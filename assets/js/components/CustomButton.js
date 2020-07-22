@@ -11,7 +11,7 @@ export default function CustomButton(props) {
             <Text
                 style={styles.button}
             >
-                {props.title}
+                {props.title}{props.children}
             </Text>
         </TouchableOpacity>
     )

@@ -5,23 +5,35 @@ import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
 
 export default function CustomTextInput(props) {
     return (
-        <TextInput
-            style={styles.textInput}
-            defaultValue=""
-            placeholder={props.placeholder}
-        />
+        <View style={styles.container}>
+            <Text style={styles.label}>{props.label}</Text>
+            <TextInput
+                style={styles.input}
+                value={props.value}
+                placeholder={`${props.placeholder}`}
+                onChangeText={text => props.onChangeText(text)}
+            />
+        </View>
     )
 }
 
 const styles = StyleSheet.create({
-    textInput: {
-        borderRadius: 999, // "999px",
+    container: {
+        borderRadius: 999,
         backgroundColor: "lightgray",
+        // paddingTop: 15,
+        // paddingBottom: 15,
+        // marginTop: 8,
+        // marginBottom: 8,
+        paddingVertical: 15,
+        marginVertical: 8,
+    },
+    label: {
         textAlign: "center",
-        paddingTop: 15, // "1em",
-        paddingBottom: 15, // "1em",
-        marginTop: 8, // "0.5em",
-        marginBottom: 8, // "0.5em",
-        fontSize: 20, // "20px",
-    }
+        fontSize: 12,
+    },
+    input: {
+        textAlign: "center",
+        fontSize: 20,
+    },
 })

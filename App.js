@@ -9,6 +9,11 @@ import SignUp from "./assets/js/screens/SignUp"
 import Login from "./assets/js/screens/Login"
 import UserDashboard from "./assets/js/screens/UserDashboard"
 
+import UserClasses from "./assets/js/screens/UserClasses"
+import UserMemberships from "./assets/js/screens/UserMemberships"
+import ProfileSettings from "./assets/js/screens/ProfileSettings"
+import PaymentSettings from "./assets/js/screens/PaymentSettings"
+
 const Stack = createStackNavigator()
 
 export default function App() {
@@ -39,6 +44,26 @@ export default function App() {
                     name="UserDashboard"
                     component={UserDashboard}
                     options={{ title: "Dashboard" }}
+                />
+                <Stack.Screen
+                    name="UserClasses"
+                    component={UserClasses}
+                    options={{ title: "My Classes" }}
+                />
+                <Stack.Screen
+                    name="UserMemberships"
+                    component={UserMemberships}
+                    options={{ title: "Memberships" }}
+                />
+                <Stack.Screen
+                    name="ProfileSettings"
+                    component={ProfileSettings}
+                    options={{ title: "Profile Settings" }}
+                />
+                <Stack.Screen
+                    name="PaymentSettings"
+                    component={PaymentSettings}
+                    options={{ title: "Payment Settings" }}
                 />
                 {/*
                 <Stack.Screen

@@ -1,13 +1,28 @@
 import React, { useState, useRef } from 'react'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, useWindowDimensions } from 'react-native'
+import { useDimensions } from '@react-native-community/hooks'
 
 import UserIcon from "../components/UserIcon"
+import UserMenu from "../components/UserMenu"
 
 
 
 export default function UserDashboard(props) {
+    const { width, height } = useDimensions().window
+    console.log(width)
+    console.log(height)
     const [expanded, setExpanded] = useState(false)
-    const slidingAnim = useRef(new Animated.Value(-450)).current
+    const slidingAnim = useRef(new Animated.Value(-1 * width)).current
+
+    // const window = useWindowDimensions()
+    // const windowWidth = window.width
+    // const windowHeight = window.height
+    // console.log(windowWidth)
+    // console.log(windowHeight)
+
+    // const maxWidth = width
+    // const maxHeight = height
+    // console.log(maxWidth, maxHeight)
 
     function sidePanelToggle() {
         if (expanded) {
@@ -22,8 +37,9 @@ export default function UserDashboard(props) {
 
     function sidePanelSlideIn() {
         Animated.timing(slidingAnim, {
-            toValue: -450,
+            toValue: -1 * width,
             duration: 500,
+            useNativeDriver: false,
         }).start()
     }
 
@@ -31,38 +47,31 @@ export default function UserDashboard(props) {
         Animated.timing(slidingAnim, {
             toValue: 0,
             duration: 500,
+            useNativeDriver: false,
         }).start()
     }
 
     return (
         <View style={styles.container}>
-            <Animated.View style={[
-                styles.sidePanel,
-                {
-                    left: slidingAnim,
-                }
-            ]}>
-                <TouchableOpacity
+            <TouchableOpacity
                     style={styles.sidePanelButton}
                     onPress={sidePanelToggle}
                 >
                     {/* <Text style={{fontSize: 30}}>{expanded ? "<" : ">"}</Text> */}
                     <UserIcon />
-                </TouchableOpacity>
-                <View>
-                    <Text>(Profile Representation)</Text>
-                </View>
-                <View>
-                    <Text>My Classes</Text>
-                    <Text>Manage Memberships</Text>
-                    <Text>Profile Settings</Text>
-                    <Text>Payment Settings</Text>
-                </View>
+            </TouchableOpacity>
+            <Animated.View style={[
+                styles.sidePanel,
+                {
+                    width: width,
+                    height: height,
+                    left: slidingAnim,
+                }
+            ]}>
+                <UserMenu navigation={props.navigation} />
             </Animated.View>
-            <ScrollView style={styles.scrollView}>
-                <View style={styles.content}>
-                    <Text>content goes here. content goes here. content goes here. content goes here. content goes here.</Text>
-                </View>
+            <ScrollView style={styles.content}>
+                <Text>content goes here. content goes here. content goes here. content goes here. content goes here.</Text>
             </ScrollView>
         </View>
     )
@@ -70,16 +79,13 @@ export default function UserDashboard(props) {
 
 const styles = StyleSheet.create({
     container: {
+        width: "100%",
         height: "100%",
         // flex: 1,
     },
-    scrollView: {
-        backgroundColor: "pink",
-        left: 50,
-    },
     sidePanel: {
-        width: 500,
-        height: "inherit",
+        // width: "inherit",
+        // height: "inherit",
         position: "absolute",
         // left: 0,
         backgroundColor: "gray",
@@ -89,10 +95,11 @@ const styles = StyleSheet.create({
         width: 50,
         height: 50,
         position: "absolute",
-        right: 0,
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 1,
+        zIndex: 2,
     },
-    content: {},
+    content: {
+        backgroundColor: "pink",
+    },
 })

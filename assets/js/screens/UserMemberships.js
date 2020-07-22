@@ -3,7 +3,7 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 
 
-export default function Component(props) {
+export default function UserMemberships(props) {
     return (
         <View style={styles.container}>
             <ScrollView style={styles.content}></ScrollView>
