@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button } from 'react-native'
+import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -21,6 +21,10 @@ export default function Home(props) {
         props.navigation.navigate("Login")
     }
 
+    function partnerSignUp() {
+        props.navigation.navigate("PartnerSignUp")
+    }
+
     return (
         <View style={styles.container}>
             <AppBackground />
@@ -34,6 +38,11 @@ export default function Home(props) {
                     onPress={logIn}
                     title="Login"
                 />
+                <TouchableOpacity
+                    onPress={partnerSignUp}
+                >
+                    <Text>Partner Sign Up</Text>
+                </TouchableOpacity>
             </View>
         </View>
     )

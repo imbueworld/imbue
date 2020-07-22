@@ -16,6 +16,10 @@ import PaymentSettings from "./assets/js/screens/PaymentSettings"
 
 import GymDescription from "./assets/js/screens/GymDescription"
 
+import PartnerSignUp from "./assets/js/screens/PartnerSignUp"
+import PartnerDashboard from "./assets/js/screens/PartnerDashboard"
+import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
+
 const Stack = createStackNavigator()
 
 export default function App() {
@@ -66,6 +70,21 @@ export default function App() {
                     name="GymDescription"
                     component={GymDescription}
                     options={{ title: "Gym Description" }}
+                />
+                <Stack.Screen
+                    name="PartnerSignUp"
+                    component={PartnerSignUp}
+                    options={{ title: "Sign Up" }}
+                />
+                <Stack.Screen
+                    name="PartnerDashboard"
+                    component={PartnerDashboard}
+                    options={{ title: "Dashboard" }}
+                />
+                <Stack.Screen
+                    name="PartnerGymSettings"
+                    component={PartnerGymSettings}
+                    options={{ title: "Gym Settings" }}
                 />
                 {/*
                 <Stack.Screen
