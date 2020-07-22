@@ -7,6 +7,7 @@ import Home from "./assets/js/screens/Home"
 import Test from "./assets/js/screens/Test"
 import SignUp from "./assets/js/screens/SignUp"
 import Login from "./assets/js/screens/Login"
+import UserDashboard from "./assets/js/screens/UserDashboard"
 
 const Stack = createStackNavigator()
 
@@ -33,6 +34,11 @@ export default function App() {
                     name="Login"
                     component={Login}
                     options={{ title: "Login" }}
+                />
+                <Stack.Screen
+                    name="UserDashboard"
+                    component={UserDashboard}
+                    options={{ title: "Dashboard" }}
                 />
                 {/*
                 <Stack.Screen

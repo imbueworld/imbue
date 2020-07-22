@@ -11,6 +11,7 @@ import AltLoginService from "../components/AltLoginService"
 export default function Login(props) {
     function login() {
         console.log("LOGIN ACTION")
+        props.navigation.navigate("UserDashboard")
     }
 
     return (

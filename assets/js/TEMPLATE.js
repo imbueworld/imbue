@@ -1,16 +1,20 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 
 
 export default function TEMPLATE(props) {
     return (
         <View style={styles.container}>
-            <Text></Text>
+            <ScrollView style={styles.scrollView}>
+            </ScrollView>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {},
+    container: {
+        flex: 1,
+    },
+    scrollView: {},
 })

@@ -9,7 +9,7 @@ export default function CompanyLogo(props) {
             <View style={styles.imageContainer}>
                 <Image
                     style={styles.image}
-                    source={require("./img/imbue-logo.webp")}
+                    source={require("./img/imbue-logo.png")}
                 />
             </View>
         </View>
