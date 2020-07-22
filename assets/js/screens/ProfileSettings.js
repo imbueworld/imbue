@@ -6,7 +6,7 @@ import CustomButton from "../components/CustomButton"
 
 
 
-export default function Component(props) {
+export default function ProfileSettings(props) {
     const [firstNameText, setFirstNameText] = useState("")
     const [lastNameText, setLastNameText] = useState("")
     const [emailText, setEmailText] = useState("")

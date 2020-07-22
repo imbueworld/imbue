@@ -2,6 +2,8 @@ import React, { useState, useRef } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, Button } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
 
+import AppBackground from "../components/AppBackground"
+
 import UserIcon from "../components/UserIcon"
 import UserMenu from "../components/UserMenu"
 
@@ -68,6 +70,7 @@ export default function UserDashboard(props) {
                     left: slidingAnim,
                 }
             ]}>
+                <AppBackground />
                 <UserMenu navigation={props.navigation} />
             </Animated.View>
             <ScrollView style={styles.content}>
@@ -85,14 +88,9 @@ const styles = StyleSheet.create({
     container: {
         width: "100%",
         height: "100%",
-        // flex: 1,
     },
     sidePanel: {
-        // width: "inherit",
-        // height: "inherit",
         position: "absolute",
-        // left: 0,
-        backgroundColor: "gray",
         zIndex: 1,
     },
     sidePanelButton: {

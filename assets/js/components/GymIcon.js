@@ -1,17 +1,16 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
+import UserIcon from "./UserIcon"
+
 
 
 export default function Component(props) {
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <View style={styles.container}></View>
-        </ScrollView>
+        <UserIcon />
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {},
     container: {},
 })

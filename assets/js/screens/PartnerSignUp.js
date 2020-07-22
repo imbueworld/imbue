@@ -9,13 +9,17 @@ import CustomButton from "../components/CustomButton"
 
 
 
-export default function Component(props) {
+export default function PartnerSignUp(props) {
     const [firstNameText, setFirstNameText] = useState("")
     const [lastNameText, setLastNameText] = useState("")
     const [gymNameText, setGymNameText] = useState("")
     const [emailText, setEmailText] = useState("")
     const [passwordText, setPasswordText] = useState("")
     const [verifyPasswordText, setVerifyPasswordText] = useState("")
+
+    function signUp() {
+        props.navigation.navigate("PartnerDashboard")
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
@@ -55,6 +59,7 @@ export default function Component(props) {
                 />
                 <CustomButton
                     title="Sign Up"
+                    onPress={signUp}
                 />
             </View>
         </ScrollView>
@@ -63,7 +68,7 @@ export default function Component(props) {
 
 const styles = StyleSheet.create({
     scrollViewContainer: {
-        height: "100%",
+        // height: "100%",
     },
     container: {
         width: "85%",

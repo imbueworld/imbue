@@ -7,7 +7,7 @@ export default function CustomTextInput(props) {
     return (
         <View style={styles.container}>
             <TextInput
-                style={styles.input}
+                style={[styles.input, props.style]}
                 value={props.value !== undefined ? props.value : undefined}
                 placeholder={props.placeholder}
                 onChangeText={text => props.onChangeText(text)}
