@@ -1,10 +1,10 @@
 import 'react-native-gesture-handler'
 import React from 'react'
+import { View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
 import Home from "./assets/js/screens/Home"
-import Test from "./assets/js/screens/Test"
 import SignUp from "./assets/js/screens/SignUp"
 import Login from "./assets/js/screens/Login"
 import UserDashboard from "./assets/js/screens/UserDashboard"
@@ -13,6 +13,8 @@ import UserClasses from "./assets/js/screens/UserClasses"
 import UserMemberships from "./assets/js/screens/UserMemberships"
 import ProfileSettings from "./assets/js/screens/ProfileSettings"
 import PaymentSettings from "./assets/js/screens/PaymentSettings"
+
+import GymDescription from "./assets/js/screens/GymDescription"
 
 const Stack = createStackNavigator()
 
@@ -24,11 +26,6 @@ export default function App() {
                     name="Home"
                     component={Home}
                     options={{ title: "Welcome" }}
-                />
-                <Stack.Screen
-                    name="Test"
-                    component={Test}
-                    options={{ title: "Test Screen" }}
                 />
                 <Stack.Screen
                     name="SignUp"
@@ -64,6 +61,11 @@ export default function App() {
                     name="PaymentSettings"
                     component={PaymentSettings}
                     options={{ title: "Payment Settings" }}
+                />
+                <Stack.Screen
+                    name="GymDescription"
+                    component={GymDescription}
+                    options={{ title: "Gym Description" }}
                 />
                 {/*
                 <Stack.Screen

@@ -20,13 +20,9 @@ const styles = StyleSheet.create({
     container: {
         alignItems: "center",
     },
-    imageContainer: {
-        borderWidth: 1,
-        borderStyle: "dashed",
-        borderColor: "#00000044",
-    },
+    imageContainer: {},
     image: {
-        width: 325, // "325px", // "143px",
-        height: 325, // "325px", // "143px",
+        width: 500,
+        height: 500,
     },
 })

@@ -1,6 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
+import AppBackground from "../components/AppBackground"
+
 import CompanyLogo from "../components/CompanyLogo"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
@@ -16,6 +18,7 @@ export default function SignUp(props) {
     return (
         <ScrollView>
             <View style={styles.container}>
+                <AppBackground />
                 <CompanyLogo />
                 <View style={styles.fieldContainer}>
                     <AltSignUpService />

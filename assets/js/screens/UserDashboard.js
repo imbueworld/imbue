@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, useWindowDimensions } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, Button } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
 
 import UserIcon from "../components/UserIcon"
@@ -72,6 +72,10 @@ export default function UserDashboard(props) {
             </Animated.View>
             <ScrollView style={styles.content}>
                 <Text>content goes here. content goes here. content goes here. content goes here. content goes here.</Text>
+                <Button
+                    title="map piece, that takes you to gym description screen"
+                    onPress={() => props.navigation.navigate("GymDescription")}
+                />
             </ScrollView>
         </View>
     )

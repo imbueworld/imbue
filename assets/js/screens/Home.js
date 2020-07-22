@@ -1,6 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button } from 'react-native'
 
+import AppBackground from "../components/AppBackground"
+
 import CompanyLogo from "../components/CompanyLogo"
 import CustomButton from "../components/CustomButton"
 
@@ -21,14 +23,9 @@ export default function Home(props) {
 
     return (
         <View style={styles.container}>
-        {/* <View> */}
-            {/* <Button
-                onPress={test}
-                title="Generic Button"
-            /> */}
+            <AppBackground />
             <CompanyLogo />
             <View style={styles.buttonContainer}>
-            {/* <View> */}
                 <CustomButton
                     onPress={signUp}
                     title="Sign Up"
@@ -46,7 +43,7 @@ const styles = StyleSheet.create({
     container: {
         width: "100%",
         height: "100%",
-        justifyContent: "space-around",
+        // justifyContent: "space-around",
         alignItems: "center",
     },
     buttonContainer: {

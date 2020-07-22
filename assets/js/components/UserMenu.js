@@ -24,7 +24,7 @@ export default function UserMenu(props) {
             <View>
                 <Text>(Profile Representation)</Text>
             </View>
-            <View>
+            <View style={styles.menu}>
                 <CustomButton onPress={classes}>My Classes</CustomButton>
                 <CustomButton onPress={memberships}>Manage Memberships</CustomButton>
                 <CustomButton onPress={profileSettings}>Profile Settings</CustomButton>
@@ -37,5 +37,9 @@ export default function UserMenu(props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+        alignItems: "center",
     },
+    menu: {
+        width: "85%",
+    }
 })

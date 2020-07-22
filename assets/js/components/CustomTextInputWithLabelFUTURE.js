@@ -1,15 +1,18 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
+import { TextInput } from 'react-native-paper'
 
 
 
 export default function CustomTextInput(props) {
     return (
         <View style={styles.container}>
+            {/* <Text style={styles.label} on>{props.label}</Text> */}
             <TextInput
                 style={styles.input}
+                label={props.placeholder}
+                // placeholder={props.placeholder}
                 value={props.value !== undefined ? props.value : undefined}
-                placeholder={props.placeholder}
                 onChangeText={text => props.onChangeText(text)}
             />
         </View>
@@ -17,13 +20,15 @@ export default function CustomTextInput(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {},
+    container: {
+        flex: 1,
+    },
     input: {
         borderRadius: 999,
         backgroundColor: "lightgray",
         paddingVertical: 15,
         marginVertical: 8,
-        textAlign: "center",
+        // textAlign: "center",
         fontSize: 20,
     },
 })
