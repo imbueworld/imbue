@@ -43,6 +43,10 @@ export default function Home(props) {
                 >
                     <Text>Partner Sign Up</Text>
                 </TouchableOpacity>
+                <Button
+                    title="TESTING GROUNDS"
+                    onPress={() => {props.navigation.navigate("ClassesSchedule")}}
+                />
             </View>
         </View>
     )

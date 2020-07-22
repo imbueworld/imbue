@@ -1,6 +1,5 @@
 import 'react-native-gesture-handler'
 import React from 'react'
-import { View } from 'react-native'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -20,6 +19,7 @@ import PartnerSignUp from "./assets/js/screens/PartnerSignUp"
 import PartnerDashboard from "./assets/js/screens/PartnerDashboard"
 import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
 import PartnerUpdateMemberships from "./assets/js/screens/PartnerUpdateMemberships"
+import ClassesSchedule from "./assets/js/screens/ClassesSchedule"
 
 const Stack = createStackNavigator()
 
@@ -91,6 +91,11 @@ export default function App() {
                     name="PartnerUpdateMemberships"
                     component={PartnerUpdateMemberships}
                     options={{ title: "Update Memberships" }}
+                />
+                <Stack.Screen
+                    name="ClassesSchedule"
+                    component={ClassesSchedule}
+                    options={{ title: "Schedule" }}
                 />
                 {/*
                 <Stack.Screen
