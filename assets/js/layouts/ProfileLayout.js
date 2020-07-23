@@ -4,22 +4,17 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import AppBackground from "../components/AppBackground"
 import ProfileRepr from "../components/ProfileRepr"
 
-import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
-import CustomBar from "../components/CustomBar"
-import ActiveMembershipBadge from "../components/ActiveMembershipsBadge"
 
 
 
-export default function UserMemberships(props) {
-
+export default function Component(props) {
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <AppBackground />
             <View style={{
                 top: 50,
             }}>
-
                 <ProfileRepr
                     style={{
                         position: "absolute",
@@ -27,30 +22,16 @@ export default function UserMemberships(props) {
                         zIndex: 100,
                     }}
                 />
-
-                <View style={styles.container}>
+                
+                <View style={props.style}>
                     <CustomCapsule
                         style={{
                             paddingTop: 100,
                             top: 150,
                         }}
                     >
-
-                        <ActiveMembershipBadge
-                            name="Membership One"
-                        />
-                        <ActiveMembershipBadge
-                            name="Membership Two"
-                        />
-                        <ActiveMembershipBadge
-                            name="Membership Three"
-                        />
-
-                        <CustomBar />
-
-                        <CustomButton
-                            title="View Past Transactions"
-                        />
+                    
+                    {props.children}
 
                     </CustomCapsule>
                 </View>
@@ -64,8 +45,5 @@ const styles = StyleSheet.create({
     scrollViewContainer: {
         height: "100%",
     },
-    container: {
-        width: "85%",
-        alignSelf: "center",
-    },
+    // container: {},
 })

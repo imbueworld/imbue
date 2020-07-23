@@ -7,6 +7,8 @@ import AppBackground from "../components/AppBackground"
 import UserIcon from "../components/UserIcon"
 import UserMenu from "../components/UserMenu"
 
+import GymBadge from "../components/GymBadge"
+
 
 
 export default function UserDashboard(props) {
@@ -15,16 +17,6 @@ export default function UserDashboard(props) {
     console.log(height)
     const [expanded, setExpanded] = useState(false)
     const slidingAnim = useRef(new Animated.Value(-1 * width)).current
-
-    // const window = useWindowDimensions()
-    // const windowWidth = window.width
-    // const windowHeight = window.height
-    // console.log(windowWidth)
-    // console.log(windowHeight)
-
-    // const maxWidth = width
-    // const maxHeight = height
-    // console.log(maxWidth, maxHeight)
 
     function sidePanelToggle() {
         if (expanded) {
@@ -80,6 +72,9 @@ export default function UserDashboard(props) {
                     onPress={() => props.navigation.navigate("GymDescription")}
                 />
             </ScrollView>
+
+            <GymBadge />
+
         </View>
     )
 }

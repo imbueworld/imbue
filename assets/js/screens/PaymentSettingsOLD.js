@@ -8,26 +8,10 @@ import CustomButton from "../components/CustomButton"
 
 export default function Component(props) {
     const [holderNameText, setHolderNameText] = useState("")
-
     const [creditCardText, setCreditCardText] = useState("")
-    function creditCard(text) {
-        setCreditCardText(text)
-    }
-
     const [expireDateText, setExpireDateText] = useState("")
-    function expireDate(text) {
-        setExpireDateText(text)
-    }
-
     const [CCVText, setCCVText] = useState("")
-    function CCV(text) {
-        setCCVText(text)
-    }
-
     const [zipCodeText, setZipCodeText] = useState("")
-    function zipCode(text) {
-        setZipCodeText(text)
-    }
 
     function done() {
         console.log("DONE ACTION")
@@ -46,25 +30,25 @@ export default function Component(props) {
                     label="Credit Card Number"
                     placeholder="Credit Card Number"
                     value={creditCardText}
-                    onChangeText={creditCard}
+                    onChangeText={(text) => setCreditCardText(text)}
                 />
                 <CustomTextInputWithLabel
                     label="MM/YY"
                     placeholder="MM/YY"
                     value={expireDateText}
-                    onChangeText={expireDate}
+                    onChangeText={(text) => setExpireDateText(text)}
                 />
                 <CustomTextInputWithLabel
                     label="CCV"
                     placeholder="CCV"
                     value={CCVText}
-                    onChangeText={CCV}
+                    onChangeText={(text) => setCCVText(text)}
                 />
                 <CustomTextInputWithLabel
                     label="ZIP code"
                     placeholder="ZIP code"
                     value={zipCodeText}
-                    onChangeText={zipCode}
+                    onChangeText={(text) => setZipCodeText(text)}
                 />
                 <CustomButton
                     title="Done"

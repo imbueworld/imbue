@@ -1,22 +1,14 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
-
-import AppBackground from "../components/AppBackground"
+import { StyleSheet, Text, View } from 'react-native'
 
 
 
 export default function Component(props) {
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <AppBackground />
-            <View style={styles.container}></View>
-        </ScrollView>
+        <View style={styles.container}></View>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {
-        height: "100%",
-    },
     container: {},
 })

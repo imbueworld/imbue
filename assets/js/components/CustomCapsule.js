@@ -16,7 +16,7 @@ export default function CustomCapsule(props) {
 
 const styles = StyleSheet.create({
     container: {
-        top: 50,
+        // top: 50,
         padding: 20,
         borderRadius: 40,
         backgroundColor: "#FFFFFF88", // "#e6e6e6",

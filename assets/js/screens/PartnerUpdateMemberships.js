@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import CustomTextInput from "../components/CustomTextInput"
-import CustomLabel from "../components/CustomLabel"
+import CustomText from "../components/CustomText"
 
 
 
@@ -15,9 +15,9 @@ export default function PartnerUpdateMemberships(props) {
             <View style={styles.container}>
                 <Text style={styles.sectionLabel}>{"Memberships & Pricing"}</Text>
                 <View style={styles.row}>
-                    <CustomLabel style={styles.rowLabel}>
+                    <CustomText style={styles.rowLabel}>
                         Unlimited Membership
-                    </CustomLabel>
+                    </CustomText>
                     <CustomTextInput style={styles.rowPrice}
                         placeholder="Enter price..."
                         value={priceUnlimited}
@@ -25,9 +25,9 @@ export default function PartnerUpdateMemberships(props) {
                     />
                 </View>
                 <View style={styles.row}>
-                    <CustomLabel style={styles.rowLabel}>
+                    <CustomText style={styles.rowLabel}>
                         Single Class
-                    </CustomLabel>
+                    </CustomText>
                     <CustomTextInput style={styles.rowPrice}
                         placeholder="Enter price..."
                         value={priceSingle}

@@ -45,7 +45,7 @@ export default function Home(props) {
                 </TouchableOpacity>
                 <Button
                     title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("PurchaseOnline")}}
+                    onPress={() => {props.navigation.navigate("GymDescription")}}
                 />
             </View>
         </View>

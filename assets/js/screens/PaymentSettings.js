@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
-import CustomTextInputWithLabel from "../components/CustomTextInputWithLabel"
+import ProfileLayout from "../layouts/ProfileLayout"
+
+import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 
 
@@ -18,53 +20,43 @@ export default function Component(props) {
     }
 
     return (
-        <View style={styles.container}>
-            <ScrollView style={styles.content}>
-                <CustomTextInputWithLabel
-                    label="Name of Holder"
-                    placeholder="Name of Holder"
-                    value={holderNameText}
-                    onChangeText={(text) => setHolderNameText(text)}
-                />
-                <CustomTextInputWithLabel
-                    label="Credit Card Number"
-                    placeholder="Credit Card Number"
-                    value={creditCardText}
-                    onChangeText={(text) => setCreditCardText(text)}
-                />
-                <CustomTextInputWithLabel
-                    label="MM/YY"
-                    placeholder="MM/YY"
-                    value={expireDateText}
-                    onChangeText={(text) => setExpireDateText(text)}
-                />
-                <CustomTextInputWithLabel
-                    label="CCV"
-                    placeholder="CCV"
-                    value={CCVText}
-                    onChangeText={(text) => setCCVText(text)}
-                />
-                <CustomTextInputWithLabel
-                    label="ZIP code"
-                    placeholder="ZIP code"
-                    value={zipCodeText}
-                    onChangeText={(text) => setZipCodeText(text)}
-                />
-                <CustomButton
-                    title="Done"
-                    onPress={done}
-                />
-            </ScrollView>
-        </View>
+        <ProfileLayout style={styles.container}>
+            <CustomTextInput
+                placeholder="Name of Holder"
+                value={holderNameText}
+                onChangeText={(text) => setHolderNameText(text)}
+            />
+            <CustomTextInput
+                placeholder="Credit Card Number"
+                value={creditCardText}
+                onChangeText={(text) => setCreditCardText(text)}
+            />
+            <CustomTextInput
+                placeholder="MM/YY"
+                value={expireDateText}
+                onChangeText={(text) => setExpireDateText(text)}
+            />
+            <CustomTextInput
+                placeholder="CCV"
+                value={CCVText}
+                onChangeText={(text) => setCCVText(text)}
+            />
+            <CustomTextInput
+                placeholder="ZIP code"
+                value={zipCodeText}
+                onChangeText={(text) => setZipCodeText(text)}
+            />
+            <CustomButton
+                title="Save"
+                onPress={done}
+            />
+        </ProfileLayout>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        alignItems: "center",
-    },
-    content: {
         width: "85%",
+        alignSelf: "center",
     },
 })

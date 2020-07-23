@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 
 
@@ -10,9 +10,11 @@ export default function CustomText(props) {
             props.style
         ]}>
             <View style={styles.innerContainer}>
+
                 <Text style={styles.content}>
                     {props.children}
                 </Text>
+
                 {
                 props.label
                 ?
@@ -22,6 +24,7 @@ export default function CustomText(props) {
                 :
                 <View></View>
                 }
+            
             </View>
         </View>
     )
@@ -29,7 +32,7 @@ export default function CustomText(props) {
 
 const styles = StyleSheet.create({
     container: {
-        borderRadius: 50,
+        borderRadius: 40,
         overflow: "hidden",
         backgroundColor: "lightgray",
     },
@@ -37,7 +40,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     content: {
-        paddingVertical: 13,
+        // paddingVertical: 13,
         textAlign: "center",
         fontSize: 20,
     },
