@@ -1,15 +1,22 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, TextInput } from 'react-native'
+import { StyleSheet, View, TextInput } from 'react-native'
 
 
 
 export default function CustomTextInput(props) {
     return (
-        <View style={styles.container}>
+        <View style={[
+            styles.container,
+            props.styles
+        ]}>
             <TextInput
-                style={[styles.input, props.style]}
+                style={[
+                    styles.input,
+                    props.style
+                ]}
                 value={props.value !== undefined ? props.value : undefined}
                 placeholder={props.placeholder}
+                placeholderTextColor="white"
                 onChangeText={text => props.onChangeText(text)}
             />
         </View>
@@ -17,13 +24,14 @@ export default function CustomTextInput(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {},
+    container: {
+        paddingVertical: 10,
+    },
     input: {
         borderRadius: 999,
         backgroundColor: "lightgray",
-        paddingVertical: 15,
-        marginVertical: 8,
-        textAlign: "center",
+        paddingVertical: 20,
         fontSize: 20,
+        textAlign: "center",
     },
 })

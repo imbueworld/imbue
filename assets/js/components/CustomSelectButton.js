@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 
 
@@ -24,12 +24,28 @@ export default function CustomSelectButton(props) {
                 key={arr[0]}
                 onPress={() => setSlctdOpt(arr[0])}
             >
-                <Text>
+                <Text
+                    style={[
+                        styles.optionText,
+                        arr[0] !== slctdOpt ? styles.unselectedColor : {}
+                    ]}
+                >
                     {arr[1]}
                 </Text>
             </TouchableOpacity>
         )
     })
+
+    const highlight =
+        <View
+            style={[
+                styles.highlight,
+                {
+                    width: `${gap}%`,
+                    left: `${gap * slctdIdx}%`,
+                }
+            ]}
+        />
 
     return (
         <View
@@ -39,15 +55,7 @@ export default function CustomSelectButton(props) {
             ]}
         >
             {options}
-            <View
-                style={[
-                    styles.highlight,
-                    {
-                        width: `${gap}%`,
-                        left: `${gap * slctdIdx}%`,
-                    }
-                ]}
-            />
+            {highlight}
         </View>
     )
 }
@@ -55,6 +63,7 @@ export default function CustomSelectButton(props) {
 const styles = StyleSheet.create({
     container: {
         height: 60,
+        marginVertical: 10,
         flexDirection: "row",
         alignItems: "center",
         backgroundColor: "lightgray",
@@ -63,7 +72,14 @@ const styles = StyleSheet.create({
     option: {
         alignItems: "center",
         position: "absolute",
-        padding: 10,
+    },
+    optionText: {
+        color: "#1b1b19", // edited
+        textAlign: "center",
+        fontSize: 20,
+    },
+    unselectedColor: {
+        color: "#696461",
     },
     highlight: {
         height: "100%",

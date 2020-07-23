@@ -1,23 +1,24 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
+import { StyleSheet, Image } from 'react-native'
 
 
 
 export default function UserIcon(props) {
     return (
-        <View>
-            <Image
-                style={styles.icon}
-                source={require("./img/user-icon-example.png")}
-            />
-        </View>
+        <Image
+            style={[
+                styles.icon,
+                props.style
+            ]}
+            source={require("./img/user-icon-example.png")}
+        />
     )
 }
 
 const styles = StyleSheet.create({
     icon: {
-        width: 50,
-        height: 50,
+        width: 200,
+        height: 200,
         borderRadius: 999,
     },
 })

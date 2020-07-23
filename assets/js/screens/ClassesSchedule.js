@@ -56,7 +56,6 @@ export default function ClassesSchedule(props) {
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <MenuPanel>
-                <Text>hdowiadihdaijhoaijoadwijolawdjioadwjioldawe</Text>
                 <AddNewClass />
             </MenuPanel>
             <Text>Schedule</Text>

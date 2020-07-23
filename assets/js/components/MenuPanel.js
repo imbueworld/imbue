@@ -11,29 +11,39 @@ export default function MenuPanel(props) {
     }
 
     return (
-        <ScrollView
+        // <ScrollView
+        <View
             style={styles.container}
             // contentContainerStyle={styles.scrollViewContainer}
         >
             <TouchableOpacity
+                style={{
+                    position: "absolute",
+                    zIndex: 100,
+                }}
                 onPress={togglePanel}
             >
                 <Text style={{fontSize: 30}}>{showPanel ? "<" : "+"}</Text>
             </TouchableOpacity>
             <View
-                style={[styles.panel, {
-                    display: showPanel ? "flex" : "none"
-                }]}
+                style={[
+                    styles.panel,
+                    {
+                        display: showPanel ? "flex" : "none"
+                    }
+                ]}
             >
                 {props.children}
             </View>
-        </ScrollView>
+        </View>
+        // </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {},
+    // scrollViewContainer: {},
     container: {
+        width: "100%",
         position: "absolute",
         zIndex: 100,
     },

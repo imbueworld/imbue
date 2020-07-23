@@ -19,20 +19,30 @@ export default function CustomOptionSelector(props) {
 
     const options = Object.entries(props.options).map((arr, idx) => {
         return (
-            <TouchableOpacity
-                // style={buttonStates[idx][0] ? styles.selected : styles.unselected}
+            <View
                 style={[
-                    styles.button,
+                    styles.buttonContainer,
                     {
-                    width: 30, // `${gap}%`,
-                    left: `${gap * idx}%`,
+                        width: `${gap}%`,
+                        height: 40 + 10, // +10 for user accommodation
+                        left: `${gap * idx}%`,
                     }
                 ]}
                 key={arr[0]}
-                onPress={() => toggleButton(idx)}
             >
-                <Text>{arr[1]}</Text>
-            </TouchableOpacity>
+                <TouchableOpacity
+                    style={[
+                        styles.button,
+                        {
+                            width: 40 + 10, // +10 for user accommodation
+                        }
+                    ]}
+                    key={arr[0]}
+                    onPress={() => toggleButton(idx)}
+                >
+                    <Text>{arr[1]}</Text>
+                </TouchableOpacity>
+            </View>
         )
     })
 
@@ -40,20 +50,34 @@ export default function CustomOptionSelector(props) {
         return (
             <View
                 style={[
-                    styles.buttonBg,
-                    buttonStates[idx][0] ? styles.selected : styles.unselected,
+                    styles.buttonBgContainer,
                     {
-                        width: 30, // `${gap}%`,
+                        width: `${gap}%`,
+                        height: 40,
                         left: `${gap * idx}%`,
                     }
                 ]}
                 key={arr[0]}
-            />
+            >
+                <View
+                    style={[
+                        buttonStates[idx][0] ? styles.selected : styles.unselected,
+                        {
+                            width: 40,
+                            height: "100%",
+                        }
+                    ]}
+                    key={arr[0]}
+                />
+            </View>
         )
     })
 
     return (
-        <View style={styles.container}>
+        <View style={[
+            styles.container,
+            props.style
+        ]}>
             {options}
             {buttonBackgrounds}
         </View>
@@ -62,17 +86,24 @@ export default function CustomOptionSelector(props) {
 
 const styles = StyleSheet.create({
     container: {
-        height: 30,
+        height: 60,
         flexDirection: "row",
         alignItems: "center",
     },
-    button: {
+    buttonContainer: {
+        // height: "100%",
+        position: "absolute",
         alignItems: "center",
-        position: "absolute",
     },
-    buttonBg: {
+    button: {
         height: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+    },
+    buttonBgContainer: {
+        // height: "100%",
         position: "absolute",
+        alignItems: "center",
         zIndex: -100,
     },
     selected: {
