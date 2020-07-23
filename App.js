@@ -12,6 +12,8 @@ import UserClasses from "./assets/js/screens/UserClasses"
 import UserMemberships from "./assets/js/screens/UserMemberships"
 import ProfileSettings from "./assets/js/screens/ProfileSettings"
 import PaymentSettings from "./assets/js/screens/PaymentSettings"
+import PurchaseOnline from "./assets/js/screens/PurchaseOnline"
+import PurchaseUnlimited from "./assets/js/screens/PurchaseUnlimited"
 
 import GymDescription from "./assets/js/screens/GymDescription"
 
@@ -20,6 +22,7 @@ import PartnerDashboard from "./assets/js/screens/PartnerDashboard"
 import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
 import PartnerUpdateMemberships from "./assets/js/screens/PartnerUpdateMemberships"
 import ClassesSchedule from "./assets/js/screens/ClassesSchedule"
+import PartnerRevenueInfo from "./assets/js/screens/PartnerRevenueInfo"
 
 const Stack = createStackNavigator()
 
@@ -96,6 +99,21 @@ export default function App() {
                     name="ClassesSchedule"
                     component={ClassesSchedule}
                     options={{ title: "Schedule" }}
+                />
+                <Stack.Screen
+                    name="PartnerRevenueInfo"
+                    component={PartnerRevenueInfo}
+                    options={{ title: "Revenue" }}
+                />
+                <Stack.Screen
+                    name="PurchaseOnline"
+                    component={PurchaseOnline}
+                    options={{ title: "Purchase A Class" }}
+                />
+                <Stack.Screen
+                    name="PurchaseUnlimited"
+                    component={PurchaseUnlimited}
+                    options={{ title: "Purchase Universal Membership" }}
                 />
                 {/*
                 <Stack.Screen

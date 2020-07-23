@@ -9,14 +9,14 @@ import CustomButton from "../components/CustomButton"
 
 
 export default function PartnerDashboard(props) {
-    function schedule() {
-        props.navigation.navigate("")
-    }
-    
     function live() {
         props.navigation.navigate("")
     }
 
+    function schedule() {
+        props.navigation.navigate("ClassesSchedule")
+    }
+    
     function gym() {
         props.navigation.navigate("PartnerGymSettings")
     }

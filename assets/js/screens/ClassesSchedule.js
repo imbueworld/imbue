@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
+import MenuPanel from "../components/MenuPanel"
+import AddNewClass from "../components/AddNewClass"
 
 
 
@@ -53,6 +55,10 @@ export default function ClassesSchedule(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+            <MenuPanel>
+                <Text>hdowiadihdaijhoaijoadwijolawdjioadwjioldawe</Text>
+                <AddNewClass />
+            </MenuPanel>
             <Text>Schedule</Text>
             <View style={styles.calendarContainer}>
                 <CalendarView

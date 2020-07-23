@@ -11,7 +11,9 @@ export default function Component(props) {
     const [gymDesc, setGymDesc] = useState("")
     const [gymAddress, setGymAddress] = useState("")
 
-    function moreInfo() {}
+    function moreInfo() {
+        props.navigation.navigate("PartnerRevenueInfo")
+    }
     function updateMemberships() {
         props.navigation.navigate("PartnerUpdateMemberships")
     }
