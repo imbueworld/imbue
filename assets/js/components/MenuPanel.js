@@ -11,44 +11,51 @@ export default function MenuPanel(props) {
     }
 
     return (
-        // <ScrollView
-        <View
-            style={styles.container}
-            // contentContainerStyle={styles.scrollViewContainer}
-        >
+        <View style={{
+            width: showPanel ? "100%" : 0,
+            height: showPanel ? "100%" : 0,
+            position: "absolute",
+            zIndex: 100,
+        }}>
+
             <TouchableOpacity
                 style={{
                     position: "absolute",
-                    zIndex: 100,
+                    zIndex: 110,
                 }}
                 onPress={togglePanel}
             >
-                <Text style={{fontSize: 30}}>{showPanel ? "<" : "+"}</Text>
+                <Text style={{
+                    fontSize: 40,
+                    margin: 20,
+                }}>{showPanel ? "<" : "+"}</Text>
             </TouchableOpacity>
-            <View
+
+            <ScrollView
+                contentContainerStyle={styles.scrollViewContainer}
                 style={[
-                    styles.panel,
+                    styles.panelContainer,
                     {
                         display: showPanel ? "flex" : "none"
                     }
-                ]}
-            >
+                ]
+            }>
                 {props.children}
-            </View>
+            </ScrollView>
+
         </View>
-        // </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    // scrollViewContainer: {},
-    container: {
+    scrollViewContainer: {
+        // height: "100%",
+        // flex: 1,
+    },
+    panelContainer: {
         width: "100%",
+        height: "100%",
         position: "absolute",
         zIndex: 100,
-    },
-    panel: {
-        // position: "absolute",
-        // top: 40,
     },
 })

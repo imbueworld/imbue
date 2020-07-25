@@ -4,9 +4,11 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import AppBackground from "../components/AppBackground"
 
 import CompanyLogo from "../components/CompanyLogo"
+import AltLoginService from "../components/AltLoginService"
+
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
-import AltLoginService from "../components/AltLoginService"
+import CustomCapsule from "../components/CustomCapsule"
 
 
 
@@ -17,34 +19,38 @@ export default function Login(props) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
             <CompanyLogo />
-            <View style={styles.fieldContainer}>
-                <AltLoginService />
-                <CustomTextInput
-                    placeholder="Email"
-                />
-                <CustomTextInput
-                    placeholder="Password"
-                />
-                <CustomButton
-                    title="Login"
-                    onPress={login}
-                />
-            </View>
+
+            <CustomCapsule style={styles.container}>
+
+                <View>
+                    <AltLoginService />
+                    <CustomTextInput
+                        placeholder="Email"
+                    />
+                    <CustomTextInput
+                        placeholder="Password"
+                    />
+                    <CustomButton
+                        title="Login"
+                        onPress={login}
+                    />
+                </View>
+
+            </CustomCapsule>
+
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
+    scrollView: {},
     container: {
-        // width: "100%",
-        // height: "100%",
-        // justifyContent: "space-around",
-        alignItems: "center",
-    },
-    fieldContainer: {
         width: "85%",
+        marginBottom: 50,
+        paddingBottom: 0,
+        alignSelf: "center",
     },
 })

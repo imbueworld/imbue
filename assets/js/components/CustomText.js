@@ -1,31 +1,30 @@
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
+import { colors } from "../contexts/Colors"
+
 
 
 export default function CustomText(props) {
     return (
         <View style={[
             styles.container,
-            props.style
+            props.containerStyle,
         ]}>
-            <View style={styles.innerContainer}>
 
-                <Text style={styles.content}>
-                    {props.children}
-                </Text>
+            <Text style={[
+                styles.text,
+                props.style,
+            ]}>
+                {props.children}
+            </Text>
 
-                {
-                props.label
-                ?
+            { props.label ?
                 <Text style={styles.label}>
                     {props.label}
                 </Text>
-                :
-                <View></View>
-                }
+            : <View />}
             
-            </View>
         </View>
     )
 }
@@ -33,21 +32,17 @@ export default function CustomText(props) {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 40,
-        overflow: "hidden",
         backgroundColor: "lightgray",
+        overflow: "hidden",
     },
-    innerContainer: {
-        padding: 10,
-    },
-    content: {
-        // paddingVertical: 13,
+    text: {
         textAlign: "center",
         fontSize: 20,
     },
     label: {
-        paddingVertical: 2,
-        borderColor: "gray",
         borderTopWidth: 1,
+        borderColor: `${colors.grayInactive}80`,
+        color: colors.grayInactive,
         textAlign: "center",
         fontSize: 14,
     },

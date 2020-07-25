@@ -1,6 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
+import ProfileLayout from "../layouts/ProfileLayout"
+
 import AppBackground from "../components/AppBackground"
 import GymIcon from "../components/GymIcon"
 
@@ -22,39 +24,25 @@ export default function PartnerDashboard(props) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <AppBackground />
-            <View style={styles.container}>
-                <View style={styles.gymReprContainer}>
-                    <GymIcon />
-                    <Text>Corepower Yoga</Text>
-                </View>
-                <CustomButton
-                    title="Go Live"
-                    onPress={live}
-                />
-                <CustomButton
-                    title="Schedule"
-                    onPress={schedule}
-                />
-                <CustomButton
-                    title="Manage Gym"
-                    onPress={gym}
-                />
-            </View>
-        </ScrollView>
+        <ProfileLayout capsuleStyle={styles.container}>
+
+            <CustomButton
+                title="Go Live"
+                onPress={live}
+            />
+            <CustomButton
+                title="Schedule"
+                onPress={schedule}
+            />
+            <CustomButton
+                title="Manage Gym"
+                onPress={gym}
+            />
+
+        </ProfileLayout>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {
-        height: "100%"
-    },
-    container: {
-        width: "85%",
-        alignSelf: "center",
-    },
-    gymReprContainer: {
-        alignItems: "center",
-    },
+    container: {},
 })

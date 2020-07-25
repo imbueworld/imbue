@@ -1,8 +1,6 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
-import ClassListItem from "./ClassListItem"
-
 
 
 export default function ClassList(props) {
@@ -10,15 +8,22 @@ export default function ClassList(props) {
         if (dateString === props.dateString) return true
     })
 
-    const items = filteredData.map(({time, title, trainer, key}) => <ClassListItem
-        time={time}
-        title={title}
-        trainer={trainer}
-        key={key}
-    />)
+    const items = filteredData.map(({time, title, trainer, key}) =>
+        <View
+            style={styles.listItem}
+            key={key}
+        >
+            <Text>{time}</Text>
+            <Text>{title}</Text>
+            <Text>{trainer}</Text>
+        </View>
+    )
 
     return (
-        <View style={styles.container}>
+        <View style={[
+            styles.container,
+            props.containerStyle,
+        ]}>
             {items}
         </View>
     )
@@ -28,5 +33,11 @@ const styles = StyleSheet.create({
     container: {
         width: "85%",
         alignSelf: "center",
+    },
+    listItem: {
+        marginVertical: 10,
+        borderRadius: 999,
+        backgroundColor: "white",
+        alignItems: "center",
     },
 })

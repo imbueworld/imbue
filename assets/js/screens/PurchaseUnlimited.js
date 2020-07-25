@@ -8,69 +8,60 @@ import CustomText from "../components/CustomText"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
+import CustomBar from "../components/CustomBar"
 
 import CreditCardInput from "../components/CreditCardInput"
 
 
 
 export default function Component(props) {
-    const Bar =
-        <View style={{
-            marginTop: 15,
-            borderColor: "gray",
-            borderTopWidth: 1,
-        }}/>
-    
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-        <AppBackground />
-            <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+            <AppBackground />
 
-                <CustomCapsule
+            <CustomCapsule style={styles.container}>
+            
+                <CompanyLogo
                     style={{
-                        paddingTop: 0,
+                        width: 300,
+                        height: 200,
                     }}
-                >
+                />
+
+                <CustomText containerStyle={{marginBottom: 10}}>
+                    {`$199\n`+
+                    `Unlimited access to all facilities in our network.\n`+
+                    `Unlimited access to online & in studio.`}
+                </CustomText>
+
+                <CustomBar />
+
+                <CustomButton
+                    title="Past Credit Cards"
+                />
+
+                <CustomBar />
                 
-                    <CompanyLogo
-                        style={{
-                            width: 300,
-                            height: 200,
-                        }}
-                    />
+                <CreditCardInput />
+                <CustomButton
+                    title="Purchase"
+                />
 
-                    <CustomText>
-                        {`$199\n`+
-                        `Unlimited access to all facilities in our network.\n`+
-                        `Unlimited access to online & in studio.`}
-                    </CustomText>
+            </CustomCapsule>
 
-                    {Bar}
-
-                    <CustomButton
-                        title="Past Credit Cards"
-                    />
-
-                    {Bar}
-                    
-                    <CreditCardInput />
-                    <CustomButton
-                        title="Purchase"
-                    />
-
-                </CustomCapsule>
-
-            </View>
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {
-        height: "110%",
+    scrollView: {
+        flex: 1,
     },
     container: {
         width: "85%",
+        marginVertical: 50,
+        paddingTop: 0,
+        paddingBottom: 0,
         alignSelf: "center",
     },
 })

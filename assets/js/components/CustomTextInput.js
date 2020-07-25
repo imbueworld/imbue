@@ -7,7 +7,7 @@ export default function CustomTextInput(props) {
     return (
         <View style={[
             styles.container,
-            props.styles
+            props.containerStyle
         ]}>
             <TextInput
                 style={[

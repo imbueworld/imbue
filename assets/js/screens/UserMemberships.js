@@ -17,7 +17,7 @@ export default function UserMemberships(props) {
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <AppBackground />
             <View style={{
-                top: 50,
+                marginVertical: 50,
             }}>
 
                 <ProfileRepr
@@ -31,8 +31,8 @@ export default function UserMemberships(props) {
                 <View style={styles.container}>
                     <CustomCapsule
                         style={{
+                            marginTop: 150,
                             paddingTop: 100,
-                            top: 150,
                         }}
                     >
 

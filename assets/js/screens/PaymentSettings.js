@@ -20,7 +20,7 @@ export default function Component(props) {
     }
 
     return (
-        <ProfileLayout style={styles.container}>
+        <ProfileLayout capsuleStyle={styles.container}>
             <CustomTextInput
                 placeholder="Name of Holder"
                 value={holderNameText}
@@ -56,7 +56,6 @@ export default function Component(props) {
 
 const styles = StyleSheet.create({
     container: {
-        width: "85%",
-        alignSelf: "center",
+        paddingBottom: 0,
     },
 })

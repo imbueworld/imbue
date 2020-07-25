@@ -1,6 +1,10 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
+import AppBackground from "../components/AppBackground"
+
+import CustomCapsule from "../components/CustomCapsule"
+
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
 import MenuPanel from "../components/MenuPanel"
@@ -9,16 +13,6 @@ import AddNewClass from "../components/AddNewClass"
 
 
 export default function ClassesSchedule(props) {
-    function dateStringFromDate(dateObj = new Date()) {
-        const options = {month: "2-digit", day: "2-digit", year: "numeric"}
-        const [month, day, year] =
-            ( dateObj ).toLocaleDateString("en-US", options).split("/")
-        const curDateString =
-            `${year}-${month}-${day}`
-        
-        return curDateString
-    }
-    
     const data = [
         {
             key: "ABCDF",
@@ -39,7 +33,7 @@ export default function ClassesSchedule(props) {
             dateString: "2020-07-15",
             time: "Jul 15 11:00 PM",
             title: "Super Yoga",
-            trainer: "Oskar Yogamaster",
+            trainer: "Oskar Birch",
         },
         {
             key: "CDF",
@@ -50,39 +44,61 @@ export default function ClassesSchedule(props) {
         },
     ]
 
-    const curDateString = dateStringFromDate()
-    const [slcDateString, setSlcDateString] = useState(curDateString)
+    // const curDateString = dateStringFromDate()
+    // const [slctdDateString, setslctdDateString] = useState(curDateString)
+
+    const [slctdDate, setSlctdDate] = useState([])
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
+
+            <AppBackground />
+
             <MenuPanel>
                 <AddNewClass />
             </MenuPanel>
-            <Text>Schedule</Text>
-            <View style={styles.calendarContainer}>
+
+            <Text style={{
+                marginVertical: 20,
+                textAlign: "center",
+                fontSize: 30,
+            }}>Schedule</Text>
+            
+            <View
+                style={styles.capsule}
+            >
+
                 <CalendarView
                     data={data}
-                    setDate={dateString => setSlcDateString(dateString)}
-                    slcDateString={slcDateString}
+                    // setDate={dateString => setslctdDateString(dateString)}
+                    // slctdDateString={slctdDateString}
+                    setSlctdDate={setSlctdDate}
+                />
+
+                <ClassList
+                    containerStyle={styles.classListContainer}
+                    data={data}
+                    // dateString={slctdDateString}
+                    dateString={slctdDate}
                 />
             </View>
-            <ClassList
-                data={data}
-                dateString={slcDateString}
-            />
+
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {},
-    calendarContainer: {
+    scrollView: {
+        flex: 1,
+    },
+    capsule: {
         width: "85%",
+        paddingBottom: 10,
         alignSelf: "center",
-        padding: 12,
-        backgroundColor: "white",
-        borderRadius: 30,
-        // borderColor: "red",
-        // borderWidth: 1,
+        backgroundColor: "#FFFFFF80",
+        borderRadius: 40,
+    },
+    classListContainer: {
+        marginTop: 10,
     },
 })

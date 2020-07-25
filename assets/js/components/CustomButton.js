@@ -1,6 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
+import { simpleShadow } from "../contexts/Colors"
+
 
 
 export default function CustomButton(props) {
@@ -12,9 +14,10 @@ export default function CustomButton(props) {
             <TouchableOpacity
                 onPress={props.onPress}
             >
-                <Text
-                    style={styles.button}
-                >
+                <Text style={[
+                    styles.button,
+                    simpleShadow,
+                ]}>
                     {props.title}
                 </Text>
             </TouchableOpacity>
@@ -27,7 +30,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
     },
     button: {
-        color: "#1b1b19", // gray // #C4C4C4 //// Material Gray #1b1b19 //// Less Black #4b4b43
+        color: "#1b1b19",
         borderRadius: 999,
         backgroundColor: "#fff",
         textAlign: "center",

@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -31,6 +31,17 @@ export default function Component(props) {
             <View style={styles.container}>
                 <CustomCapsule>
 
+                    <Image
+                        style={styles.gymImg}
+                        source={require("../components/img/yoga.png")}
+                    />
+
+                    <Text style={{
+                        marginVertical: 10,
+                        textAlign: "center",
+                        fontSize: 20,
+                    }}>Corepower Yoga</Text>
+
                     <View style={styles.genres}>
                         {labels}
                     </View>
@@ -58,15 +69,15 @@ const styles = StyleSheet.create({
     },
     container: {
         width: "85%",
+        paddingVertical: 50,
         alignSelf: "center",
     },
-
     genres: {
         flexDirection: "row",
-        // flex: 0,
     },
     genreContainer: {
         marginVertical: 10,
+        marginRight: 10,
         paddingVertical: 5,
         backgroundColor: "lightgray",
         borderRadius: 999,
@@ -75,8 +86,13 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         backgroundColor: "lightgray",
     },
-    genreLabel: {
-        // paddingVertical: 4,
-        // marginRight: 10,
-    },
+    gymImg: {
+        flex: 1,
+        // width: "100%",
+        // height: "100%",
+        minHeight: 300,
+        maxHeight: 300,
+        marginBottom: 10,
+        borderRadius: 40,
+    }
 })

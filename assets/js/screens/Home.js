@@ -1,6 +1,8 @@
 import React from 'react'
 import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
 
+import { colors } from "../contexts/Colors"
+
 import AppBackground from "../components/AppBackground"
 
 import CompanyLogo from "../components/CompanyLogo"
@@ -9,10 +11,6 @@ import CustomButton from "../components/CustomButton"
 
 
 export default function Home(props) {
-    function test() {
-        props.navigation.navigate("Test")
-    }
-
     function signUp() {
         props.navigation.navigate("SignUp")
     }
@@ -27,8 +25,10 @@ export default function Home(props) {
 
     return (
         <View style={styles.container}>
+
             <AppBackground />
             <CompanyLogo />
+
             <View style={styles.buttonContainer}>
                 <CustomButton
                     onPress={signUp}
@@ -41,13 +41,25 @@ export default function Home(props) {
                 <TouchableOpacity
                     onPress={partnerSignUp}
                 >
-                    <Text>Partner Sign Up</Text>
+                    <Text style={{
+                        marginTop: 10,
+                        color: colors.gray,
+                        fontSize: 16,
+                        textAlign: "center",
+                    }}>Partner Sign Up</Text>
                 </TouchableOpacity>
+
+                {/* <Button
+                    title="TESTING GROUNDS"
+                    onPress={() => {props.navigation.navigate("PurchaseOnline")}}
+                />
                 <Button
                     title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("GymDescription")}}
-                />
+                    onPress={() => {props.navigation.navigate("PurchaseUnlimited")}}
+                /> */}
+
             </View>
+
         </View>
     )
 }

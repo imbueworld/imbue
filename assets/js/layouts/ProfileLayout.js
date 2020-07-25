@@ -13,7 +13,7 @@ export default function Component(props) {
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
             <AppBackground />
             <View style={{
-                top: 50,
+                paddingVertical: 50,
             }}>
                 <ProfileRepr
                     style={{
@@ -23,15 +23,22 @@ export default function Component(props) {
                     }}
                 />
                 
-                <View style={props.style}>
-                    <CustomCapsule
-                        style={{
+                <View style={[
+                    props.style, // should probably be removed and not used
+                    {
+                        width: "85%",
+                        alignSelf: "center",
+                    },
+                ]}>
+                    <CustomCapsule style={[
+                        {
+                            marginTop: 150,
                             paddingTop: 100,
-                            top: 150,
-                        }}
-                    >
+                        },
+                        props.capsuleStyle
+                    ]}>
                     
-                    {props.children}
+                        {props.children}
 
                     </CustomCapsule>
                 </View>
@@ -43,7 +50,8 @@ export default function Component(props) {
 
 const styles = StyleSheet.create({
     scrollViewContainer: {
-        height: "100%",
+        flex: 1,
+        // height: "100%",
     },
     // container: {},
 })
