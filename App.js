@@ -1,4 +1,6 @@
 import 'react-native-gesture-handler'
+// require("./assets/js/bootstrap.js")
+
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -14,7 +16,6 @@ import ProfileSettings from "./assets/js/screens/ProfileSettings"
 import PaymentSettings from "./assets/js/screens/PaymentSettings"
 import PurchaseOnline from "./assets/js/screens/PurchaseOnline"
 import PurchaseUnlimited from "./assets/js/screens/PurchaseUnlimited"
-
 import GymDescription from "./assets/js/screens/GymDescription"
 
 import PartnerSignUp from "./assets/js/screens/PartnerSignUp"
@@ -23,6 +24,10 @@ import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
 import PartnerUpdateMemberships from "./assets/js/screens/PartnerUpdateMemberships"
 import ClassesSchedule from "./assets/js/screens/ClassesSchedule"
 import PartnerRevenueInfo from "./assets/js/screens/PartnerRevenueInfo"
+
+import Livestream from "./assets/js/screens/Livestream"
+
+
 
 const Stack = createStackNavigator()
 
@@ -114,6 +119,11 @@ export default function App() {
                     name="PurchaseUnlimited"
                     component={PurchaseUnlimited}
                     options={{ title: "Purchase Universal Membership" }}
+                />
+                <Stack.Screen
+                    name="Livestream"
+                    component={Livestream}
+                    options={{ title: "Livestream" }}
                 />
                 {/*
                 <Stack.Screen

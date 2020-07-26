@@ -23,14 +23,14 @@ export default function ClassesSchedule(props) {
         },
         {
             key: "BCDF",
-            dateString: "2020-07-15",
+            dateString: "2020-07-26",
             time: "Jul 15 12:00 PM",
             title: "A30",
             trainer: "Lexi Johnson",
         },
         {
             key: "DF",
-            dateString: "2020-07-15",
+            dateString: "2020-07-26",
             time: "Jul 15 11:00 PM",
             title: "Super Yoga",
             trainer: "Oskar Birch",
@@ -44,10 +44,7 @@ export default function ClassesSchedule(props) {
         },
     ]
 
-    // const curDateString = dateStringFromDate()
-    // const [slctdDateString, setslctdDateString] = useState(curDateString)
-
-    const [slctdDate, setSlctdDate] = useState([])
+    const [slctdDate, setSlctdDate] = useState("")
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -70,15 +67,13 @@ export default function ClassesSchedule(props) {
 
                 <CalendarView
                     data={data}
-                    // setDate={dateString => setslctdDateString(dateString)}
-                    // slctdDateString={slctdDateString}
+                    slctdDate={slctdDate}
                     setSlctdDate={setSlctdDate}
                 />
 
                 <ClassList
                     containerStyle={styles.classListContainer}
                     data={data}
-                    // dateString={slctdDateString}
                     dateString={slctdDate}
                 />
             </View>

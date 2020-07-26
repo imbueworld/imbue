@@ -17,11 +17,16 @@ export default function CalendarView(props) {
 
     const [slctdDateString, setSlctdDateString] =
         useState(dateStringFromDate())
-    // const slctdDateString = props.slctdDateString || dateStringFromDate()
+    
+    // temporary(?)
+    // First time render, set the provided parent's state to correct one
+    if (!props.slctdDate) props.setSlctdDate(slctdDateString)
 
     const workout = {color: "red"}
     const markedDates = {}
     
+    // Responsible for meshing together the data provided
+    // into date-sorted object
     props.data.forEach(({dateString}) => {
         if (!markedDates[dateString])
             markedDates[dateString] = {dots: [workout]}
@@ -30,6 +35,7 @@ export default function CalendarView(props) {
     })
 
     // Responsible for meshing together the options for current selected date
+    // with {selected: "true"}
     markedDates[slctdDateString] =
         markedDates[slctdDateString]
         ? Object.assign(markedDates[slctdDateString], {selected: "true"})

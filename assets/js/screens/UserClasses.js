@@ -1,5 +1,5 @@
-import React from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import React, { useState, useRef } from 'react'
+import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -11,8 +11,8 @@ import CustomButton from "../components/CustomButton"
 
 
 export default function Component(props) {
-    const chosenDate = []
-    setTimeout(()=>{console.log(chosenDate)}, 1)
+    const [slctdDate, setSlctdDate] = useState("")
+    const textRef = useRef()
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -27,13 +27,16 @@ export default function Component(props) {
                 
                 <CalendarView
                     data={[]}
-                    chosenDate={chosenDate}
+                    slctdDate={slctdDate}
+                    setSlctdDate={setSlctdDate}
                 />
+
+                <Text ref={textRef}><Image /></Text>
 
                 <CustomButton
                     title="Access Ref"
                     onPress={() => {
-                        console.log(chosenDate)
+                        console.log(textRef.current)
                     }}
                 />
 

@@ -49,14 +49,14 @@ export default function Home(props) {
                     }}>Partner Sign Up</Text>
                 </TouchableOpacity>
 
-                {/* <Button
+                <Button
                     title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("PurchaseOnline")}}
+                    onPress={() => {props.navigation.navigate("Livestream", {referrer: "Home"})}}
                 />
                 <Button
                     title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("PurchaseUnlimited")}}
-                /> */}
+                    onPress={() => {props.navigation.navigate("ClassesSchedule")}}
+                />
 
             </View>
 
