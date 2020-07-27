@@ -46,29 +46,40 @@ export default function Chat(props) {
 
     const SendMessage = (props) => {
         const [msg, setMsg] = useState("")
+        const [textFocus, setTextFocus] = useState(false)
 
         return (
             <View style={{
-                margin: 10,
+                margin: 10 + msg.length,
                 flexDirection: "row",
                 backgroundColor: "lightgray",
                 borderRadius: 40,
             }}>
-                <TextInput
-                    style={[
-                        {
-                            flex: 1,
-                            paddingHorizontal: 10,
-                            // borderTopLeftRadius: 40,
-                            // borderBottomLeftRadius: 40,
-                        },
-                        props.style,
-                    ]}
-                    multiline
-                    placeholder="Enter Message..."
-                    onChangeText={setMsg}
-                    value={msg}
-                />
+                <View style={{
+                    flex: 1,
+                    justifyContent: "center",
+                    borderTopLeftRadius: 40,
+                    borderBottomLeftRadius: 40,
+                    borderWidth: 3,
+                    borderColor: textFocus ? "#e9e9e980" : "lightgray",
+                }}>
+                    <TextInput
+                        style={[
+                            {
+                                // height: "100%",
+                                paddingHorizontal: 10,
+                            },
+                            props.style,
+                        ]}
+                        multiline
+                        placeholder="Enter Message..."
+                        placeholderTextColor="white"
+                        value={msg}
+                        onChangeText={setMsg}
+                        onFocus={() => setTextFocus(true)}
+                        onBlur={() => setTextFocus(false)}
+                    />
+                </View>
                 <TouchableOpacity
                     style={[
                         {
