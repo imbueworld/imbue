@@ -1,32 +1,40 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
 import { Calendar } from "react-native-calendars"
 
 
 
 export default function CalendarView(props) {
+    /**
+     * props
+     * .data -- data
+     * .slctdDate -- selected DateString (parent's state obj), can be empty
+     * .setSlctdDate -- (parent's setState func), must be provided
+     */
+
     function dateStringFromDate(dateObj = new Date()) {
-        const options = {month: "2-digit", day: "2-digit", year: "numeric"}
-        const [month, day, year] =
-            ( dateObj ).toLocaleDateString("en-US", options).split("/")
+        let year = dateObj.getFullYear()
+        let month = dateObj.getMonth() + 1
+        if (month < 10) month = `0${month}`
+        let day = dateObj.getDate()
         const curDateString =
             `${year}-${month}-${day}`
-        
+
         return curDateString
     }
 
     const [slctdDateString, setSlctdDateString] =
         useState(dateStringFromDate())
     
-    // temporary(?)
-    // First time render, set the provided parent's state to correct one
-    if (!props.slctdDate) props.setSlctdDate(slctdDateString)
+    useEffect(() => {
+        if (!props.slctdDate) props.setSlctdDate(slctdDateString)
+    })
 
     const workout = {color: "red"}
     const markedDates = {}
     
-    // Responsible for meshing together the data provided
-    // into date-sorted object
+    // Responsible for meshing together the data provided (props.data)
+    // into date-sorted object used by <Calendar />
     props.data.forEach(({dateString}) => {
         if (!markedDates[dateString])
             markedDates[dateString] = {dots: [workout]}
@@ -40,9 +48,6 @@ export default function CalendarView(props) {
         markedDates[slctdDateString]
         ? Object.assign(markedDates[slctdDateString], {selected: "true"})
         : {selected: "true"}
-
-    // props.chosenDate[0] = slctdDateString
-    // props.slctdDate[0] = slctdDateString
 
     return (
         <View style={styles.calendarContainer}>
@@ -61,8 +66,6 @@ export default function CalendarView(props) {
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {},
-    container: {},
     calendarContainer: {
         width: "100%",
         alignSelf: "center",
@@ -72,4 +75,6 @@ const styles = StyleSheet.create({
     },
 })
 
-const calendarStyle = {}
+const calendarStyle = {
+    // <Calendar /> can be styled following react-native-calendars properties
+}

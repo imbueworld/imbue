@@ -78,11 +78,9 @@ const styles = StyleSheet.create({
     },
     priceContainer: {
         flex: 1,
-        paddingRight: 10,
+        marginRight: 10,
         alignSelf: "center",
-    },
-    price: {
-        fontSize: 20,
+        borderRadius: 999,
 
         shadowColor: "#000",
         shadowOffset: {
@@ -93,5 +91,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         
         elevation: 5,
+    },
+    price: {
+        fontSize: 20,
     },
 })

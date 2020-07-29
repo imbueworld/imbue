@@ -16,7 +16,7 @@ export default function Component(props) {
 
 const styles = StyleSheet.create({
     scrollView: {
-        flex: 1,
+        minHeight: "100%",
     },
     container: {},
 })

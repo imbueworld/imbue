@@ -11,9 +11,9 @@ import CustomCapsule from "./CustomCapsule"
 export default function GymBadge(props) {
     return (
         <View style={styles.container}>
+
             <CustomCapsule
                 style={{
-                    position: "static",
                     backgroundColor: "#FFFFFF80",
                     borderBottomLeftRadius: 0,
                     borderBottomRightRadius: 0,
@@ -41,6 +41,7 @@ export default function GymBadge(props) {
 
             <TouchableOpacity
                 style={styles.moreInfoContainer}
+                onPress={props.onPress}
             >
                 <Text
                     style={styles.moreInfoText}
@@ -55,7 +56,7 @@ export default function GymBadge(props) {
 
 const styles = StyleSheet.create({
     container: {
-        top: 500, // TEMP ADJUSTMENT
+        top: 450, // TEMP ADJUSTMENT
         width: "85%",
         position: "absolute",
         alignSelf: "center",
@@ -77,6 +78,7 @@ const styles = StyleSheet.create({
     },
     // subInfoContainer: {},
     moreInfoContainer: {
+        paddingVertical: 10,
         alignItems: "center",
         backgroundColor: "#FFFFFFC0",
         borderColor: "gray",
@@ -85,7 +87,6 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 40,
     },
     moreInfoText: {
-        paddingVertical: 10,
         fontSize: 13,
     },
 })

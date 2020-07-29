@@ -1,8 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
-import AppBackground from "../components/AppBackground"
-import ProfileRepr from "../components/ProfileRepr"
+import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
@@ -14,58 +13,28 @@ import ActiveMembershipBadge from "../components/ActiveMembershipsBadge"
 export default function UserMemberships(props) {
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-            <AppBackground />
-            <View style={{
-                marginVertical: 50,
-            }}>
+        <ProfileLayout>
 
-                <ProfileRepr
-                    style={{
-                        position: "absolute",
-                        alignSelf: "center",
-                        zIndex: 100,
-                    }}
-                />
+            <ActiveMembershipBadge
+                name="Membership One"
+            />
+            <ActiveMembershipBadge
+                name="Membership Two"
+            />
+            <ActiveMembershipBadge
+                name="Membership Three"
+            />
 
-                <View style={styles.container}>
-                    <CustomCapsule
-                        style={{
-                            marginTop: 150,
-                            paddingTop: 100,
-                        }}
-                    >
+            <CustomBar />
 
-                        <ActiveMembershipBadge
-                            name="Membership One"
-                        />
-                        <ActiveMembershipBadge
-                            name="Membership Two"
-                        />
-                        <ActiveMembershipBadge
-                            name="Membership Three"
-                        />
+            <CustomButton
+                title="View Past Transactions"
+            />
 
-                        <CustomBar />
-
-                        <CustomButton
-                            title="View Past Transactions"
-                        />
-
-                    </CustomCapsule>
-                </View>
-
-            </View>
-        </ScrollView>
+        </ProfileLayout>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {
-        height: "100%",
-    },
-    container: {
-        width: "85%",
-        alignSelf: "center",
-    },
+    container: {},
 })

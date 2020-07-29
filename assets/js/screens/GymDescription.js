@@ -26,7 +26,7 @@ export default function Component(props) {
     const desc = `(DESCRIPTION) | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
             <View style={styles.container}>
                 <CustomCapsule>
@@ -64,8 +64,8 @@ export default function Component(props) {
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {
-        height: "100%",
+    scrollView: {
+        minHeight: "100%",
     },
     container: {
         width: "85%",
@@ -87,9 +87,8 @@ const styles = StyleSheet.create({
         backgroundColor: "lightgray",
     },
     gymImg: {
-        flex: 1,
-        // width: "100%",
-        // height: "100%",
+        width: "100%",
+        height: "100%",
         minHeight: 300,
         maxHeight: 300,
         marginBottom: 10,

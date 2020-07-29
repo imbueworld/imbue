@@ -20,6 +20,7 @@ export default function Login(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
+            
             <AppBackground />
             <CompanyLogo />
 
@@ -46,7 +47,9 @@ export default function Login(props) {
 }
 
 const styles = StyleSheet.create({
-    scrollView: {},
+    scrollView: {
+        minHeight: "100%",
+    },
     container: {
         width: "85%",
         marginBottom: 50,

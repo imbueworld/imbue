@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react'
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, View, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -7,22 +7,29 @@ import CalendarView from "../components/CalendarView"
 
 import CustomCapsule from "../components/CustomCapsule"
 import CustomButton from "../components/CustomButton"
+import CustomSelectButton from "../components/CustomSelectButton"
 
 
 
-export default function Component(props) {
+export default function UserClasses(props) {
     const [slctdDate, setSlctdDate] = useState("")
-    const textRef = useRef()
+    
+    const options = {
+        allStudio: "All Studio Classes",
+        inStudio: "In Studio",
+        livestream: "Livestream",
+        all: "My Classes",
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
             <CustomCapsule style={{
                 width: "85%",
-                marginVertical: 50,
-                paddingHorizontal: 0,
-                paddingTop: 0,
                 alignSelf: "center",
+                marginVertical: 50,
+                paddingTop: 0,
+                paddingHorizontal: 0,
             }}>
                 
                 <CalendarView
@@ -31,13 +38,17 @@ export default function Component(props) {
                     setSlctdDate={setSlctdDate}
                 />
 
-                <Text ref={textRef}><Image /></Text>
-
-                <CustomButton
-                    title="Access Ref"
-                    onPress={() => {
-                        console.log(textRef.current)
+                <CustomSelectButton
+                    containerStyle={{
+                        marginTop: 15,
+                        marginBottom: 0,
+                        width: "90%",
+                        alignSelf: "center"
                     }}
+                    textStyle={{
+                        fontSize: 14,
+                    }}
+                    options={options}
                 />
 
             </CustomCapsule>
@@ -47,6 +58,6 @@ export default function Component(props) {
 
 const styles = StyleSheet.create({
     scrollView: {
-        flex: 1,
+        minHeight: "100%",
     },
 })

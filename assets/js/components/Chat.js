@@ -85,6 +85,7 @@ export default function Chat(props) {
                         {
                             width: 50,
                             height: 50,
+                            padding: 10,
                             backgroundColor: "white",
                             borderRadius: 999,
                         },
@@ -94,10 +95,10 @@ export default function Chat(props) {
                 >
                     <Image
                         style={{
-                            flex: 1,
-                            margin: 10,
+                            width: "100%",
+                            height: "100%",
                         }}
-                        source={require("./img/send-msg.svg")}
+                        source={require("./img/png/send.png")}
                     />
                 </TouchableOpacity>
             </View>

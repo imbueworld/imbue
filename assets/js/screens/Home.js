@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, TouchableOpacity } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, Button, TouchableOpacity } from 'react-native'
 
 import { colors } from "../contexts/Colors"
 
@@ -24,12 +24,17 @@ export default function Home(props) {
     }
 
     return (
-        <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
 
             <AppBackground />
-            <CompanyLogo />
+            <CompanyLogo
+                containerStyle={{
+                    top: 0,
+                    position: "absolute",
+                }}
+            />
 
-            <View style={styles.buttonContainer}>
+            <View style={styles.container}>
                 <CustomButton
                     onPress={signUp}
                     title="Sign Up"
@@ -51,27 +56,26 @@ export default function Home(props) {
 
                 <Button
                     title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("Livestream", {referrer: "Home"})}}
+                    onPress={() => {props.navigation.navigate("UserClasses", {referrer: "Home"})}}
                 />
                 <Button
                     title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("ClassesSchedule")}}
+                    onPress={() => {props.navigation.navigate("Livestream", {referrer: "Home"})}}
                 />
 
             </View>
 
-        </View>
+        </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        height: "100%",
-        // justifyContent: "space-around",
+    scrollView: {
+        minHeight: "100%",
+        flexDirection: "column-reverse",
         alignItems: "center",
     },
-    buttonContainer: {
+    container: {
         width: "85%",
     },
 })

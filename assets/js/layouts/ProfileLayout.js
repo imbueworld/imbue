@@ -9,11 +9,12 @@ import CustomCapsule from "../components/CustomCapsule"
 
 
 export default function Component(props) {
+
     return (
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
             <View style={{
-                paddingVertical: 50,
+                marginVertical: 50,
             }}>
                 <ProfileRepr
                     style={{
@@ -49,9 +50,7 @@ export default function Component(props) {
 }
 
 const styles = StyleSheet.create({
-    scrollViewContainer: {
-        flex: 1,
-        // height: "100%",
+    scrollView: {
+        minHeight: "100%",
     },
-    // container: {},
 })

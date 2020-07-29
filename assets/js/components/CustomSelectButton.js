@@ -4,6 +4,13 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 
 export default function CustomSelectButton(props) {
+    /**
+     * props
+     * .options -- {label: repr_string, ..}
+     * .containerStyle -- style of <View /> container
+     * .textStyle -- style of text
+     */
+
     const [slctdOpt, setSlctdOpt] = useState(Object.keys(props.options)[0])
     const gap = 100 / Object.keys(props.options).length
 
@@ -27,7 +34,8 @@ export default function CustomSelectButton(props) {
                 <Text
                     style={[
                         styles.optionText,
-                        arr[0] !== slctdOpt ? styles.unselectedColor : {}
+                        arr[0] !== slctdOpt ? styles.unselectedColor : {},
+                        props.textStyle,
                     ]}
                 >
                     {arr[1]}
@@ -51,7 +59,7 @@ export default function CustomSelectButton(props) {
         <View
             style={[
                 styles.container,
-                props.style
+                props.containerStyle,
             ]}
         >
             {options}

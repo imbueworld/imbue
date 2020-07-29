@@ -7,18 +7,21 @@ import { useDimensions } from '@react-native-community/hooks'
 export default function CompanyLogo(props) {
     const { width, height } = useDimensions().window
     const image = {
-        width: width,
-        height: width,
+        width: width * 0.85,
+        height: width * 0.85,
     }
 
     return (
-        <View style={styles.container}>
+        <View style={[
+            styles.container,
+            props.containerStyle,
+        ]}>
             <View style={styles.imageContainer}>
                 <Image
                     style={[
                         styles.image,
                         image,
-                        props.style
+                        props.style,
                     ]}
                     source={require("./img/imbue-logo.png")}
                 />

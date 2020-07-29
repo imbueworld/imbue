@@ -11,13 +11,7 @@ export default function MenuPanel(props) {
     }
 
     return (
-        <View style={{
-            width: showPanel ? "100%" : 0,
-            height: showPanel ? "100%" : 0,
-            position: "absolute",
-            zIndex: 100,
-        }}>
-
+        <>
             <TouchableOpacity
                 style={{
                     position: "absolute",
@@ -28,22 +22,31 @@ export default function MenuPanel(props) {
                 <Text style={{
                     fontSize: 40,
                     margin: 20,
+                    zIndex: 120,
                 }}>{showPanel ? "<" : "+"}</Text>
             </TouchableOpacity>
 
-            <ScrollView
-                contentContainerStyle={styles.scrollViewContainer}
-                style={[
-                    styles.panelContainer,
-                    {
-                        display: showPanel ? "flex" : "none"
-                    }
-                ]
-            }>
-                {props.children}
-            </ScrollView>
+            <View style={{
+                width: showPanel ? "100%" : 0,
+                height: showPanel ? "100%" : 0,
+                position: "absolute",
+                zIndex: 100,
+            }}>
 
-        </View>
+                <ScrollView
+                    contentContainerStyle={styles.scrollViewContainer}
+                    style={[
+                        styles.panelContainer,
+                        {
+                            display: showPanel ? "flex" : "none"
+                        }
+                    ]
+                }>
+                    {props.children}
+                </ScrollView>
+
+            </View>
+        </>
     )
 }
 

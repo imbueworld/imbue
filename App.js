@@ -1,5 +1,4 @@
 import 'react-native-gesture-handler'
-// require("./assets/js/bootstrap.js")
 
 import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'

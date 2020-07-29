@@ -1,8 +1,7 @@
-// import adapter from 'webrtc-adapter'
-
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
-// import Video from 'react-native-video'
+
+import Video from 'react-native-video'
 
 import AppBackground from "../components/AppBackground"
 
@@ -31,42 +30,42 @@ export default function Livestream(props) {
         {
             profileId: "1",
             name: "Participant 1",
-            iconUri: require("../components/img/profile-icon-yoga.svg"),
+            iconUri: require("../components/img/png/pfp-yoga.png"),
         },
         {
             profileId: "2",
             name: "Participant 2",
-            iconUri: require("../components/img/profile-icon-fitness.svg"),
+            iconUri: require("../components/img/png/pfp-fitness.png"),
         },
         {
             profileId: "3",
             name: "Participant 3",
-            iconUri: require("../components/img/profile-icon-man.svg"),
+            iconUri: require("../components/img/png/pfp-man.png"),
         },
         {
             profileId: "4",
             name: "Participant 4",
-            iconUri: require("../components/img/profile-icon-woman.svg"),
+            iconUri: require("../components/img/png/pfp-woman.png"),
         },
         {
             profileId: "5",
             name: "Participant 1",
-            iconUri: require("../components/img/profile-icon-yoga.svg"),
+            iconUri: require("../components/img/png/pfp-man-2.png"),
         },
         {
             profileId: "6",
             name: "Participant 2",
-            iconUri: require("../components/img/profile-icon-fitness.svg"),
+            iconUri: require("../components/img/png/pfp-man-3.png"),
         },
         {
             profileId: "7",
             name: "Participant 3",
-            iconUri: require("../components/img/profile-icon-man.svg"),
+            iconUri: require("../components/img/png/pfp-man.png"),
         },
         {
             profileId: "8",
             name: "Participant 4",
-            iconUri: require("../components/img/profile-icon-woman.svg"),
+            iconUri: require("../components/img/png/pfp-woman.png"),
         },
     ]
 
@@ -99,7 +98,7 @@ export default function Livestream(props) {
 
     const selfProfileData = {
         name: "Participant 3",
-        iconUri: require("../components/img/profile-icon-man.svg"),
+        iconUri: require("../components/img/png/pfp-man.png"),
         profileId: "7",
     }
 
@@ -112,11 +111,15 @@ export default function Livestream(props) {
         // ...
     }
 
+
+    // All these links work with <Video /> (m3u8, webm, mp4)
+    const uriNymn = "https://video-weaver.arn03.hls.ttvnw.net/v1/playlist/CssEB1smDectDepLEonZHtPJvDc59VQBWAmeLlCt05AiejkvIKMxZQM0A4lRXvre43u-okk6sN_8ZTn975I9pjekF0USVydBRdutzhihLmnMwlI4aO3TZkYgl2CWSSTQeYscPaUctZA75coO8Hw_MufFYJU6YlDxa5FMTGJjz-NjfyqrxT5L6uPJGEAGvdVg1MVEsUQa6IYzeHv6AIqL30-pV--WU2RaIsphNRTZOrtrIA9tPMKEREu9qCPIeB9XZyHAWgJVlldhcMhvcmI4OCOPahMkAwuLIiYzHNfl77OdPTwtI3jSoNuq6HYDKGFeo-nkp8Jrjkt3QLItfu0LaTAAQ0H8xKBTLFWX4EYrewW4cLL7zQ7-qncWy69GMju247UKFu0421CJLmOx5OBXS3joDnlBw9vWmw8rqE1kktCQi4vnM3QNXiCqZwOOAS9N5KczXhqMa4iY1yYk5aW8LMYHdGYg82vDpyMUM3Z-xWM939vD4b5PRA_Sb1d_WZ6rgiQJps0sbAzX_jvOAH5mxq1rf9YwazbxHffikn9TT4dTB7usoOYR7-cyxovv9c621ARnrYvwU1hSLMBCOdYhw-u1VzVWHXJlDUtAX44uccoLBc4_dkwM23EMALKFGSMt9AruGOVVWI2j5ztiyleUVOHjD4Ju9Yqcsj2BOUsPeiWlzLb6IHmQjVi9xzAhKjD1o_hQXzDiXkP3MI-UgsuvZnqmLuOylUeZnv-cC-rQW02UCWGUZ6q7VWP68lD6553L7KMP-w9TKbhSNLMvk14SEPIOzIhbu8lmuY_OcBFei7saDLGZGIBkE4i6tYDeHw.m3u8"
+    const leagueOne = "https://lolstatic-a.akamaihd.net/frontpage/apps/prod/harbinger-l10-website/en-gb/production/en-gb/static/hero-0632cbf2872c5cc0dffa93d2ae8a29e8.webm"
+    const leagueTwo = "https://lolstatic-a.akamaihd.net/frontpage/apps/prod/harbinger-l10-website/en-gb/production/en-gb/static/hero-de0ba45b1d0959277d12545fbb645722.mp4"
+
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
-
-            {/* <View style={styles.container}> */}
 
             <View style={styles.controlPanelContainer}>
                 <ChatButton
@@ -152,7 +155,15 @@ export default function Livestream(props) {
                 />
             :   <View />}
 
-            {/* </View> */}
+            <Video
+                style={styles.video}
+                source={{uri: uriNymn}}
+                onBuffer={() => {console.log("Buffering video...")}}
+                onError={() => {console.log("Error on video!")}}
+                paused={false}
+                resizeMode={"contain"}
+                // repeat={true}
+            />
 
         </ScrollView>
     )
@@ -185,5 +196,11 @@ const styles = StyleSheet.create({
         marginVertical: 50,
         position: "absolute",
         alignSelf: "center",
+    },
+    video: {
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        zIndex: -100,
     },
 })

@@ -1,6 +1,8 @@
 import React, { useState, useRef } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated, Button } from 'react-native'
+
 import { useDimensions } from '@react-native-community/hooks'
+import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
 
 import AppBackground from "../components/AppBackground"
 
@@ -12,10 +14,8 @@ import GymBadge from "../components/GymBadge"
 
 
 export default function UserDashboard(props) {
-    const { width, height } = useDimensions().window
-    console.log(width)
-    console.log(height)
     const [expanded, setExpanded] = useState(false)
+    const { width, height } = useDimensions().window
     const slidingAnim = useRef(new Animated.Value(-1 * width)).current
 
     function sidePanelToggle() {
@@ -47,33 +47,47 @@ export default function UserDashboard(props) {
 
     return (
         <View style={styles.container}>
+
             <TouchableOpacity
                     style={styles.sidePanelButton}
                     onPress={sidePanelToggle}
                 >
                     {/* <Text style={{fontSize: 30}}>{expanded ? "<" : ">"}</Text> */}
-                    <UserIcon />
+                    <UserIcon style={{
+                        marginTop: 32,
+                        marginLeft: 32,
+                        width: 64,
+                        height: 64,
+                    }}/>
             </TouchableOpacity>
+
             <Animated.View style={[
                 styles.sidePanel,
                 {
-                    width: width,
-                    height: height,
+                    // width: width,
+                    // height: height,
+                    width: "100%",
+                    height: "100%",
                     left: slidingAnim,
                 }
             ]}>
-                <AppBackground />
                 <UserMenu navigation={props.navigation} />
             </Animated.View>
-            <ScrollView style={styles.content}>
-                <Text>content goes here. content goes here. content goes here. content goes here. content goes here.</Text>
-                <Button
-                    title="map piece, that takes you to gym description screen"
-                    onPress={() => props.navigation.navigate("GymDescription")}
-                />
-            </ScrollView>
 
-            <GymBadge />
+            <MapView
+                style={styles.map}
+                provider={PROVIDER_GOOGLE}
+                initialRegion={{
+                    latitude: 37.78825,
+                    longitude: -122.4324,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+            />
+
+            <GymBadge
+                onPress={() => props.navigation.navigate("GymDescription")}
+            />
 
         </View>
     )
@@ -81,12 +95,14 @@ export default function UserDashboard(props) {
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        height: "100%",
+        // minHeight: "100%", // This breaks sidePanel within <Anmimated.View>; minHeight does not synergize well with child position: "absolute" 's ?
+        // flex: 1,
+        // width: "100%",
+        // height: "100%",
     },
     sidePanel: {
         position: "absolute",
-        zIndex: 1,
+        zIndex: 100,
     },
     sidePanelButton: {
         width: 50,
@@ -94,9 +110,11 @@ const styles = StyleSheet.create({
         position: "absolute",
         justifyContent: "center",
         alignItems: "center",
-        zIndex: 2,
+        zIndex: 110,
     },
-    content: {
-        backgroundColor: "pink",
+    map: {
+        width: "100%",
+        height: "100%",
+        backgroundColor: "#addbff", // water fill before map loads
     },
 })

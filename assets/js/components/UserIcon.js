@@ -8,7 +8,7 @@ export default function UserIcon(props) {
         <Image
             style={[
                 styles.icon,
-                props.style
+                props.style,
             ]}
             source={require("./img/user-icon-example.png")}
         />

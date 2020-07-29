@@ -25,37 +25,27 @@ export default function UserMenu(props) {
         <ProfileLayout capsuleStyle={{
             paddingBottom: 0,
         }}>
-            <View style={styles.container}>
-                <View style={styles.menu}>
-                    <CustomButton
-                        title="My Classes"
-                        onPress={classes}
-                        />
-                    <CustomButton
-                        title="Manage Memberships"
-                        onPress={memberships}
-                    />
-                    <CustomButton
-                        title="Profile Settings"
-                        onPress={profileSettings}
-                    />
-                    <CustomButton
-                        title="Payment Settings"
-                        onPress={paymentSettings}
-                    />
-                </View>
-            </View>
+
+            <CustomButton
+                title="My Classes"
+                onPress={classes}
+                />
+            <CustomButton
+                title="Manage Memberships"
+                onPress={memberships}
+            />
+            <CustomButton
+                title="Profile Settings"
+                onPress={profileSettings}
+            />
+            <CustomButton
+                title="Payment Settings"
+                onPress={paymentSettings}
+            />
+
         </ProfileLayout>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        // width: "100%",
-        // flex: 1,
-        // alignItems: "center",
-    },
-    menu: {
-        // width: "85%",
-    }
 })

@@ -17,7 +17,7 @@ export default function ChatButton(props) {
                     styles.image,
                     props.style,
                 ]}
-                source={require("./img/chat-bubble-icon-2.png")}
+                source={require("./img/png/chat-bubble-icon-2.png")}
             />
         </TouchableOpacity>
     )
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
         borderRadius: 999,
     },
     image: {
-        flex: 1,
+        width: "100%",
+        height: "100%",
     },
 })

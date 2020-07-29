@@ -12,12 +12,13 @@ export default function CustomButton(props) {
             props.style
         ]}>
             <TouchableOpacity
-                onPress={props.onPress}
-            >
-                <Text style={[
+                style={[
                     styles.button,
                     simpleShadow,
-                ]}>
+                ]}
+                onPress={props.onPress}
+            >
+                <Text style={styles.text}>
                     {props.title}
                 </Text>
             </TouchableOpacity>
@@ -27,15 +28,16 @@ export default function CustomButton(props) {
 
 const styles = StyleSheet.create({
     container: {
-        paddingVertical: 20,
+        marginVertical: 20,
     },
     button: {
-        color: "#1b1b19",
+        paddingVertical: 20,
         borderRadius: 999,
         backgroundColor: "#fff",
+    },
+    text: {
+        color: "#1b1b19",
         textAlign: "center",
-        paddingTop: 20,
-        paddingBottom: 20,
         fontSize: 20,
     },
 })

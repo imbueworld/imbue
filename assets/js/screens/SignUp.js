@@ -18,56 +18,48 @@ export default function SignUp(props) {
     }
 
     return (
-        <ScrollView>
-            <View style={styles.container}>
+        <ScrollView contentContainerStyle={styles.scrollView}>
 
-                <AppBackground />
-                <CompanyLogo />
+            <AppBackground />
+            <CompanyLogo />
 
-                <CustomCapsule style={{
-                    // alignItems: "center",
-                    marginBottom: 50,
-                    paddingBottom: 0,
-                }}>
+            <CustomCapsule style={styles.container}>
 
-                    <View style={styles.fieldContainer}>
-                        <AltSignUpService />
-                        <CustomTextInput
-                            placeholder="First Name"
-                        />
-                        <CustomTextInput
-                            placeholder="Last Name"
-                        />
-                        <CustomTextInput
-                            placeholder="Email"
-                        />
-                        <CustomTextInput
-                            placeholder="Password"
-                        />
-                        <CustomTextInput
-                            placeholder="Verify Password"
-                        />
-                        <CustomButton
-                            title="Sign Up"
-                            onPress={signUp}
-                        />
-                    </View>
+                <AltSignUpService />
+                <CustomTextInput
+                    placeholder="First Name"
+                />
+                <CustomTextInput
+                    placeholder="Last Name"
+                />
+                <CustomTextInput
+                    placeholder="Email"
+                />
+                <CustomTextInput
+                    placeholder="Password"
+                />
+                <CustomTextInput
+                    placeholder="Verify Password"
+                />
+                <CustomButton
+                    title="Sign Up"
+                    onPress={signUp}
+                />
 
-                </CustomCapsule>
+            </CustomCapsule>
 
-            </View>
         </ScrollView>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        // width: "100%",
-        // height: "100%",
-        // justifyContent: "space-around",
-        alignItems: "center",
+    scrollView: {
+        minHeight: "100%",
     },
-    fieldContainer: {
-        // width: "85%",
+    container: {
+        width: "85%",
+        marginBottom: 50,
+        paddingBottom: 0,
+        alignSelf: "center",
     },
 })
