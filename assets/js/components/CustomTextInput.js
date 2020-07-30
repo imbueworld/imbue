@@ -35,6 +35,7 @@ export default function CustomTextInput(props) {
                 placeholderTextColor="white"
                 value={msg}
                 onChangeText={text => {
+                    props.info[0] = text
                     setMsg(text)
                     // props.onChangeText(text)
                 }}

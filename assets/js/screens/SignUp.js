@@ -10,12 +10,31 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
+import { signUp } from "../backend/main"
+
 
 
 export default function SignUp(props) {
-    function signUp() {
+    function signUpAction() {
         console.log("SIGN UP ACTION")
+
+        console.log(emailField)
+        console.log(pwField)
+        if (!emailField[0]) emailField[0] = "imthebestyasuo@gmail.com"
+        if (!pwField[0]) pwField[0] = "123123"
+        signUp(emailField[0], pwField[0])
+            .then(() => {
+                console.log("All good!")
+            })
+            .catch((err) => {
+                console.log("Error in login()!")
+                console.log(err.code)
+                console.log(err.message)
+            })
     }
+
+    const emailField = []
+    const pwField = []
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -34,16 +53,18 @@ export default function SignUp(props) {
                 />
                 <CustomTextInput
                     placeholder="Email"
+                    info={emailField}
                 />
                 <CustomTextInput
                     placeholder="Password"
+                    info={pwField}
                 />
                 <CustomTextInput
                     placeholder="Verify Password"
                 />
                 <CustomButton
                     title="Sign Up"
-                    onPress={signUp}
+                    onPress={signUpAction}
                 />
 
             </CustomCapsule>

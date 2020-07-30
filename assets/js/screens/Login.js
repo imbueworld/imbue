@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
@@ -10,13 +10,35 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
+// Temporary
+import { signIn, runChecker } from "../backend/main"
+
 
 
 export default function Login(props) {
+    // runChecker()
+
     function login() {
         console.log("LOGIN ACTION")
-        props.navigation.navigate("UserDashboard")
+        // props.navigation.navigate("UserDashboard")
+
+
+        signIn(emailField[0], pwField[0])
+            .then(() => {
+                console.log("Login: Successful.")
+                setLoggedIn(true)
+            })
+            .catch(() => {
+                console.log("Error in login()!")
+                console.log(err.code)
+                console.log(err.message)
+            })
     }
+
+    const [loggedIn, setLoggedIn] = useState(false)
+
+    const emailField = []
+    const pwField = []
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -30,9 +52,11 @@ export default function Login(props) {
                     <AltLoginService />
                     <CustomTextInput
                         placeholder="Email"
+                        info={emailField}
                     />
                     <CustomTextInput
                         placeholder="Password"
+                        info={pwField}
                     />
                     <CustomButton
                         title="Login"
