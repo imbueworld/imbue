@@ -4,6 +4,7 @@ import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
+import Boot from "./assets/js/screens/Boot"
 import Home from "./assets/js/screens/Home"
 import SignUp from "./assets/js/screens/SignUp"
 import Login from "./assets/js/screens/Login"
@@ -34,6 +35,11 @@ export default function App() {
     return (
         <NavigationContainer>
             <Stack.Navigator>
+                <Stack.Screen
+                    name="Boot"
+                    component={Boot}
+                    options={{ title: "Boot" }}
+                />
                 <Stack.Screen
                     name="Home"
                     component={Home}

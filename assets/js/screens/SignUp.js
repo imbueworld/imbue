@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, View, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
@@ -10,31 +10,65 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
-import { signUp } from "../backend/main"
+import { signUp/*, createAccount, updateAccount*/ } from "../backend/SignUp"
 
 
 
 export default function SignUp(props) {
-    function signUpAction() {
-        console.log("SIGN UP ACTION")
+    const [formStatus, setFormStatus] = useState("ok")
+    console.log(formStatus)
 
+    const [emailField, setEmailField] = useState("")
+    const [pwField, setPwField] = useState("")
+    const [verifyPwField, setVerifyPwField] = useState("")
+    const [firstNameField, setFirstNameField] = useState("")
+    const [lastNameField, setLastNameField] = useState("")
+
+    function signUpAction() {
         console.log(emailField)
         console.log(pwField)
-        if (!emailField[0]) emailField[0] = "imthebestyasuo@gmail.com"
-        if (!pwField[0]) pwField[0] = "123123"
-        signUp(emailField[0], pwField[0])
-            .then(() => {
-                console.log("All good!")
-            })
-            .catch((err) => {
-                console.log("Error in login()!")
-                console.log(err.code)
-                console.log(err.message)
-            })
+        console.log(verifyPwField)
+        console.log(firstNameField)
+        console.log(lastNameField)
+        
+        if (
+            !( emailField.length !== 0
+            && pwField.length !== 0
+            && verifyPwField.length !== 0
+            && firstNameField.length !== 0
+            && lastNameField.length !== 0)
+        )
+            setFormStatus("fields/empty")
+        else if (pwField !== verifyPwField)
+            setFormStatus("password/does-not-match")
+        else if (pwField.length < 8)
+            setFormStatus("password/too-weak")
+        else
+            setFormStatus("proceed")
     }
 
-    const emailField = []
-    const pwField = []
+    switch(formStatus) {
+        case "proceed":
+            console.log("Form is ok!")
+
+            const form = {
+                email: emailField,
+                password: pwField,
+                first: firstNameField,
+                last: lastNameField,
+            }
+
+            signUp(form)
+            break
+    }
+
+    // if (formStatus === "ok") {
+    //     const emailField = [""]
+    //     const pwField = [""]
+    //     const verifyPwField = [""]
+    //     const firstNameField = [""]
+    //     const lastNameField = [""]
+    // }
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -47,20 +81,28 @@ export default function SignUp(props) {
                 <AltSignUpService />
                 <CustomTextInput
                     placeholder="First Name"
+                    // info={firstNameField}
+                    onChangeText={setFirstNameField}
                 />
                 <CustomTextInput
                     placeholder="Last Name"
+                    // info={lastNameField}
+                    onChangeText={setLastNameField}
                 />
                 <CustomTextInput
                     placeholder="Email"
-                    info={emailField}
+                    // info={emailField}
+                    onChangeText={setEmailField}
                 />
                 <CustomTextInput
                     placeholder="Password"
-                    info={pwField}
+                    // info={pwField}
+                    onChangeText={setPwField}
                 />
                 <CustomTextInput
                     placeholder="Verify Password"
+                    // info={verifyPwField}
+                    onChangeText={setVerifyPwField}
                 />
                 <CustomButton
                     title="Sign Up"

@@ -23,10 +23,6 @@ export function initFirebase() {
 
     Firebase.auth().onAuthStateChanged(user => {
         if (user) {
-            let displayName = user.displayName // null
-            // ...
-            let providerData = user.providerData // a Dto with lots of info
-
             console.log("User just signed in!")
             console.log(user.email)
         } else {
@@ -34,41 +30,3 @@ export function initFirebase() {
         }
     })
 }
-
-function sanitizeEmail(email) {
-    return email
-}
-
-function sanitizePassword(password) {
-    return password
-}
-
-export function signUp(email, password) {
-    const em = sanitizeEmail(email)
-    const pw = sanitizePassword(password)
-    return Firebase.auth().createUserWithEmailAndPassword(em, pw)
-}
-
-export function signIn(email, password) {
-    // Could sanitize as well
-    return Firebase.auth().signInWithEmailAndPassword(email, password)
-}
-
-// export function runChecker() {
-//     Firebase.auth().onAuthStateChanged(user => {
-//         if (user) {
-//             // User is signed in.
-//             let displayName = user.displayName // null
-//             let email = user.email
-//             let emailVerified = user.emailVerified // false
-//             let photoURL = user.photoURL // null
-//             let isAnonymous = user.isAnonymous // false
-//             let uid = user.uid
-//             let providerData = user.providerData // a Dto with lots of info
-//             console.log("User just signed in!")
-//             console.log(email)
-//         } else {
-//             console.log("User just signed out.")
-//         }
-//     })
-// }

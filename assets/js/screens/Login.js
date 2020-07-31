@@ -10,32 +10,27 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
-// Temporary
-import { signIn, runChecker } from "../backend/main"
+import Firebase from "firebase/app"
+import "firebase/auth"
 
 
 
 export default function Login(props) {
-    // runChecker()
+    Firebase.auth().onAuthStateChanged((user) => {
+        console.log(user.displayName)
+    })
 
     function login() {
-        console.log("LOGIN ACTION")
-        // props.navigation.navigate("UserDashboard")
-
-
-        signIn(emailField[0], pwField[0])
+        Firebase.auth().signInWithEmailAndPassword(emailField[0], pwField[0])
             .then(() => {
                 console.log("Login: Successful.")
-                setLoggedIn(true)
+                props.navigation.navigate("UserDashboard")
             })
-            .catch(() => {
-                console.log("Error in login()!")
+            .catch((err) => {
                 console.log(err.code)
                 console.log(err.message)
             })
     }
-
-    const [loggedIn, setLoggedIn] = useState(false)
 
     const emailField = []
     const pwField = []

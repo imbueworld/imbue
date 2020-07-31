@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
@@ -8,19 +8,6 @@ import CustomButton from "./CustomButton"
 
 
 export default function UserMenu(props) {
-    function classes() {
-        props.navigation.navigate("UserClasses")
-    }
-    function memberships() {
-        props.navigation.navigate("UserMemberships")
-    }
-    function profileSettings() {
-        props.navigation.navigate("ProfileSettings")
-    }
-    function paymentSettings() {
-        props.navigation.navigate("PaymentSettings")
-    }
-
     return (
         <ProfileLayout capsuleStyle={{
             paddingBottom: 0,
@@ -28,19 +15,19 @@ export default function UserMenu(props) {
 
             <CustomButton
                 title="My Classes"
-                onPress={classes}
+                onPress={() => props.navigation.navigate("UserClasses")}
                 />
             <CustomButton
                 title="Manage Memberships"
-                onPress={memberships}
+                onPress={() => props.navigation.navigate("UserMemberships")}
             />
             <CustomButton
                 title="Profile Settings"
-                onPress={profileSettings}
+                onPress={() => props.navigation.navigate("ProfileSettings")}
             />
             <CustomButton
                 title="Payment Settings"
-                onPress={paymentSettings}
+                onPress={() => props.navigation.navigate("PaymentSettings")}
             />
 
         </ProfileLayout>
