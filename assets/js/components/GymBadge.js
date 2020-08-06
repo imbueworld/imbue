@@ -32,8 +32,8 @@ export default function GymBadge(props) {
                         </View>
                     </View>
                     <View style={styles.infoContainer}>
-                        <Text>{"✰✰✰✰✰ (54)"}</Text>
-                        <Text>2.1 miles</Text>
+                        <Text>{props.rating}</Text>
+                        <Text>{props.relativeDistance}</Text>
                     </View>
                 </View>
             
@@ -41,13 +41,20 @@ export default function GymBadge(props) {
 
             <TouchableOpacity
                 style={styles.moreInfoContainer}
-                onPress={props.onPress}
+                onPress={props.onMoreInfo}
             >
                 <Text
                     style={styles.moreInfoText}
                 >
                     More Info
                 </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+                style={styles.X}
+                onPress={props.onX}
+            >
+                <Text stlye={{fontSize: 20}}>X</Text>
             </TouchableOpacity>
         
         </View>
@@ -88,5 +95,17 @@ const styles = StyleSheet.create({
     },
     moreInfoText: {
         fontSize: 13,
+    },
+    X: {
+        width: 35,
+        height: 35,
+        position: "absolute",
+        right: 0,
+        marginTop: 10,
+        marginRight: 10,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "white",
+        borderRadius: 999,
     },
 })

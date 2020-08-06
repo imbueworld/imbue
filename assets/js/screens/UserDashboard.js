@@ -2,8 +2,9 @@ import React, { useState, useRef } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Animated } from 'react-native'
 
 import { useDimensions } from '@react-native-community/hooks'
-import MapView, { PROVIDER_GOOGLE } from 'react-native-maps'
+import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
+import { mapStyle } from "../contexts/MapStyle"
 import ProfileLayout from "../layouts/ProfileLayout"
 // import AppBackground from "../components/AppBackground"
 
@@ -56,23 +57,61 @@ export default function UserDashboard(props) {
         }).start()
     }
 
+    const [currentMarkerId, setCurrentMarkerId] = useState(null)
+
+    const markers = [
+        {
+            latlng: {
+                latitude: 37.78825,
+                longitude: -122.4324,
+            },
+            rating: "✰✰✰✰✰ (54)",
+            relativeDistance: "2.1 miles",
+            id: "999",
+        },
+    ]
+
+    const currentlyShownGymBadge = markers.filter((marker) => marker.id === currentMarkerId).map((marker) =>
+        <GymBadge
+            rating={marker.rating}
+            relativeDistance={marker.relativeDistance}
+            onMoreInfo={() => props.navigation.navigate("GymDescription", {gymId: currentMarkerId})}
+            onX={() => setCurrentMarkerId(null)}
+        />
+    )
+
     return (
         <View /*contentContainerStyle={styles.container}*/>
 
             <MapView
                 style={styles.map}
                 provider={PROVIDER_GOOGLE}
+                // showsPointsOfInterest={false}
+                // showsCompass={false}
+                // showsBuildings={false}
+                // showsTraffic={false}
+                // showsIndoors={false}
+                // showsIndoorLevelPicker={false}
+                customMapStyle={mapStyle}
                 initialRegion={{
                     latitude: 37.78825,
                     longitude: -122.4324,
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
                 }}
-            />
+            >
+                {markers.map(marker =>
+                    <Marker
+                        coordinate={marker.latlng}
+                        // title={marker.title}
+                        // description={marker.description}
+                        key={marker.id}
+                        onPress={(e) => setCurrentMarkerId(marker.id)}
+                    />
+                )}
+            </MapView>
 
-            <GymBadge
-                onPress={() => props.navigation.navigate("GymDescription")}
-            />
+            {currentlyShownGymBadge}
 
             <TouchableOpacity
                 style={[

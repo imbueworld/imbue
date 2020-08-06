@@ -32,7 +32,7 @@ export default function Home(props) {
                     top: 0,
                     position: "absolute",
                 }}
-            />
+            /> 
 
             <View style={styles.container}>
                 <CustomButton
@@ -53,16 +53,6 @@ export default function Home(props) {
                         textAlign: "center",
                     }}>Partner Sign Up</Text>
                 </TouchableOpacity>
-
-                <Button
-                    title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("UserClasses", {referrer: "Home"})}}
-                />
-                <Button
-                    title="TESTING GROUNDS"
-                    onPress={() => {props.navigation.navigate("Livestream", {referrer: "Home"})}}
-                />
-
             </View>
 
         </ScrollView>

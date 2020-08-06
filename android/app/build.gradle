@@ -121,6 +121,12 @@ def jscFlavor = 'org.webkit:android-jsc:+'
 def enableHermes = project.ext.react.get("enableHermes", false);
 
 android {
+    // v Added manually v
+    // dexOptions {
+    //     javaMaxHeapSize "4g"
+    // }
+    // ^ Added manually ^
+
     compileSdkVersion rootProject.ext.compileSdkVersion
 
     compileOptions {
@@ -134,6 +140,7 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
     }
     splits {
         abi {
@@ -184,6 +191,17 @@ dependencies {
     // v added manually v //////
     compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
+
+    // implementation 'com.stripe:stripe-android:15.0.1'
+
+    // Added for LivestreamModule.java
+    compile group: 'org.bytedeco', name: 'javacv', version: '1.4.3'
+    compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.3', classifier: 'android-arm'
+    compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.3', classifier: 'android-x86'
+    compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '4.0.2-1.4.3', classifier: 'android-arm'
+    compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '4.0.2-1.4.3', classifier: 'android-x86'
+    //
+
     // ^ added manually ^ //////
 
     implementation fileTree(dir: "libs", include: ["*.jar"])

@@ -24,6 +24,7 @@ import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
 import PartnerUpdateMemberships from "./assets/js/screens/PartnerUpdateMemberships"
 import ClassesSchedule from "./assets/js/screens/ClassesSchedule"
 import PartnerRevenueInfo from "./assets/js/screens/PartnerRevenueInfo"
+import PartnerLivestreamDashboard from "./assets/js/screens/PartnerLivestreamDashboard"
 
 import Livestream from "./assets/js/screens/Livestream"
 
@@ -129,6 +130,11 @@ export default function App() {
                     name="Livestream"
                     component={Livestream}
                     options={{ title: "Livestream" }}
+                />
+                <Stack.Screen
+                    name="PartnerLivestreamDashboard"
+                    component={PartnerLivestreamDashboard}
+                    options={{ title: "Livestream Dashboard" }}
                 />
                 {/*
                 <Stack.Screen

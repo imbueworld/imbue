@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, TextInput } from 'react-native'
 
 
 export default function CustomTextInput(props) {
-    const [msg, setMsg] = useState(props.value || "")
+    // const [msg, setMsg] = useState(props.value || "")
 
     return (
         <View style={[
@@ -24,7 +24,7 @@ export default function CustomTextInput(props) {
             </View> */}
 
             <TextInput
-                multiline={msg.length > 15 ? false : true}
+                multiline={props.value > 15 ? false : true}
                 numberOfLines={1}
                 style={[
                     styles.input,
@@ -33,11 +33,12 @@ export default function CustomTextInput(props) {
                 value={props.value !== undefined ? props.value : undefined}
                 placeholder={props.placeholder}
                 placeholderTextColor="white"
-                value={msg}
+                // value={msg}
+                value={props.value || undefined}
                 onChangeText={text => {
                     if (props.info) props.info[0] = text
                     if (props.onChangeText) props.onChangeText(text)
-                    setMsg(text)
+                    // setMsg(text)
                 }}
             />
 

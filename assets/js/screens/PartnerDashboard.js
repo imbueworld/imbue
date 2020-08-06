@@ -12,7 +12,7 @@ import CustomButton from "../components/CustomButton"
 
 export default function PartnerDashboard(props) {
     function live() {
-        props.navigation.navigate("")
+        props.navigation.navigate("PartnerLivestreamDashboard")
     }
 
     function schedule() {
