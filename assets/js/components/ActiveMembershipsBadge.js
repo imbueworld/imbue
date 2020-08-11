@@ -1,18 +1,29 @@
 import React from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { colors } from '../contexts/Colors'
 
 
 
+/**
+ * props
+ * .data -- has to have { name }
+ * .onAction -- callback fired when tap on ( X )
+ */
 export default function ActiveMembershipBadge(props) {
+    let membership = props.data
+
     return (
         <View style={styles.container}>
             <Text style={styles.text}>
-                {props.name}
+                {membership.name}
             </Text>
             <View>
                 {/* <Image /> */}
             </View>
-            <View style={styles.X}>
+            <TouchableOpacity
+                style={styles.X}
+                onPress={props.onAction}
+            >
                 <Text style={[
                     {
                         fontSize: 20,
@@ -20,20 +31,22 @@ export default function ActiveMembershipBadge(props) {
                 ]}>
                     X
                 </Text>
-            </View>
+            </TouchableOpacity>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        marginVertical: 10,
+        marginBottom: 15,
         paddingVertical: 20,
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        borderRadius: 999,
-        backgroundColor: "lightgray",
+        borderRadius: 30,
+        // backgroundColor: "lightgray",
+        borderWidth: 1,
+        borderColor: colors.gray,
     },
     X: {
         width: 50,
@@ -45,6 +58,7 @@ const styles = StyleSheet.create({
         justifyContent: "center",
     },
     text: {
+        flex: 1,
         marginLeft: 20,
         fontSize: 20,
     },

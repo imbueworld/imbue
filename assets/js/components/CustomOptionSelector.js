@@ -4,10 +4,18 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-nati
 
 
 export default function CustomOptionSelector(props) {
+    /**
+     * props
+     * .options -- {label: repr_string, ..}
+     * .info -- transfers information over to parent component
+     * .containerStyle -- style of <View /> container
+     * .textStyle -- style of text
+     */
+
     const gap = 100 / Object.keys(props.options).length
     const buttonStates = []
 
-    Object.entries(props.options).forEach((arr, idx) => {
+    Object.entries(props.options).forEach((item, idx, arr) => {
         const [buttonToggled, setButtonToggled] = useState(false)
         buttonStates.push([buttonToggled, setButtonToggled])
     })
@@ -16,6 +24,12 @@ export default function CustomOptionSelector(props) {
         if (buttonStates[idx][0]) buttonStates[idx][1](false)
         else buttonStates[idx][1](true)
     }
+
+    // With each render, reset the info array and push correct values
+    props.info.forEach(() => props.info.shift())
+    buttonStates.forEach(([state, setFn], idx, arr) => {
+        if (state) props.info.push(idx)
+    })
 
     const options = Object.entries(props.options).map((arr, idx) => {
         return (
@@ -40,7 +54,7 @@ export default function CustomOptionSelector(props) {
                     key={arr[0]}
                     onPress={() => toggleButton(idx)}
                 >
-                    <Text>{arr[1]}</Text>
+                    <Text style={props.textStyle}>{arr[1]}</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -76,7 +90,7 @@ export default function CustomOptionSelector(props) {
     return (
         <View style={[
             styles.container,
-            props.style
+            props.containerStyle
         ]}>
             {options}
             {buttonBackgrounds}

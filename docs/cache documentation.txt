@@ -1,0 +1,18 @@
+[props.route.params].cache
+.user
+	.account_type
+	.active_classes
+	.active_memberships
+.creditCards		// all user credit cards
+	[{/*credit card data*/}, {}, ..]
+.classes		// all user classes
+	[{/*class data*/}, {}, ..]
+.memberships
+	{ membship_id: {/*membership data*/}, .. }
+.gyms			// includes all gyms
+	[{/*gym data*/}, {}, ..]
+.gymClasses		// includes each gym visited through map
+	{ id1: {/*class data*/}, id2: {}, .. }
+.mux
+	.streams
+		{ partner_id: playback_id, partner_id2: playback_id2, .. }

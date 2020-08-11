@@ -1,65 +1,192 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
-import CustomText from "../components/CustomText"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
+import MembershipPopup from '../components/popups/MembershipPopup'
+import PopupPurchase from '../components/popups/PopupPurchase'
+
+import firebase from "firebase/app"
+import "firebase/functions"
+import { retrieveUserData, retrieveMemberships } from '../backend/CacheFunctions'
+import { purchaseMemberships } from "../backend/BackendFunctions"
+import { colors } from '../contexts/Colors'
 
 
 
-export default function Component(props) {
-    function bookClass() {
-        console.log("BOOK A CLASS ACTION")
+// /**
+//  * 1.   Charges user
+//  * 2.   adds gymIds to active_memberships for user in users collection
+//  */
+// async function purchaseMembership(gymIds, creditCardId, price) {
+//     console.log("gymIds", gymIds)
+//     try {
+//         await firebase.functions().httpsCallable("chargeCustomer")({ cardId: creditCardId, amount: price })
+//         await firebase.functions().httpsCallable("registerMemberships")({ gymIds })
+//     } catch(err) {
+//         console.log(err.message)
+//         throw new Error("Something prevented the action.")
+//     }
+// }
+
+
+
+export default function GymDescription(props) {
+    console.log("[GYM DESCRIPTION]")
+    let cache = props.route.params.cache
+    let gymData = props.route.params.data
+
+    const [Genres, GenresCreate] = useState(null)
+    const [Desc, DescCreate] = useState(null)
+    const [Name, NameCreate] = useState(null)
+
+    const [popup, setPopup] = useState(false)
+
+    const [hasMembership, setHasMembership] = useState(null)
+    const [imbueMembership, setImbueMembership] = useState(null)
+    const [selectedCard, selectCard] = useState(null)
+
+    useEffect(() => {
+        const init = async() => {
+            let user = await retrieveUserData(cache)
+            let imbueMembership = await retrieveMemberships(cache, {
+                membershipIds: ["imbue"]
+            })
+            setImbueMembership(imbueMembership)
+
+            let membership =
+                user.active_memberships.includes(imbueMembership.id)
+                    ? "imbue"
+                    : user.active_memberships.includes(gymData.id)
+                        ? "gym"
+                        : false
+            setHasMembership(membership)
+        }
+        init()
+    }, [popup])
+
+    useEffect(() => {
+
+        GenresCreate(
+            <View style={styles.genreContainer}>
+                { gymData.genres.map((txt, idx) =>
+                    <View
+                        style={styles.genre}
+                        key={idx}
+                    >
+                        <Text style={styles.genreText}>{txt}</Text>
+                    </View>) }
+            </View>
+        )
+    
+        DescCreate(
+            <View style={styles.descContainer}>
+                <Text style={styles.descText}>
+                    {gymData.description}
+                </Text>
+            </View>
+        )
+
+        NameCreate(
+            <View style={styles.nameContainer}>
+                <Text style={styles.nameText}>{gymData.name}</Text>
+            </View>
+        )
+    }, [])
+
+    function openClassesSchedule() {
+        props.navigation.navigate(
+            "ScheduleViewer", { data: cache.gymClasses[gymData.id] })
     }
 
-    const labels = ["Genre 1", "Genre 2", "Genre 3"].map((txt) => 
-        <CustomCapsule
-            style={styles.genreContainer}
-            key={txt}
-        >
-            <Text>{txt}</Text>
-        </CustomCapsule>
-    )
-
-    const desc = `(DESCRIPTION) | Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
-
     return (
+        <>
+        { popup !== "membership" ? null :
+        <MembershipPopup
+            data={{
+                name: gymData.name
+            }}
+            onProceed={() => setPopup("buy")}
+            onX={() => setPopup(false)}
+        />}
+
+        { popup !== "buy" ? null :
+        <PopupPurchase
+            cache={cache}
+            // data={{ id: gymData.id , price: gymData.membership_price }}
+            popupText={`If you would like to confirm your purchase of ${gymData.membership_price}, select your payment method.`}
+            selectedCard={selectedCard}
+            selectCard={selectCard}
+            onProceed={async() => {
+                if (selectedCard) {
+                    await purchaseMemberships(cache, {
+                        membershipIds: [gymData.id],
+                        creditCardId: selectedCard,
+                        price: gymData.membership_price,
+                        description: `Gym Online Membership for ${gymData.name}`,
+                    })
+                    setPopup(false)
+                }
+            }}
+            onX={() => setPopup(false)}
+        />}
+
         <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
-            <View style={styles.container}>
-                <CustomCapsule>
 
-                    <Image
-                        style={styles.gymImg}
-                        source={require("../components/img/yoga.png")}
-                    />
+            <CustomCapsule
+                style={styles.container}
+                innerContainerStyle={styles.innerContainer}
+            >
 
-                    <Text style={{
-                        marginVertical: 10,
-                        textAlign: "center",
-                        fontSize: 20,
-                    }}>Corepower Yoga</Text>
-
-                    <View style={styles.genres}>
-                        {labels}
-                    </View>
-
-                    <CustomCapsule
-                        style={styles.descContainer}
-                    >
-                        <Text>{desc}</Text>
-                    </CustomCapsule>
+                <Image
+                    style={styles.gymImg}
+                    source={require("../components/img/yoga.png")}
+                />
+                
+                <View style={{
+                    paddingHorizontal: 10,
+                }}>
+                    {Name}
+                    {Genres}
+                    {Desc}
 
                     <CustomButton
-                        title="Book A Class"
-                        onPress={bookClass}
+                        style={{
+                            marginVertical: 20,
+                        }}
+                        title="Visit Classes"
+                        onPress={openClassesSchedule}
                     />
 
-                </CustomCapsule>
-            </View>
+                    { hasMembership ? null :
+                    <>
+                    <CustomButton
+                        title="Get Membership"
+                        onPress={() => setPopup("membership")}
+                    />
+                    <CustomButton
+                        title="Get Imbue Universal Membership"
+                        onPress={() => props.navigation.navigate("PurchaseUnlimited")}
+                    />
+                    </>}
+                    
+                    { hasMembership !== "gym" ? null :
+                    <Text style={{ color: "green" }}>
+                        [V] You have a membership for this gym!
+                    </Text>}
+
+                    { hasMembership !== "imbue" ? null :
+                    <Text style={{ color: "purple" }}>
+                        [V] You have the Imbue Universal Gym Membership!
+                    </Text>}
+                </View>
+
+            </CustomCapsule>
         </ScrollView>
+        </>
     )
 }
 
@@ -68,30 +195,54 @@ const styles = StyleSheet.create({
         minHeight: "100%",
     },
     container: {
-        width: "85%",
-        paddingVertical: 50,
+        width: "88%",
+        marginVertical: 30,
         alignSelf: "center",
     },
-    genres: {
-        flexDirection: "row",
+    innerContainer: {
+        paddingHorizontal: 0,
+    },
+    nameContainer: {},
+    nameText: {
+        marginTop: 20,
+        textAlign: "center",
+        fontSize: 24,
     },
     genreContainer: {
-        marginVertical: 10,
-        marginRight: 10,
+        marginTop: 20,
+        flexDirection: "row",
+        flexWrap: "wrap",
+    },
+    genre: {
+        marginRight: 5,
+        paddingHorizontal: 10,
         paddingVertical: 5,
-        backgroundColor: "lightgray",
         borderRadius: 999,
+        borderWidth: 1,
+        borderColor: colors.gray,
+    },
+    genreText: {
+        fontSize: 14,
     },
     descContainer: {
-        marginVertical: 10,
-        backgroundColor: "lightgray",
+        marginTop: 10,
+        paddingHorizontal: 15,
+        paddingVertical : 10,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: colors.gray,
+    },
+    descText: {
+        fontSize: 16,
+        textAlign: "justify",
     },
     gymImg: {
         width: "100%",
         height: "100%",
         minHeight: 300,
         maxHeight: 300,
-        marginBottom: 10,
         borderRadius: 40,
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
     }
 })

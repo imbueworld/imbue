@@ -7,11 +7,13 @@ export default function CustomSelectButton(props) {
     /**
      * props
      * .options -- {label: repr_string, ..}
+     * .info -- transfers information over to parent component
      * .containerStyle -- style of <View /> container
      * .textStyle -- style of text
      */
 
     const [slctdOpt, setSlctdOpt] = useState(Object.keys(props.options)[0])
+    if (props.info) props.info[0] = slctdOpt
     const gap = 100 / Object.keys(props.options).length
 
     let slctdIdx = null
@@ -29,7 +31,10 @@ export default function CustomSelectButton(props) {
                     }
                 ]}
                 key={arr[0]}
-                onPress={() => setSlctdOpt(arr[0])}
+                onPress={() => {
+                    setSlctdOpt(arr[0])
+                    if (props.onPress) props.onPress
+                }}
             >
                 <Text
                     style={[

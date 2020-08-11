@@ -17,7 +17,10 @@ export default function PurchaseOnline(props) {
         <ProfileLayout capsuleStyle={styles.container}>
 
             <CustomSelectButton
-                options={{single: "Single Class\n$9", membership: "Membership\n$50"}}
+                options={{
+                    single: "Single Class\n$9",
+                    membership: "Membership\n$50"
+                }}
             />
 
             <CustomBar />

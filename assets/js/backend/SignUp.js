@@ -1,26 +1,26 @@
-import Firebase from "firebase/app"
+import { defIcons } from "../contexts/Links"
+import firebase from "firebase/app"
 import 'firebase/auth'
 
 
 
-export function signUp(form) {
-    const em = form.email // sanitizeEmail(form.email)
-    const pw = form.password // sanitizePassword(form.password)
-    Firebase.auth().createUserWithEmailAndPassword(em, pw)
-        .then(() => {
-            Firebase.auth().currentUser.updateProfile({
-                displayName: `${form.first} ${form.last}`,
-            })
-            .catch(handleErr)
+export async function signUp(form) {
+    try {
+        const em = form.email // sanitizeEmail(form.email)
+        const pw = form.password // sanitizePassword(form.password)
+        const { user } = await firebase.auth().createUserWithEmailAndPassword(em, pw)
+        await user.updateProfile({
+            displayName: `${form.first} ${form.last}`,
+            photoURL: defIcons[0],
         })
-        .catch(handleErr)
-}
-
-
-
-const handleErr = err => {
-    console.log(err.code)
-    console.log(err.message)
+        return "200 OK"
+    } catch(err) {
+        console.log("////////")
+        console.log(err.code)
+        console.log(err.message)
+        console.log("////////")
+        return err.code
+    }
 }
 
 // function sanitizeEmail(email) {

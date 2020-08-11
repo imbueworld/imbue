@@ -6,9 +6,18 @@ import ProfileRepr from "../components/ProfileRepr"
 
 import CustomCapsule from "../components/CustomCapsule"
 
+import firebase from "firebase/app"
+import "firebase/auth"
+import { colors } from '../contexts/Colors'
 
 
-export default function Component(props) {
+
+export default function ProfileLayout(props) {
+    const user = firebase.auth().currentUser
+    const profileData = {
+        name: user.displayName,
+        iconUri: user.photoURL,
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
@@ -19,30 +28,35 @@ export default function Component(props) {
                 <ProfileRepr
                     style={{
                         position: "absolute",
+                        width: "80%",
                         alignSelf: "center",
                         zIndex: 100,
+                        overflow: "hidden",
                     }}
+                    data={profileData}
                 />
                 
-                <View style={[
-                    props.style, // should probably be removed and not used
-                    {
-                        width: "85%",
-                        alignSelf: "center",
-                    },
-                ]}>
-                    <CustomCapsule style={[
+                <CustomCapsule
+                    style={[
                         {
-                            marginTop: 150,
-                            paddingTop: 100,
+                            // marginTop: 150,
+                            marginTop: 115,
+                            width: "88%",
+                            alignSelf: "center",
                         },
-                        props.capsuleStyle
-                    ]}>
-                    
-                        {props.children}
+                        props.containerStyle,
+                    ]}
+                    innerContainerStyle={[
+                        {
+                            paddingTop: 135,
+                        },
+                        props.innerContainerStyle,
+                    ]}
+                >
+                
+                    {props.children}
 
-                    </CustomCapsule>
-                </View>
+                </CustomCapsule>
 
             </View>
         </ScrollView>
@@ -50,6 +64,9 @@ export default function Component(props) {
 }
 
 const styles = StyleSheet.create({
+    container: {
+        minHeight: "100%",
+    },
     scrollView: {
         minHeight: "100%",
     },

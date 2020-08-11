@@ -1,22 +1,24 @@
 import React from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 
 
 export default function ClassList(props) {
-    const filteredData = props.data.filter(({dateString}) => {
+    let filteredData = props.data.filter(({ dateString }) => {
         if (dateString === props.dateString) return true
     })
 
-    const items = filteredData.map(({time, title, trainer, key}) =>
-        <View
+    const items = filteredData.map(({ formattedDate, formattedTime, name, instructor, onPress }, idx) =>
+        <TouchableOpacity
             style={styles.listItem}
-            key={key}
+            key={idx}
+            onPress={onPress}
         >
-            <Text>{time}</Text>
-            <Text>{title}</Text>
-            <Text>{trainer}</Text>
-        </View>
+            <Text>{formattedDate}</Text>
+            <Text>{formattedTime}</Text>
+            <Text>{name}</Text>
+            <Text>{instructor}</Text>
+        </TouchableOpacity>
     )
 
     return (
@@ -36,7 +38,7 @@ const styles = StyleSheet.create({
     },
     listItem: {
         marginVertical: 10,
-        borderRadius: 999,
+        borderRadius: 30,
         backgroundColor: "white",
         alignItems: "center",
     },

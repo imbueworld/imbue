@@ -7,17 +7,29 @@ export default function CustomCapsule(props) {
     return (
         <View style={[
             styles.container,
-            props.style
+            props.style,
         ]}>
-            {props.children}
+            <View style={[
+                styles.innerContainer,
+                props.innerContainerStyle
+            ]}>
+                {props.children}
+            </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        padding: 20,
         borderRadius: 40,
         backgroundColor: "#FFFFFF80", // "#e6e6e6",
+        // paddingBottom: 12,
+        // paddingRight: 12,
+        padding: 12,
+    },
+    innerContainer: {
+        borderRadius: 30,
+        backgroundColor: "#FFFFFF80",
+        paddingHorizontal: 20,
     },
 })

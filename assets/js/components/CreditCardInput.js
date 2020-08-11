@@ -9,7 +9,7 @@ export default function Component(props) {
     return (
         <View style={styles.container}>
             <CustomTextInput
-                    placeholder="Credit Card Number"
+                placeholder="Credit Card Number"
             />
             <CustomTextInput
                 placeholder="CCV"

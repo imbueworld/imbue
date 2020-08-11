@@ -1,36 +1,56 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, ScrollView, View, Text } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
-
+import CustomButton from "../components/CustomButton"
 import CustomTextInput from "../components/CustomTextInput"
-
-import ToastExample from "../native-to-js-modules/ToastExample"
-import AndroidLivestream from "../native-to-js-modules/AndroidLivestream"
+import CustomCapsule from "../components/CustomCapsule"
+import { addDataToUser } from '../backend/BackendFunctions'
+import { retrieveUserData } from '../backend/CacheFunctions'
 
 
 
 export default function PartnerLivestreamDashboard(props) {
-    const [streamKeyField, setStreamKeyField] = useState("")
-    const [streamKeyField2, setStreamKeyField2] = useState("")
+    let cache = props.route.params.cache
 
-    ToastExample.show("Awesome", ToastExample.SHORT)
-    const streamKey = "a3c6b4e3-a477-7174-05e0-2be62275f3cf"
-    AndroidLivestream.setStreamKey(streamKey, console.log, console.log)
-    AndroidLivestream.startRecording(console.log, console.log)
-    setTimeout(() => {AndroidLivestream.stopRecording(console.log, console.log)}, 3000)
-    // setTimeout(() => {AndroidLivestream.stopRecording(console.log, console.log)}, 10 * 1000)
+    const [r, refresh] = useState(0)
+    // const [user, setUser] = useState(null)
+    const [streamKeyField, setStreamKeyField] = useState(null)
+
+    useEffect(() => {
+        const init = async() => {
+            let user = await retrieveUserData(cache)
+            // setUser(user)
+            setStreamKeyField(user.stream_key)
+        }
+        init()
+    }, [])
+
+    const applySettings = async() => {
+        await addDataToUser(cache, {
+            collection: "partners",
+            data: { stream_key: streamKeyField }
+        })
+        refresh(r + 1)
+    }
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
-            <View style={styles.container}>
+            <CustomCapsule style={styles.container}>
+
                 <CustomTextInput
                     placeholder="Stream Secret Key"
                     value={streamKeyField}
                     onChangeText={setStreamKeyField}
                 />
-            </View>
+
+                <CustomButton
+                    title="Apply"
+                    onPress={applySettings}
+                />
+
+            </CustomCapsule>
         </ScrollView>
     )
 }
@@ -39,5 +59,11 @@ const styles = StyleSheet.create({
     scrollView: {
         minHeight: "100%",
     },
-    container: {},
+    container: {
+        width: "85%",
+        marginTop: 50,
+        paddingTop: 10,
+        paddingBottom: 0,
+        alignSelf: "center",
+    },
 })

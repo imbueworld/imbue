@@ -1,4 +1,4 @@
-import Firebase from 'firebase/app'
+import firebase from 'firebase/app'
 // import 'firebase/analytics'
 import 'firebase/auth'
 
@@ -16,17 +16,6 @@ export function initFirebase() {
         measurementId: "G-0FYZ1KH1H5",
     }
 
-    Firebase.initializeApp(firebaseConfig)
-    // Firebase.analytics()
-
-
-
-    Firebase.auth().onAuthStateChanged(user => {
-        if (user) {
-            console.log("User just signed in!")
-            console.log(user.email)
-        } else {
-            console.log("User just signed out.")
-        }
-    })
+    firebase.initializeApp(firebaseConfig)
+    // firebase.analytics()
 }

@@ -8,46 +8,31 @@ export default function CalendarView(props) {
     /**
      * props
      * .data -- data
-     * .slctdDate -- selected DateString (parent's state obj), can be empty
+     * .slctdDate -- selected DateString (parent's state obj)
      * .setSlctdDate -- (parent's setState func), must be provided
      */
 
-    function dateStringFromDate(dateObj = new Date()) {
-        let year = dateObj.getFullYear()
-        let month = dateObj.getMonth() + 1
-        if (month < 10) month = `0${month}`
-        let day = dateObj.getDate()
-        const curDateString =
-            `${year}-${month}-${day}`
-
-        return curDateString
-    }
-
-    const [slctdDateString, setSlctdDateString] =
-        useState(dateStringFromDate())
-    
     useEffect(() => {
-        if (!props.slctdDate) props.setSlctdDate(slctdDateString)
-    })
 
-    const workout = {color: "red"}
-    const markedDates = {}
-    
-    // Responsible for meshing together the data provided (props.data)
-    // into date-sorted object used by <Calendar />
-    props.data.forEach(({dateString}) => {
-        if (!markedDates[dateString])
-            markedDates[dateString] = {dots: [workout]}
-        else
+        // Responsible for meshing together the data provided (props.data)
+        // into date-sorted object used by <Calendar />
+        let markedDates = {}
+        props.data.forEach(({ dateString }) => {
+            if (!markedDates[dateString]) markedDates[dateString] = { dots: [] }
             markedDates[dateString].dots.push(workout)
-    })
+        })
 
-    // Responsible for meshing together the options for current selected date
-    // with {selected: "true"}
-    markedDates[slctdDateString] =
-        markedDates[slctdDateString]
-        ? Object.assign(markedDates[slctdDateString], {selected: "true"})
-        : {selected: "true"}
+        // Responsible for meshing together the options for current selected date
+        markedDates[props.slctdDate] =
+            markedDates[props.slctdDate]
+            ? Object.assign(markedDates[props.slctdDate], {selected: "true"})
+            : { selected: "true" }
+
+        setMarkedDates(markedDates)
+    }, [props.slctdDate])
+
+    const [markedDates, setMarkedDates] = useState({})
+    const workout = { color: "lightgreen" }
 
     return (
         <View style={styles.calendarContainer}>
@@ -57,7 +42,11 @@ export default function CalendarView(props) {
                 theme={calendarStyle}
                 // onDayPress={day => props.setDate(day.dateString)}
                 onDayPress={day => {
-                    setSlctdDateString(day.dateString)
+                    // setSlctdDateString(day.dateString)
+                    props.setSlctdDate(day.dateString)
+                }}
+                onDayLongPress={day => {
+                    // setSlctdDateString(day.dateString)
                     props.setSlctdDate(day.dateString)
                 }}
             />

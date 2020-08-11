@@ -8,22 +8,14 @@ import CustomButton from "../components/CustomButton"
 
 
 
-export default function Component(props) {
-    const [gymName, setGymName] = useState("")
-    const [gymDesc, setGymDesc] = useState("")
-    const [gymAddress, setGymAddress] = useState("")
-
-    function moreInfo() {
-        props.navigation.navigate("PartnerRevenueInfo")
-    }
-    function updateMemberships() {
-        props.navigation.navigate("PartnerUpdateMemberships")
-    }
-    function done() {}
+export default function PartnerGymSettings(props) {
+    // const [gymName, setGymName] = useState("")
+    // const [gymDesc, setGymDesc] = useState("")
+    // const [gymAddress, setGymAddress] = useState("")
 
     return (
         <ProfileLayout capsuleStyle={styles.container}>
-            <CustomTextInput
+            {/* <CustomTextInput
                 placeholder="Gym Name"
                 value={gymName}
                 onTextChange={setGymName}
@@ -37,19 +29,21 @@ export default function Component(props) {
                 placeholder="Gym Address"
                 value={gymAddress}
                 onTextChange={setGymAddress}
-            />
+            /> */}
             <CustomButton
                 title="Update Memberships"
-                onPress={updateMemberships}
+                onPress={() => props.navigation.navigate(
+                    "PartnerUpdateMemberships")}
             />
             <CustomButton
                 title="More Information"
-                onPress={moreInfo}
+                onPress={() => props.navigation.navigate(
+                    "PartnerRevenueInfo")}
             />
-            <CustomButton
+            {/* <CustomButton
                 title="Done"
                 onPress={done}
-            />
+            /> */}
         </ProfileLayout>
     )
 }

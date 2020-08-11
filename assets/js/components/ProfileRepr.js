@@ -11,9 +11,15 @@ export default function ProfileRepr(props) {
             styles.container,
             props.style
         ]}>
-            <UserIcon />
-            <Text style={styles.profileName}>
-                Corepower Yoga
+            <UserIcon
+                data={{ uri: props.data.iconUri }}
+            />
+            <Text
+                style={styles.profileName}
+                numberOfLines={1}
+            >
+                {/* Corepower Yoga */}
+                {props.data.name}
             </Text>
         </View>
     )
@@ -24,6 +30,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     profileName: {
-        fontSize: 20,
+        marginTop: 15,
+        fontSize: 22,
     },
 })

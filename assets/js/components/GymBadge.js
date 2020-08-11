@@ -10,33 +10,40 @@ import CustomCapsule from "./CustomCapsule"
 
 export default function GymBadge(props) {
     return (
-        <View style={styles.container}>
+        <View style={[ styles.container, props.containerStyle ]}>
 
             <CustomCapsule
                 style={{
+                    flex: 1,
                     backgroundColor: "#FFFFFF80",
                     borderBottomLeftRadius: 0,
                     borderBottomRightRadius: 0,
                 }}
             >
-                
+
                 <View>
+
                     <View style={styles.infoContainer}>
-                        <UserIcon style={{
-                            width: 75,
-                            height: 75,
-                        }}/>
+                        <UserIcon
+                            style={{
+                                width: 75,
+                                height: 75,
+                            }}
+                            data={{ uri: props.iconUri }}
+                        />
                         <View style={styles.desc}>
-                            <Text style={styles.name}>Corepower Yoga</Text>
-                            <Text style={styles.slogan}>Yoga classes for all!</Text>
+                            <Text style={styles.name} numberOfLines={1}>{props.name}</Text>
+                            <Text style={styles.slogan} numberOfLines={4}>{props.desc}</Text>
                         </View>
                     </View>
+
                     <View style={styles.infoContainer}>
                         <Text>{props.rating}</Text>
                         <Text>{props.relativeDistance}</Text>
                     </View>
+
                 </View>
-            
+
             </CustomCapsule>
 
             <TouchableOpacity
@@ -54,16 +61,15 @@ export default function GymBadge(props) {
                 style={styles.X}
                 onPress={props.onX}
             >
-                <Text stlye={{fontSize: 20}}>X</Text>
+                <Text stlye={{ fontSize: 20 }}>X</Text>
             </TouchableOpacity>
-        
+
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        top: 450, // TEMP ADJUSTMENT
         width: "85%",
         position: "absolute",
         alignSelf: "center",
@@ -75,7 +81,9 @@ const styles = StyleSheet.create({
     },
     desc: {
         flex: 1,
+        marginHorizontal: 20,
         alignItems: "center",
+        textAlign: "justify", // Android reqs: Android Oreo (8.0) or above (API level >= 26)
     },
     name: {
         fontSize: 20,

@@ -101,7 +101,9 @@ export default function ProfileSettings(props) {
             </View>
         :   <View />} */}
 
-        <ProfileLayout capsuleStyle={styles.container}>
+        <ProfileLayout innerContainerStyle={{
+            paddingBottom: 10,
+        }}>
             <CustomTextInput
                 placeholder="First Name"
                 value={firstNameField}
@@ -129,6 +131,7 @@ export default function ProfileSettings(props) {
                     onX={() => setPwForm(false)}
                 />
             :   <CustomButton
+                    style={styles.button}
                     title="Change Password"
                     onPress={() => setPwForm(true)}
                 />}
@@ -145,6 +148,7 @@ export default function ProfileSettings(props) {
             /> */}
 
             <CustomButton
+                style={styles.button}
                 title="Save"
                 onPress={save}
             />
@@ -154,7 +158,8 @@ export default function ProfileSettings(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingBottom: 0,
+    button: {
+        paddingVertical: 10,
+        marginHorizontal: 30,
     },
 })

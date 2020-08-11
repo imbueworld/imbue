@@ -1,36 +1,43 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight } from 'react-native'
 
-import { simpleShadow } from "../contexts/Colors"
+import { simpleShadow, colors } from "../contexts/Colors"
 
 
 
 export default function CustomButton(props) {
     return (
-        <View style={[
-            styles.container,
-            props.style
-        ]}>
+        // <View style={[
+        //     styles.container,
+        //     props.style,
+        // ]}>
             <TouchableOpacity
                 style={[
                     styles.button,
                     simpleShadow,
+                    props.style,
                 ]}
-                onPress={props.onPress}
+                underlayColor="#eee"
+                onPress={props.onPress || undefined}
+                onLongPress={props.onLongPress || undefined}
             >
-                <Text style={styles.text}>
+                <Text style={[
+                    styles.text,
+                    props.textStyle
+                ]}>
                     {props.title}
                 </Text>
             </TouchableOpacity>
-        </View>
+        // </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        marginVertical: 20,
-    },
+    // container: {
+    //     marginVertical: 20,
+    // },
     button: {
+        marginVertical: 10,
         paddingVertical: 20,
         borderRadius: 999,
         backgroundColor: "#fff",

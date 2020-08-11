@@ -10,26 +10,23 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
-import Firebase from "firebase/app"
+import firebase from "firebase/app"
 import "firebase/auth"
 
 
 
 export default function Login(props) {
-    Firebase.auth().onAuthStateChanged((user) => {
-        console.log(user.displayName)
-    })
-
-    function login() {
-        Firebase.auth().signInWithEmailAndPassword(emailField[0], pwField[0])
+    async function login() {
+        await firebase.auth().signInWithEmailAndPassword(emailField[0], pwField[0])
             .then(() => {
-                console.log("Login: Successful.")
-                props.navigation.navigate("UserDashboard")
+                props.navigation.navigate("Boot", {referrer: "Login"})
             })
             .catch((err) => {
                 console.log(err.code)
                 console.log(err.message)
             })
+        
+        console.log("User just signed in!  " + firebase.auth().currentUser.email)
     }
 
     const emailField = []

@@ -15,10 +15,6 @@ export default function Home(props) {
         props.navigation.navigate("SignUp")
     }
 
-    function logIn() {
-        props.navigation.navigate("Login")
-    }
-
     function partnerSignUp() {
         props.navigation.navigate("PartnerSignUp")
     }
@@ -40,8 +36,8 @@ export default function Home(props) {
                     title="Sign Up"
                 />
                 <CustomButton
-                    onPress={logIn}
                     title="Login"
+                    onPress={() => props.navigation.navigate("Login")}
                 />
                 <TouchableOpacity
                     onPress={partnerSignUp}
