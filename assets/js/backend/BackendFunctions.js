@@ -1,7 +1,101 @@
-import firebase from "firebase/app"
-import "firebase/functions"
+import auth from "@react-native-firebase/auth"
+import firestore from "@react-native-firebase/firestore"
+import functions from "@react-native-firebase/functions"
+import { DEFAULT_ICONS } from "../contexts/Constants"
+import { retrieveUserData } from "./CacheFunctions"
+import { storage } from "../contexts/Links"
 
 
+
+// /**
+//  * Takes:
+//  *  form -- must include { cardNumber, expMonth, expYear, cvc, name, address_zip }
+//  */
+// export async function updateUserProfile(cache, data) {
+//     throw new Error("Not Implemented")
+// }
+
+
+
+/**
+ * Initializes the user account with necessary data
+ */
+export async function initializeAccount(cache, { first, last, email, password, type }) {
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    let collection
+    if (type === "user") collection = "users"
+    if (type === "partner") collection = "partners"
+
+    try {
+        let user = await auth().createUserWithEmailAndPassword(email, password)
+        const uid = user.user.uid
+        let authPromise = auth().currentUser.updateProfile({
+            displayName: `${type}_${first} ${last}`
+        })
+        let form = {
+            account_type: type,
+            first,
+            last,
+            email,
+            icon_uri: DEFAULT_ICONS[0],
+            active_memberships: [],
+            active_classes: [],
+        }
+        let firestorePromise = firestore()
+            .collection(collection)
+            .doc(uid)
+            .set(form)
+        await Promise.all([ authPromise, firestorePromise ])
+    } catch(err) {
+        // For now, need to forward the error to the caller...
+        throw err
+        // throw new Error("Something prevented the action.")
+    }
+
+    cache.working -= 1
+}
+
+/**
+ * Logs user in, sets their data in cache
+ * Returns user data.
+ */
+export async function signIn(cache, { email, password }) {
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    await auth().signInWithEmailAndPassword(email, password)
+
+    cache.working -= 1
+}
+
+/**
+ * Takes:
+ *  form -- must include { cardNumber, expMonth, expYear, cvc, name, address_zip }
+ */
+export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, cvc, cardHolderName, zip }) {
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    const user = await retrieveUserData(cache)
+    if (!user.payment_methods) user.payment_methods = []
+
+    try {
+        // Add payment method
+        const addPaymentMethod = functions().httpsCallable("addPaymentMethod")
+        let paymentMethod = ( await addPaymentMethod(
+            { cardNumber, expMonth, expYear, cvc, cardHolderName, zip }) ).data
+
+        // Update cache
+        user.payment_methods.push(paymentMethod)
+    } catch(err) {
+        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
+        throw new Error("Something prevented the action.")
+    }
+
+    cache.working -= 1
+}
 
 /**
  * 1.   If the request is valid (the user doesn't already own this class),
@@ -9,18 +103,45 @@ import "firebase/functions"
  * 2.   Charges the user
  * 3.   Updates cache with the new purchase
  */
-export async function purchaseClasses(cache, { classIds, creditCardId, price, description }) {
+export async function purchaseClasses(cache, { classIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
+    // temporary guard clauses, to get purchaseClasses in code straight
+    if (!partnerId) throw new Error("partnerId must be provided in purchaseClasses()")
+    if (!purchaseType) throw new Error("purchaseType must be provided in purchaseClasses()")
+    if (!gymId) throw new Error("gymId must be provided in purchaseClasses()")
+
     if (!cache.working) cache.working = 0
     cache.working += 1
-    console.log("classIds", classIds) //
+
+    const uid = auth().currentUser.uid
+
+    const docRef = firestore()
+        .collection("users")
+        .doc(uid)
+
     try {
-        await firebase.functions().httpsCallable("chargeCustomer")({ cardId: creditCardId, amount: price, description })
-        await firebase.functions().httpsCallable("registerClasses")({ classIds })
+        // Charge customer
+        const chargeCustomer = functions().httpsCallable("chargeCustomer")
+        await chargeCustomer({ cardId: creditCardId, amount: price, description })
+        
+        // Document payment
+        const documentPayment = functions().httpsCallable("documentPayment")
+        await documentPayment({ partnerId, gymId, purchaseType })
+        
+        // Register classes for user
+        let activeClasses = ( await docRef.get() ).data().active_classes
+        if (!activeClasses) activeClasses = []
+        await docRef.set(
+            { active_classes: [...activeClasses, ...classIds] },
+            { merge: true }
+        )
+
+        // Update cache
         cache.user.active_classes.push(...classIds)
     } catch(err) {
-        console.warn(err.message)
+        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         throw new Error("Something prevented the action.")
     }
+
     cache.working -= 1
 }
 
@@ -33,16 +154,33 @@ export async function purchaseClasses(cache, { classIds, creditCardId, price, de
 export async function purchaseMemberships(cache, { membershipIds, creditCardId, price, description }) {
     if (!cache.working) cache.working = 0
     cache.working += 1
-    console.log("membershipIds", membershipIds) //
+
+    const uid = auth().currentUser.uid
+
+    const docRef = firestore()
+        .collection("users")
+        .doc(uid)
+
     try {
-        await firebase.functions().httpsCallable("chargeCustomer")({ cardId: creditCardId, amount: price, description })
-        await firebase.functions().httpsCallable("registerMemberships")({ membershipIds })
-        // update cache
+        // Charge customer
+        const chargeCustomer = functions().httpsCallable("chargeCustomer")
+        await chargeCustomer({ cardId: creditCardId, amount: price, description })
+
+        // Register membership
+        let activeMemberships = ( await docRef.get() ).data().active_memberships
+        if (!activeMemberships) activeMemberships = []
+        await docRef.set(
+            { active_memberships: [...activeMemberships, ...membershipIds] },
+            { merge: true }
+        )
+
+        // Update cache
         cache.user.active_memberships.push(...membershipIds)
     } catch(err) {
-        console.warn(err.message)
+        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         throw new Error("Something prevented the action.")
     }
+
     cache.working -= 1
 }
 
@@ -52,40 +190,78 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
  * 2.   Updates cache with the new purchase
  */
 export async function cancelMemberships(cache, { membershipIds }) {
-    console.log("membershipIds", membershipIds)
-    try {
-        await firebase.functions().httpsCallable("cancelMemberships")({ membershipIds })
-    } catch(err) {
-        console.warn(err.message)
-        throw new Error("Something prevented the action.")
-    }
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    // cancelMemberships
+
+    // cache work
+
+    cache.working -= 1
 }
 
 /**
  * Merges provided data with the data about the user that lives on the database.
  */
-export async function addDataToUser(cache, { collection, data }) {
+export async function updateUser(cache, doc) {
+    if (!cache.working) cache.working = 0
     cache.working += 1
 
-    switch(collection) {
-        case "users":
-        case "partners":
-            console.log("user before", cache.user)
+    const user = await retrieveUserData(cache)
+    let collection
+    if (user.account_type === "user") collection = "users"
+    else if (user.account_type === "partner") collection = "partners"
 
-            Object.entries(cache.user).forEach((key, value) => {
-                Object.entries(data).forEach((key2, value2) => {
-                    cache.user[key2] = value2
-                })
-            })
+    // Update database
+    await firestore()
+        .collection(collection)
+        .doc(user.uid)
+        .set(doc, { merge: true })
+    
+    // Update cache
+    Object.entries(doc).forEach(([ key, value ]) => {
+        cache.user[key] = value
+    })
 
-            console.log("user after", cache.user)
-            break
-    }
+    // Update the field shortcuts, that are obligatory,
+    // and are seen instantiated in retrieveUserDate() as well.
+    // [THIS "SHORTCUT" NOTION SHOULD BE DISCONTINUED -- ; TOO INCONVENIENT]
+    if (doc.icon_uri) user.icon_uri = `${storage.public}${user.icon_uri}` // This already has a publicStorage() func from HelperFunctions.js
+    user.name = `${user.first} ${user.last}`
+
+    cache.working -= 1
+}
+
+/**
+ * Merges data with a gym of the provided gymId
+ */
+export async function updateGym(cache, { gymId, doc }) {
+    if (!gymId) throw new Error("gymId must be provided in updateGym()")
+
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    if (!cache.gyms) cache.gyms = []
 
     try {
-        await firebase.functions().httpsCallable("addDataToUser")({ collection, data })
+        // Update gym
+        await firestore()
+            .collection("gyms")
+            .doc(gymId)
+            .set(doc, { merge: true })
+
+        // Update cache
+        Object.entries(doc).forEach(([ key, value ]) => {
+            cache.gyms.forEach(gym => {
+                if (gym.id === gymId) {
+                    Object.entries(gym).forEach(([ key2, value2 ]) => {
+                        gym[ key ] = value
+                    })
+                }
+            })
+        })
     } catch(err) {
-        console.warn(err.message)
+        console.error(err.message)
         throw new Error("Something prevented the action.")
     }
 
@@ -93,30 +269,148 @@ export async function addDataToUser(cache, { collection, data }) {
 }
 
 /**
+ * [CURRENTLY NOT UTILIZNG MANY SETTINGS,
+ * WHEREFORE CREATING A NEW COLLECTION "settings" DOESN'T SEEM NECESSARY]
+ */
+// export async function updateUserSetting(cache, doc) {
+//     if (!cache.working) cache.working = 0
+//     cache.working += 1
+
+//     const user = retrieveUserData(cache)
+
+//     try {
+//         await firestore()
+//             .collection("settings")
+//             .doc(user.uid)
+//             .set(doc, { merge: true })
+//     } catch(err) {
+//         throw new Error("Something prevented the action.")
+//     }
+
+//     cache.working -= 1
+// }
+
+/**
  * Merges provided data with the data about the gym that lives on the database.
  */
-export async function addDataToGym(cache, { gymId, data }) {
+// export async function addDataToGym(cache, { gymId, data }) {
+//     throw new Error("Not Implemented")
+// }
+
+/**
+ * Compiles the form data of <NewClassForm />,
+ * pushes it to database and updates cache.
+ */
+export async function createClass(cache, { instructor, name, description, genres, type, price, gym_id }) {
+    if (!cache.working) cache.working = 0
     cache.working += 1
 
-    console.log("gyms before", cache.gyms)
-
-    cache.gyms.forEach((doc, idx) => {
-        if (doc.id === gymId) {
-            // gyms.splice(idx, 1)
-            // return
-            Object.entries(data).forEach((key, value) => {
-                doc[key] = value
-            })
-        }
-    })
-
-    console.log("gyms after", cache.gyms)
+    const partner_id = auth().currentUser.uid
+    let form = { instructor, name, description, genres, type, price, gym_id, partner_id }
 
     try {
-        await firebase.functions().httpsCallable("addDataToGym")({ gymId, data })
+        // Add class to database
+        await firestore()
+            .collection("classes")
+            .add(form)
+        
+        // Update cache
+        cache.classes.push(form)
     } catch(err) {
-        console.warn(err.message)
+        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         throw new Error("Something prevented the action.")
     }
+
+    cache.working -= 1
+}
+
+/**
+ * TEMPLATE
+ */
+export async function populateClass(cache, { class_id, active_dates }) {
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    try {
+        // Populate class with data
+        await firestore()
+            .collection("classes")
+            .doc(class_id)
+            .set({ active_dates }, { merge: true })
+    } catch(err) {
+        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
+        throw new Error("Something prevented the action.")
+    }
+
+    // cache work
+        // cache.classes.forEach((doc, idx) => {
+        //     if (doc.id === class_id) cache.classes[idx].active_classes.push(active_classes)
+        // })
+        // [UNTESTED]
+
+    cache.working -= 1
+}
+
+/**
+ * TEMPLATE
+ */
+export async function initializeLivestream(cache) {
+    const user = retrieveUserData(cache)
+    if (cache.user.stream_key) return cache.user.stream_key
+
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    let streamKey
+    try {
+        // async function getStreamKey() {
+        //     return (await firestore()
+        //         .collection("partners")
+        //         .doc(user.uid)
+        //         .get()
+        //     ).data().stream_key
+        // }
+
+        // 15 Attempts to retrieve stream key after stream has been created
+        // for the first time, or insta return they key
+        for (let i = 0; i < 15; i++) {
+            streamKey = (await firestore()
+                .collection("partners")
+                .doc(user.uid)
+                .get()
+            ).data().stream_key
+
+            if (!streamKey && i === 0) {
+                const createLivestream = functions().httpsCallable("createLivestream")
+                await createLivestream()
+            } else if (!streamKey) {
+                await new Promise(r => setTimeout(r, 4500))
+            } else {
+                break
+            }
+        }
+
+        // Update cache
+        cache.user.stream_key = streamKey
+    } catch(err) {
+        throw new Error("Something prevented the action.")
+    }
+
+    cache.working -= 1
+}
+
+
+
+/**
+ * TEMPLATE
+ */
+export async function TEMPLATE(cache) {
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    try {} catch(err) {
+        throw new Error("Something prevented the action.")
+    }
+
     cache.working -= 1
 }

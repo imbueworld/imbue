@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, ScrollView, Text } from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, ScrollView, Text } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -10,139 +10,162 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
-import { signUp/*, createAccount, updateAccount*/ } from "../backend/SignUp"
-
-import firebase from "firebase/app"
-import "firebase/auth"
+import { initializeAccount } from "../backend/BackendFunctions"
+import { handleAuthError } from '../backend/HelperFunctions'
 
 
 
 export default function SignUp(props) {
-    // const [formStatus, setFormStatus] = useState("ok")
-    const [errorText, setErrorText] = useState("")
+  let cache = props.route.params.cache
 
-    const [firstNameField, setFirstNameField] = useState("")
-    const [lastNameField, setLastNameField] = useState("")
-    const [emailField, setEmailField] = useState("")
-    const [pwField, setPwField] = useState("")
-    const [verifyPwField, setVerifyPwField] = useState("")
+  const [redFields, setRedFields] = useState([])
+  const [errorMsg, setErrorMsg] = useState("")
+  const [successMsg, setSuccessMsg] = useState("")
+
+  const [first, setFirst] = useState("")
+  const [last, setLast] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordConfirm, setPasswordConfirm] = useState("")
 
 
-    function signUpAction() {
-        console.log("signUpAction() started.")
-        
-        if (
-            !( emailField.length !== 0
-            && pwField.length !== 0
-            && verifyPwField.length !== 0
-            && firstNameField.length !== 0
-            && lastNameField.length !== 0)
-        ) {
-            // setFormStatus("fields/empty")
-            setErrorText("All fields must be filled")
-        }
-        else if (pwField !== verifyPwField) {
-            // setFormStatus("password/does-not-match")
-            setErrorText("Passwords do not match")
-        }
-        else if (pwField.length < 8) {
-            // setFormStatus("password/too-weak")
-            setErrorText("Password must be at least 8 characters long")
-        }
-        else {
-            // setFormStatus("proceed")
-            proceed()
-        }
+  function invalidate() {
+    let redFields = []
+    if (!first) redFields.push("first")
+    if (!last) redFields.push("last")
+    if (!email) redFields.push("email")
+    if (!password) redFields.push("password")
+    if (!passwordConfirm) redFields.push("passwordConfirm")
+
+    if (redFields.length) {
+      setRedFields(redFields)
+      return "Required fields need to be filled."
     }
 
-    async function proceed() {
-        console.log("proceed() started.")
-        const form = {
-            email: emailField,
-            password: pwField,
-            first: firstNameField,
-            last: lastNameField,
-        }
-
-        const code = await signUp(form)
-        
-        if (code === "auth/invalid-email") {
-            setErrorText("Email must be valid.")
-            return
-        } else if (code == "auth/email-already-in-use") {
-            setErrorText("Email already signed up.")
-            return
-        }
-
-        const initUserAcc = firebase.functions().httpsCallable("initializeUserAccount")
-        await initUserAcc()
-        
-        setErrorText("")
-        props.navigation.navigate("Boot", {referrer: "SignUp", backScreen: "LogOut"})
+    if (password !== passwordConfirm) {
+      setRedFields(["password", "passwordConfirm"])
+      setPasswordConfirm("")
+      return "Passwords did not match"
     }
 
-    return (
-        <ScrollView contentContainerStyle={styles.scrollView}>
+    if (password.length < 8
+      || !password.match(/[A-Z]/g)
+      || !password.match(/[a-z]/g)) {
+      setRedFields(["password", "passwordConfirm"])
+      return "Password must consist of at least 8 characters, " +
+        "and at least 1 lowercase and uppercase letter."
+    }
+  }
 
-            <AppBackground />
-            <CompanyLogo />
+  return (
+    <ScrollView
+      contentContainerStyle={styles.scrollView}
+      keyboardShouldPersistTaps="handled"
+    >
 
-            <CustomCapsule style={styles.container}>
+      <AppBackground />
+      <CompanyLogo />
 
-                <AltSignUpService />
+      <CustomCapsule style={styles.container}>
 
-                <View stlye={styles.errorContainer}>
-                    <Text style={styles.errorText}>{errorText}</Text>
-                </View>
-                
-                <CustomTextInput
-                    placeholder="First Name"
-                    value={firstNameField}
-                    onChangeText={setFirstNameField}
-                />
-                <CustomTextInput
-                    placeholder="Last Name"
-                    value={lastNameField}
-                    onChangeText={setLastNameField}
-                />
-                <CustomTextInput
-                    placeholder="Email"
-                    value={emailField}
-                    onChangeText={setEmailField}
-                />
-                <CustomTextInput
-                    placeholder="Password"
-                    value={pwField}
-                    onChangeText={setPwField}
-                />
-                <CustomTextInput
-                    placeholder="Verify Password"
-                    value={verifyPwField}
-                    onChangeText={setVerifyPwField}
-                />
-                <CustomButton
-                    title="Sign Up"
-                    onPress={signUpAction}
-                />
+        <AltSignUpService />
 
-            </CustomCapsule>
+        {errorMsg
+          ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+          : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
-        </ScrollView>
-    )
+        <CustomTextInput
+          containerStyle={{
+            borderColor: redFields.includes("first") ? "red" : undefined,
+          }}
+          placeholder="First Name"
+          value={first}
+          onChangeText={setFirst}
+        />
+        <CustomTextInput
+          containerStyle={{
+            borderColor: redFields.includes("last") ? "red" : undefined,
+          }}
+          placeholder="Last Name"
+          value={last}
+          onChangeText={setLast}
+        />
+        <CustomTextInput
+          containerStyle={{
+            borderColor: redFields.includes("email") ? "red" : undefined,
+          }}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <CustomTextInput
+          secureTextEntry
+          containerStyle={{
+            borderColor: redFields.includes("password") ? "red" : undefined,
+          }}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+        />
+        <CustomTextInput
+          secureTextEntry
+          containerStyle={{
+            borderColor: redFields.includes("passwordConfirm") ? "red" : undefined,
+          }}
+          placeholder="Verify Password"
+          value={passwordConfirm}
+          onChangeText={setPasswordConfirm}
+        />
+        <CustomButton
+          style={{
+            marginBottom: 20,
+          }}
+          title="Sign Up"
+          onPress={async () => {
+            setRedFields([])
+            setErrorMsg("")
+            setSuccessMsg("")
+
+            let errorMsg
+            try {
+              let type = "user"
+
+              errorMsg = invalidate()
+              if (errorMsg) throw new Error(errorMsg)
+
+              await initializeAccount(cache, { first, last, email, password, type })
+              setSuccessMsg("You've been signed up!")
+
+              await new Promise(r => setTimeout(r, 3000)) // sleep
+              props.navigation.navigate("Boot", { referrer: "SignUp" })
+            } catch (err) {
+              // If not native (form) error, check for auth error
+              if (!errorMsg) {
+                let [errorMsg, redFields] = handleAuthError(err)
+                setRedFields(redFields)
+                setErrorMsg(errorMsg)
+                return
+              }
+              // Otherwise...
+              // setRedFields(redFields)
+              setErrorMsg(errorMsg)
+            }
+          }}
+        />
+
+      </CustomCapsule>
+
+    </ScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        minHeight: "100%",
-    },
-    container: {
-        width: "85%",
-        marginBottom: 50,
-        paddingBottom: 0,
-        alignSelf: "center",
-    },
-    errorContainer: {},
-    errorText: {
-        color: "red",
-    },
+  scrollView: {
+    minHeight: "100%",
+  },
+  container: {
+    width: "88%",
+    marginBottom: 30,
+    alignSelf: "center",
+  },
 })

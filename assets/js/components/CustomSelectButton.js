@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { colors } from '../contexts/Colors'
 
 
 
@@ -12,13 +13,18 @@ export default function CustomSelectButton(props) {
      * .textStyle -- style of text
      */
 
-    const [slctdOpt, setSlctdOpt] = useState(Object.keys(props.options)[0])
-    if (props.info) props.info[0] = slctdOpt
+    let option = Object.keys(props.options).includes(props.value)
+    ?   props.value
+    :   Object.keys(props.options)[0]
+
+    // const [slctdOpt, setSlctdOpt] = useState(option)
+
+    // if (props.info) props.info[0] = slctdOpt
     const gap = 100 / Object.keys(props.options).length
 
     let slctdIdx = null
     const options = Object.entries(props.options).map((arr, idx) => {
-        if (arr[0] === slctdOpt) slctdIdx = idx
+        if (arr[0] === /*slctdOpt*/props.value) slctdIdx = idx
         // arr[1] is the formatted label
         return (
             <TouchableOpacity
@@ -32,14 +38,14 @@ export default function CustomSelectButton(props) {
                 ]}
                 key={arr[0]}
                 onPress={() => {
-                    setSlctdOpt(arr[0])
-                    if (props.onPress) props.onPress
+                    // setSlctdOpt(arr[0])
+                    if (props.onChange) props.onChange(arr[0])
                 }}
             >
                 <Text
                     style={[
                         styles.optionText,
-                        arr[0] !== slctdOpt ? styles.unselectedColor : {},
+                        arr[0] !== /*slctdOpt*/props.value ? styles.unselectedColor : {},
                         props.textStyle,
                     ]}
                 >
@@ -67,7 +73,9 @@ export default function CustomSelectButton(props) {
                 props.containerStyle,
             ]}
         >
+            <View style={styles.border}>
             {options}
+            </View>
             {highlight}
         </View>
     )
@@ -79,26 +87,39 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "lightgray",
+        borderWidth: 1,
+        borderColor: colors.gray,
         borderRadius: 999,
     },
     option: {
-        alignItems: "center",
+        width: "100%",
+        height: "100%",
         position: "absolute",
+        alignItems: "center",
+        justifyContent: "center",
+        borderRadius: 20,
     },
     optionText: {
         color: "#1b1b19", // edited
         textAlign: "center",
         fontSize: 20,
+        fontFamily: 'sans-serif-light',
     },
     unselectedColor: {
         color: "#696461",
     },
     highlight: {
-        height: "100%",
+        height: 60,
         position: "absolute",
         backgroundColor: "white",
         borderRadius: 999,
+        borderWidth: 1,
+        borderColor: colors.gray,
+        top: -1,
         zIndex: -100,
+    },
+    border: {
+        width: "100%",
+        height: "100%",
     },
 })

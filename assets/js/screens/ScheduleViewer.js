@@ -8,17 +8,22 @@ import CustomCapsule from "../components/CustomCapsule"
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
 import MenuPanel from "../components/MenuPanel"
-import AddNewClass from "../components/AddNewClass"
+// import AddNewClass from "../components/AddNewClass"
 
 import {
     datestringFromTimestamp,
     clockFromTimestamp,
     shortDateFromTimestamp
 } from "../backend/HelperFunctions"
+import CalendarPopulateForm from '../components/CalendarPopulateForm'
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import { retrieveClassesByIds, retrieveClassesByGymIds } from '../backend/CacheFunctions'
 
 
 
 function addFormattingToData(docs) {
+    if (!(docs instanceof Array)) return
+
     return docs.map(doc => {
         let formatting = {
             dateString: datestringFromTimestamp(doc.begin_time),
@@ -33,6 +38,8 @@ function addFormattingToData(docs) {
 }
 
 function addFunctionality({ navigation }, docs) {
+    if (!(docs instanceof Array)) return
+
     docs.forEach(doc => {
         doc.onPress = () => {
             navigation.navigate("ClassDescription", { data: doc })
@@ -45,11 +52,12 @@ function addFunctionality({ navigation }, docs) {
 
 export default function ScheduleViewer(props) {
     let cache = props.route.params.cache
-    let calendarData = props.route.params.data
-    // let calendarData
-    // let calendarType = props.route.params.calendarType
+    let params = props.route.params
 
-    const [r, refresh] = useState(0)
+    const [cacheIsWorking, setCacheIsWorking] = useState(true)
+
+    const [calendarData, setCalendarData] = useState(null)
+    const [dataIsFormatted, setDataIsFormatted] = useState(false)
     
     const [slctdDate, setSlctdDate] = useState(datestringFromTimestamp( Date.now() ))
 
@@ -57,7 +65,29 @@ export default function ScheduleViewer(props) {
     const [CalendarItemList, CalendarItemListCreate] = useState(null)
 
     useEffect(() => {
-        let limit = 5 * (1000 / 200)
+        if (cacheIsWorking) return
+        const init = async () => {
+            // Determine which classes to display:
+            // based on the provided gymId or classIds
+            if (params.classIds) {
+                setCalendarData( await retrieveClassesByIds(cache, { classIds: params.classIds }) )
+            } else if (params.gymId) {
+                setCalendarData( await retrieveClassesByGymIds(cache, { gymIds: [params.gymId] }) )
+            } else console.warn("Calendar is missing data. It most likely was not provided.")
+        }
+        init()
+    }, [cacheIsWorking])
+
+    // return (
+    //     <CalendarPopulateForm
+    //         cache={cache}
+    //     />)
+    // let calendarData = props.route.params.data
+    // let calendarData
+    // let calendarType = props.route.params.calendarType
+
+    useEffect(() => {
+        let limit = 10 * (1000 / 200) // seconds * intervals per second
         let initCheck = setInterval(() => {
             limit--
             console.log("Checking...")
@@ -71,31 +101,23 @@ export default function ScheduleViewer(props) {
                 // upon receiving desired outcome
                 clearInterval(initCheck)
                 console.log("Interval cleared.")
-                refresh(r + 1)
+                setCacheIsWorking(false)
             }
         }, /*25*/200)
     }, [])
 
     useEffect(() => {
-        if (!r) return
+        if (!calendarData) return
 
-        // switch(calendarType) {
-        //     case "user":
-        //         calendarData = cache.classes
-        //         break
-        //     case "partner":
-        //         calendarData = cache.classes
-        //         break
-        //     case "gym":
-        //         calendarData = cache.gymClasses[gymId]
-        // }
-
-        calendarData = addFormattingToData(calendarData)
-        calendarData = addFunctionality(props, calendarData)
-    }, [r])
+        // calendarData = addFormattingToData(calendarData)
+        // calendarData = addFunctionality(props, calendarData)
+        setCalendarData(addFormattingToData(calendarData))
+        setCalendarData(addFunctionality(props, calendarData))
+        setDataIsFormatted(true)
+    }, [calendarData])
 
     useEffect(() => {
-        if (!r) return
+        if (!dataIsFormatted) return
 
         CalendarCreate(
             <CalendarView
@@ -112,24 +134,53 @@ export default function ScheduleViewer(props) {
             />
         )
 
-    }, [r, slctdDate])
+    }, [dataIsFormatted, slctdDate])
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
 
             <AppBackground />
 
-            {cache.user.account_type === "user" ? <View/> :
+            {/* {cache.user.account_type === "user" ? <View/> :
             <MenuPanel>
                 <AddNewClass
-                    navigation={props.navigation}
+                    cache={cache}
                 />
-            </MenuPanel>}
+            </MenuPanel>} */}
+            <View style={{
+                width: 60,
+                height: 60,
+                position: "absolute",
+                zIndex: 110,
+            }}>
+                <TouchableOpacity
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        top: 10,
+                        left: 30,
+                        zIndex: 110,
+                    }}
+                    onPress={() => props.navigation.navigate("SchedulePopulate")}
+                >
+                    <Text style={{
+                        width: "100%",
+                        height: "100%",
+                        textAlign: "center",
+                        textAlignVertical: "center",
+                        backgroundColor: "white",
+                        borderRadius: 999,
+                        fontSize: 40,
+                        fontFamily: 'sans-serif-light',
+                    }}>{"+"}</Text>
+                </TouchableOpacity>
+            </View>
 
             <Text style={{
                 marginVertical: 20,
                 textAlign: "center",
                 fontSize: 30,
+                fontFamily: 'sans-serif-light',
             }}>Schedule</Text>
             
             <View style={styles.capsule}>

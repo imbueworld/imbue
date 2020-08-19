@@ -5,6 +5,15 @@ import { colors } from '../contexts/Colors'
 
 
 export default function CustomTextInput(props) {
+    let multiline = props.value > 15 ? false : true
+    if (props.multiline) multiline = true // overrides
+
+    let secureTextEntry = false
+    if (props.secureTextEntry) {
+        secureTextEntry = true
+        multiline = false // overrides
+    }
+
     return (
         <View style={[
             styles.container,
@@ -27,8 +36,9 @@ export default function CustomTextInput(props) {
                     styles.input,
                     props.style
                 ]}
-                multiline={props.value > 15 ? false : true}
-                numberOfLines={1}
+                secureTextEntry={secureTextEntry}
+                multiline={multiline}
+                numberOfLines={props.numberOfLines || 1}
                 keyboardType={props.keyboardType || "default"}
                 value={props.value !== undefined ? props.value : undefined}
                 placeholder={props.placeholder}
@@ -38,9 +48,10 @@ export default function CustomTextInput(props) {
                     if (props.info) props.info[0] = text
                     if (props.onChangeText) props.onChangeText(text)
                 }}
+                // {...props}
             />
 
-            <View style={styles.inputBg} />
+            {/* <View style={styles.inputBg} /> */}
 
         </View>
     )
@@ -48,15 +59,23 @@ export default function CustomTextInput(props) {
 
 const styles = StyleSheet.create({
     container: {
-        height: 70,
+        height: 72,
         marginVertical: 10,
         justifyContent: "center",
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: colors.gray,
+        overflow: "hidden",
     },
     input: {
-        paddingVertical: 20,
+        height: "100%",
+        // paddingVertical: 20,
+        paddingTop: 0,
+        paddingBottom: 1,
         textAlign: "center",
         fontSize: 20,
         zIndex: 100,
+        fontFamily: 'sans-serif-light',
     },
     // placeholderContainer: {
     //     width: "100%",
@@ -71,13 +90,13 @@ const styles = StyleSheet.create({
     //     textAlignVertical: "center",
     //     fontSize: 20,
     // },
-    inputBg: {
-        width: "100%",
-        height: "100%",
-        position: "absolute",
-        borderRadius: 30,
-        // backgroundColor: "lightgray",
-        borderWidth: 1,
-        borderColor: colors.gray,
-    },
+    // inputBg: {
+    //     width: "100%",
+    //     height: "100%",
+    //     position: "absolute",
+    //     borderRadius: 30,
+    //     // backgroundColor: "lightgray",
+    //     borderWidth: 1,
+    //     borderColor: colors.gray,
+    // },
 })

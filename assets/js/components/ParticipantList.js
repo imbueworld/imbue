@@ -2,6 +2,8 @@ import React from 'react'
 import { StyleSheet, ScrollView, View, Text, Image } from 'react-native'
 
 import CustomCapsule from "./CustomCapsule"
+import { publicStorage } from "../backend/HelperFunctions"
+import { colors } from '../contexts/Colors'
 
 
 
@@ -10,27 +12,31 @@ export default function ParticipantList(props) {
         <View style={styles.ptcContainer}>
             <Image
                 style={styles.ptcIcon}
-                source={props.iconUri}
+                source={{ uri: props.iconUri }}
             />
             <Text style={styles.ptcName}>{props.name}</Text>
         </View>
     
-
-    const participants = props.data.map(({name, iconUri, profileId}) => 
+    const participants = props.data.map(({ name, icon_uri, uid }) => 
         <Participant
             name={name}
-            iconUri={iconUri}
-            key={profileId}
+            iconUri={publicStorage(icon_uri)}
+            key={uid}
         />
     )
 
     return (
-        <CustomCapsule style={[
-            styles.container,
-            props.containerStyle,
-        ]}>
+        <CustomCapsule
+            containerStyle={[
+                styles.container,
+                props.containerStyle,
+            ]}
+            innerContainerStyle={{
+                height: "100%",
+            }}
+        >
             <ScrollView>
-                <View /* First child, last child padding */ style={{
+                <View style={{
                     paddingVertical: 10,
                 }}>
                     {participants}
@@ -42,14 +48,14 @@ export default function ParticipantList(props) {
 
 const styles = StyleSheet.create({
     container: {
-        paddingVertical: 0,
-        overflow: "hidden",
     },
     ptcContainer: {
         marginVertical: 10,
         flexDirection: "row",
         alignItems: "center",
-        backgroundColor: "lightgray",
+        // backgroundColor: "lightgray",
+        borderWidth: 1,
+        borderColor: colors.gray,
         borderRadius: 999,
     },
     ptcIcon: {

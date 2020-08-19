@@ -4,16 +4,16 @@ import { Calendar } from "react-native-calendars"
 
 
 
+/**
+ * props
+ * .data -- data
+ * .slctdDate -- selected DateString (parent's state obj)
+ * .setSlctdDate -- (parent's setState func), must be provided
+ */
 export default function CalendarView(props) {
-    /**
-     * props
-     * .data -- data
-     * .slctdDate -- selected DateString (parent's state obj)
-     * .setSlctdDate -- (parent's setState func), must be provided
-     */
+    if (!props.data) return <View />
 
     useEffect(() => {
-
         // Responsible for meshing together the data provided (props.data)
         // into date-sorted object used by <Calendar />
         let markedDates = {}

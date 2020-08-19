@@ -14,6 +14,9 @@ import CreditCardSelection from '../components/CreditCardSelection'
 
 import { retrievePaymentMethods, retrieveMemberships, retrieveUserData } from '../backend/CacheFunctions'
 import { purchaseMemberships } from '../backend/BackendFunctions'
+import { colors } from '../contexts/Colors'
+import PopupPurchase from '../components/popups/PopupPurchase'
+import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 
 
 
@@ -22,7 +25,7 @@ export default function PurchaseUnlimited(props) {
     console.log(cache.user.active_memberships)
 
     const [CCData, setCCData] = useState([])
-    const [membershipData, setMembershipData] = useState(null)
+    const [imbueMembership, setImbueMembership] = useState(null)
 
     const [hasMembership, setHasMembership] = useState(null)
     const [selectedCard, selectCard] = useState(null)
@@ -31,12 +34,13 @@ export default function PurchaseUnlimited(props) {
     useEffect(() => {
         const init = async() => {
             let userData = await retrieveUserData(cache)
-            let membershipData = await retrieveMemberships(cache, {
+            let memberships = await retrieveMemberships(cache, {
                 membershipIds: ["imbue"]
             })
+            let imbueMembership = memberships[0]
 
-            setMembershipData(membershipData)
-            setHasMembership(userData.active_memberships.includes(membershipData.id))
+            setImbueMembership(imbueMembership)
+            setHasMembership(userData.active_memberships.includes(imbueMembership.id))
         }
         init()
     }, [])
@@ -50,7 +54,7 @@ export default function PurchaseUnlimited(props) {
 
     return (
         <>
-        { popup !== "purchase" ? null :
+        {/* { popup !== "purchase" ? null :
         <CustomPopup
             onX={() => setPopup(null)}
         >
@@ -64,7 +68,6 @@ export default function PurchaseUnlimited(props) {
                     }}
                     title="Confirm"
                     onPress={async() => {
-                        console.log(`${membershipData.id} == ${selectedCard} == ${membershipData.price}`)
                         await purchaseMemberships(cache, {
                             membershipIds: [membershipData.id],
                             creditCardId: selectedCard,
@@ -83,7 +86,28 @@ export default function PurchaseUnlimited(props) {
                     onPress={() => setPopup(null)}
                 />
             </View>
-        </CustomPopup>}
+        </CustomPopup>} */}
+        
+        {popup === "buy" && imbueMembership ?
+        <PopupPurchase
+            cache={cache}
+            popupText={``}
+            selectedCard={selectedCard}
+            selectCard={selectCard}
+            onProceed={async () => {
+                if (selectedCard) {
+                    console.log("tap", imbueMembership.id)
+                    await purchaseMemberships(cache, {
+                        membershipIds: [imbueMembership.id],
+                        creditCardId: selectedCard,
+                        price: imbueMembership.price,
+                        description: `Imbue Universal Gym Membership`,
+                    })
+                    setPopup(false)
+                }
+            }}
+            onX={() => setPopup(false)}
+        /> : null}
 
         <ScrollView contentContainerStyle={styles.scrollView}>
             <AppBackground />
@@ -97,40 +121,41 @@ export default function PurchaseUnlimited(props) {
                     }}
                 />
 
-                <CustomText containerStyle={{marginBottom: 10}}>
-                    {`$199\n`+
-                    `Unlimited access to all facilities in our network.\n`+
-                    `Unlimited access to online & in studio.`}
-                </CustomText>
+                <View style={styles.textContainer}>
+                    <Text style={styles.text}>
+                        {`$199\n`+
+                        `Unlimited access to all facilities in our network. ` +
+                        `Unlimited access to both online content & in studio classes.`}
+                    </Text>
+                </View>
 
-                <CustomBar />
+                {/* <CustomBar /> */}
 
 
                 { !hasMembership
                 ?   <>
-                    <CustomCapsule style={{
-                        paddingTop: 5,
-                        paddingBottom: 15,
-                    }}>
-                        <CreditCardSelection
-                            data={CCData}
-                            selectedCard={selectedCard}
-                            selectCard={selectCard}
-                        />
-                    </CustomCapsule>
+                    {/* <CreditCardSelection
+                        data={CCData}
+                        selectedCard={selectedCard}
+                        selectCard={selectCard}
+                    /> */}
 
                     <CustomButton
                         style={{
-                            opacity: selectedCard ? 1 : 0.5,
+                            marginTop: 20,
+                            marginBottom: 20,
                         }}
                         title="Purchase"
-                        onPress={() => {
-                            if (selectedCard) setPopup("purchase")
-                        }}
+                        onPress={() => setPopup("buy")}
                     />
                     </>
 
-                :   <Text style={{ color: "green" }}>[V] You have the Imbue Universal Gym Membership!</Text>}
+                :   <MembershipApprovalBadgeImbue
+                        containerStyle={{
+                            marginTop: 10,
+                            marginBottom: 10,
+                        }}
+                    />}
                 
                 {/* <CreditCardInput /> */}
 
@@ -155,15 +180,25 @@ const styles = StyleSheet.create({
         minHeight: "100%",
     },
     container: {
-        width: "85%",
-        marginVertical: 50,
-        paddingTop: 0,
-        paddingBottom: 0,
+        width: "88%",
+        marginVertical: 30,
         alignSelf: "center",
     },
     buttonSmall: {
         paddingVertical: 10,
         paddingHorizontal: 10,
         borderRadius: 999,
-    }
+    },
+    textContainer: {
+        paddingVertical: 10,
+        paddingHorizontal: 15,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: colors.gray,
+        overflow: "hidden",
+    },
+    text: {
+        textAlign: "justify",
+        fontSize: 16,
+    },
 })

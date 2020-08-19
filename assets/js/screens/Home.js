@@ -7,6 +7,7 @@ import AppBackground from "../components/AppBackground"
 
 import CompanyLogo from "../components/CompanyLogo"
 import CustomButton from "../components/CustomButton"
+import CustomCapsule from '../components/CustomCapsule'
 
 
 
@@ -27,15 +28,31 @@ export default function Home(props) {
                 containerStyle={{
                     top: 0,
                     position: "absolute",
+                    alignSelf: "center",
                 }}
             /> 
 
-            <View style={styles.container}>
+            {/* <View style={styles.container}> */}
+            <CustomCapsule
+                containerStyle={{
+                    width: "88%",
+                    alignSelf: "center",
+                    marginBottom: 50,
+                }}
+            >
                 <CustomButton
+                    style={{
+                        marginTop: 20,
+                        marginBottom: 0,
+                    }}
                     onPress={signUp}
                     title="Sign Up"
                 />
                 <CustomButton
+                    style={{
+                        marginTop: 20,
+                        marginBottom: 0,
+                    }}
                     title="Login"
                     onPress={() => props.navigation.navigate("Login")}
                 />
@@ -43,13 +60,15 @@ export default function Home(props) {
                     onPress={partnerSignUp}
                 >
                     <Text style={{
-                        marginTop: 10,
+                        marginTop: 20,
+                        marginBottom: 20,
                         color: colors.gray,
                         fontSize: 16,
                         textAlign: "center",
                     }}>Partner Sign Up</Text>
                 </TouchableOpacity>
-            </View>
+            </CustomCapsule>
+            {/* </View> */}
 
         </ScrollView>
     )
@@ -59,9 +78,10 @@ const styles = StyleSheet.create({
     scrollView: {
         minHeight: "100%",
         flexDirection: "column-reverse",
-        alignItems: "center",
+        // alignItems: "center",
     },
     container: {
-        width: "85%",
+        width: "80%",
+        marginBottom: 50,
     },
 })

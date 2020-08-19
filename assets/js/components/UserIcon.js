@@ -8,16 +8,17 @@ export default function UserIcon(props) {
     return (
         <View style={{
             borderRadius: 999,
-            ...simpleShadow
+            ...simpleShadow,
+            ...props.containerStyle,
         }}>
-        <Image
-            style={[
-                styles.icon,
-                props.style,
-            ]}
-            // source={require("./img/user-icon-example.png")}
-            source={{uri: props.data.uri}}
-        />
+            <Image
+                style={[
+                    styles.icon,
+                    props.style,
+                ]}
+                // source={require("./img/user-icon-example.png")}
+                source={{ uri: props.data.uri }}
+            />
         </View>
     )
 }

@@ -8,7 +8,9 @@ import CustomPopup from "../components/CustomPopup"
 import CustomBar from "../components/CustomBar"
 import ActiveMembershipBadge from "../components/ActiveMembershipsBadge"
 import { cancelMemberships } from '../backend/BackendFunctions'
-import { retrievePastTransactions, retrieveMemberships, retrieveUserData } from '../backend/CacheFunctions'
+import { retrievePastTransactions, retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
+import TransactionView from '../components/TransactionView'
+import CloseButton from '../components/CloseButton'
 
 
 
@@ -16,9 +18,10 @@ export default function UserMemberships(props) {
     console.log("[USER MEMBERSHIPS]")
     let cache = props.route.params.cache
 
-    const [r, refresh] = useState(0)
     const [errorMsg, setErrorMsg] = useState("")
     const [popup, setPopup] = useState(null)
+
+    const [user, setUser] = useState(null)
     const [memberships, setMemberships] = useState(null)
 
     const [Memberships, MembershipsCreate] = useState(null)
@@ -28,21 +31,17 @@ export default function UserMemberships(props) {
         console.log("\n\n\n")
         const init = async() => {
             let user = await retrieveUserData(cache)
-            setMemberships(
-                await retrieveMemberships(cache, {
-                    membershipIds: user.active_memberships
-                })
-            )
-            console.log("done!")
-            refresh(r + 1)
+            setUser(user)
+            let memberships = await retrieveGymsByIds(cache, {
+                gymIds: user.active_memberships
+            })
+            setMemberships(memberships)
         }
         init()
     }, [])
 
-    console.log("memberships", memberships)
-
     useEffect(() => {
-        if (!r) return
+        if (!memberships) return
 
         MembershipsCreate(memberships.map(membership =>
             <ActiveMembershipBadge
@@ -59,22 +58,34 @@ export default function UserMemberships(props) {
                 }}
             />
         ))
-    }, [r])
+    }, [memberships])
+
+    if (!user) return <View />
 
     return (
         <>
         { popup !== "transactions" ? null :
         <CustomPopup
+            innerContainerStyle={{
+                paddingHorizontal: 0,
+            }}
             onX={() => setPopup(false)}
         >
-            <ScrollView style={{
-                height: "90%",
-            }}>
-                {PastTransactions}
-            </ScrollView>
+            <CloseButton
+                containerStyle={styles.X}
+                onPress={() => setPopup(false)}
+            />
+            <View style={{ paddingHorizontal: 10 }}>
+                <ScrollView>
+                    {PastTransactions}
+                    <View style={{ height: 10 }}/>
+                </ScrollView>
+            </View>
         </CustomPopup>}
 
-        <ProfileLayout>
+        <ProfileLayout
+            data={{ name: user.name, iconUri: user.icon_uri }}
+        >
 
             <Text style={{ color: "red" }}>{errorMsg}</Text>
             {Memberships}
@@ -87,17 +98,13 @@ export default function UserMemberships(props) {
                 title="View Past Transactions"
                 onPress={async() => {
                     setPopup("transactions")
+                    let pastTransactions = await retrievePastTransactions(cache)
                     PastTransactionsCreate(
-                        ( await retrievePastTransactions(cache) ).map((transaction, idx) =>
-                            <View
-                                style={{
-                                    flexDirection: "row",
-                                }}
+                        pastTransactions.map((transaction, idx) =>
+                            <TransactionView
+                                data={transaction}
                                 key={idx}
-                            >
-                                <Text style={{ flex: 2 }}>{transaction.description}</Text>
-                                <Text style={{ flex: 1 }}>{transaction.amount}</Text>
-                            </View>
+                            />
                         )
                     )
                 }}
@@ -118,5 +125,13 @@ const styles = StyleSheet.create({
     },
     buttonText: {
         fontSize: 14,
+    },
+    X: {
+        width: 35,
+        height: 35,
+        position: "absolute",
+        right: 0,
+        marginTop: 10,
+        marginRight: 10,
     },
 })

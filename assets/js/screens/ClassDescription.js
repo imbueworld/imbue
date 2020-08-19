@@ -1,14 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Text } from 'react-native'
-
-import AppBackground from "../components/AppBackground"
+import { StyleSheet, View, Text } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 import CustomPopup from "../components/CustomPopup"
 import PopupPurchase from '../components/popups/PopupPurchase'
+import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
+import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
+import ClassApprovalBadge from '../components/ClassApprovalBadge'
 
 import { retrieveUserData, retrieveGyms, retrieveMemberships } from '../backend/CacheFunctions'
 import { purchaseClasses } from "../backend/BackendFunctions"
+import GymLayout from '../layouts/GymLayout'
+import { colors } from "../contexts/Colors"
 
 
 
@@ -31,7 +34,7 @@ export default function ClassDescription(props) {
 
   useEffect(() => {
     const init = async () => {
-      setGym(( await retrieveGyms(cache, { gymIds: [classData.gym_id] }) )[0])
+      setGym((await retrieveGyms(cache, { gymIds: [classData.gym_id] }))[0])
     }
     init()
   }, [])
@@ -41,18 +44,20 @@ export default function ClassDescription(props) {
 
     const init = async () => {
       let user = await retrieveUserData(cache)
-      let imbueMembership = await retrieveMemberships(cache, {
+      let memberships = await retrieveMemberships(cache, {
         membershipIds: ["imbue"]
       })
+
+      let imbueMembership = memberships[0]
 
       let membership =
         user.active_memberships.includes(imbueMembership.id)
           ? "imbue"
           : user.active_memberships.includes(gym.id)
-              ? "gym"
-              : user.active_classes.includes(classData.id)
-                  ? "class"
-                  : false
+            ? "gym"
+            : user.active_classes.includes(classData.id)
+              ? "class"
+              : false
 
       setHasMembership(membership)
     }
@@ -61,20 +66,28 @@ export default function ClassDescription(props) {
 
   useEffect(() => {
     TitleCreate(
-      <View>
-        <Text>{classData.name}</Text>
-        <Text>{classData.instructor}</Text>
+      <View style={styles.nameContainer}>
+        <Text style={styles.nameText}>
+          {classData.name}
+        </Text>
+        <Text style={styles.nameText}>
+          {classData.instructor}
+        </Text>
       </View>
     )
     TimeCreate(
-      <View>
-        <Text>{classData.formattedDate}</Text>
-        <Text>{classData.formattedTime}</Text>
+      <View style={styles.timeContainer}>
+        <Text style={styles.timeText}>
+          {classData.formattedDate}
+          {classData.formattedTime}
+        </Text>
       </View>
     )
     DescCreate(
-      <View>
-        <Text>{classData.description}</Text>
+      <View style={styles.descContainer}>
+        <Text style={styles.descText}>
+          {classData.description}
+        </Text>
       </View>
     )
     PopupCCNotFoundCreate(
@@ -144,41 +157,87 @@ export default function ClassDescription(props) {
             !creditCards.length ? PopupCCNotFound : PopupConfirmPurchase
         } */}
 
-      { popup ? PopupBuy : null}
+      {popup ? PopupBuy : null}
 
-      <ScrollView contentContainerStyle={styles.scrollView}>
+      {!gym ? null :
+      <GymLayout
+        containerStyle={styles.container}
+        innerContainerStyle={styles.innerContainerStyle}
+        data={gym}
+      >
+        {Title}
+        {Time}
+        {Desc}
 
-        <AppBackground />
-
-        <View style={styles.container}>
-          {Title}
-          {Time}
-          {Desc}
-        </View>
         <View>
-          { hasMemebership ? null :
-          <CustomButton
-            title="Book"
-            onPress={() => {
-              setPopup("buy")
+          {hasMemebership ? null :
+            <CustomButton
+              title="Book"
+              onPress={() => {
+                setPopup("buy")
+              }}
+            />}
+
+          {hasMemebership !== "imbue" ? null :
+          <MembershipApprovalBadgeImbue
+            containerStyle={{
+              marginTop: 10,
+              marginBottom: 10,
+            }}
+            data={gym}
+          />}
+          {hasMemebership !== "gym" ? null :
+          <MembershipApprovalBadge
+            containerStyle={{
+              marginTop: 10,
+              marginBottom: 10,
+            }}
+            data={gym}
+          />}
+          {hasMemebership !== "class" ? null :
+          <ClassApprovalBadge
+            containerStyle={{
+              marginTop: 10,
+              marginBottom: 10,
             }}
           />}
-          
-          { hasMemebership !== "imbue" ? null :
-          <Text style={{ color: "purple" }}>[V] You have Imbue Universal Gym Membership!</Text>}
-          { hasMemebership !== "gym" ? null :
-          <Text style={{ color: "green" }}>[V] You have a membership to this gym!</Text>}
-          { hasMemebership !== "class" ? null :
-          <Text style={{ color: "green" }}>[V] You are signed up for this class!</Text>}
         </View>
-      </ScrollView>
+      </GymLayout>}
     </>
   )
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    minHeight: "100%",
-  },
   container: {},
+  innerContainerStyle: {},
+  nameContainer: {},
+  nameText: {
+      marginTop: 20,
+      textAlign: "center",
+      fontSize: 24,
+  },
+  timeContainer: {
+    marginTop: 20,
+    marginRight: 5,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 999,
+    borderWidth: 1,
+    borderColor: colors.gray,
+  },
+  timeText: {
+    fontSize: 14,
+  },
+  descContainer: {
+    marginTop: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 30,
+    borderWidth: 1,
+    borderColor: colors.gray,
+  },
+  descText: {
+    fontSize: 16,
+    textAlign: "justify",
+  },
 })

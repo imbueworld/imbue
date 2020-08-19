@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 import CustomIcon from "./CustomIcon"
+import { colors } from '../contexts/Colors'
 
 
 
@@ -53,11 +54,11 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "center",
         borderStyle: "solid",
-        borderColor: "lightgray",
-        borderBottomWidth: 3, // "3px",
-        marginBottom: 30, // "2em",
+        borderColor: colors.gray,
+        borderBottomWidth: 1,
+        marginBottom: 30,
     },
     iconContainer: {
-        padding: 30, // "2em",
+        padding: 30,
     },
 })

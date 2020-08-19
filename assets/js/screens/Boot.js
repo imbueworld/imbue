@@ -3,14 +3,15 @@ import { StyleSheet, ScrollView, View, Text, Button } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
-import firebase from "firebase/app"
-import "firebase/auth"
-import "firebase/functions"
+// import firebase from "firebase/app"
+// import "firebase/auth"
+import auth from "@react-native-firebase/auth"
 import { retrieveUserData } from '../backend/CacheFunctions'
 
 
 
 export default function Boot(props) {
+    // auth().signOut()
     // props.route.params.cache.user = null
     // props.route.params.cache.creditCards = null
     // props.route.params.cache.classes = null
@@ -24,16 +25,17 @@ export default function Boot(props) {
     const [booting, setBooting] = useState(true)
 
     useEffect(() => {
-        setBooting(true)
-
         async function init() {
             await retrieveUserData(cache)
-            // setUserData(res.data)
             setBooting(false)
         }
+        setBooting(true)
         
         let bootWithoutUser = setTimeout(() => {
             console.log("After 6 seconds, no user was found to be logged in.")
+            Object.keys(cache).forEach(key => {
+                cache[ key ] = null
+            })
             setBooting(false)
         }, 6100)
 
@@ -42,9 +44,9 @@ export default function Boot(props) {
         for (let i = 0; i <= 6000; i += 1000) {
             queue[i] = setTimeout(() => {
                 console.log(`Attempt ${i / 1000}..`)
-                if (firebase.auth().currentUser) {
+                if (auth().currentUser) {
                     clearTimeout(bootWithoutUser)
-                    queue.forEach(timeout => {clearTimeout(timeout)})
+                    queue.forEach(timeout => clearTimeout(timeout))
                     init()
                 }
             }, i)
@@ -53,7 +55,6 @@ export default function Boot(props) {
 
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
-            <Button title="test" onPress={()=>props.navigation.navigate("TestScreen")}/>
             <AppBackground />
             <View style={styles.container}>
 
@@ -80,7 +81,11 @@ export default function Boot(props) {
                                     })
                                     break
                                 case "partner":
-                                    props.navigation.navigate("PartnerDashboard", {referrer: "Boot"})
+                                    // props.navigation.navigate("PartnerDashboard", {referrer: "Boot"})
+                                    props.navigation.reset({
+                                        index: 0,
+                                        routes: [{ name: "PartnerDashboard" }]
+                                    })
                                     break
                                 default:
                                     props.navigation.navigate("Home", {referrer: "Boot"})
@@ -93,16 +98,8 @@ export default function Boot(props) {
                 <View style={{ height: 50 }}/>
 
                 <Button
-                    title="GymDescription"
-                    onPress={() => {props.navigation.navigate("GymDescription", {referrer: "Boot"})}}
-                />
-                <Button
                     title="Livestream"
-                    onPress={() => {props.navigation.navigate("Livestream", {referrer: "Boot"})}}
-                />
-                <Button
-                    title="PartnerDashboard"
-                    onPress={() => {props.navigation.navigate("PartnerDashboard", {referrer: "Boot"})}}
+                    onPress={() => {props.navigation.navigate("Livestream", { gymId: "D4iONGuVmdWwx4zGk4BI" })}}
                 />
 
             </View>

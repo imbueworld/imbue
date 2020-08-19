@@ -5,10 +5,6 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-nati
 
 export default function MenuPanel(props) {
     const [showPanel, setShowPanel] = useState(false)
-    function togglePanel() {
-        if (showPanel) setShowPanel(false)
-        else setShowPanel(true)
-    }
 
     return (
         <>
@@ -17,12 +13,11 @@ export default function MenuPanel(props) {
                     position: "absolute",
                     zIndex: 110,
                 }}
-                onPress={togglePanel}
+                onPress={() => setShowPanel(!showPanel)}
             >
                 <Text style={{
                     fontSize: 40,
                     margin: 20,
-                    zIndex: 120,
                 }}>{showPanel ? "<" : "+"}</Text>
             </TouchableOpacity>
 
@@ -59,6 +54,6 @@ const styles = StyleSheet.create({
         width: "100%",
         height: "100%",
         position: "absolute",
-        zIndex: 100,
+        // zIndex: 100,
     },
 })

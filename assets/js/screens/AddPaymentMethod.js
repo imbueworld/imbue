@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
@@ -6,14 +6,16 @@ import ProfileLayout from "../layouts/ProfileLayout"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 
-import firebase from "firebase/app"
-import "firebase/firestore"
-import "firebase/functions"
+import { retrieveUserData } from '../backend/CacheFunctions'
+import { addPaymentMethod } from '../backend/BackendFunctions'
 
 
 
+// 4000000760000002 // Visa
+// 5555555555554444 // Mastercard
+// 6011111111111117 // Discover
 const exampleUser = {
-    cardNumber: "4242424242424242",
+    cardNumber: "4000000760000002",
     expMonth: "12",
     expYear: "69",
     cvc: "699",
@@ -25,6 +27,7 @@ const exampleUser = {
 
 export default function AddPaymentMethod(props) {
     let cache = props.route.params.cache
+    let params = props.route.params
 
     const [holderNameText, setHolderNameText] = useState("")
     const [creditCardText, setCreditCardText] = useState("")
@@ -34,21 +37,17 @@ export default function AddPaymentMethod(props) {
 
     const [errorMsg, setErrorMsg] = useState("")
 
-    async function sendForm(form) {
-        try {
-            /**
-             * Takes { cardNumber, expMonth, expYear, cvc, name, address_zip }
-             */
-            let paymentMethod = await firebase.functions().httpsCallable("addPaymentMethod")(form)
-            if (!cache.creditCards) cache.creditCards = []
-            cache.creditCards.push(paymentMethod)
-            props.navigation.goBack()
-        } catch(err) {
-            setErrorMsg(err.message)
-        }
-    }
+    const [user, setUser] = useState(null)
 
-    function validateAndProceed() {
+    useEffect(() => {
+        const init = async() => {
+            let user = await retrieveUserData(cache)
+            setUser(user)
+        }
+        init()
+    }, [])
+
+    async function validateAndProceed() {
         let [expMonth, expYear] = expireDateText.split("/")
 
         let form = {
@@ -59,12 +58,29 @@ export default function AddPaymentMethod(props) {
             name: holderNameText,
             address_zip: zipCodeText,
         }
-        sendForm(form)
+
+        try {
+            form = exampleUser
+            await addPaymentMethod(cache, form)
+            if (!params.referrer) {
+                props.navigation.goBack()
+                return
+            }
+            props.navigation.navigate(props.route.params.referrer, { referrer: "AddPaymentSettings" })
+        } catch(err) {
+            setErrorMsg(err.message)
+        }
     }
 
+    if (!user) return <View />
+
     return (
-        <ProfileLayout capsuleStyle={styles.container}>
+        <ProfileLayout
+            innerContainerStyle={styles.innerContainer}
+            data={{ name: user.name, iconUri: user.icon_uri }}
+        >
             <Text style={{ color: "red" }}>{errorMsg}</Text>
+
             <CustomTextInput
                 placeholder="Name of Holder"
                 value={holderNameText}
@@ -99,7 +115,7 @@ export default function AddPaymentMethod(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingBottom: 0,
+    innerContainer: {
+        paddingBottom: 10,
     },
 })

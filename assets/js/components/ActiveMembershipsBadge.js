@@ -15,12 +15,12 @@ export default function ActiveMembershipBadge(props) {
     return (
         <View style={styles.container}>
             <Text style={styles.text}>
-                {membership.name}
+                {membership.description}
             </Text>
             <View>
                 {/* <Image /> */}
             </View>
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={styles.X}
                 onPress={props.onAction}
             >
@@ -31,7 +31,7 @@ export default function ActiveMembershipBadge(props) {
                 ]}>
                     X
                 </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
         </View>
     )
 }
@@ -61,5 +61,6 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 20,
         fontSize: 20,
+        fontFamily: 'sans-serif-light',
     },
 })

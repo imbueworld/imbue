@@ -1,5 +1,8 @@
-import firebase from "firebase/app"
-import "firebase/functions"
+// import firebase from "firebase/app"
+// import "firebase/functions"
+import auth from "@react-native-firebase/auth"
+import firestore from "@react-native-firebase/firestore"
+import { storage } from "../contexts/Links"
 
 
 
@@ -8,35 +11,30 @@ import "firebase/functions"
  * calls cloud for it and stores it in cache
  */
 export async function retrievePaymentMethods(cache) {
+    const user = await retrieveUserData(cache)
+    if (!user.payment_methods) user.payment_methods = []
+    if (user.payment_methods.length) return user.payment_methods
+    
     if (!cache.working) cache.working = 0
     cache.working += 1
-    
-    if (!cache.creditCards) {
-        console.log("No credit cards were found in cache, retrieving from cloud.")
-        const getCustomerData = firebase.functions().httpsCallable("getCustomerData")
-        cache.creditCards = ( await getCustomerData() ).data
-    } else {
-        console.log("Found credit cards in cache, using those.")
+
+    let paymentMethods
+    try {
+        paymentMethods = (await firestore()
+            .collection("stripe_customers")
+            .doc(user.uid)
+            .collection("payment_methods")
+            .get()
+        ).docs.map(doc => doc.data())
+    } catch(err) {
+        paymentMethods = []
     }
 
-    cache.working -= 1
-    return cache.creditCards
-}
+    user.payment_methods = paymentMethods
 
-// /**
-//  * Retrieves memberships from cache,
-//  * or calls cloud for it and stores it in cache
-//  */
-// export async function retrieveMemberships(cache) {
-//     if (!cache.activeMemberships) {
-//         console.log("activeMemberships was NOT found in cache, calling cloud function.")
-//         cache.activeMemberships = ( await firebase.functions().httpsCallable("")() ).data
-//         return cache.activeMemberships
-//     } else {
-//         console.log("activeMemberships was found in cache, returning that.")
-//         return cache.activeMemberships
-//     }
-// }
+    cache.working -= 1
+    return paymentMethods
+}
 
 /**
  * Retrieves user data,
@@ -44,17 +42,131 @@ export async function retrievePaymentMethods(cache) {
  * then from cloud, and saves into cache.
  */
 export async function retrieveUserData(cache) {
-    if (!cache.user) {
-        console.log("user was NOT found in cache, calling cloud function.")
-        cache.user = ( await firebase.functions().httpsCallable("getUserData")() ).data
-    } else {
-        console.log("user was found in cache, returning that.")
+    if (cache.user) return cache.user
+
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    const user = auth().currentUser
+    let idx = user.displayName.search("_")
+    let account_type = user.displayName.slice(0, idx)
+    let collection
+    switch(account_type) {
+        case "user":
+            collection = "users"
+            break
+        case "partner":
+            collection = "partners"
+            break
+        default:
+            cache.working -= 1
+            throw new Error("Badly initialized user account. (Lacks 'partner_' or 'user_' handle in displayName)")
+    }
+    
+    try {
+        let doc = await firestore()
+            .collection(collection)
+            .doc(user.uid)
+            .get()
+        // add shortcuts / necessary data adjustments for ease of access
+        // SIGNIFICANT PARTS OF CODE OF THE APP DEPEND ON THIS
+        let userData = doc.data()
+        userData.uid = doc.id
+        // userData.icon_uri = `${storage.public}${userData.icon_uri}` // moved to doing publicStorage() from "HelperFunctions.js" instead
+        userData.name = `${userData.first} ${userData.last}`
+        // These 2 should be there at all times, since account creation, however -- another layer of making sure
+        if (!userData.active_classes) userData.active_classes = []
+        if (!userData.active_memberships) userData.active_memberships = []
+        cache.user = userData
+    } catch(err) {
+        cache.working -= 1
+        console.error(err.message)
+        throw new Error("Something prevented the action.")
     }
 
-    if (!cache.user.active_classes) cache.user.active_classes = []
-    if (!cache.user.active_memberships) cache.user.active_memberships = []
-
+    cache.working -= 1
     return cache.user
+}
+
+/**
+ * Retrieves past transactinos from "stripe_users" collection
+ */
+export async function retrievePastTransactions(cache) {
+    const user = await retrieveUserData(cache)
+    if (user.pastTransactions) return user.pastTransactions
+
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    user.pastTransactions = []
+    
+    let transactions = (await firestore()
+        .collection("stripe_customers")
+        .doc(user.uid)
+        .collection("payments")
+        .get()
+    ).docs.map(doc => doc.data())
+
+    user.pastTransactions = transactions
+
+    cache.working -= 1
+    return transactions
+}
+
+/**
+ * Checks whether all of the classes in users.active_classes have data about them
+ * added in cache.classes, if something is missing it is added.
+ * by Class Ids.
+ */
+export async function retrieveClassesByIds(cache, { classIds }) {
+    if (!classIds.length) return []
+    // if (cache.classes) return cache.classes
+
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    if (!cache.classes) cache.classes = []
+    // cache.classes = []
+
+    // let queue = classIds.map(id => {
+    //     cache.classes.forEach(classDoc => {
+    //         return classDoc.id !== id
+    //     })
+    // })
+
+    let classes = (await firestore()
+        .collection("classes")
+        .where("id", "in", classIds)
+        .get()
+    ).docs.map(doc => doc.data())
+
+    cache.classes = [...cache.classes, ...classes]
+
+    cache.working -= 1
+    return classes
+}
+
+/**
+ * Checks whether all of the classes in users.active_classes have data about them
+ * added in cache.classes, if something is missing it is added.
+ * by Gym Ids.
+ */
+export async function retrieveClassesByGymIds(cache, { gymIds }) {
+    if (!cache.working) cache.working = 0
+    cache.working += 1
+
+    if (!cache.classes) cache.classes = []
+
+    let classes = (await firestore()
+        .collection("classes")
+        .where("gym_id", "in", gymIds)
+        .get()
+    ).docs.map(doc => doc.data())
+
+    cache.classes = [...cache.classes, ...classes]
+
+    cache.working -= 1
+    return classes
 }
 
 /**
@@ -62,167 +174,73 @@ export async function retrieveUserData(cache) {
  *  if passed in, retrieves only those,
  *  if not, gets all user's memebrships (cache.user.active_memberships)
  */
-export async function retrieveMemberships(cache, { membershipIds }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
-    if (!cache.memberships) cache.memberships = []
-
-    let queue = []
-    let existingIds = cache.memberships.map(doc => doc.id)
-    
-    cache.user.active_memberships.forEach(membershipId => {
-        if (!existingIds.includes(membershipId)) queue.push(membershipId)
-    })
-    membershipIds.forEach(membershipId => {
-        if (!existingIds.includes(membershipId)) queue.push(membershipId)
-    })
-    
-    console.log("queue", queue) //
-    console.log("existingIds", existingIds) //
-    console.log("cache.user.active_memberships", cache.user.active_memberships) //
-    console.log("membershipIds", membershipIds) //
-
-    if (queue.length) {
-        console.log("[CACHE]  Memberships needed to be updated in cache.")
-        const getMemberships = firebase.functions().httpsCallable("getMemberships")
-        cache.memberships.push( ...( await getMemberships({ membershipIds }) ).data )
-
-        // If failed to find in "memberships" collection, try again in "gyms" collection,
-        // because that is where, currently, we are going to find normal memberships (tied to gyms)
-        let queue2 = []
-        let existingIds2 = cache.memberships.map(doc => doc.id)
-
-        cache.user.active_memberships.forEach(membershipId => {
-            if (!existingIds2.includes(membershipId)) queue2.push(membershipId)
-        })
-
-        if (queue2.length) {
-            let gyms = await retrieveGyms(cache, { gymIds: queue2 })
-            cache.memberships.push(...gyms)
-        }
-    } else {
-        console.log("[CACHE]  All memberships were found to be up to date in cache, returning those.")
-    }
-
-    console.log("cache.memberships", cache.memberships)
-
-    cache.working -= 1
-    if (!membershipIds) return cache.memberships
-    return cache.memberships
-        .filter(membership => membershipIds.includes(membership.id))
-}
-
-/**
- * TEMPLATE
- */
-export async function retrievePastTransactions(cache) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
-    if (!cache.user) cache.user = {}
-
-    if (!cache.user.pastTransactions) {
-        console.log("pastTransactions was NOT found in cache, calling cloud function.")
-        cache.user.pastTransactions = ( await firebase.functions().httpsCallable("getUserTransactions")() ).data
-    } else {
-        console.log("pastTransactions was found in cache, returning that.")
-    }
-    cache.working -= 1
-    return cache.user.pastTransactions
-}
-
-/**
- * Checks whether all of the classes in users.active_classes have data about them
- * added in cache.classes, if something is missing it is added.
- */
-export async function retrieveUserClasses(cache) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
-    console.log("cache", cache) //
-    console.log("", ) //
-    if (!cache.classes) cache.classes = []
-
-    let queue = []
-    let existingIds = cache.classes.map(doc => doc.id)
-    
-    cache.user.active_classes.forEach(classId => {
-        if (!existingIds.includes(classId)) queue.push(classId)
-    })
-
-    if (queue.length) {
-        console.log("classes was NOT fully updated in cache, calling cloud function.")
-        const getUserClasses = firebase.functions().httpsCallable("getUserClasses")
-        cache.classes.push( ...( await getUserClasses({ classIds: queue }) ).data )
-        console.log(420, cache.classes)
-    } else {
-        console.log("all classes were found to be up to date in cache, returning that.")
-    }
-    cache.working -= 1
-    return cache.classes
-}
+// export async function retrieveMemberships(cache, { membershipIds }) {
+//     throw new Error("Not Implemented")
+// }
 
 /**
  * Retrieves data about each class that is tied to the partner (partner id)
  */
-export async function retrievePartnerClasses(cache) {
-    if (!cache.classes) {
-        console.log("classes was NOT found in cache, calling cloud function.")
-        const getPartnerClasses = firebase.functions().httpsCallable("getPartnerClasses")
-        cache.classes = ( await getPartnerClasses() ).data
-    } else {
-        console.log("classes was found in cache, returning that.")
-    }
-    return cache.classes
-}
+// export async function retrievePartnerClasses(cache) {
+//     throw new Error("Not Implemented") // Probably can tie it into one fucntion up above
+// }
 
 /**
  * Retrieves data about each class that is tied to a gym (gmy id)
  */
-export async function retrieveGymClasses(cache, gymId) {
+// export async function retrieveGymClasses(cache, gymId) {
+//     throw new Error("Not Implemented") // Same same; up above
+// }
+
+/**
+ * Retrieve gyms by their ids
+ */
+export async function retrieveGymsByIds(cache, { gymIds }) {
     if (!cache.working) cache.working = 0
     cache.working += 1
 
-    if (!cache.gymClasses) cache.gymClasses = {}
+    if (!cache.gyms) cache.gyms = []
 
-    if (!cache.gymClasses[gymId]) {
-        console.log(`gymClasses[${gymId}] was NOT found in cache, calling cloud function.`)
-        const getGymClasses = firebase.functions().httpsCallable("getGymClasses")
-        cache.gymClasses[gymId] = ( await getGymClasses(gymId) ).data
-    } else {
-        console.log(`gymClasses[${gymId}] was found in cache, returning that.`)
-    }
+    // let queue = gymIds.map(id => {
+    //     cache.gyms.forEach(gymDoc => {
+    //         return gymDoc.id !== id
+    //     })
+    // })
+
+    let gyms = (await firestore()
+        .collection("gyms")
+        .where("id", "in", gymIds)
+        .get()
+    ).docs.map(doc => doc.data())
+    
+    cache.gyms = [...cache.gyms, ...gyms]
+
     cache.working -= 1
-    return cache.gymClasses[gymId]
+    return gyms
 }
 
 /**
- * TEMPLATE
+ * Retrieve gyms by their geolocation
+ * [NOT YET IMPLEMENTED]
+ * [DEFAULTING TO:  GET ALL]
  */
-export async function retrieveAllGyms(cache) {
+export async function retrieveGymsByLocation(cache, /*{ coordinate }*/) {
     if (!cache.working) cache.working = 0
     cache.working += 1
 
-    if (!cache.gyms) {
-        console.log("gyms was NOT found in cache, calling cloud function.")
-        cache.gyms = ( await firebase.functions().httpsCallable("getGyms")({}) ).data
-    } else {
-        console.log("gyms was found in cache, returning that.")
-    }
-    cache.working -= 1
-    return cache.gyms
-}
+    if (!cache.gyms) cache.gyms = []
 
-/**
- * TEMPLATE
- */
-export async function retrieveGyms(cache, { gymIds }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
-    let gyms = ( await retrieveAllGyms(cache) )
-        .filter(gym => gymIds.includes(gym.id))
+    let gyms = (await firestore()
+        .collection("gyms")
+        .get()
+    ).docs.map(doc => doc.data())
+    // ).docs.filter(doc => {
+    //     cache.gyms.forEach(gym => {
+    //         if (gym.id !== doc.id) return doc.data()
+    //     })
+    // })
+    
+    cache.gyms = [...cache.gyms, ...gyms]
 
     cache.working -= 1
     return gyms
@@ -231,22 +249,47 @@ export async function retrieveGyms(cache, { gymIds }) {
 /**
  * TEMPLATE
  */
+// export async function retrieveGyms(cache, { gymIds }) {
+//     throw new Error("Not Implemented")
+// }
+
+/**
+ * TEMPLATE
+ */
 export async function retrievePlaybackId(cache, { gymId }) {
+    if (!cache.livestreams) cache.livestreams = {}
+    if (!cache.livestreams[ gymId ]) cache.livestreams[ gymId ] = {}
+    if (cache.livestreams[ gymId ].playback_id)
+        return cache.livestreams[ gymId ].playback_id
+
     if (!cache.working) cache.working = 0
     cache.working += 1
 
-    if (!cache.mux) cache.mux = {}
-    if (!cache.mux.streams) cache.mux.streams = {}
+    let playback_id
+    try {
+        let partnerId = (await firestore()
+            .collection("gyms")
+            .doc(gymId)
+            .get()
+        ).data().partner_id
 
-    if (!cache.mux.streams[ gymId ]) {
-        console.log("mux.streams was NOT found in cache, calling cloud function.")
-        const getPlaybackId = firebase.functions().httpsCallable("getPlaybackId")
-        cache.mux.streams[ gymId ] = ( await getPlaybackId({ gymId }) ).data
-    } else {
-        console.log("mux.streams was found in cache, returning that.")
+        playback_id = (await firestore()
+            .collection("partners")
+            .doc(partnerId)
+            .collection("public")
+            .doc("livestream")
+            .get()
+        ).data().playback_id
+    } catch(err) {
+        console.error(err.message)
+        cache.working -= 1
+        throw new Error("Something prevented the action.")
     }
+
+    cache.livestreams[ gymId ].playback_id = playback_id
+
     cache.working -= 1
-    return cache.mux.streams
+    return playback_id
 }
 
 
@@ -259,12 +302,16 @@ export async function TEMPLATE(cache) {
     cache.working += 1
 
     if (!cache.TEMPLATE) {
-        console.log("TEMPLATE was NOT found in cache, calling cloud function.")
-        const templateFunc = firebase.functions().httpsCallable("templateFunc")
-        cache.TEMPLATE = ( await templateFunc ).data
-    } else {
-        console.log("TEMPLATE was found in cache, returning that.")
+        try {
+            let data
+            cache.TEMPLATE = data
+        } catch(err) {
+            console.error(err.message)
+            cache.working -= 1
+            throw new Error("Something prevented the action.")
+        }
     }
+
     cache.working -= 1
     return cache.TEMPLATE
 }

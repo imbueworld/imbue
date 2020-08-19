@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>736868821-vsr2mpqaqaqrt2uurjm85bah1f3q55u4.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.736868821-vsr2mpqaqaqrt2uurjm85bah1f3q55u4</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>736868821-fvo1gfmfra2sttvh1uab88oe9k4qq9v4.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDMqJscgDIPOIIKsIoXevLJhFW8Qbx7OK4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>736868821</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>imbue</string>
+	<key>PROJECT_ID</key>
+	<string>spring-ranger-281214</string>
+	<key>STORAGE_BUCKET</key>
+	<string>spring-ranger-281214.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:736868821:ios:7c7193d322398d76c5e55c</string>
+	<key>DATABASE_URL</key>
+	<string>https://spring-ranger-281214.firebaseio.com</string>
+</dict>
+</plist>

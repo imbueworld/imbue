@@ -6,9 +6,10 @@ import ProfileLayout from "../layouts/ProfileLayout"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomText from "../components/CustomText"
 import CustomButton from "../components/CustomButton"
-import { retrieveUserData, retrieveGyms } from '../backend/CacheFunctions'
+import { retrieveUserData, retrieveGyms, retrieveGymsByIds } from '../backend/CacheFunctions'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
-import { addDataToGym } from '../backend/BackendFunctions'
+import { addDataToGym, updateGym } from '../backend/BackendFunctions'
+import { colors } from '../contexts/Colors'
 
 
 
@@ -20,7 +21,10 @@ function validateInput(inp) {
 
     let split = inp.split(".")
     let [a, b] = split
-    if (b) b = b.slice(0, 2)
+    if (b) {
+        b = b.slice(0, 2)
+        if (b.length < 2) b = `${b}0`
+    }
     else b = "00"
 
     console.log(202, `${a}${b}`)
@@ -31,10 +35,11 @@ function validateInput(inp) {
 
 export default function PartnerUpdateMemberships(props) {
     let cache = props.route.params.cache
-    let gymId = props.route.params.gymId
+    // let gymId = props.route.params.gymId
 
     const [r, refresh] = useState(0)
     const [errorMsg, setErrorMsg] = useState("")
+    const [successMsg, setSuccessMsg] = useState("")
 
     const [user, setUser] = useState(null)
     const [gym, setGym] = useState(null)
@@ -43,31 +48,40 @@ export default function PartnerUpdateMemberships(props) {
     useEffect(() => {
         const init = async() => {
             let user = await retrieveUserData(cache)
-            // setUser(user)
+            setUser(user)
             // Currently operates on the premise, that there is no more than ONE gym per partner
-            let gym = ( await retrieveGyms(cache, { gymIds: [user.associated_gyms[0]] }) )[0]
+            let gym = ( await retrieveGymsByIds(cache, { gymIds: [user.associated_gyms[0]] }) )[0]
             setGym(gym)
             setPriceUnlimited(`$${currencyFromZeroDecimal(gym.membership_price)}`)
         }
         init()
     }, [r])
-    // const [priceSingle, setPriceSingle] = useState("$99")
+
+    if (!user) return <View />
 
     return (
-        <ProfileLayout capsuleStyle={styles.container}>
+        <ProfileLayout
+            innerContainerStyle={{
+                paddingBottom: 10,
+            }}
+            data={{ name: user.name, iconUri: user.icon_uri }}
+        >
             
             <Text style={{
-                fontSize: 20,
                 alignSelf: "center",
                 paddingBottom: 10,
+                fontSize: 20,
+                fontFamily: 'sans-serif-light',
             }}>{"Memberships & Pricing"}</Text>
 
-            <Text style={{ color: "red" }}>{errorMsg}</Text>
+            {errorMsg
+            ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+            : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
             <View style={styles.row}>
-                <CustomText containerStyle={styles.label}>
+                <Text style={styles.label}>
                     Online Membership
-                </CustomText>
+                </Text>
                 <CustomTextInput
                     style={styles.price}
                     containerStyle={styles.priceContainer}
@@ -101,14 +115,15 @@ export default function PartnerUpdateMemberships(props) {
             <CustomButton
                 title="Save"
                 onPress={async() => {
+                    setErrorMsg("")
+
                     try {
-                        setErrorMsg("")
                         let price = validateInput(priceUnlimited)
-                        await addDataToGym(cache, {
+                        await updateGym(cache, {
                             gymId: gym.id,
-                            data: { membership_price: price }
+                            doc: { membership_price: price }
                         })
-                        refresh(r + 1)
+                        setSuccessMsg("Membership updated.")
                     } catch(err) {
                         setErrorMsg(err.message)
                     }
@@ -123,14 +138,13 @@ const styles = StyleSheet.create({
     scrollViewContainer: {
         height: "100%",
     },
-    container: {
-        paddingBottom: 0,
-    },
     row: {
         marginVertical: 10,
         flexDirection: "row",
         justifyContent: "space-between",
-        backgroundColor: "lightgray",
+        // backgroundColor: "lightgray",
+        borderWidth: 1,
+        borderColor: colors.gray,
         borderRadius: 30,
     },
     label: {
@@ -138,22 +152,13 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         paddingLeft: 20,
         alignSelf: "center",
+        fontFamily: 'sans-serif-light',
     },
     priceContainer: {
         flex: 1,
         marginRight: 10,
         alignSelf: "center",
         borderRadius: 999,
-
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 0,
-        },
-        shadowOpacity: 0.5,
-        shadowRadius: 5,
-        
-        elevation: 5,
     },
     price: {
         fontSize: 20,

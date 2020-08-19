@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight } from 'react-native'
 
 import { simpleShadow, colors } from "../contexts/Colors"
+import { fonts } from "../contexts/Styles"
 
 
 
@@ -16,17 +17,29 @@ export default function CustomButton(props) {
                     styles.button,
                     simpleShadow,
                     props.style,
+                    {
+                        paddingLeft: props.icon ? 24 : undefined,
+                        justifyContent: props.icon ? "flex-start" : "center",
+                    },
                 ]}
                 underlayColor="#eee"
+                disabled={props.disabled}
                 onPress={props.onPress || undefined}
                 onLongPress={props.onLongPress || undefined}
             >
+
+                {props.icon}
+
                 <Text style={[
                     styles.text,
-                    props.textStyle
+                    props.textStyle,
+                    {
+                        paddingLeft: props.icon ? 10 : undefined,
+                    },
                 ]}>
                     {props.title}
                 </Text>
+
             </TouchableOpacity>
         // </View>
     )
@@ -37,14 +50,19 @@ const styles = StyleSheet.create({
     //     marginVertical: 20,
     // },
     button: {
+        // flex: 1,
         marginVertical: 10,
         paddingVertical: 20,
+        // paddingLeft: 24, // moved
+        flexDirection: "row",
         borderRadius: 999,
-        backgroundColor: "#fff",
+        backgroundColor: "white",
     },
     text: {
+        // paddingLeft: 10, // moved
         color: "#1b1b19",
-        textAlign: "center",
-        fontSize: 20,
+        alignSelf: "center",
+        fontSize: 18,
+        fontFamily: 'sans-serif-light',
     },
 })

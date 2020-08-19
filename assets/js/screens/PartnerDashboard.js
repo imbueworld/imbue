@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
@@ -6,31 +6,43 @@ import ProfileLayout from "../layouts/ProfileLayout"
 import CustomButton from "../components/CustomButton"
 import LogOut from "../components/LogOut"
 
-import firebase from "firebase/app"
-import "firebase/auth"
-import { retrievePartnerClasses } from '../backend/CacheFunctions'
+import auth from "@react-native-firebase/auth"
+import { retrieveUserData, retrieveClassesByGymIds } from '../backend/CacheFunctions'
+import Icon from '../components/Icon'
 
 
 
 export default function PartnerDashboard(props) {
     let cache = props.route.params.cache
-    console.log("[PARTNER DASHBOARD]")
+
+    const [user, setUser] = useState(null)
+    // const [classes, setClasses] = useState(null)
 
     useEffect(() => {
         async function init() {
-            await retrievePartnerClasses(cache)
+            let user = await retrieveUserData(cache)
+            setUser(user)
+            let classes = await retrieveClassesByGymIds(cache, { gymIds: [user.associated_gyms] })
+            // setClasses(classes)
         }
         init()
     }, [])
 
-    return (
-        <ProfileLayout capsuleStyle={styles.container}>
+    if (!user) return <View />
 
+    return (
+        <ProfileLayout
+            innerContainerStyle={{
+                padding: 10,
+            }}
+            hideBackButton={true}
+            data={{ name: user.name, iconUri: user.icon_uri }}
+        >
             <TouchableOpacity
                 style={styles.logOutButtonContainer}
                 onPress={() => console.log("To-Do: Intuitively shows what the button does")}
                 onLongPress={() => {
-                    firebase.auth().signOut()
+                    auth().signOut()
                     props.navigation.navigate("Boot", { referrer: "PartnerDashboard" })
                 }}
             >
@@ -47,21 +59,37 @@ export default function PartnerDashboard(props) {
             </TouchableOpacity>
 
             <CustomButton
+                icon={
+                    <Icon
+                    source={require("../components/img/png/livestream.png")}
+                    />
+                }
                 title="Go Live"
                 onPress={() => {props.navigation.navigate(
                     "GoLive")}}
             />
-            <CustomButton
+            {/* <CustomButton
                 title="Livestream Settings"
                 onPress={() => {props.navigation.navigate(
                     "PartnerLivestreamDashboard")}}
-            />
+            /> */}
             <CustomButton
+                icon={
+                    <Icon
+                    source={require("../components/img/png/my-classes.png")}
+                    />
+                }
                 title="Schedule"
                 onPress={() => {props.navigation.navigate(
-                    "ClassesSchedule")}}
+                    "ScheduleViewer",
+                    { gymIds: [] })}}
             />
             <CustomButton
+                icon={
+                    <Icon
+                    source={require("../components/img/png/gym-settings.png")}
+                    />
+                }
                 title="Manage Gym"
                 onPress={() => {props.navigation.navigate(
                     "PartnerGymSettings")}}
@@ -72,9 +100,6 @@ export default function PartnerDashboard(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        paddingBottom: 0,
-    },
     logOutButtonContainer: {
         width: 64,
         height: 64,

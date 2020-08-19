@@ -11,12 +11,12 @@ import SignUp from "./assets/js/screens/SignUp"
 import Login from "./assets/js/screens/Login"
 import UserDashboard from "./assets/js/screens/UserDashboard"
 
-import UserClasses from "./assets/js/screens/UserClasses"
+// import UserClasses from "./assets/js/screens/UserClasses"
 import UserMemberships from "./assets/js/screens/UserMemberships"
 import ProfileSettings from "./assets/js/screens/ProfileSettings"
 import PaymentSettings from "./assets/js/screens/PaymentSettings"
 import AddPaymentMethod from "./assets/js/screens/AddPaymentMethod"
-import PurchaseOnline from "./assets/js/screens/PurchaseOnline"
+// import PurchaseOnline from "./assets/js/screens/PurchaseOnline"
 import PurchaseUnlimited from "./assets/js/screens/PurchaseUnlimited"
 import GymDescription from "./assets/js/screens/GymDescription"
 
@@ -26,6 +26,7 @@ import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
 import PartnerUpdateMemberships from "./assets/js/screens/PartnerUpdateMemberships"
 // import ClassesSchedule from "./assets/js/screens/ClassesSchedule"
 import ScheduleViewer from "./assets/js/screens/ScheduleViewer"
+import SchedulePopulate from "./assets/js/screens/SchedulePopulate"
 import PartnerRevenueInfo from "./assets/js/screens/PartnerRevenueInfo"
 import PartnerLivestreamDashboard from "./assets/js/screens/PartnerLivestreamDashboard"
 import GoLive from "./assets/js/screens/GoLive"
@@ -35,6 +36,7 @@ import ClassDescription from "./assets/js/screens/ClassDescription"
 
 
 import TestScreen from "./assets/js/TestScreen"
+import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
 const Stack = createStackNavigator()
 
 export default function App() {
@@ -43,7 +45,11 @@ export default function App() {
 
     return (
         <NavigationContainer>
-            <Stack.Navigator>
+            <Stack.Navigator
+                screenOptions={{
+                    headerShown: false,
+                }}
+            >
                 <Stack.Screen
                     name="Boot"
                     component={Boot}
@@ -74,12 +80,12 @@ export default function App() {
                     options={{ title: "Dashboard" }}
                     initialParams={{ user: user, cache }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="UserClasses"
                     component={UserClasses}
                     options={{ title: "My Classes" }}
                     initialParams={{ user: user, cache }}
-                />
+                /> */}
                 <Stack.Screen
                     name="UserMemberships"
                     component={UserMemberships}
@@ -134,12 +140,12 @@ export default function App() {
                     options={{ title: "Revenue" }}
                     initialParams={{ user: user, cache }}
                 />
-                <Stack.Screen
+                {/* <Stack.Screen
                     name="PurchaseOnline"
                     component={PurchaseOnline}
                     options={{ title: "Purchase A Class" }}
                     initialParams={{ user: user, cache }}
-                />
+                /> */}
                 <Stack.Screen
                     name="PurchaseUnlimited"
                     component={PurchaseUnlimited}
@@ -188,12 +194,24 @@ export default function App() {
                     options={{ title: "TestScreen" }}
                     initialParams={{ user: user, cache }}
                 />
+                <Stack.Screen
+                    name="PartnerUpdateClasses"
+                    component={PartnerUpdateClasses}
+                    options={{ title: "Update Classes" }}
+                    initialParams={{ cache }}
+                />
+                <Stack.Screen
+                    name="SchedulePopulate"
+                    component={SchedulePopulate}
+                    options={{ title: "Add New Classes To Schedule" }}
+                    initialParams={{ cache }}
+                />
                 {/*
                 <Stack.Screen
                     name=""
                     component={}
                     options={{ title: "" }}
-                    initialParams={{ user: user, cache }}
+                    initialParams={{ cache }}
                 />
                 */}
             </Stack.Navigator>

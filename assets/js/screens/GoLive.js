@@ -30,6 +30,7 @@ export default function GoLive(props) {
 
     const [isStreaming, setIsStreaming] = useState(false)
     const [hasAllPermissions, setHasAllPermisions] = useState(false)
+    const [streamKey, setStreamKey] = useState(null)
 
     console.log("isStreaming", isStreaming)
 
@@ -53,12 +54,11 @@ export default function GoLive(props) {
             console.log("hasAllPermissions: ", hasAllPermissions)
             setHasAllPermisions(hasAllPermissions)
         } catch (err) {
-            console.warn(err)
+            console.error(err)
         }
     }
 
     const base = "rtmp://global-live.mux.com:5222/app/"
-    const streamKey = "906d86c3-66ac-5387-e418-f12952683178"
 
     const toggleStream = async () => {
         if (Platform.OS === "android") {
@@ -67,6 +67,8 @@ export default function GoLive(props) {
                 return
             }
         }
+
+        setStreamKey( await initializeStream(cache) )
 
         if (isStreaming) stream.stop()
         else stream.start()

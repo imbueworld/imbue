@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { colors, simpleShadow } from '../contexts/Colors'
 
 
 
@@ -54,7 +55,10 @@ export default function CustomOptionSelector(props) {
                     key={arr[0]}
                     onPress={() => toggleButton(idx)}
                 >
-                    <Text style={props.textStyle}>{arr[1]}</Text>
+                    <Text style={{
+                        ...props.textStyle,
+                        fontFamily: 'sans-serif-light',
+                    }}>{arr[1]}</Text>
                 </TouchableOpacity>
             </View>
         )
@@ -122,10 +126,15 @@ const styles = StyleSheet.create({
     },
     selected: {
         backgroundColor: "white",
+        // borderWidth: 1,
+        // borderColor: colors.gray,
+        ...simpleShadow,
         borderRadius: 999,
     },
     unselected: {
-        backgroundColor: "lightgray",
+        // backgroundColor: "lightgray",
+        borderWidth: 1,
+        borderColor: colors.gray,
         borderRadius: 999,
     },
 })

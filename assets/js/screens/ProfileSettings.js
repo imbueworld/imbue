@@ -1,87 +1,141 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, View, Keyboard } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
-
-import PasswordConfirmation from "../components/PasswordConfirmation"
 
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 
-import Firebase from "firebase/app"
-import "firebase/auth"
+import auth from "@react-native-firebase/auth"
+import { retrieveUserData } from '../backend/CacheFunctions'
+import { updateUser } from '../backend/BackendFunctions'
+import { handleAuthError } from '../backend/HelperFunctions'
 
 
 
 export default function ProfileSettings(props) {
-    if (!props.route.params.init) {
-        Firebase.auth().onAuthStateChanged((user) => {
-            if (user) console.log("Still logged in.")
-            else console.log("Became logged out.")
-        })
-        props.route.params.init = true
-    }
+    let cache = props.route.params.cache
+    const [user, setUser] = useState(null)
+    const [firebaseUser, setFirebaseUser] = useState(null)
 
-    const user = Firebase.auth().currentUser
-    let [firstName, lastName] = user.displayName.split(" ")
+    useEffect(() => {
+        const init = async() => {
+            let user = await retrieveUserData(cache)
+            setUser(user)
+            setFirebaseUser( 123 )
+        }
+        init()
+    }, [])
 
-    const [formState, setFormState] = useState("ok")
+    useEffect(() => {
+        if (!user) return
 
-    const [firstNameField, setFirstNameField] = useState(firstName)
-    const [lastNameField, setLastNameField] = useState(lastName)
-    const [emailField, setEmailField] = useState(user.email)
+        setFirstNameField(user.first)
+        setLastNameField(user.last)
+        setEmailField(user.email)
+    }, [user])
+
+    const [redFields, setRedFields] = useState([])
+    console.log("redFields", redFields)
+    const [errorMsg, setErrorMsg] = useState("")
+    const [successMsg, setSuccessMsg] = useState("")
+    const [changing, change] = useState("safeInfo") // or "password"
+
+    const [firstNameField, setFirstNameField] = useState("")
+    const [lastNameField, setLastNameField] = useState("")
+    const [emailField, setEmailField] = useState("")
     const [passwordField, setPasswordField] = useState("")
-    const [confPasswordField, setConfPasswordField] = useState("")
 
-    function save() {
-        if (
-            !( firstNameField.length !== 0
-            && lastNameField.length !== 0
-            && emailField.length !== 0
-            && passwordField.length !== 0
-            && confPasswordField.length !== 0)
-        ) {
-            setFormState("fields/empty")
-        } else if (passwordField !== confPasswordField) {
-            setFormState("password/does-not-match")
-        } else {
-            setFormState("proceed")
+    const [changePasswordField, setChangePasswordField] = useState("")
+    const [changePasswordFieldConfirm, setChangePasswordFieldConfirm] = useState("")
 
-            Firebase.auth().signInWithEmailAndPassword(user.email, passwordField)
-                .then(() => {
-                    console.log("All good!")
+    async function updateSafeInfo() {
+        setRedFields([])
+        setErrorMsg("")
+        setSuccessMsg("")
+        let redFields = []
 
-                    if (firstNameField !== firstName || lastNameField !== lastName) {
-                        user.updateProfile({
-                            displayName: `${firstNameField} ${lastNameField}`,
-                        })
-                    }
+        // if (firstNameField.length === 0) setRedFields([...redFields, "first"])
+        // if (lastNameField.length === 0) setRedFields([...redFields, "last"])
+        // if (emailField.length === 0) setRedFields([...redFields, "email"])
+        // if (passwordField.length === 0) setRedFields([...redFields, "main_password"])
+        if (firstNameField.length === 0) redFields.push("first")
+        if (lastNameField.length === 0) redFields.push("last")
+        if (emailField.length === 0) redFields.push("email")
+        if (passwordField.length === 0) redFields.push("main_password")
 
-                    if (emailField !== user.email) {
-                        user.updateEmail(emailField)
-                    }
-                })
-                .catch((err) => {
-                    console.log(err.code)
-                    console.log(err.message)
-                })
+        setRedFields(redFields)
+        if (redFields.length) {
+            setErrorMsg("Required fields need to be filled.")
+            return
+        }
+
+        try {
+            await auth().signInWithEmailAndPassword(user.email, passwordField)
+            let updatables = {}
+
+            if (firstNameField !== user.first) updatables.first = firstNameField
+            if (lastNameField !== user.last) updatables.last = lastNameField
+            if (emailField !== user.email) {
+                updatables.email = emailField
+                await auth().currentUser.updateEmail(emailField)
+            }
+
+            if (!Object.keys(updatables).length) {
+                setSuccessMsg("All information is up to date.")
+                return
+            }
+
+            await updateUser(cache, updatables),
+
+            setSuccessMsg("Successfully updated profile information.")
+            setPasswordField("")
+            Keyboard.dismiss()
+        } catch(err) {
+            let [errorMsg, redFields] = handleAuthError(err)
+            setRedFields(redFields)
+            setErrorMsg(errorMsg)
         }
     }
-    
 
-    const [pwForm, setPwForm] = useState(false)
+    async function updatePassword() {
+        setRedFields([])
+        setErrorMsg("")
+        setSuccessMsg("")
+        let redFields = []
 
-    function changePassword(password) {
-        user.updatePassword(password)
-            .then(() => {
-                console.log("Password Changed!")
-            })
-            .catch((err) => {
-                console.log(err.code)
-                console.log(err.message)
-            })
+        if (changePasswordField.length === 0) redFields.push("change_password")
+        if (changePasswordFieldConfirm.length === 0) redFields.push("change_password_confirm")
+        if (passwordField.length === 0) redFields.push("main_password")
+
+        if (redFields.length) {
+            setErrorMsg("Required fields need to be filled.")
+            setRedFields(redFields)
+            return
+        }
+
+        if (changePasswordField !== changePasswordFieldConfirm) {
+            setErrorMsg("Passwords do not match.")
+            setRedFields(["change_password", "change_password_confirm"])
+            return
+        }
+        
+        try {
+            await auth().signInWithEmailAndPassword(user.email, passwordField)
+            await auth().currentUser.updatePassword(changePasswordField)
+            setSuccessMsg("Successfully changed password.")
+            setChangePasswordField("")
+            setChangePasswordFieldConfirm("")
+            setPasswordField("")
+            Keyboard.dismiss()
+        } catch(err) {
+            let [errorMsg, redFields] = handleAuthError(err)
+            setRedFields(redFields)
+            setErrorMsg(errorMsg)
+        }
     }
 
+    if (!user) return <View />
 
     return (
         <>
@@ -101,42 +155,99 @@ export default function ProfileSettings(props) {
             </View>
         :   <View />} */}
 
-        <ProfileLayout innerContainerStyle={{
-            paddingBottom: 10,
-        }}>
-            <CustomTextInput
-                placeholder="First Name"
-                value={firstNameField}
-                onChangeText={setFirstNameField}
-            />
-            <CustomTextInput
-                placeholder="Last Name"
-                value={lastNameField}
-                onChangeText={setLastNameField}
-            />
-            <CustomTextInput
-                placeholder="Email"
-                value={emailField}
-                onChangeText={setEmailField}
-            />
+        {/* <PasswordConfirmation
+            capsuleStyle={{
+                // marginTop: 10,
+                marginVertical: 10,
+            }}
+            onSuccess={changePassword}
+            onFail={setFormState}
+            onX={() => setPwForm(false)}
+        /> */}
 
-            { pwForm
-            ?   <PasswordConfirmation
-                    capsuleStyle={{
-                        // marginTop: 10,
-                        marginVertical: 10,
-                    }}
-                    onSuccess={changePassword}
-                    onFail={setFormState}
-                    onX={() => setPwForm(false)}
+        <ProfileLayout
+            innerContainerStyle={{
+                paddingBottom: 10,
+            }}
+            data={{ name: user.name , iconUri: user.icon_uri }}
+        >
+            {changing === "safeInfo"
+            ?   <CustomButton
+                    style={styles.button}
+                    title="Change password"
+                    onPress={() => change("password")}
                 />
             :   <CustomButton
                     style={styles.button}
-                    title="Change Password"
-                    onPress={() => setPwForm(true)}
+                    title="Change profile data"
+                    onPress={() => change("safeInfo")}
                 />}
+
+            {errorMsg
+            ?   <Text style={{ color: "red" }}>{errorMsg}</Text>
+            :   <Text style={{ color: "green" }}>{successMsg}</Text>}
+
+            {changing === "safeInfo"
+            ?   <>
+                <CustomTextInput
+                    containerStyle={{
+                        borderColor: redFields.includes("first")
+                            ? "red" : undefined
+                    }}
+                    placeholder="First Name"
+                    value={firstNameField}
+                    onChangeText={setFirstNameField}
+                />
+                <CustomTextInput
+                    containerStyle={{
+                        borderColor: redFields.includes("last")
+                            ? "red" : undefined
+                    }}
+                    placeholder="Last Name"
+                    value={lastNameField}
+                    onChangeText={setLastNameField}
+                />
+                <CustomTextInput
+                    containerStyle={{
+                        borderColor: redFields.includes("email")
+                            ? "red" : undefined
+                    }}
+                    placeholder="Email"
+                    value={emailField}
+                    onChangeText={setEmailField}
+                />
+                </>
+            :   null}
+
+            {changing === "password"
+            ?   <>
+                <CustomTextInput
+                    containerStyle={{
+                        borderColor: redFields.includes("change_password")
+                            ? "red" : undefined
+                    }}
+                    placeholder="Password"
+                    value={changePasswordField}
+                    onChangeText={setChangePasswordField}
+                />
+                <CustomTextInput
+                    containerStyle={{
+                        borderColor: redFields.includes("change_password_confirm")
+                            ? "red" : undefined
+                    }}
+                    placeholder="Password Confirmation"
+                    value={changePasswordFieldConfirm}
+                    onChangeText={setChangePasswordFieldConfirm}
+                />
+                </>
+            :   null}
+            
             
             <CustomTextInput
+                containerStyle={{
+                    borderColor: redFields.includes("password")
+                        ? "red" : undefined
+                }}
                 placeholder="Current Password"
                 value={passwordField}
                 onChangeText={setPasswordField}
@@ -150,7 +261,13 @@ export default function ProfileSettings(props) {
             <CustomButton
                 style={styles.button}
                 title="Save"
-                onPress={save}
+                onPress={() => {
+                    if (changing === "safeInfo") {
+                        updateSafeInfo()
+                    } else if (changing === "password") {
+                        updatePassword()
+                    }
+                }}
             />
         </ProfileLayout>
         </>

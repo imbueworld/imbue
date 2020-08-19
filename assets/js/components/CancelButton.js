@@ -12,7 +12,7 @@ export default function CancelButton(props) {
                 styles.container,
                 props.containerStyle,
             ]}
-            onPress={()=>{i++; if (i >= 3) console.log("Hold to Exit")}}
+            onPress={() => {i++; if (i >= 3) console.log("Hold to Exit")}}
             onLongPress={props.onLongPress}
         >
             <Text

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "736868821",
+    "firebase_url": "https://spring-ranger-281214.firebaseio.com",
+    "project_id": "spring-ranger-281214",
+    "storage_bucket": "spring-ranger-281214.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736868821:android:9fe12573f4cf730dc5e55c",
+        "android_client_info": {
+          "package_name": "com.imbue"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "736868821-fvo1gfmfra2sttvh1uab88oe9k4qq9v4.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.imbue",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "736868821-ercn72gvhlopsal4m23b58da4lqu0v7l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDcOkLwwAeOmjngKARmznbVqLKjyWxJ4oc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "736868821-ercn72gvhlopsal4m23b58da4lqu0v7l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

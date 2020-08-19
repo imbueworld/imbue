@@ -18,16 +18,20 @@ export default function CustomPopup(props) {
     return (
         <View style={[
             styles.container,
-            // props.containerStyle,
         ]}>
             <TouchableWithoutFeedback
                 onPress={props.onX}
-            ><View style={styles.exit}/></TouchableWithoutFeedback>
+            >
+                <View style={styles.exit}/>
+            </TouchableWithoutFeedback>
             
-            <CustomCapsule style={[
-                styles.capsule,
-                props.containerStyle
-            ]}>
+            <CustomCapsule
+                containerStyle={[
+                    styles.capsule,
+                    props.containerStyle,
+                ]}
+                innerContainerStyle={props.innerContainerStyle}
+            >
                 {props.children}
             </CustomCapsule>
         </View>
@@ -36,7 +40,6 @@ export default function CustomPopup(props) {
 
 const styles = StyleSheet.create({
     container: {
-        display: "none",
         width: "100%",
         height: "100%",
         position: "absolute",
@@ -51,7 +54,8 @@ const styles = StyleSheet.create({
         zIndex: -1000,
     },
     capsule: {
-        width: "85%",
+        width: "88%",
+        height: "88%",
         alignSelf: "center",
         backgroundColor: "lightgray",
     },

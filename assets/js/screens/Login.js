@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
@@ -9,67 +9,113 @@ import AltLoginService from "../components/AltLoginService"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
-
-import firebase from "firebase/app"
-import "firebase/auth"
+import { signIn } from '../backend/BackendFunctions'
+import { handleAuthErrorAnonymous } from '../backend/HelperFunctions'
 
 
 
 export default function Login(props) {
-    async function login() {
-        await firebase.auth().signInWithEmailAndPassword(emailField[0], pwField[0])
-            .then(() => {
-                props.navigation.navigate("Boot", {referrer: "Login"})
-            })
-            .catch((err) => {
-                console.log(err.code)
-                console.log(err.message)
-            })
-        
-        console.log("User just signed in!  " + firebase.auth().currentUser.email)
+  let cache = props.route.params.cache
+
+  const [redFields, setRedFields] = useState([])
+  const [successMsg, setSuccessMsg] = useState("")
+  const [errorMsg, setErrorMsg] = useState("")
+
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+
+  function invalidate() {
+    let redFields = []
+    if (!email) redFields.push("email")
+    if (!password) redFields.push("password")
+
+    if (redFields.length) {
+      setRedFields(redFields)
+      return "Required fields need to be filled."
     }
+  }
 
-    const emailField = []
-    const pwField = []
+  return (
+    <ScrollView
+      contentContainerStyle={styles.scrollView}
+      keyboardShouldPersistTaps="handled"
+    >
 
-    return (
-        <ScrollView contentContainerStyle={styles.scrollView}>
-            
-            <AppBackground />
-            <CompanyLogo />
+      <AppBackground />
+      <CompanyLogo />
 
-            <CustomCapsule style={styles.container}>
+      <CustomCapsule containerStyle={styles.container}>
 
-                <View>
-                    <AltLoginService />
-                    <CustomTextInput
-                        placeholder="Email"
-                        info={emailField}
-                    />
-                    <CustomTextInput
-                        placeholder="Password"
-                        info={pwField}
-                    />
-                    <CustomButton
-                        title="Login"
-                        onPress={login}
-                    />
-                </View>
+        <AltLoginService />
 
-            </CustomCapsule>
+        {errorMsg
+          ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+          : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
-        </ScrollView>
-    )
+        <CustomTextInput
+          containerStyle={{
+            borderColor: redFields.includes("email") ? "red" : undefined,
+          }}
+          placeholder="Email"
+          value={email}
+          onChangeText={setEmail}
+        />
+        <CustomTextInput
+          containerStyle={{
+            borderColor: redFields.includes("password") ? "red" : undefined,
+          }}
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+        />
+
+        <CustomButton
+          style={{
+            marginBottom: 20,
+          }}
+          title="Login"
+          onPress={async () => {
+            setRedFields([])
+            setErrorMsg("")
+            setSuccessMsg("")
+
+            let errorMsg
+            try {
+              errorMsg = invalidate()
+              if (errorMsg) throw new Error(errorMsg)
+              
+              await signIn(cache, { email, password })
+              setSuccessMsg("You've signed in!")
+
+              await new Promise(r => setTimeout(r, 3000)) // sleep
+              props.navigation.navigate("Boot", { referrer: "Login" })
+            } catch (err) {
+              // If not native (form) error, check for auth error
+              if (!errorMsg) {
+                let [errorMsg, redFields] = handleAuthErrorAnonymous(err)
+                setRedFields(redFields)
+                setErrorMsg(errorMsg)
+                return
+              }
+              // Otherwise...
+              // setRedFields(redFields)
+              setErrorMsg(errorMsg)
+            }
+          }}
+        />
+      </CustomCapsule>
+
+    </ScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        minHeight: "100%",
-    },
-    container: {
-        width: "85%",
-        marginBottom: 50,
-        paddingBottom: 0,
-        alignSelf: "center",
-    },
+  scrollView: {
+    minHeight: "100%",
+  },
+  container: {
+    width: "88%",
+    marginBottom: 30,
+    alignSelf: "center",
+  },
 })

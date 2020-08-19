@@ -6,6 +6,8 @@ import { retrievePaymentMethods } from "../../backend/CacheFunctions"
 import CreditCardSelection from "../CreditCardSelection"
 import CustomPopup from '../CustomPopup'
 import CustomButton from '../CustomButton'
+import AppBackground from "../AppBackground"
+import CustomCapsule from '../CustomCapsule'
 
 
 //taken out
@@ -36,63 +38,77 @@ export default function PopupPurchase(props) {
     return (
         <CustomPopup
             containerStyle={{
-                padding: 0,
-                paddingVertical: 30,
+                backgroundColor: "#ffffeeB0",
+            }}
+            innerContainerStyle={{
+                paddingLeft: 0,
+                paddingRight: 0,
             }}
             onX={props.onX}
         >
+            <AppBackground />
+
             <View style={{
-                marginHorizontal: 20,
+                marginVertical: 20,
+                marginHorizontal: 10,
             }}>
 
-                <View style={{
-                }}>
-                    <Text style={{
-                        fontSize: 20,
-                    }}
-                    >{props.popupText}</Text>
-                </View>
+                {!props.popupText ? null :
+                <Text style={{
+                    paddingHorizontal: 24,
+                    fontSize: 18,
+                    textAlign: "justify",
+                }}
+                >{props.popupText}</Text>}
 
                 <Text style={{ color: "red" }}>{errorMsg}</Text>
 
                 <View style={{
-                    marginVertical: 20,
+                    // marginVertical: 20,
                 }}>
                     <CreditCardSelection
+                        contentContainerStyle={{
+                            maxHeight: 300,
+                        }}
                         data={creditCards}
                         selectedCard={props.selectedCard}
                         selectCard={props.selectCard}
                     />
                 </View>
                 
+                {/* Proceed / Cancel buttons */}
                 <View style={{
                     flexDirection: "row",
-                    marginTop: 10,
+                    marginTop: 30,
+                    marginHorizontal: 10,
                 }}>
                     <CustomButton
                         style={{
                             flex: 1,
                             marginVertical: 0,
                             marginRight: 10,
-                            opacity: props.selectedCard ? 1 : 0.5,
                         }}
-                        title="Book"
-                        onPress={() => {
-                            try {
-                                props.onProceed()
-                            } catch(err) {
-                                setErrorMsg(err.message)
-                            }
-                        }}
+                        title="Cancel"
+                        onPress={() => props.onX()}
                     />
                     <CustomButton
                         style={{
                             flex: 1,
                             marginVertical: 0,
                             marginLeft: 10,
+                            opacity: props.selectedCard ? 1 : 0.65,
                         }}
-                        title="Cancel"
-                        onPress={() => props.onX()}
+                        title="Book"
+                        disabled={props.selectedCard ? false : true}
+                        onPress={!props.selectedCard ? undefined :
+                            () => {
+                                try {
+                                    props.onProceed()
+                                } catch(err) {
+                                    setErrorMsg(err.message)
+                                }
+                            }
+                        }
                     />
                 </View>
                 

@@ -31,13 +31,17 @@ export default function CustomText(props) {
 
 const styles = StyleSheet.create({
     container: {
-        borderRadius: 40,
-        backgroundColor: "lightgray",
+        borderRadius: 30,
+        // backgroundColor: "lightgray",
+        borderWidth: 1,
+        borderColor: colors.gray,
+        padding: 5,
         overflow: "hidden",
     },
     text: {
-        textAlign: "center",
-        fontSize: 20,
+        textAlign: "justify",
+        fontSize: 18,
+        fontFamily: 'sans-serif-light',
     },
     label: {
         borderTopWidth: 1,
@@ -45,5 +49,6 @@ const styles = StyleSheet.create({
         color: colors.grayInactive,
         textAlign: "center",
         fontSize: 14,
+        fontFamily: 'sans-serif-light',
     },
 })

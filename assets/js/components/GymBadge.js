@@ -5,6 +5,9 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import UserIcon from "./UserIcon"
 
 import CustomCapsule from "./CustomCapsule"
+import { colors } from '../contexts/Colors'
+import Icon from './Icon'
+import CloseButton from './CloseButton'
 
 
 
@@ -12,39 +15,41 @@ export default function GymBadge(props) {
     return (
         <View style={[ styles.container, props.containerStyle ]}>
 
-            <CustomCapsule
+            <View
                 style={{
-                    flex: 1,
+                    padding: 12,
                     backgroundColor: "#FFFFFF80",
+                    borderRadius: 40,
                     borderBottomLeftRadius: 0,
                     borderBottomRightRadius: 0,
                 }}
             >
+                <View style={styles.infoContainer}>
 
-                <View>
-
-                    <View style={styles.infoContainer}>
-                        <UserIcon
-                            style={{
-                                width: 75,
-                                height: 75,
-                            }}
-                            data={{ uri: props.iconUri }}
-                        />
-                        <View style={styles.desc}>
-                            <Text style={styles.name} numberOfLines={1}>{props.name}</Text>
-                            <Text style={styles.slogan} numberOfLines={4}>{props.desc}</Text>
-                        </View>
+                    <UserIcon
+                        style={{
+                            width: 75,
+                            height: 75,
+                        }}
+                        data={{ uri: props.iconUri }}
+                    />
+                    <View style={styles.desc}>
+                        <Text style={styles.name} numberOfLines={1}>{props.name}</Text>
+                        <Text style={styles.slogan} numberOfLines={4}>{props.desc}</Text>
                     </View>
-
-                    <View style={styles.infoContainer}>
-                        <Text>{props.rating}</Text>
-                        <Text>{props.relativeDistance}</Text>
-                    </View>
-
+                    
                 </View>
 
-            </CustomCapsule>
+                <View style={styles.infoContainer}>
+                    <Text style={{
+                        fontFamily: 'sans-serif-light',
+                    }}>{props.rating}</Text>
+                    <Text style={{
+                        fontFamily: 'sans-serif-light',
+                    }}>{props.relativeDistance}</Text>
+                </View>
+
+            </View>
 
             <TouchableOpacity
                 style={styles.moreInfoContainer}
@@ -57,12 +62,10 @@ export default function GymBadge(props) {
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity
-                style={styles.X}
+            <CloseButton
+                containerStyle={styles.X}
                 onPress={props.onX}
-            >
-                <Text stlye={{ fontSize: 20 }}>X</Text>
-            </TouchableOpacity>
+            />
 
         </View>
     )
@@ -87,22 +90,25 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 20,
+        fontFamily: 'sans-serif-light',
     },
     slogan: {
         fontSize: 15,
+        fontFamily: 'sans-serif-light',
     },
     // subInfoContainer: {},
     moreInfoContainer: {
         paddingVertical: 10,
         alignItems: "center",
-        backgroundColor: "#FFFFFFC0",
-        borderColor: "gray",
+        backgroundColor: "#FFFFFFD0",
+        borderColor: `${colors.gray}80`,
         borderTopWidth: 1,
         borderBottomLeftRadius: 40,
         borderBottomRightRadius: 40,
     },
     moreInfoText: {
         fontSize: 13,
+        fontFamily: 'sans-serif-light',
     },
     X: {
         width: 35,
@@ -111,9 +117,5 @@ const styles = StyleSheet.create({
         right: 0,
         marginTop: 10,
         marginRight: 10,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: "white",
-        borderRadius: 999,
     },
 })

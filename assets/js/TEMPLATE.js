@@ -9,6 +9,4 @@ export default function Component(props) {
     )
 }
 
-const styles = StyleSheet.create({
-    container: {},
-})
+const styles = StyleSheet.create({})

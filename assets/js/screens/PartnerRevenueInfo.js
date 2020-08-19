@@ -1,53 +1,83 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomText from "../components/CustomText"
 import CustomButton from "../components/CustomButton"
+import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
+import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 
 
 
 export default function PartnerRevenueInfo(props) {
+    let cache = props.route.params.cache
+
+    const [user, setUser] = useState(null)
+    const [gym, setGym] = useState(null)
+
+    useEffect(() => {
+        const init = async() => {
+            let user = await retrieveUserData(cache)
+            setUser(user)
+            // Currently operates on the premise that each partner has only one gym
+            let gym = await retrieveGymsByIds(cache, { gymIds: [user.associated_gyms[0]] })
+            gym = gym[0]
+            setGym(gym)
+        }
+        init()
+    }, [])
+
+    console.log(gym)
+
+    if (!user || !gym) return <View />
+
     return (
-        <ProfileLayout capsuleStyle={styles.container}>
+        <ProfileLayout
+            innerContainerStyle={{
+                paddingBottom: 10,
+            }}
+            data={{ name: user.name, iconUri: user.icon_uri }}
+        >
+            <CustomText
+                style={styles.text}
+                containerStyle={styles.textContainer}
+                label="Revenue"
+            >
+                {`$${currencyFromZeroDecimal(user.revenue)}`}
+            </CustomText>
+            <CustomText
+                style={styles.text}
+                containerStyle={styles.textContainer}
+                label="Member Count"
+            >
+                {gym.active_clients_memberships &&
+                    gym.active_clients_memberships.length}
+            </CustomText>
 
-                <CustomText
-                    style={styles.text}
-                    containerStyle={styles.textContainer}
-                    label="Revenue"
-                >
-                    $999
-                </CustomText>
-                <CustomText
-                    style={styles.text}
-                    containerStyle={styles.textContainer}
-                    label="Member Count"
-                >
-                    23
-                </CustomText>
-
-                <Text style={{
-                    paddingTop: 15,
-                    paddingBottom: 10,
-                    textAlign: "center",
-                    fontSize: 20,
-                }}>Payouts</Text>
-                <CustomButton
-                    title="Bank Account"
-                />
-                <CustomButton
-                    title="Plaid"
-                />
-
+            <Text style={{
+                paddingTop: 15,
+                paddingBottom: 10,
+                textAlign: "center",
+                fontSize: 20,
+                fontFamily: 'sans-serif-light',
+            }}>Payouts</Text>
+            <CustomButton
+                title="Bank Account"
+            />
+            <CustomButton
+                title="Plaid"
+            />
+            
         </ProfileLayout>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {},
     text: {
-        paddingVertical: 10,
+        paddingVertical: 8,
+        alignSelf: "center",
+        fontSize: 22,
     },
     textContainer: {
         marginVertical: 10,

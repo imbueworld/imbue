@@ -1,18 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
-
-import AppBackground from "../components/AppBackground"
+import { StyleSheet, Text, View } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
-import CustomCapsule from "../components/CustomCapsule"
 import MembershipPopup from '../components/popups/MembershipPopup'
 import PopupPurchase from '../components/popups/PopupPurchase'
+import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
+import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 
-import firebase from "firebase/app"
-import "firebase/functions"
-import { retrieveUserData, retrieveMemberships } from '../backend/CacheFunctions'
+import { retrieveUserData, retrieveMemberships, retrieveGymsByIds } from '../backend/CacheFunctions'
 import { purchaseMemberships } from "../backend/BackendFunctions"
 import { colors } from '../contexts/Colors'
+import GymLayout from '../layouts/GymLayout'
+import { setWaiter } from "../backend/HelperFunctions"
 
 
 
@@ -34,9 +33,10 @@ import { colors } from '../contexts/Colors'
 
 
 export default function GymDescription(props) {
-    console.log("[GYM DESCRIPTION]")
     let cache = props.route.params.cache
-    let gymData = props.route.params.data
+    let gymId = props.route.params.gymId
+
+    const [gym, setGym] = useState(null)
 
     const [Genres, GenresCreate] = useState(null)
     const [Desc, DescCreate] = useState(null)
@@ -45,33 +45,47 @@ export default function GymDescription(props) {
     const [popup, setPopup] = useState(false)
 
     const [hasMembership, setHasMembership] = useState(null)
-    const [imbueMembership, setImbueMembership] = useState(null)
+    // const [imbueMembership, setImbueMembership] = useState(null)
     const [selectedCard, selectCard] = useState(null)
 
     useEffect(() => {
-        const init = async() => {
-            let user = await retrieveUserData(cache)
-            let imbueMembership = await retrieveMemberships(cache, {
-                membershipIds: ["imbue"]
-            })
-            setImbueMembership(imbueMembership)
-
-            let membership =
-                user.active_memberships.includes(imbueMembership.id)
-                    ? "imbue"
-                    : user.active_memberships.includes(gymData.id)
-                        ? "gym"
-                        : false
-            setHasMembership(membership)
+        const init = async () => {
+            setWaiter(async () => {
+                let gyms = await retrieveGymsByIds(cache, { gymIds: [gymId] })
+                setGym(gyms[0])
+            }, cache, 10000)
         }
         init()
     }, [popup])
 
     useEffect(() => {
+        if (!gym) return
+
+        const init = async () => {
+            const user = await retrieveUserData(cache)
+
+            let imbueMembership = ( await retrieveGymsByIds(cache, {
+                gymIds: ["imbue"]
+            }) )[0]
+            // setImbueMembership(imbueMembership)
+            
+            let membership =
+                user.active_memberships.includes(imbueMembership.id)
+                    ? "imbue"
+                    : user.active_memberships.includes(gym.id)
+                        ? "gym"
+                        : false
+            setHasMembership(membership)
+        }
+        init()
+    }, [gym])
+
+    useEffect(() => {
+        if (!gym) return
 
         GenresCreate(
             <View style={styles.genreContainer}>
-                { gymData.genres.map((txt, idx) =>
+                { gym.genres.map((txt, idx) =>
                     <View
                         style={styles.genre}
                         key={idx}
@@ -80,33 +94,33 @@ export default function GymDescription(props) {
                     </View>) }
             </View>
         )
-    
         DescCreate(
             <View style={styles.descContainer}>
                 <Text style={styles.descText}>
-                    {gymData.description}
+                    {gym.description}
                 </Text>
             </View>
         )
-
         NameCreate(
             <View style={styles.nameContainer}>
-                <Text style={styles.nameText}>{gymData.name}</Text>
+                <Text style={styles.nameText}>{gym.name}</Text>
             </View>
         )
-    }, [])
+    }, [gym])
 
     function openClassesSchedule() {
         props.navigation.navigate(
-            "ScheduleViewer", { data: cache.gymClasses[gymData.id] })
+            "ScheduleViewer", { gymId })
     }
+
+    if (!gym) return <View><Text style={{fontSize: 50}}>Loading!</Text></View>
 
     return (
         <>
         { popup !== "membership" ? null :
         <MembershipPopup
             data={{
-                name: gymData.name
+                name: gym.name
             }}
             onProceed={() => setPopup("buy")}
             onX={() => setPopup(false)}
@@ -116,16 +130,16 @@ export default function GymDescription(props) {
         <PopupPurchase
             cache={cache}
             // data={{ id: gymData.id , price: gymData.membership_price }}
-            popupText={`If you would like to confirm your purchase of ${gymData.membership_price}, select your payment method.`}
+            popupText={`If you would like to confirm your purchase of ${gym.membership_price}, select your payment method.`}
             selectedCard={selectedCard}
             selectCard={selectCard}
             onProceed={async() => {
                 if (selectedCard) {
                     await purchaseMemberships(cache, {
-                        membershipIds: [gymData.id],
+                        membershipIds: [gym.id],
                         creditCardId: selectedCard,
-                        price: gymData.membership_price,
-                        description: `Gym Online Membership for ${gymData.name}`,
+                        price: gym.membership_price,
+                        description: `Gym Online Membership for ${gym.name}`,
                     })
                     setPopup(false)
                 }
@@ -133,30 +147,32 @@ export default function GymDescription(props) {
             onX={() => setPopup(false)}
         />}
 
-        <ScrollView contentContainerStyle={styles.scrollView}>
-            <AppBackground />
+        {/* <View style={{ height: "100%" }}> */}
+        <GymLayout
+            data={gym}
+        >
+        {/* <ScrollView contentContainerStyle={styles.scrollView}>
+            <AppBackground /> */}
 
-            <CustomCapsule
+            {/* <CustomCapsule
                 style={styles.container}
                 innerContainerStyle={styles.innerContainer}
-            >
+            > */}
 
-                <Image
+                {/* <Image
                     style={styles.gymImg}
                     source={require("../components/img/yoga.png")}
-                />
+                /> */}
                 
-                <View style={{
+                {/* <View style={{
                     paddingHorizontal: 10,
-                }}>
+                }}> */}
                     {Name}
                     {Genres}
                     {Desc}
 
                     <CustomButton
-                        style={{
-                            marginVertical: 20,
-                        }}
+                        style={styles.button}
                         title="Visit Classes"
                         onPress={openClassesSchedule}
                     />
@@ -164,43 +180,70 @@ export default function GymDescription(props) {
                     { hasMembership ? null :
                     <>
                     <CustomButton
+                        style={styles.button}
                         title="Get Membership"
                         onPress={() => setPopup("membership")}
                     />
                     <CustomButton
+                        style={[styles.button, {
+                            marginBottom: 10,
+                        }]}
                         title="Get Imbue Universal Membership"
                         onPress={() => props.navigation.navigate("PurchaseUnlimited")}
                     />
                     </>}
                     
                     { hasMembership !== "gym" ? null :
-                    <Text style={{ color: "green" }}>
-                        [V] You have a membership for this gym!
-                    </Text>}
+                    <MembershipApprovalBadge
+                        containerStyle={{
+                            marginTop: 10,
+                            marginBottom: 10,
+                        }}
+                        data={gym}
+                    />}
 
                     { hasMembership !== "imbue" ? null :
-                    <Text style={{ color: "purple" }}>
-                        [V] You have the Imbue Universal Gym Membership!
-                    </Text>}
-                </View>
+                    <MembershipApprovalBadgeImbue
+                        containerStyle={{
+                            marginTop: 10,
+                            marginBottom: 10,
+                        }}
+                        data={gym}
+                    />}
+                {/* </View> */}
 
-            </CustomCapsule>
-        </ScrollView>
+            {/* </CustomCapsule>
+        </ScrollView> */}
+        </GymLayout>
+        {/* </View> */}
         </>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        minHeight: "100%",
-    },
-    container: {
-        width: "88%",
-        marginVertical: 30,
-        alignSelf: "center",
-    },
-    innerContainer: {
-        paddingHorizontal: 0,
+    // scrollView: {
+    //     minHeight: "100%",
+    // },
+    // container: {
+    //     width: "88%",
+    //     marginVertical: 30,
+    //     alignSelf: "center",
+    // },
+    // innerContainer: {
+    //     paddingHorizontal: 0,
+    // },
+    // gymImg: {
+    //     width: "100%",
+    //     height: "100%",
+    //     height: 300,
+    //     borderRadius: 30,
+    //     borderBottomLeftRadius: 0,
+    //     borderBottomRightRadius: 0,
+    // },
+    button: {
+        // marginVertical: 20,
+        marginTop: 10,
+        marginBottom: 0,
     },
     nameContainer: {},
     nameText: {
@@ -236,13 +279,4 @@ const styles = StyleSheet.create({
         fontSize: 16,
         textAlign: "justify",
     },
-    gymImg: {
-        width: "100%",
-        height: "100%",
-        minHeight: 300,
-        maxHeight: 300,
-        borderRadius: 40,
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-    }
 })

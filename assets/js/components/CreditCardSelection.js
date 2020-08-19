@@ -1,6 +1,9 @@
 import React from 'react'
-import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+
+import CreditCardBadge from "./CreditCardBadge"
+import CustomSmallButton from './CustomSmallButton'
 
 
 
@@ -15,45 +18,57 @@ export default function CreditCardSelection(props) {
     let navigation = useNavigation()
     let CCData = props.data
 
-    const Cards = CCData.map((doc, idx) => 
+    const Cards = CCData.map(({ brand, last4, exp_month, exp_year, id }, idx) => 
         <TouchableOpacity
-            style={[
-                styles.creditCardContainer,
-                {
-                    backgroundColor:
-                        props.selectedCard === doc.id
-                        ? "white" : "lightgray",
-                },
-            ]}
             key={idx}
-            onPress={() => props.selectCard(doc.id)}
+            onPress={() => props.selectCard(id)}
         >
-            <Text style={styles.creditCardText}>
-                {`${doc.brand}  |  ending in ${doc.last4}`}
-            </Text>
+            <CreditCardBadge
+                containerStyle={{
+                    backgroundColor: props.selectedCard === id
+                        ? "white" : undefined,
+                }}
+                data={{ brand, last4, exp_month, exp_year }}
+            />
         </TouchableOpacity>
     )
 
     const AddNewCard =
-        <TouchableOpacity
-            style={[{
-                marginTop: 10,
-                alignSelf: "center",
-                // backgroundColor: "white",
-            }, styles.buttonSmall]}
+        // <TouchableOpacity
+        //     style={[{
+        //         marginTop: 10,
+        //         alignSelf: "center",
+        //         // backgroundColor: "white",
+        //     }, styles.buttonSmall]}
+        //     onPress={() => navigation.navigate("AddPaymentMethod")}
+        // >
+        //     <Text style={{
+        //         textDecorationLine: "underline",
+        //     }}>Add a new card</Text>
+        // </TouchableOpacity>
+        <CustomSmallButton
+            style={{
+                marginTop: 30,
+            }}
+            title="Add a new card"
             onPress={() => navigation.navigate("AddPaymentMethod")}
-        >
-            <Text style={{
-                textDecorationLine: "underline",
-            }}>Add a new card</Text>
-        </TouchableOpacity>
+        />
 
     return (
         <View style={[
             styles.container,
             props.containerStyle,
         ]}>
-            {Cards}
+            <View style={{
+                maxHeight: 450,
+                borderRadius: 20,
+                overflow: "hidden",
+                ...props.contentContainerStyle,
+            }}>
+                <ScrollView>
+                    {Cards}
+                </ScrollView>
+            </View>
             {AddNewCard}
         </View>
     )
@@ -61,18 +76,9 @@ export default function CreditCardSelection(props) {
 
 const styles = StyleSheet.create({
     container: {},
-    creditCardContainer: {
-        marginTop: 15,
-        paddingVertical: 15,
-        borderRadius: 999,
-    },
-    creditCardText: {
-        paddingLeft: 20,
-        fontSize: 18,
-    },
-    buttonSmall: {
-        paddingVertical: 10,
-        paddingHorizontal: 10,
-        borderRadius: 999,
-    }
+    // buttonSmall: {
+    //     paddingVertical: 10,
+    //     paddingHorizontal: 10,
+    //     borderRadius: 999,
+    // }
 })

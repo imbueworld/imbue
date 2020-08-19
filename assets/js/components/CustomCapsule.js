@@ -5,13 +5,17 @@ import { StyleSheet, View } from 'react-native'
 
 export default function CustomCapsule(props) {
     return (
-        <View style={[
-            styles.container,
-            props.style,
-        ]}>
+        <View
+            style={[
+                styles.container,
+                props.style,
+                props.containerStyle,
+            ]}
+            ref={props.containerRef}
+        >
             <View style={[
                 styles.innerContainer,
-                props.innerContainerStyle
+                props.innerContainerStyle,
             ]}>
                 {props.children}
             </View>
@@ -28,8 +32,10 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     innerContainer: {
+        // height: "100%",
         borderRadius: 30,
         backgroundColor: "#FFFFFF80",
         paddingHorizontal: 20,
+        overflow: "hidden",
     },
 })
