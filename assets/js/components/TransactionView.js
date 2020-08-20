@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import { colors } from '../contexts/Colors'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -25,14 +26,14 @@ export default function TransactionView(props) {
                 // textAlign: "justify",
                 textAlignVertical: "center",
                 fontSize: 16,
-                fontFamily: 'sans-serif-light',
+                fontFamily: fonts.default,
             }}>{description}</Text>
             <Text style={{
                 flex: 1,
                 textAlign: "center",
                 textAlignVertical: "center",
                 fontSize: 16,
-                fontFamily: 'sans-serif-light',
+                fontFamily: fonts.default,
             }}>{`$${currencyFromZeroDecimal(amount)}`}</Text>
         </View>
     )

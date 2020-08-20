@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import DropDownPicker from 'react-native-dropdown-picker'
-import { retrievePartnerClasses } from '../backend/CacheFunctions'
+import { retrieveClassesByUser } from '../backend/CacheFunctions'
 import DateSelector from './DateSelector'
 import ClockInput from './ClockInput'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import ClockInputDismissOverlay from './ClockInputDismissOverlay'
 import CustomButton from './CustomButton'
 import { populateClass } from '../backend/BackendFunctions'
@@ -19,26 +17,23 @@ export default function CalendarPopulateForm(props) {
   const [initialized, setInitialized] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
-  const [redFields, setRedFields] = useState(null)
+  const [redFields, setRedFields] = useState([])
 
   const [forceCloseClock, setForceCloseClock] = useState(false)
   const [dismissOverlay, setDismissOveraly] = useState(true)
 
   const [dropDownClasses, setDropDownClasses] = useState(null)
 
-  const [beginClock, setBeginClock] = useState(null)
-  const [endClock, setEndClock] = useState(null)
-  console.log("beginClock", beginClock)
-  console.log("endClock", endClock)
-  const [dateStringList, setDateStringList] = useState(null)
+  const [beginClock, setBeginClock] = useState([0, 0])
+  const [endClock, setEndClock] = useState([0, 0])
+  const [dateStringList, setDateStringList] = useState([])
 
   const [class_id, setClassId] = useState(null)
-  const [active_dates, setActiveDates] = useState(null)
+  // const [active_times, setActiveTimes] = useState(null)
 
   useEffect(() => {
     const init = async () => {
-      let classes = await retrievePartnerClasses(cache)
-      console.log(444, classes)
+      let classes = await retrieveClassesByUser(cache)
       let dropDownClasses = classes.map(entity => (
         { label: entity.name, value: entity.id }
       ))
@@ -50,35 +45,75 @@ export default function CalendarPopulateForm(props) {
   }, [])
 
   function validate() {
-    let redFields = []
-    if (!class_id) redFields.push("class_id")
-    if (!dateStringList.length) redFields.push("dateStringList")
+    if (!class_id) {
+      setRedFields(["class"])
+      throw new Error("A class must be selected.")
+    }
 
-    if (redFields.length) {
-      setRedFields(redFields)
-      throw new Error("Required fields need to be filled.")
+    if (!dateStringList.length) {
+      setRedFields(["calendar"])
+      throw new Error("A date for the class must be selected")
     }
 
     if (dateStringList.length > 50) {
       setRedFields(["calendar"])
       throw new Error("Currently we allow adding only 50 classes at once.")
     }
-  }
 
-  function format() {
-    let hB = beginClock[0] * 3600000 // hours ===> milliseconds
-    let mB = beginClock[1] * 60000 // minutes ===> milliseconds
-    let hE = endClock[0] * 3600000 // hours ===> milliseconds
-    let mE = endClock[1] * 60000 // minutes ===> milliseconds
-
-    let activeDates = []
+    // Date must be in the future
     dateStringList.forEach(dateString => {
-      activeDates.push({
-        begin_time: ( new Date(dateString) ).getTime() + hB + mB,
-        end_time: ( new Date(dateString) ).getTime() + hE + mE
+      let bH = beginClock[0] * 3600000 // hours ===> milliseconds
+      let bM = beginClock[1] * 60000 // minutes ===> milliseconds
+
+      const dateObj = new Date(dateString)
+      const dateTsLocal = dateObj.getTime()
+        + dateObj.getTimezoneOffset() * 60 * 1000 // minutes ===> milliseconds
+        + bH + bM
+
+      console.log("dateTsLocal", dateTsLocal)
+      console.log("Date.now()", Date.now())
+
+      if (dateTsLocal < Date.now()) {
+        setRedFields(["calendar"])
+        throw new Error("The class date and time must be in the future.")
+      }
+    })
+
+    let bH = beginClock[0] * 60 // hours ===> minutes
+    let bM = beginClock[1]
+    let eH = endClock[0] * 60 // hours ===> minutes
+    let eM = endClock[1]
+    // beginning time of class must be before the end of class
+    if (bH + bM > eH + eM) {
+      setRedFields(["beginClock", "endClock"])
+      throw new Error("Class starting time must be before its end time.")
+    }
+    // Classes must last at least 5 minutes
+    if ((eH + eM) - (bH + bM) < 5) {
+      setRedFields(["beginClock", "endClock"])
+      throw new Error("A class must last at least 5 minutes.")
+    }
+  }
+  
+  function format() {
+    let bH = beginClock[0] * 3600000 // hours ===> milliseconds
+    let bM = beginClock[1] * 60000 // minutes ===> milliseconds
+    let eH = endClock[0] * 3600000 // hours ===> milliseconds
+    let eM = endClock[1] * 60000 // minutes ===> milliseconds
+
+    let activeTimes = []
+    dateStringList.forEach(dateString => {
+      const dateObj = new Date(dateString)
+      const dateTsLocal = dateObj.getTime()
+        + dateObj.getTimezoneOffset() * 60 * 1000 // minutes ===> milliseconds
+      console.log("getTimezoneOffset()", dateObj.getTimezoneOffset())
+      activeTimes.push({
+        begin_time: dateTsLocal + bH + bM,
+        end_time: dateTsLocal + eH + eM
       })
     })
-    setActiveDates(activeDates)
+    // setActiveTimes(activeTimes)
+    return activeTimes
   }
 
 
@@ -99,27 +134,42 @@ export default function CalendarPopulateForm(props) {
 
     <View style={{...props.containerStyle}}>
 
-      {errorMsg
-      ?   <Text style={{ color: "red" }}>{errorMsg}</Text>
-      :   <Text style={{ color: "green" }}>{successMsg}</Text>}
+      <View style={styles.layoutMargin}>
+        {errorMsg
+        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+        : <Text style={{ color: "green" }}>{successMsg}</Text>}
+      </View>
 
       <CustomDropDownPicker
-        containerStyle={{...styles.dropDownPickerContainerStyle, ...styles.layoutMargin}}
-        style={styles.dropDownPicker}
+        containerStyle={{
+          ...styles.dropDownPickerContainerStyle,
+          ...styles.layoutMargin
+        }}
+        style={{
+          ...styles.dropDownPicker,
+          borderColor: redFields.includes("class") ? "red" : undefined,
+        }}
         items={dropDownClasses}
         placeholder="Select your class"
-        onChangeItem={item => setClassId(item)}
+        onChangeItem={item => setClassId(item.value)}
       />
 
       <DateSelector
-        containerStyle={styles.calendarContainerStyle}
+        containerStyle={{
+          ...styles.calendarContainerStyle,
+          borderColor: redFields.includes("calendar") ? "red" : undefined,
+        }}
         innerContainerStyle={styles.calendarInnerContainerStyle}
         onDayPress={dates => setDateStringList(dates)}
       />
 
       <View style={styles.layoutMargin}>
         <ClockInput
-          containerStyle={styles.clockInput}
+          cache={cache}
+          containerStyle={{
+            ...styles.clockInput,
+            borderColor: redFields.includes("beginClock") ? "red" : undefined
+          }}
           // forceClose={forceCloseClock}
           // onOpen={() => setDismissOveraly(true)}
           // onClose={() => setDismissOveraly(false)}
@@ -129,7 +179,11 @@ export default function CalendarPopulateForm(props) {
         />
 
         <ClockInput
-          containerStyle={styles.clockInput}
+          cache={cache}
+          containerStyle={{
+            ...styles.clockInput,
+            borderColor: redFields.includes("endClock") ? "red" : undefined
+          }}
           // forceClose={forceCloseClock}
           // onOpen={() => setDismissOveraly(true)}
           // onClose={() => setDismissOveraly(false)}
@@ -142,14 +196,15 @@ export default function CalendarPopulateForm(props) {
           style={{ marginTop: 20 }}
           title="Apply"
           onPress={async () => {
+            setRedFields([])
             setErrorMsg("")
             setSuccessMsg("")
             
             try {
               validate()
-              format()
+              let active_times = format()
               await populateClass(cache,
-                  { class_id, active_dates })
+                  { class_id, active_times })
               setSuccessMsg("Successfully added class dates to the gym's official calendar.")
             } catch(err) {
               setErrorMsg(err.message)
@@ -178,7 +233,9 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
   calendarInnerContainerStyle: {},
-  dropDownPickerContainerStyle: {},
+  dropDownPickerContainerStyle: {
+    marginTop: 20,
+  },
   dropDownPicker: {
     marginTop: 0,
     marginBottom: 0,

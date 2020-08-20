@@ -21,7 +21,7 @@ export default function ClockInputPopupField(props) {
                     justifyContent: "center",
                 }}
                 underlayColor="#00000008"
-                onPress={() => props.onPress()}
+                onPress={() => {if (props.onPress) props.onPress()}}
             >
                 <Text style={{
                     fontSize: 24,

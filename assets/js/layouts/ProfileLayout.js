@@ -10,6 +10,7 @@ import { simpleShadow } from '../contexts/Colors'
 import BackButton from '../components/BackButton'
 import { useNavigation } from '@react-navigation/native'
 import { publicStorage } from '../backend/HelperFunctions'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -108,7 +109,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: "center",
     fontSize: 22,
-    fontFamily: 'sans-serif-light',
+    fontFamily: fonts.default,
   },
   sidePanelButtonContainer: {
     ...simpleShadow,

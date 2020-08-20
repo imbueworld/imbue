@@ -3,50 +3,48 @@ import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
-import CustomCapsule from "../components/CustomCapsule"
-
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
-import MenuPanel from "../components/MenuPanel"
-// import AddNewClass from "../components/AddNewClass"
 
 import {
     datestringFromTimestamp,
     clockFromTimestamp,
-    shortDateFromTimestamp
+    shortDateFromTimestamp,
+    addFormattingToClassData,
+    addFunctionalityToClassData
 } from "../backend/HelperFunctions"
-import CalendarPopulateForm from '../components/CalendarPopulateForm'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import { retrieveClassesByIds, retrieveClassesByGymIds } from '../backend/CacheFunctions'
+import { fonts } from '../contexts/Styles'
 
 
 
-function addFormattingToData(docs) {
-    if (!(docs instanceof Array)) return
+// function addFormattingToData(docs) {
+//     if (!(docs instanceof Array)) return
 
-    return docs.map(doc => {
-        let formatting = {
-            dateString: datestringFromTimestamp(doc.begin_time),
-            formattedDate:
-                `${shortDateFromTimestamp(doc.begin_time)}`,
-            formattedTime:
-                `${clockFromTimestamp(doc.begin_time)} – ${clockFromTimestamp(doc.end_time)}`,
-        }
+//     return docs.map(doc => {
+//         let formatting = {
+//             dateString: datestringFromTimestamp(doc.begin_time),
+//             formattedDate:
+//                 `${shortDateFromTimestamp(doc.begin_time)}`,
+//             formattedTime:
+//                 `${clockFromTimestamp(doc.begin_time)} – ${clockFromTimestamp(doc.end_time)}`,
+//         }
 
-        return Object.assign(doc, formatting)
-    })
-}
+//         return Object.assign(doc, formatting)
+//     })
+// }
 
-function addFunctionality({ navigation }, docs) {
-    if (!(docs instanceof Array)) return
+// function addFunctionality({ navigation }, docs) {
+//     if (!(docs instanceof Array)) return
 
-    docs.forEach(doc => {
-        doc.onPress = () => {
-            navigation.navigate("ClassDescription", { data: doc })
-        }
-    })
-    return docs
-}
+//     docs.forEach(doc => {
+//         doc.onPress = () => {
+//             navigation.navigate("ClassDescription", { data: doc })
+//         }
+//     })
+//     return docs
+// }
 
 
 
@@ -64,25 +62,25 @@ export default function ScheduleViewer(props) {
     const [Calendar, CalendarCreate] = useState(null)
     const [CalendarItemList, CalendarItemListCreate] = useState(null)
 
-    useEffect(() => {
-        let limit = 20 * (1000 / 200) // seconds * intervals per second
-        let initCheck = setInterval(() => {
-            limit--
-            console.log("Checking...")
-            // DO NOT PUT HERE ANYTHING COMPUTATIONALLY INTENSIVE
-            // ...
+    // useEffect(() => {
+    //     let limit = 20 * (1000 / 200) // seconds * intervals per second
+    //     let initCheck = setInterval(() => {
+    //         limit--
+    //         console.log("Checking...")
+    //         // DO NOT PUT HERE ANYTHING COMPUTATIONALLY INTENSIVE
+    //         // ...
 
-            if (!cache.working || !limit) {
-                console.log("cache.working", cache.working) //
-                cache.working = 0 // reset it for good messure
-                // And immediately clear the interval,
-                // upon receiving desired outcome
-                clearInterval(initCheck)
-                console.log("Interval cleared.")
-                setCacheIsWorking(false)
-            }
-        }, /*25*/200)
-    }, [])
+    //         if (!cache.working || !limit) {
+    //             console.log("cache.working", cache.working) //
+    //             cache.working = 0 // reset it for good messure
+    //             // And immediately clear the interval,
+    //             // upon receiving desired outcome
+    //             clearInterval(initCheck)
+    //             console.log("Interval cleared.")
+    //             setCacheIsWorking(false)
+    //         }
+    //     }, /*25*/200)
+    // }, [])
 
     useEffect(() => {
         // if (cacheIsWorking) return
@@ -99,22 +97,26 @@ export default function ScheduleViewer(props) {
         init()
     }, [cacheIsWorking])
 
-    // return (
-    //     <CalendarPopulateForm
-    //         cache={cache}
-    //     />)
-    // let calendarData = props.route.params.data
-    // let calendarData
-    // let calendarType = props.route.params.calendarType
-
     useEffect(() => {
         if (!calendarData) return
 
+        calendarData.forEach(({ active_times }) => {
+            addFormattingToClassData(active_times)
+        })
+
+        addFunctionalityToClassData(calendarData)
+
+        console.log("calendarData", calendarData)
+
+        setCalendarData(calendarData)
+        setDataIsFormatted(true)
+
+
         // calendarData = addFormattingToData(calendarData)
         // calendarData = addFunctionality(props, calendarData)
-        setCalendarData(addFormattingToData(calendarData))
-        setCalendarData(addFunctionality(props, calendarData))
-        setDataIsFormatted(true)
+        // setCalendarData(addFormattingToData(calendarData))
+        // setCalendarData(addFunctionality(props, calendarData))
+        // setDataIsFormatted(true)
     }, [calendarData])
 
     useEffect(() => {
@@ -172,7 +174,7 @@ export default function ScheduleViewer(props) {
                         backgroundColor: "white",
                         borderRadius: 999,
                         fontSize: 40,
-                        fontFamily: 'sans-serif-light',
+                        fontFamily: fonts.default,
                     }}>{"+"}</Text>
                 </TouchableOpacity>
             </View>
@@ -181,7 +183,7 @@ export default function ScheduleViewer(props) {
                 marginVertical: 20,
                 textAlign: "center",
                 fontSize: 30,
-                fontFamily: 'sans-serif-light',
+                fontFamily: fonts.default,
             }}>Schedule</Text>
             
             <View style={styles.capsule}>

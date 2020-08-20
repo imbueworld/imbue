@@ -10,6 +10,7 @@ import { retrieveUserData, retrieveGyms, retrieveGymsByIds } from '../backend/Ca
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import { addDataToGym, updateGym } from '../backend/BackendFunctions'
 import { colors } from '../contexts/Colors'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -71,7 +72,7 @@ export default function PartnerUpdateMemberships(props) {
                 alignSelf: "center",
                 paddingBottom: 10,
                 fontSize: 20,
-                fontFamily: 'sans-serif-light',
+                fontFamily: fonts.default,
             }}>{"Memberships & Pricing"}</Text>
 
             {errorMsg
@@ -152,7 +153,7 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         paddingLeft: 20,
         alignSelf: "center",
-        fontFamily: 'sans-serif-light',
+        fontFamily: fonts.default,
     },
     priceContainer: {
         flex: 1,

@@ -224,7 +224,7 @@ export function addFormattingToClassData(docs) {
 /**
  * For in use with <ClassList />
  */
-export function addFunctionalityToClassData({ navigation }, docs) {
+export function addFunctionalityToClassData(docs, navigation) {
     if (!(docs instanceof Array)) return
 
     docs.forEach(doc => {

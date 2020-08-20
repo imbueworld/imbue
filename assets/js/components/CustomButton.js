@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 import { simpleShadow, colors } from "../contexts/Colors"
 import { fonts } from "../contexts/Styles"
@@ -63,6 +63,6 @@ const styles = StyleSheet.create({
         color: "#1b1b19",
         alignSelf: "center",
         fontSize: 18,
-        fontFamily: 'sans-serif-light',
+        fontFamily: fonts.default,
     },
 })

@@ -22,7 +22,8 @@ export default function PartnerDashboard(props) {
         async function init() {
             let user = await retrieveUserData(cache)
             setUser(user)
-            let classes = await retrieveClassesByGymIds(cache, { gymIds: [user.associated_gyms] })
+            // let classes = await retrieveClassesByGymIds(
+            //     cache, { gymIds: [user.associated_gyms] })
             // setClasses(classes)
         }
         init()
@@ -82,7 +83,7 @@ export default function PartnerDashboard(props) {
                 title="Schedule"
                 onPress={() => {props.navigation.navigate(
                     "ScheduleViewer",
-                    { gymIds: [] })}}
+                    { gymId: user.associated_gyms[0] })}}
             />
             <CustomButton
                 icon={

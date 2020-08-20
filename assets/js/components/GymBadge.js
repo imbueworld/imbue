@@ -8,6 +8,7 @@ import CustomCapsule from "./CustomCapsule"
 import { colors } from '../contexts/Colors'
 import Icon from './Icon'
 import CloseButton from './CloseButton'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -41,12 +42,12 @@ export default function GymBadge(props) {
                 </View>
 
                 <View style={styles.infoContainer}>
-                    <Text style={{
-                        fontFamily: 'sans-serif-light',
-                    }}>{props.rating}</Text>
-                    <Text style={{
-                        fontFamily: 'sans-serif-light',
-                    }}>{props.relativeDistance}</Text>
+                    <Text style={styles.font}>
+                        {props.rating}
+                    </Text>
+                    <Text style={styles.font}>
+                        {props.relativeDistance}
+                    </Text>
                 </View>
 
             </View>
@@ -56,7 +57,10 @@ export default function GymBadge(props) {
                 onPress={props.onMoreInfo}
             >
                 <Text
-                    style={styles.moreInfoText}
+                    style={{
+                        ...styles.moreInfoText,
+                        ...styles.font,
+                    }}
                 >
                     More Info
                 </Text>
@@ -73,7 +77,7 @@ export default function GymBadge(props) {
 
 const styles = StyleSheet.create({
     container: {
-        width: "85%",
+        width: "88%",
         position: "absolute",
         alignSelf: "center",
     },
@@ -90,11 +94,11 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 20,
-        fontFamily: 'sans-serif-light',
+        fontFamily: fonts.default,
     },
     slogan: {
         fontSize: 15,
-        fontFamily: 'sans-serif-light',
+        fontFamily: fonts.default,
     },
     // subInfoContainer: {},
     moreInfoContainer: {
@@ -108,7 +112,9 @@ const styles = StyleSheet.create({
     },
     moreInfoText: {
         fontSize: 13,
-        fontFamily: 'sans-serif-light',
+    },
+    font: {
+        fontFamily: fonts.default,
     },
     X: {
         width: 35,

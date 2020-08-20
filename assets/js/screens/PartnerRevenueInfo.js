@@ -7,6 +7,7 @@ import CustomText from "../components/CustomText"
 import CustomButton from "../components/CustomButton"
 import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -60,7 +61,7 @@ export default function PartnerRevenueInfo(props) {
                 paddingBottom: 10,
                 textAlign: "center",
                 fontSize: 20,
-                fontFamily: 'sans-serif-light',
+                fontFamily: fonts.default,
             }}>Payouts</Text>
             <CustomButton
                 title="Bank Account"

@@ -169,6 +169,61 @@ export async function retrieveClassesByGymIds(cache, { gymIds }) {
     return classes
 }
 
+export async function retrieveClassesByUser(cache) {
+    const user = await retrieveUserData(cache)
+
+    function appropriate() {
+        switch (user.account_type) {
+            case "user":
+                return cache.classes
+                    .filter(doc => user.active_classes.includes(doc.id))
+            case "partner":
+                return cache.classes
+                    .filter(doc => doc.partner_id === user.id)
+        }
+    }
+
+    // Construct a queue of absent ids in cache.classes
+    let cached_ids = cache.classes.map(doc => doc.id)
+    // let queue = []
+    // cached_ids.forEach(id => {
+    //     switch (user.account_type) {
+    //         case "user":
+    //             if (!user.active_classes.includes(id)) queue.append(id)
+    //             break
+    //         case "partner":
+    //             if (!user.associated_classes.includes(id)) queue.append(id)
+    //             break
+    //     }
+    // })
+
+    let queue
+    switch (user.account_type) {
+        case "user":
+            queue = user.active_classes
+                .filter(id => !cached_ids.includes(id))
+            break
+        case "partner":
+            queue = user.associated_classes
+                .filter(id => !cached_ids.includes(id))
+            break
+    }
+
+    if (queue && !queue.length) return appropriate()
+
+    // Request data for absent ids
+    let classes = (await firestore()
+        .collection("classes")
+        .where("id", "in", queue)
+        .get()
+    ).docs.map(doc => doc.data())
+
+    // Update cache
+    cache.classes.push(...classes)
+
+    return appropriate()
+}
+
 /**
  * memebershipIds -- optional,
  *  if passed in, retrieves only those,
@@ -176,13 +231,6 @@ export async function retrieveClassesByGymIds(cache, { gymIds }) {
  */
 // export async function retrieveMemberships(cache, { membershipIds }) {
 //     throw new Error("Not Implemented")
-// }
-
-/**
- * Retrieves data about each class that is tied to the partner (partner id)
- */
-// export async function retrievePartnerClasses(cache) {
-//     throw new Error("Not Implemented") // Probably can tie it into one fucntion up above
 // }
 
 /**

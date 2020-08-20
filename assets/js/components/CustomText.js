@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { colors } from "../contexts/Colors"
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -14,13 +15,17 @@ export default function CustomText(props) {
 
             <Text style={[
                 styles.text,
+                styles.font,
                 props.style,
             ]}>
                 {props.children}
             </Text>
 
             { props.label ?
-                <Text style={styles.label}>
+                <Text style={{
+                    ...styles.label,
+                    ...styles.font,
+                }}>
                     {props.label}
                 </Text>
             : <View />}
@@ -41,7 +46,6 @@ const styles = StyleSheet.create({
     text: {
         textAlign: "justify",
         fontSize: 18,
-        fontFamily: 'sans-serif-light',
     },
     label: {
         borderTopWidth: 1,
@@ -49,6 +53,8 @@ const styles = StyleSheet.create({
         color: colors.grayInactive,
         textAlign: "center",
         fontSize: 14,
-        fontFamily: 'sans-serif-light',
+    },
+    font: {
+        fontFamily: fonts.default,
     },
 })

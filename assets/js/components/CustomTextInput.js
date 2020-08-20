@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
-import { StyleSheet, View, Text, TextInput } from 'react-native'
+import React from 'react'
+import { StyleSheet, View, TextInput } from 'react-native'
 import { colors } from '../contexts/Colors'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -75,7 +76,7 @@ const styles = StyleSheet.create({
         textAlign: "center",
         fontSize: 20,
         zIndex: 100,
-        fontFamily: 'sans-serif-light',
+        fontFamily: fonts.default,
     },
     // placeholderContainer: {
     //     width: "100%",

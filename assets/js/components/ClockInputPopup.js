@@ -1,14 +1,40 @@
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ScrollView, FlatList } from 'react-native-gesture-handler'
+import { ScrollView } from 'react-native-gesture-handler'
 
 
 
 export default function ClockInputPopup(props) {
-    let hours = []
-    for (let i = 0; i <= 59; i++) {
-        hours.push({ id: i, title: i })
+    // const [itemIdx, selectItemIdx] = useState(0)
+    const cItemIdx = props.value // current item idx
+
+    function onScroll({ nativeEvent }) {
+        // Layout simultaneously shows exactly three items
+        let itemHeight = nativeEvent.layoutMeasurement.height / 3
+        let offsetY = nativeEvent.contentOffset.y
+        let newItemIdx = Math.round(offsetY / itemHeight)
+        if (cItemIdx !== newItemIdx) {
+            // selectItemIdx(newItemIdx)
+            props.onItemIdxChange(newItemIdx)
+        }
     }
+
+    const scrollViewRef = useRef(null)
+    // An unoptimal way of doing things, but currently
+    // this is going to be the way to scroll to correct pos when user
+    // opens the clock input.
+    const currentPredictedItemHeight = 59.93650817871094
+
+    useEffect(() => {
+        const ref = scrollViewRef.current
+
+        if (ref) {
+            ref.scrollTo({
+                y: currentPredictedItemHeight * cItemIdx,
+                animated: true,
+            })
+        }
+    }, [])
 
     return (
         <View
@@ -27,7 +53,8 @@ export default function ClockInputPopup(props) {
                 snapToInterval={60} // item height
                 decelerationRate="fast"
                 fadingEdgeLength={200}
-                onScroll={event => console.log(event.nativeEvent)}
+                ref={scrollViewRef}
+                onScroll={onScroll}
             >
                 {props.children}
             </ScrollView>

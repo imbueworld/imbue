@@ -327,19 +327,48 @@ export async function createClass(cache, { instructor, name, description, genres
 /**
  * TEMPLATE
  */
-export async function populateClass(cache, { class_id, active_dates }) {
+export async function populateClass(cache, { class_id, active_times }) {
     if (!cache.working) cache.working = 0
     cache.working += 1
 
+    const classDocRef = firestore().collection("classes").doc(class_id)
+
     try {
+        // Retrieve already added active_times
+        let existingTimes = ( await classDocRef.get() ).data().active_times || []
+
+        // Make sure that the times don't overlap; it's not allowed
+        existingTimes.forEach(({ begin_time, end_time }) => {
+            active_times.forEach(doc => {
+                let begin_time_NEW = doc.begin_time
+                let end_time_NEW = doc.end_time
+
+                const err = new Error("Some class times overlap with already existing class times.")
+                
+                if (begin_time_NEW > begin_time
+                    && begin_time_NEW < end_time) {
+                    throw err
+                }
+                if (end_time_NEW > begin_time
+                    && end_time_NEW < end_time) {
+                    throw err
+                }
+                if (end_time_NEW === end_time
+                    && begin_time_NEW === begin_time) {
+                    throw err
+                }
+            })
+        })
+
         // Populate class with data
-        await firestore()
-            .collection("classes")
-            .doc(class_id)
-            .set({ active_dates }, { merge: true })
+        await classDocRef
+            .set({
+                active_times: [...existingTimes, ...active_times]
+            }, { merge: true })
     } catch(err) {
-        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
-        throw new Error("Something prevented the action.")
+        console.error(`[CACHE populateClass]  [${err.code}]  ${err.message}`)
+        // throw new Error("Something prevented the action.")
+        throw err
     }
 
     // cache work

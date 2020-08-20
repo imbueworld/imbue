@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { colors, simpleShadow } from '../contexts/Colors'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -57,7 +58,7 @@ export default function CustomOptionSelector(props) {
                 >
                     <Text style={{
                         ...props.textStyle,
-                        fontFamily: 'sans-serif-light',
+                        ...styles.font,
                     }}>{arr[1]}</Text>
                 </TouchableOpacity>
             </View>
@@ -136,5 +137,8 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: colors.gray,
         borderRadius: 999,
+    },
+    font: {
+        fontFamily: fonts.default,
     },
 })

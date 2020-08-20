@@ -1,6 +1,7 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { colors } from '../contexts/Colors'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -61,6 +62,6 @@ const styles = StyleSheet.create({
         flex: 1,
         marginLeft: 20,
         fontSize: 20,
-        fontFamily: 'sans-serif-light',
+        fontFamily: fonts.default,
     },
 })

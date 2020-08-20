@@ -18,7 +18,7 @@ export default function ClockInput(props) {
     const [Hours, HoursCreate] = useState(null)
     const [Minutes, MinutesCreate] = useState(null)
 
-    const [popup, setPopup] = useState(true)
+    const [popup, setPopup] = useState(false)
 
     const [h, setH] = useState(0)
     const [m, setM] = useState(0)
@@ -28,20 +28,20 @@ export default function ClockInput(props) {
 
     useEffect(() => {
         let hours = []
-        for (let i = -1; i <= 1 + 12; i++) {
+        for (let i = -1; i <= 1 + 23; i++) {
             hours.push(
                 <ClockInputPopupField
                     width={width}
                     height={width}
                     style={{
-                        opacity: i === -1 || i === 13 ? 0 : 1,
+                        opacity: i === -1 || i === 24 ? 0 : 1,
                     }}
                     key={`h${i}`}
-                    onPress={() => {
-                        setH(i)
-                        // setPopup(false)
-                        // props.onClose()
-                    }}
+                    // onPress={() => {
+                    //     setH(i)
+                    //     // setPopup(false)
+                    //     // props.onClose()
+                    // }}
                 >
                     {i}
                 </ClockInputPopupField>
@@ -50,7 +50,7 @@ export default function ClockInput(props) {
         HoursCreate(hours)
     
         let minutes = []
-        for (let i = 0; i <= 1 + 59 + 1; i++) {
+        for (let i = -1; i <= 60 + 1; i++) {
             let item = i - 3
             item = `${i}`.length > 1 ? i : `0${i}`
             minutes.push(
@@ -61,14 +61,14 @@ export default function ClockInput(props) {
                         // for the offset that is apparently needed, because
                         // it is not perfectly centered otherwise
                         paddingBottom: 0.3 * i,
-                        opacity: i === 61 || i === 0 ? 0 : 1,
+                        opacity: i === -1 || i === 61 ? 0 : 1,
                     }}
                     key={`h${i}`}
-                    onPress={() => {
-                        setM(i + 1)
-                        // setPopup(false)
-                        // props.onClose()
-                    }}
+                    // onPress={() => {
+                    //     setM(i + 1)
+                    //     // setPopup(false)
+                    //     // props.onClose()
+                    // }}
                 >
                     {item}
                 </ClockInputPopupField>
@@ -132,6 +132,11 @@ export default function ClockInput(props) {
                         style={{ flex: 36 }}
                         // width={width}
                         // height={height * 3}
+                        value={h}
+                        onItemIdxChange={(idx) => {
+                            setH(idx)
+                            if (props.onChange) props.onChange(idx, m)
+                        }}
                     >
                         {Hours}
                     </ClockInputPopup>
@@ -140,6 +145,11 @@ export default function ClockInput(props) {
                         style={{ flex: 36 }}
                         // width={width}
                         // height={height * 3}
+                        value={m}
+                        onItemIdxChange={(idx) => {
+                            setM(idx)
+                            if (props.onChange) props.onChange(h, idx)
+                        }}
                     >
                         {Minutes}
                     </ClockInputPopup>

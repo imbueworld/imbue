@@ -2,6 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { addFormattingToClassData, addFunctionalityToClassData } from '../backend/HelperFunctions'
 import { useNavigation } from '@react-navigation/native'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -18,31 +19,49 @@ export default function ClassList(props) {
 
     if (!classData) return <View />
 
-    if (props.dateString) {
-        classData = classData.filter(({ dateString }) => {
-            if (dateString === props.dateString) return true
-        })
-    }
+    // if (props.dateString) {
+    //     classData = classData.filter(({ dateString }) => {
+    //         if (dateString === props.dateString) return true
+    //     })
+    // }
 
-    const items = classData.map(({ formattedDate, formattedTime, name, instructor, onPress }, idx) =>
-        <TouchableOpacity
-            style={styles.listItem}
-            key={idx}
-            onPress={onPress}
-        >
-            <Text style={styles.text}>{formattedDate}</Text>
-            <Text style={styles.text}>{formattedTime}</Text>
-            <Text style={styles.text}>{name}</Text>
-            <Text style={styles.text}>{instructor}</Text>
-        </TouchableOpacity>
-    )
+    // const items = classData.map(({ formattedDate, formattedTime, name, instructor, onPress }, idx) =>
+    //     <TouchableOpacity
+    //         style={styles.listItem}
+    //         key={idx}
+    //         onPress={onPress}
+    //     >
+    //         <Text style={styles.text}>{formattedDate}</Text>
+    //         <Text style={styles.text}>{formattedTime}</Text>
+    //         <Text style={styles.text}>{name}</Text>
+    //         <Text style={styles.text}>{instructor}</Text>
+    //     </TouchableOpacity>
+    // )
+
+    const Items = []
+    classData.forEach((doc, idx) => {
+        doc.active_times.forEach(({ formattedDate, formattedTime }) => {
+            Items.push(
+                <TouchableOpacity
+                    style={styles.listItem}
+                    key={idx}
+                    onPress={doc.onPress}
+                >
+                    <Text style={styles.text}>{formattedDate}</Text>
+                    <Text style={styles.text}>{formattedTime}</Text>
+                    <Text style={styles.text}>{doc.name}</Text>
+                    <Text style={styles.text}>{doc.instructor}</Text>
+                </TouchableOpacity>
+            )
+        })
+    })
 
     return (
         <View style={[
             styles.container,
             props.containerStyle,
         ]}>
-            {items}
+            {Items}
         </View>
     )
 }
@@ -59,6 +78,6 @@ const styles = StyleSheet.create({
         alignItems: "center",
     },
     text: {
-        fontFamily: 'sans-serif-light',
+        fontFamily: fonts.default,
     },
 })
