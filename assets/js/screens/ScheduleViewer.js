@@ -65,7 +65,28 @@ export default function ScheduleViewer(props) {
     const [CalendarItemList, CalendarItemListCreate] = useState(null)
 
     useEffect(() => {
-        if (cacheIsWorking) return
+        let limit = 20 * (1000 / 200) // seconds * intervals per second
+        let initCheck = setInterval(() => {
+            limit--
+            console.log("Checking...")
+            // DO NOT PUT HERE ANYTHING COMPUTATIONALLY INTENSIVE
+            // ...
+
+            if (!cache.working || !limit) {
+                console.log("cache.working", cache.working) //
+                cache.working = 0 // reset it for good messure
+                // And immediately clear the interval,
+                // upon receiving desired outcome
+                clearInterval(initCheck)
+                console.log("Interval cleared.")
+                setCacheIsWorking(false)
+            }
+        }, /*25*/200)
+    }, [])
+
+    useEffect(() => {
+        // if (cacheIsWorking) return
+
         const init = async () => {
             // Determine which classes to display:
             // based on the provided gymId or classIds
@@ -85,26 +106,6 @@ export default function ScheduleViewer(props) {
     // let calendarData = props.route.params.data
     // let calendarData
     // let calendarType = props.route.params.calendarType
-
-    useEffect(() => {
-        let limit = 10 * (1000 / 200) // seconds * intervals per second
-        let initCheck = setInterval(() => {
-            limit--
-            console.log("Checking...")
-            // DO NOT PUT HERE ANYTHING COMPUTATIONALLY INTENSIVE
-            // ...
-
-            if (!cache.working || !limit) {
-                console.log("cache.working", cache.working) //
-                cache.working = 0 // reset it for good messure
-                // And immediately clear the interval,
-                // upon receiving desired outcome
-                clearInterval(initCheck)
-                console.log("Interval cleared.")
-                setCacheIsWorking(false)
-            }
-        }, /*25*/200)
-    }, [])
 
     useEffect(() => {
         if (!calendarData) return

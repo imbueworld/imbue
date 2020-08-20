@@ -24,7 +24,6 @@ import { publicStorage } from '../backend/HelperFunctions'
 
 export default function UserDashboard(props) {
   let cache = props.route.params.cache
-  console.log("[USER DASHBOARD]")
 
   const [expanded, setExpanded] = useState(false)
   const { width, height } = useDimensions().window

@@ -50,10 +50,10 @@ export default function GymDescription(props) {
 
     useEffect(() => {
         const init = async () => {
-            setWaiter(async () => {
-                let gyms = await retrieveGymsByIds(cache, { gymIds: [gymId] })
-                setGym(gyms[0])
-            }, cache, 10000)
+            // setWaiter(async () => {
+            // }, cache, 10000)
+            let gyms = await retrieveGymsByIds(cache, { gymIds: [gymId] })
+            setGym(gyms[0])
         }
         init()
     }, [popup])
