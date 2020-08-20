@@ -35,9 +35,6 @@ static void InitializeFlipper(UIApplication *application) {
 #endif
 
   [GMSServices provideAPIKey:@"AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM"];
-  // if ([FIRApp defaultApp] == nil) {
-  [FIRApp configure];
-  // }
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge
@@ -51,6 +48,9 @@ static void InitializeFlipper(UIApplication *application) {
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
+  // if ([FIRApp defaultApp] == nil) {
+  [FIRApp configure];
+  // }
   return YES;
 }
 
