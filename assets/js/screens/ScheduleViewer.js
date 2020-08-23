@@ -15,7 +15,9 @@ import {
   retrieveClassesByIds,
   retrieveClassesByGymIds,
   retrieveUserData,
-  retrieveClassesByUser
+  retrieveClassesByUser,
+  filterUserClasses,
+  retrieveGymsByIds
 } from '../backend/CacheFunctions'
 import { fonts } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
@@ -40,6 +42,9 @@ export default function ScheduleViewer(props) {
   const [CalendarItemList, CalendarItemListCreate] = useState(null)
 
   const [user, setUser] = useState(null)
+
+  const [title, setTitle] = useState("")
+  const [subtitle, setSubtitle] = useState("")
 
   // useEffect(() => {
   //     let limit = 20 * (1000 / 200) // seconds * intervals per second
@@ -72,12 +77,20 @@ export default function ScheduleViewer(props) {
       // based on the provided gymId or classIds
       let classes
       if (params.classIds) {
+        setTitle("My Classes")
         classes = await retrieveClassesByIds(cache, { classIds: params.classIds })
       } else if (params.gymId) {
+        let gyms = await retrieveGymsByIds(cache, { gymIds: [params.gymId] })
+        let gym = gyms[0]
+        setTitle(gym.name)
+        setSubtitle("Schedule")
+
         classes = await retrieveClassesByGymIds(cache, { gymIds: [params.gymId] })
-      // } else console.warn("Calendar is missing data. It most likely was not provided.")
       } else {
+        setTitle("My Classes")
+
         classes = await retrieveClassesByUser(cache)
+        classes = await filterUserClasses(cache)
       }
 
       setCalendarData(classes)
@@ -140,6 +153,7 @@ export default function ScheduleViewer(props) {
           marginBottom: 20,
         }}
         innerContainerStyle={{
+          paddingHorizontal: 0,
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
         }}
@@ -148,16 +162,37 @@ export default function ScheduleViewer(props) {
           flexDirection: "row",
           height: 80,
           alignItems: "center",
+          justifyContent: "center",
         }}>
-          <GoBackButton />
+          <View style={{
+            position: "absolute",
+            left: 15,
+          }}>
+            <GoBackButton
+              imageContainerStyle={{
+                width: 48,
+                height: 48,
+              }}
+            />
+          </View>
 
+          <View style={{
+            position: "absolute",
+          }}>
           <Text style={{
             width: "100%",
-            position: "absolute",
             textAlign: "center",
             fontSize: 30,
             fontFamily: fonts.default,
-          }}>Schedule</Text>
+          }}>{title}</Text>
+          {subtitle ?
+          <Text style={{
+            width: "100%",
+            textAlign: "center",
+            fontSize: 18,
+            fontFamily: fonts.default,
+          }}>{subtitle}</Text> : null}
+          </View>
 
           {user.account_type === "partner" ?
           <PlusButton
@@ -192,7 +227,7 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     alignSelf: "center",
     // backgroundColor: "#FFFFFF80",
-    backgroundColor: "#00000008",
+    backgroundColor: "#00000040",
     // borderWidth: 1,
     borderLeftWidth: 1,
     borderRightWidth: 1,

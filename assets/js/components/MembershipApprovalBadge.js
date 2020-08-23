@@ -29,7 +29,7 @@ export default function MembershipApproval(props) {
                 paddingRight: 20,
                 textAlign: "justify",
                 fontSize: 13,
-            }}>You have the {gym.name} Online Gym Membership! You have access to all online content that they provide.</Text>
+            }}>You have the {gym.name} Gym Online Membership! You have access to all online content that they provide.</Text>
         </Notification>
     )
 }

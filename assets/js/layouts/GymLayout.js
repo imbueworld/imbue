@@ -123,22 +123,11 @@ const styles = StyleSheet.create({
     minHeight: "100%",
   },
   container: {
-    // marginTop: 0,
-    // width: "100%",
-    // minHeight: "100%",
-    // padding: 0,
-    // borderBottomLeftRadius: 0,
-    // borderBottomRightRadius: 0,
-    // borderTopLeftRadius: 0,
-    // borderTopRightRadius: 0,
-
     width: "94%",
     marginVertical: 30,
     alignSelf: "center",
   },
   innerContainer: {
-    // height: "100%",
-
     paddingHorizontal: 0,
   },
   image: {

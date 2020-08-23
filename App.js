@@ -41,7 +41,9 @@ const Stack = createStackNavigator()
 
 export default function App() {
     let user = []
-    let cache = {}
+    let cache = {
+        working: {},
+    }
 
     return (
         <NavigationContainer>

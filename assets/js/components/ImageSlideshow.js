@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Image } from 'react-native'
+import { StyleSheet, View, Image } from 'react-native'
 import { publicStorage } from '../backend/HelperFunctions'
-import { TouchableHighlight, TouchableWithoutFeedback, TouchableOpacity } from 'react-native-gesture-handler'
-import GoBackButton from './buttons/GoBackButton'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { colors } from '../contexts/Colors'
 
 

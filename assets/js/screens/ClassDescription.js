@@ -3,7 +3,6 @@ import { StyleSheet, View, Text } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 import CustomPopup from "../components/CustomPopup"
-import PopupPurchase from '../components/popups/PopupPurchase'
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import ClassApprovalBadge from '../components/ClassApprovalBadge'
@@ -14,6 +13,7 @@ import GymLayout from '../layouts/GymLayout'
 import { colors } from "../contexts/Colors"
 import { fonts } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
+import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
 
 
 
@@ -42,24 +42,23 @@ export default function ClassDescription(props) {
 
   useEffect(() => {
     const init = async () => {
-      let gyms = await retrieveGymsByIds(cache, {
-        gymIds: [classData.gym_id]
-      })
-      let gym = gyms[0]
-      setGym(gym)
-
-      let user = await retrieveUserData(cache)
-      setUser(user)
+      let promises = await Promise.all([
+        retrieveUserData(cache),
+        retrieveGymsByIds(cache, {
+          gymIds: [classData.gym_id]
+        })
+      ])
+      setUser(promises[0])
+      setGym(promises[1][0])
     }
     init()
   }, [])
   
-  let activeClassesCount =
-    user
-      ? user.active_classes
-          ? user.active_classes.length
-          : null
-      : null
+  let activeClassesCount = user
+    ? user.active_classes
+        ? user.active_classes.length
+        : null
+    : null
   useEffect(() => {
     if (!gym) return
     if (!user) return
@@ -70,16 +69,18 @@ export default function ClassDescription(props) {
       })
       let imbueMembership = memberships[0]
 
-      let membership =
+      let activeTimeIds = user.active_classes.map(active => active.time_id)
+
+      let hasMembership =
         user.active_memberships.includes(imbueMembership.id)
           ? "imbue"
           : user.active_memberships.includes(gym.id)
               ? "gym"
-              : user.active_classes.includes(classData.time_id)
+              : activeTimeIds.includes(classData.time_id)
                   ? "class"
                   : false
 
-      setHasMembership(membership)
+      setHasMembership(hasMembership)
     }
     init()
   }, [activeClassesCount, gym, popup])
@@ -93,32 +94,6 @@ export default function ClassDescription(props) {
       borderColor: `${colors.gray}40`,
     }}/>
 
-    // TitleCreate(
-    //   <View style={styles.nameContainer}>
-    //     <Text style={styles.nameText}>
-    //       {classData.name}
-    //     </Text>
-    //     <Text style={styles.nameText}>
-    //       {classData.instructor}
-    //     </Text>
-    //   </View>
-    // )
-    // TimeCreate(
-    //   <View style={styles.timeContainer}>
-    //     <Text style={styles.timeText}>
-    //       {classData.formattedDate}
-    //       {"\n"}
-    //       {classData.formattedTime}
-    //     </Text>
-    //   </View>
-    // )
-    // DescCreate(
-    //   <View style={styles.descContainer}>
-    //     <Text style={styles.descText}>
-    //       {classData.description}
-    //     </Text>
-    //   </View>
-    // )
     ContentCreate(
       <View style={styles.contentContainer}>
 
@@ -135,6 +110,8 @@ export default function ClassDescription(props) {
           {classData.formattedDate}
           {"\n"}
           {classData.formattedTime}
+          {"\n"}
+          {classType(classData.type)}
         </Text>
 
         { Bar }
@@ -142,6 +119,12 @@ export default function ClassDescription(props) {
         <View style={styles.descContainer}>
           <Text style={styles.descText}>
             {classData.description}
+          </Text>
+          <Text style={{
+            ...styles.descText,
+            alignSelf: "flex-end",
+          }}>
+            {`$${currencyFromZeroDecimal(classData.price)}`}
           </Text>
         </View>
 
@@ -187,123 +170,129 @@ export default function ClassDescription(props) {
 
   if (!gym || !user) return <View />
 
-  // Helper variable
+  // helper variable
   const classIsAddedToCalendar =
-    user.scheduled_classes.includes(classData.time_id)
+    user.scheduled_classes
+      .map(active => active.time_id)
+      .includes(classData.time_id)
 
   return (
-    <>
-      {/* { !popup ? null :
-            !creditCards.length ? PopupCCNotFound : PopupConfirmPurchase
-        } */}
+    <GymLayout
+      containerStyle={styles.container}
+      innerContainerStyle={styles.innerContainerStyle}
+      data={gym}
+      buttonOptions={{
+        addToCalendar: {
+          show: hasMembership ? true : false,
+          state: classIsAddedToCalendar ? "fulfilled" : "opportunity",
+          onPress: async () => {
+            await scheduleClasses(cache, {
+              classId: classData.id,
+              timeIds: [classData.time_id]
+            })
+            refresh(r + 1)
+          }
+        },
+        goToCalendar: { show: true } //{ show: hasMembership === "class" ? true : false },
+      }}
+    >
+      { Content }
 
-      {/* {popup ? PopupBuy : null} */}
+      {errorMsg
+      ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+      : null}
+      {successMsg
+      ? <Text style={{ color: "green" }}>{successMsg}</Text>
+      : null}
 
-      <GymLayout
-        containerStyle={styles.container}
-        innerContainerStyle={styles.innerContainerStyle}
-        data={gym}
-        buttonOptions={{
-          addToCalendar: {
-            show: hasMembership /*=== "class"*/ ? true : false,
-            state: classIsAddedToCalendar ? "fulfilled" : "opportunity",
-            onPress: async () => {
-              await scheduleClasses(cache, { time_ids: [classData.time_id] })
-              refresh(r + 1)
-            }
-          },
-          goToCalendar: { show: true } //{ show: hasMembership === "class" ? true : false },
-        }}
-      >
-        {/* {Title}
-        {Time}
-        {Desc} */}
-        { Content }
+      {user.account_type !== "user" ? null :
+      <View>
+        {/* if null, it means it hasn't been initialized yet. */}
+        {hasMembership === null ? <View /> :
+          hasMembership ? null :
+            <>
+            {popup === "buy"
+            ? <CreditCardSelectionV2
+                containerStyle={styles.cardSelectionContainer}
+                title={
+                  <Text>
+                    {`Confirm payment for ${gym.name}, ${classData.name} — `}
+                    <Text style={{
+                      textDecorationLine: "underline",
+                    }}>One Time Online Class</Text>
+                  </Text>
+                }
+                cache={cache}
+                onX={() => setPopup(null)}
+                onCardSelect={async cardId => {
+                  try {
+                    console.log("Book!")
+                    setErrorMsg("")
+                    setSuccessMsg("")
 
-        {errorMsg
-        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-        : null}
-        {successMsg
-        ? <Text style={{ color: "green" }}>{successMsg}</Text>
-        : null}
+                    await purchaseClasses(cache, {
+                      classId: classData.id,
+                      timeIds: [classData.time_id],
+                      creditCardId: cardId,
+                      price: classData.price,
+                      description: `One Time Class purchase for ${gym.name}, ${classData.name}`,
+                      partnerId: gym.partner_id,
+                      gymId: gym.id,
+                      purchaseType: "class",
+                    })
 
-        {user.account_type !== "user" ? null :
-        <View>
-          {/* if null, it means it hasn't been initialized yet. */}
-          {hasMembership === null ? <View /> :
-            hasMembership ? null :
-              <>
-              {popup === "buy"
-              ? <CreditCardSelectionV2
-                  containerStyle={styles.cardSelectionContainer}
-                  cache={cache}
-                  onCardSelect={async cardId => {
-                    try {
-                      console.log("Book!")
-                      setErrorMsg("")
-                      setSuccessMsg("")
-
-                      await purchaseClasses(cache, {
-                        timeIds: [classData.time_id],
-                        creditCardId: cardId,
-                        price: classData.price,
-                        description: `One Time Class purchase for ${gym.name}, ${classData.name}`,
-                        partnerId: gym.partner_id,
-                        gymId: gym.id,
-                        purchaseType: "class",
-                      })
-
-                      refresh(r + 1)
-                    } catch(err) {
-                      switch (err.code) {
-                        case "class-already-bought":
-                          setSuccessMsg(err.message)
-                          break
-                        default:
-                          // setErrorMsg("Something prevented the action.")
-                          setErrorMsg(err.message)
-                          break
-                      }
+                    refresh(r + 1)
+                  } catch(err) {
+                    switch (err.code) {
+                      case "busy":
+                        setErrorMsg(err.message)
+                        break
+                      case "class-already-bought":
+                        setSuccessMsg(err.message)
+                        break
+                      default:
+                        setErrorMsg("Something prevented the action.")
+                        break
                     }
-                  }}
-                />
-              : <CustomButton
-                  style={{
-                    marginBottom: 0,
-                  }}
-                  title="Book"
-                  onPress={() => {
-                    setPopup("buy")
-                  }}
-                />}
-              </>}
+                  }
+                }}
+              />
+            : <CustomButton
+                style={{
+                  marginBottom: 0,
+                }}
+                title="Book"
+                onPress={() => {
+                  setPopup("buy")
+                }}
+              />}
+            </>}
 
-          {hasMembership !== "imbue" ? null :
-          <MembershipApprovalBadgeImbue
-            containerStyle={{
-              marginTop: 10,
-              // marginBottom: 10,
-            }}
-            data={gym}
-          />}
-          {hasMembership !== "gym" ? null :
-          <MembershipApprovalBadge
-            containerStyle={{
-              marginTop: 10,
-              // marginBottom: 10,
-            }}
-            data={gym}
-          />}
-          {hasMembership !== "class" ? null :
-          <ClassApprovalBadge
-            containerStyle={{
-              marginTop: 10,
-              // marginBottom: 10,
-            }}
-          />}
-        </View>}
-      </GymLayout>
-    </>
+        {hasMembership !== "imbue" ? null :
+        <MembershipApprovalBadgeImbue
+          containerStyle={{
+            marginTop: 10,
+            // marginBottom: 10,
+          }}
+          data={gym}
+        />}
+        {hasMembership !== "gym" ? null :
+        <MembershipApprovalBadge
+          containerStyle={{
+            marginTop: 10,
+            // marginBottom: 10,
+          }}
+          data={gym}
+        />}
+        {hasMembership !== "class" ? null :
+        <ClassApprovalBadge
+          containerStyle={{
+            marginTop: 10,
+            // marginBottom: 10,
+          }}
+        />}
+      </View>}
+    </GymLayout>
   )
 }
 

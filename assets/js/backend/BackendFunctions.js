@@ -7,13 +7,8 @@ import { storage } from "../contexts/Links"
 
 
 
-// /**
-//  * Takes:
-//  *  form -- must include { cardNumber, expMonth, expYear, cvc, name, address_zip }
-//  */
-// export async function updateUserProfile(cache, data) {
-//     throw new Error("Not Implemented")
-// }
+const BusyError = new Error()
+BusyError.code = "busy"
 
 
 
@@ -21,9 +16,6 @@ import { storage } from "../contexts/Links"
  * Initializes the user account with necessary data
  */
 export async function initializeAccount(cache, { first, last, email, password, type }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     let collection
     if (type === "user") collection = "users"
     if (type === "partner") collection = "partners"
@@ -54,8 +46,6 @@ export async function initializeAccount(cache, { first, last, email, password, t
         throw err
         // throw new Error("Something prevented the action.")
     }
-
-    cache.working -= 1
 }
 
 /**
@@ -63,12 +53,7 @@ export async function initializeAccount(cache, { first, last, email, password, t
  * Returns user data.
  */
 export async function signIn(cache, { email, password }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     await auth().signInWithEmailAndPassword(email, password)
-
-    cache.working -= 1
 }
 
 /**
@@ -76,9 +61,6 @@ export async function signIn(cache, { email, password }) {
  *  form -- must include { cardNumber, expMonth, expYear, cvc, name, address_zip }
  */
 export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, cvc, cardHolderName, zip }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     const user = await retrieveUserData(cache)
     if (!user.payment_methods) user.payment_methods = []
 
@@ -94,8 +76,6 @@ export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, c
         console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         throw new Error("Something prevented the action.")
     }
-
-    cache.working -= 1
 }
 
 /**
@@ -104,19 +84,24 @@ export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, c
  * 3.   Updates cache with the new purchase
  * 4.   Automatically adds the new class to user's schedule
  */
-export async function purchaseClasses(cache, { timeIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
+export async function purchaseClasses(cache, { classId, timeIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
     // temporary guard clauses, to get purchaseClasses in code straight
     if (!partnerId) throw new Error("partnerId must be provided in purchaseClasses()")
     if (!purchaseType) throw new Error("purchaseType must be provided in purchaseClasses()")
     if (!gymId) throw new Error("gymId must be provided in purchaseClasses()")
 
-    const user = retrieveUserData(cache)
-
-    const docRef = firestore()
-        .collection("users")
-        .doc(user.id)
+    if (cache.working.purchaseClasses) {
+        BusyError.message = "A purchase is in process already. Hang tight. (You won't be charged twice)"
+        throw BusyError
+    }
+    cache.working.purchaseClasses = true
 
     try {
+        const user = await retrieveUserData(cache)
+        const docRef = firestore()
+            .collection("users")
+            .doc(user.id)
+
         // Get some up-to-date data
         const userDoc = ( await docRef.get() ).data()
         let activeClasses = userDoc.active_classes || []
@@ -125,8 +110,12 @@ export async function purchaseClasses(cache, { timeIds, creditCardId, price, des
         // Throw error, if user already owns this class
         const err = new Error("You already own this class.")
         err.code = "class-already-bought"
+        // timeIds.forEach(id => {
+        //     if (activeClasses.includes(id)) throw err
+        // })
+        let activeTimeIds = activeClasses.map(active => active.time_id)
         timeIds.forEach(id => {
-            if (activeClasses.includes(id)) throw err
+            if (activeTimeIds.includes(id)) throw err
         })
         
         // Charge customer
@@ -138,22 +127,36 @@ export async function purchaseClasses(cache, { timeIds, creditCardId, price, des
         await documentPayment({ partnerId, gymId, purchaseType, amount: price })
         
         // Register classes for user
+        let newActiveClasses = timeIds.map(timeId => ({
+            class_id: classId,
+            time_id: timeId,
+        }))
+        let newScheduleEntries = timeIds.map(timeId => ({
+            class_id: classId,
+            time_id: timeId,
+        }))
         await docRef.set({
-            active_classes: [...activeClasses, ...timeIds],
-            scheduled_classes: [...scheduledClasses, ...timeIds]
+            // active_classes: [...activeClasses, ...timeIds],
+            // scheduled_classes: [...scheduledClasses, ...timeIds],
+            active_classes: [...activeClasses, ...newActiveClasses],
+            scheduled_classes: [...scheduledClasses, ...newScheduleEntries],
         }, { merge: true })
 
         // Update cache
-        cache.user.active_classes.push(...timeIds)
-        cache.user.scheduled_classes.push(...timeIds)
+        // cache.user.active_classes.push(...timeIds)
+        // cache.user.scheduled_classes.push(...timeIds)
+        cache.user.active_classes.push(...newActiveClasses)
+        cache.user.scheduled_classes.push(...newScheduleEntries)
     } catch(err) {
         // console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         // throw new Error("Something prevented the action.")
         throw err
+    } finally {
+        cache.working.purchaseClasses = false
     }
 }
 
-export async function scheduleClasses(cache, { time_ids }) {
+export async function scheduleClasses(cache, { classId, timeIds }) {
     const user = await retrieveUserData(cache)
 
     const docRef = firestore()
@@ -167,16 +170,22 @@ export async function scheduleClasses(cache, { time_ids }) {
     const err = new Error("Class has already been added to your schedule.")
     err.code = "class-already-scheduled"
     scheduledClasses.forEach(time_id => {
-        if (time_ids.includes(time_id)) throw err
+        if (timeIds.includes(time_id)) throw err
     })
 
     // Add to schedule
+    let newEntries = timeIds.map(timeId => ({
+        class_id: classId,
+        time_id: timeId,
+    }))
     await docRef.set({
-        scheduled_classes: [...scheduledClasses, ...time_ids]
+        // scheduled_classes: [...scheduledClasses, ...timeIds]
+        scheduled_classes: [...scheduledClasses, ...newEntries]
     }, { merge: true })
 
     // Update cache
-    user.scheduled_classes.push(...time_ids)
+    // user.scheduled_classes.push(...timeIds)
+    user.scheduled_classes.push(...newEntries)
 }
 
 /**
@@ -185,36 +194,52 @@ export async function scheduleClasses(cache, { time_ids }) {
  * 2.   Charges the user
  * 3.   Updates cache with the new purchase
  */
-export async function purchaseMemberships(cache, { membershipIds, creditCardId, price, description }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
-    const uid = auth().currentUser.uid
-
-    const docRef = firestore()
-        .collection("users")
-        .doc(uid)
+export async function purchaseMemberships(cache, { membershipIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
+    if (cache.working.purchaseMemberships) {
+        BusyError.message = "A purchase is in process already. Hang tight. (You won't be charged twice)"
+        throw BusyError
+    }
+    cache.working.purchaseMemberships = true
 
     try {
+        const user = await retrieveUserData(cache)
+        const docRef = firestore()
+            .collection("users")
+            .doc(user.id)
+        
+        // Get some up-to-date data
+        const userDoc = ( await docRef.get() ).data()
+        let activeMemberships = userDoc.active_memberships || []
+
+        // Throw error, if user already owns this membership
+        const err = new Error("You already own this membership.")
+        err.code = "membership-already-bought"
+        membershipIds.forEach(id => {
+            if (activeMemberships.includes(id)) throw err
+        })
+
         // Charge customer
         const chargeCustomer = functions().httpsCallable("chargeCustomer")
         await chargeCustomer({ cardId: creditCardId, amount: price, description })
+        
+        // Document payment
+        const documentPayment = functions().httpsCallable("documentPayment")
+        await documentPayment({ partnerId, gymId, purchaseType, amount: price })
 
         // Register membership
-        let activeMemberships = ( await docRef.get() ).data().active_memberships || []
-        await docRef.set(
-            { active_memberships: [...activeMemberships, ...membershipIds] },
-            { merge: true }
-        )
+        await docRef.set({
+            active_memberships: [...activeMemberships, ...membershipIds],
+        }, { merge: true })
 
         // Update cache
         cache.user.active_memberships.push(...membershipIds)
     } catch(err) {
-        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
-        throw new Error("Something prevented the action.")
+        // console.error(`[CACHE]  [${err.code}]  ${err.message}`)
+        // throw new Error("Something prevented the action.")
+        throw err
+    } finally {
+        cache.working.purchaseMemberships = false
     }
-
-    cache.working -= 1
 }
 
 /**
@@ -223,14 +248,9 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
  * 2.   Updates cache with the new purchase
  */
 export async function cancelMemberships(cache, { membershipIds }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     // cancelMemberships
 
     // cache work
-
-    cache.working -= 1
 }
 
 /**
@@ -266,9 +286,6 @@ export async function updateUser(cache, doc) {
 export async function updateGym(cache, { gymId, doc }) {
     if (!gymId) throw new Error("gymId must be provided in updateGym()")
 
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     if (!cache.gyms) cache.gyms = []
 
     try {
@@ -292,8 +309,6 @@ export async function updateGym(cache, { gymId, doc }) {
         console.error(err.message)
         throw new Error("Something prevented the action.")
     }
-
-    cache.working -= 1
 }
 
 /**
@@ -301,8 +316,6 @@ export async function updateGym(cache, { gymId, doc }) {
  * WHEREFORE CREATING A NEW COLLECTION "settings" DOESN'T SEEM NECESSARY]
  */
 // export async function updateUserSetting(cache, doc) {
-//     if (!cache.working) cache.working = 0
-//     cache.working += 1
 
 //     const user = retrieveUserData(cache)
 
@@ -315,7 +328,6 @@ export async function updateGym(cache, { gymId, doc }) {
 //         throw new Error("Something prevented the action.")
 //     }
 
-//     cache.working -= 1
 // }
 
 /**
@@ -330,9 +342,6 @@ export async function updateGym(cache, { gymId, doc }) {
  * pushes it to database and updates cache.
  */
 export async function createClass(cache, { instructor, name, description, genres, type, price, gym_id }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     const partner_id = auth().currentUser.uid
     let form = { instructor, name, description, genres, type, price, gym_id, partner_id }
     // form.active_times = []
@@ -349,17 +358,12 @@ export async function createClass(cache, { instructor, name, description, genres
         console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         throw new Error("Something prevented the action.")
     }
-
-    cache.working -= 1
 }
 
 /**
  * TEMPLATE
  */
 export async function populateClass(cache, { class_id, active_times }) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     const classDocRef = firestore().collection("classes").doc(class_id)
 
     try {
@@ -394,19 +398,18 @@ export async function populateClass(cache, { class_id, active_times }) {
             .set({
                 active_times: [...existingTimes, ...active_times]
             }, { merge: true })
+
+        // Update cache
+        // cache.classes.forEach((doc, idx) => {
+        //     if (doc.id === class_id) cache.classes[idx].active_classes.push(active_classes)
+        // })
+        // [UNTESTED]
     } catch(err) {
         console.error(`[CACHE populateClass]  [${err.code}]  ${err.message}`)
         // throw new Error("Something prevented the action.")
         throw err
     }
 
-    // cache work
-        // cache.classes.forEach((doc, idx) => {
-        //     if (doc.id === class_id) cache.classes[idx].active_classes.push(active_classes)
-        // })
-        // [UNTESTED]
-
-    cache.working -= 1
 }
 
 /**
@@ -458,12 +461,7 @@ export async function initializeLivestream(cache) {
  * TEMPLATE
  */
 export async function TEMPLATE(cache) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     try {} catch(err) {
         throw new Error("Something prevented the action.")
     }
-
-    cache.working -= 1
 }

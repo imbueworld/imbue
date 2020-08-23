@@ -15,7 +15,6 @@ import CloseButton from '../components/CloseButton'
 
 
 export default function UserMemberships(props) {
-    console.log("[USER MEMBERSHIPS]")
     let cache = props.route.params.cache
 
     const [errorMsg, setErrorMsg] = useState("")
@@ -28,7 +27,6 @@ export default function UserMemberships(props) {
     const [PastTransactions, PastTransactionsCreate] = useState(null)
 
     useEffect(() => {
-        console.log("\n\n\n")
         const init = async() => {
             let user = await retrieveUserData(cache)
             setUser(user)
@@ -48,7 +46,6 @@ export default function UserMemberships(props) {
                 data={membership}
                 key={membership.id}
                 onAction={async() => {
-                    // Popup ...
                     try {
                         await cancelMemberships(cache, { membershipIds: [membership.id] })
                         setErrorMsg("")

@@ -59,7 +59,7 @@ export async function retrieveUserData(cache) {
     try {
         let doc = await firestore()
             .collection(collection)
-            .doc(user.id)
+            .doc(user.uid)
             .get()
         // add shortcuts / necessary data adjustments for ease of access
         // SIGNIFICANT PARTS OF CODE OF THE APP DEPEND ON THIS
@@ -186,18 +186,22 @@ export async function retrieveClassesByUser(cache) {
                 // Here, we basically take Class Entity and filter out the
                 // unneeded time_ids from active_times propery.
                 // All that by basically reconstructing a new doc of class entity.
-                let filteredClasses = []
-                cache.classes.forEach(doc => {
-                    doc = {...doc}
-                    doc.active_times = doc.active_times.filter(time => {
-                        // if (user.active_classes.includes(time.time_id)) {
-                        if (user.scheduled_classes.includes(time.time_id)) {
-                            return true
-                        }
-                    })
-                    filteredClasses.push(doc)
-                })
-                return filteredClasses
+                // let filteredClasses = []
+                // cache.classes.forEach(doc => {
+                //     doc = {...doc}
+                //     doc.active_times = doc.active_times.filter(time => {
+                //         // if (user.active_classes.includes(time.time_id)) {
+                //         if (user.scheduled_classes.includes(time.time_id)) {
+                //             return true
+                //         }
+                //     })
+                //     filteredClasses.push(doc)
+                // })
+                // return filteredClasses
+
+                let activeClassIds = user.active_classes.map(active => active.class_id)
+                return cache.classes
+                    .filter(doc => activeClassIds.includes(doc.id))
             case "partner":
                 return cache.classes
                     .filter(doc => doc.partner_id === user.id)
@@ -205,27 +209,30 @@ export async function retrieveClassesByUser(cache) {
     }
 
     // Construct a queue of absent ids in cache.classes
-    let cached_ids = cache.classes.map(doc => doc.id)
-
+    //
     // Account for each time_id,
     // if one is not accounted for, it belongs in queue.
-    let queue
+    let cached_ids = cache.classes.map(doc => doc.id)
+    let queue = []
     switch (user.account_type) {
         case "user":
             // queue = user.active_classes
             //     .filter(id => !cached_ids.includes(id))
-            queue = user.active_classes
-                .filter(time_id => {
-                    let c = 0
-                    cache.classes.forEach(({ active_times }) => {
-                        active_times.forEach(time => {
-                            let time_id2 = time.time_id
-                            if (time_id2 === time_id) c++
-                        })
-                    })
-                    if (c) return false
-                    else return true
-                })
+
+            // Queue up the absent active_classes ids
+            user.active_classes.forEach(active => {
+                if (!cached_ids.includes(active.class_id)) {
+                    queue.push(active.class_id)
+                }
+            })
+
+            // Queue up the absent scheduled_classes ids
+            user.scheduled_classes.forEach(active => {
+                if (!cached_ids.includes(active.class_id)) {
+                    queue.push(active.class_id)
+                }
+            })
+
             break
         case "partner":
             queue = user.associated_classes
@@ -246,6 +253,27 @@ export async function retrieveClassesByUser(cache) {
     cache.classes.push(...classes)
 
     return appropriate()
+}
+
+/**
+ * Filters out the time_ids from class doc,
+ * that the user hasn't signed up for.
+ */
+export async function filterUserClasses(cache) {
+    const user = await retrieveUserData(cache)
+
+    let newClasses = []
+    cache.classes.forEach(classDoc => {
+        classDoc = {...classDoc} // Must not mess up the cache
+        // helper variable
+        // let activeTimeIds = user.active_classes.map(active => active.time_id)
+        // helper variable
+        let activeTimeIds = user.scheduled_classes.map(active => active.time_id)
+        classDoc.active_times = classDoc.active_times
+            .filter(active => activeTimeIds.includes(active.time_id))
+        newClasses.push(classDoc)
+    })
+    return newClasses
 }
 
 /**

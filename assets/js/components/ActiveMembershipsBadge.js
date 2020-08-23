@@ -16,7 +16,7 @@ export default function ActiveMembershipBadge(props) {
     return (
         <View style={styles.container}>
             <Text style={styles.text}>
-                {membership.description}
+                {membership.name}
             </Text>
             <View>
                 {/* <Image /> */}

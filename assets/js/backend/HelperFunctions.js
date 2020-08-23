@@ -299,3 +299,12 @@ export function addFunctionalityToClassData(docs, navigation) {
 export function id() {
     return Math.random().toString(36).substr(2, 9)
 }
+
+export function classType(type) {
+    switch (type) {
+        case "online":
+            return "Online"
+        case "in_studio":
+            return "In Studio"
+    }
+}

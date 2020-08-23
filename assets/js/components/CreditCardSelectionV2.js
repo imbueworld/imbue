@@ -4,8 +4,9 @@ import { useNavigation } from '@react-navigation/native'
 
 import CustomSmallButton from './CustomSmallButton'
 import { retrievePaymentMethods } from '../backend/CacheFunctions'
-import { TouchableHighlight } from 'react-native-gesture-handler'
+import { TouchableHighlight, TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import CreditCardBadgeV2 from './CreditCardBadgeV2'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -21,6 +22,7 @@ import CreditCardBadgeV2 from './CreditCardBadgeV2'
 export default function CreditCardSelectionV2(props) {
     let cache = props.cache
     let navigation = useNavigation()
+    const title = props.title
 
     const [cards, setCards] = useState(null)
 
@@ -50,31 +52,75 @@ export default function CreditCardSelectionV2(props) {
     )
 
     const AddNewCard =
-        // <TouchableOpacity
-        //     style={[{
-        //         marginTop: 10,
-        //         alignSelf: "center",
-        //         // backgroundColor: "white",
-        //     }, styles.buttonSmall]}
+        // <CustomSmallButton
+        //     style={{
+        //         // marginTop: 30,
+        //     }}
+        //     title="Add a new card"
         //     onPress={() => navigation.navigate("AddPaymentMethod")}
-        // >
-        //     <Text style={{
-        //         textDecorationLine: "underline",
-        //     }}>Add a new card</Text>
-        // </TouchableOpacity>
-        <CustomSmallButton
+        // />
+        <TouchableWithoutFeedback
             style={{
-                // marginTop: 30,
+                padding: 5,
+                paddingHorizontal: 15,
             }}
-            title="Add a new card"
             onPress={() => navigation.navigate("AddPaymentMethod")}
-        />
+        >
+            <Text style={{
+                textDecorationLine: "underline",
+                fontFamily: fonts.default,
+            }}>Add a new card</Text>
+        </TouchableWithoutFeedback>
+    
+    const Cancel =
+        <TouchableWithoutFeedback
+            style={{
+                padding: 5,
+                paddingHorizontal: 15,
+            }}
+            onPress={props.onX || undefined}
+        >
+            <Text style={{
+                textDecorationLine: "underline",
+                fontFamily: fonts.default,
+            }}>Cancel</Text>
+        </TouchableWithoutFeedback>
 
     return (
         <View style={[
             styles.container,
             props.containerStyle,
         ]}>
+            {title
+            ?   <View style={{
+                    width: "88%",
+                    alignSelf: "center",
+                }}>
+                    <Text style={{
+                        textAlign: "center",
+                        fontSize: 20,
+                        fontFamily: fonts.default,
+                    }}>{ title }</Text>
+                </View>
+            :   null}
+
+            <View style={{
+                width: "94%",
+                alignSelf: "center",
+                marginTop: 6,
+                marginBottom: 4,
+            }}>
+                <Text style={{
+                    textAlign: "justify",
+                    fontSize: 12,
+                    fontFamily: fonts.default,
+                }}>
+                    To confirm, press and hold the card
+                    that you wish to make the payment with,
+                    you will be charged insantly after a successful action.
+                </Text>
+            </View>
+
             <View style={{
                 maxHeight: 450,
                 borderRadius: 20,
@@ -82,10 +128,20 @@ export default function CreditCardSelectionV2(props) {
                 ...props.contentContainerStyle,
             }}>
                 <ScrollView>
-                    {Cards}
+                    { Cards }
                 </ScrollView>
             </View>
-            {AddNewCard}
+
+            <View style={{
+                width: "100%",
+                paddingVertical: 8,
+                alignSelf: "center",
+                flexDirection: "row",
+                justifyContent: "space-between",
+            }}>
+                { Cancel }
+                { AddNewCard }
+            </View>
         </View>
     )
 }
