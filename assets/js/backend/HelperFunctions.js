@@ -55,18 +55,69 @@ export function shortDateFromTimestamp(ts) {
         case 1:
             mo = "Jan"
             break
+        case 2:
+            mo = "Feb"
+            break
+        case 3:
+            mo = "Mar"
+            break
+        case 4:
+            mo = "Apr"
+            break
+        case 5:
+            mo = "May"
+            break
+        case 6:
+            mo = "Jun"
+            break
+        case 7:
+            mo = "Jul"
+            break
+        case 8:
+            mo = "Aug"
+            break
+        case 9:
+            mo = "Sep"
+            break
+        case 10:
+            mo = "Oct"
+            break
+        case 11:
+            mo = "Nov"
+            break
+        case 12:
+            mo = "Dec"
+            break
         default:
-            mo = "Mth"
+            mo = `Month=${date.getMonth() + 1}`
             break
     }
     let day = date.getDate()
     let weekday
     switch (date.getDay() + 1) {
         case 1:
+            weekday = "Sunday"
+            break
+        case 2:
             weekday = "Monday"
             break
+        case 3:
+            weekday = "Tuesday"
+            break
+        case 4:
+            weekday = "Wednesday"
+            break
+        case 5:
+            weekday = "Thursday"
+            break
+        case 6:
+            weekday = "Friday"
+            break
+        case 7:
+            weekday = "Saturday"
+            break
         default:
-            weekday = "Weekday"
+            weekday = `DayOfTheWeek=${date.getDay() + 1}`
             break
     }
     return `${weekday}, ${mo} ${day}`
@@ -228,8 +279,23 @@ export function addFunctionalityToClassData(docs, navigation) {
     if (!(docs instanceof Array)) return
 
     docs.forEach(doc => {
-        doc.onPress = () => {
-            navigation.navigate("ClassDescription", { data: doc })
-        }
+        if (!(doc.active_times instanceof Array)) return
+        doc.active_times.forEach(classDoc => {
+            classDoc.onPress = () => {
+                let data = {...doc}
+                Object.entries(classDoc).forEach(([key, value]) => {
+                    data[ key ] = value
+                })
+                delete data.active_times
+                navigation.navigate("ClassDescription", { data })
+            }
+        })
     })
+}
+
+/**
+ * Generates a random id
+ */
+export function id() {
+    return Math.random().toString(36).substr(2, 9)
 }

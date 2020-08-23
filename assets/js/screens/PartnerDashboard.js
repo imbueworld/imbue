@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomButton from "../components/CustomButton"
-import LogOut from "../components/LogOut"
 
 import auth from "@react-native-firebase/auth"
 import { retrieveUserData, retrieveClassesByGymIds } from '../backend/CacheFunctions'
@@ -39,7 +38,7 @@ export default function PartnerDashboard(props) {
             hideBackButton={true}
             data={{ name: user.name, iconUri: user.icon_uri }}
         >
-            <TouchableOpacity
+            {/* <TouchableOpacity
                 style={styles.logOutButtonContainer}
                 onPress={() => console.log("To-Do: Intuitively shows what the button does")}
                 onLongPress={() => {
@@ -57,7 +56,7 @@ export default function PartnerDashboard(props) {
                         padding: 10,
                     }}
                 />
-            </TouchableOpacity>
+            </TouchableOpacity> */}
 
             <CustomButton
                 icon={

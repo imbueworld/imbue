@@ -12,10 +12,9 @@ import UserIcon from "../components/UserIcon"
 import CustomButton from "../components/CustomButton"
 
 import GymBadge from "../components/GymBadge"
-import LogOut from "../components/LogOut"
 
 import auth from "@react-native-firebase/auth"
-import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByGymIds, retrieveClassesByIds } from '../backend/CacheFunctions'
+import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByGymIds, retrieveClassesByIds, retrieveClassesByUser } from '../backend/CacheFunctions'
 import { simpleShadow } from '../contexts/Colors'
 import Icon from '../components/Icon'
 import { publicStorage } from '../backend/HelperFunctions'
@@ -34,8 +33,6 @@ export default function UserDashboard(props) {
 
   const [Markers, MarkersCreate] = useState(null)
   const [CurrentGymBadge, GymBadgeCreate] = useState(null)
-  // const [Menu, MenuCreate] = useState(null)
-  // const [MenuButton, MenuButtonCreate] = useState(null)
 
   useEffect(() => {
     async function init() {
@@ -43,7 +40,8 @@ export default function UserDashboard(props) {
       setUser(user)
       let promises = await Promise.all([
         retrieveGymsByLocation(cache),
-        retrieveClassesByIds(cache, { classIds: user.active_classes }),
+        // retrieveClassesByIds(cache, { classIds: user.active_classes }),
+        retrieveClassesByUser(cache),
       ])
       setGyms(promises[0])
     }
@@ -53,135 +51,45 @@ export default function UserDashboard(props) {
   useEffect(() => {
     if (!gyms) return
 
-    MarkersCreate(gyms.map((gym, idx) =>
-      <Marker
-        coordinate={gym.coordinate}
-        key={idx}
-        onPress={() => {
-          GymBadgeCreate(
-            gyms
-              .filter((gym, idx2) => idx2 === idx)
-              .map(gym => {
-                return (
-                  <GymBadge
-                    containerStyle={styles.badgeContainer}
-                    name={gym.name}
-                    desc={gym.description}
-                    rating={`${gym.rating} (${gym.rating_weight})`}
-                    relativeDistance={""}
-                    iconUri={publicStorage(gym.icon_uri)}
-                    key={idx}
-                    onMoreInfo={() => {
-                      // Does not need await, because utilizes cache.working
-                      // = load into next page instantly
-                      retrieveClassesByGymIds(cache, { gymIds: [gym.id] })
-                      props.navigation.navigate(
-                        "GymDescription", { gymId: gym.id })
-                    }}
-                    onX={() => GymBadgeCreate(null)}
-                  />
-                )
-              })
-          )
-        }}
-      />
+    MarkersCreate(gyms.map((gym, idx) => {
+      if (gym.hidden_on_map) return
+
+      return (
+        <Marker
+          coordinate={gym.coordinate}
+          key={idx}
+          onPress={() => {
+            GymBadgeCreate(
+              gyms
+                .filter((gym, idx2) => idx2 === idx)
+                .map(gym => {
+                  return (
+                    <GymBadge
+                      containerStyle={styles.badgeContainer}
+                      name={gym.name}
+                      desc={gym.description}
+                      rating={`${gym.rating} (${gym.rating_weight})`}
+                      relativeDistance={""}
+                      iconUri={publicStorage(gym.icon_uri)}
+                      key={idx}
+                      onMoreInfo={() => {
+                        // Does not need await, because utilizes cache.working
+                        // = load into next page instantly
+                        retrieveClassesByGymIds(cache, { gymIds: [gym.id] })
+                        props.navigation.navigate(
+                          "GymDescription", { gymId: gym.id })
+                      }}
+                      onX={() => GymBadgeCreate(null)}
+                    />
+                  )
+                })
+            )
+          }}
+        />
+      )
+    }
     ))
   }, [gyms])
-
-  useEffect(() => {
-    if (!user) return
-
-    // MenuButtonCreate(
-    //   <TouchableOpacity
-    //     style={styles.sidePanelButtonContainer}
-    //     onPress={sidePanelToggle}
-    //   >
-    //     <UserIcon
-    //       style={{
-    //         width: 64,
-    //         height: 64,
-    //       }}
-    //       data={{ uri: user.icon_uri }}
-    //     />
-    //   </TouchableOpacity>
-    // )
-  }, [user])
-
-  // useEffect(() => {
-  //   if (!user) return
-  //   if (!MenuButton) return
-
-  // MenuCreate(
-  //   <>
-  //   {expanded ? null : MenuButton}
-
-  //   <Animated.View style={[
-  //     styles.sidePanel,
-  //     {
-  //       left: slidingAnim,
-  //     }
-  //   ]}>
-
-  //     <ProfileLayout
-  //       innerContainerStyle={{
-  //         paddingBottom: 10,
-  //       }}
-  //       data={{ name: user.name, iconUri: user.icon_uri }}
-  //     >
-
-  //       {expanded ? MenuButton : null}
-
-  //       <TouchableOpacity
-  //         style={styles.logOutButtonContainer}
-  //         onPress={() => console.log("To-Do: Intuitively shows what the button does")}
-  //         onLongPress={() => {
-  //           firebase.auth().signOut()
-  //           props.navigation.navigate("Boot", { referrer: "UserDashboard" })
-  //           if (expanded) sidePanelToggle()
-  //         }}
-  //       >
-  //         <LogOut
-  //           style={{
-  //             width: "100%",
-  //             height: "100%",
-  //           }}
-  //           containerStyle={{
-  //             left: 1.35, // Make-up for the icon's flaw regarding centering
-  //             padding: 10,
-  //           }}
-  //         />
-  //       </TouchableOpacity>
-
-  //       <CustomButton
-  //         title="My Classes"
-  //         onPress={() => {
-  //           console.log("cache.classes", cache.classes)
-  //           props.navigation.navigate(
-  //             "ScheduleViewer", { data: cache.classes })
-  //         }}
-  //       />
-  //       <CustomButton
-  //         title="Manage Memberships"
-  //         onPress={() => props.navigation.navigate(
-  //           "UserMemberships")}
-  //       />
-  //       <CustomButton
-  //         title="Edit Profile"
-  //         onPress={() => props.navigation.navigate(
-  //           "ProfileSettings")}
-  //       />
-  //       <CustomButton
-  //         title="Payment Settings"
-  //         onPress={() => props.navigation.navigate(
-  //           "PaymentSettings")}
-  //       />
-
-  //     </ProfileLayout>
-  //   </Animated.View>
-  //   </>
-  // )
-
-  // }, [user, expanded, MenuButton, slidingAnim._value])
 
   function sidePanelToggle() {
     if (expanded) {
@@ -232,60 +140,54 @@ export default function UserDashboard(props) {
     {
     !user ? null :
     expanded ? null :
-      <TouchableOpacity
-        style={[styles.sidePanelButtonContainer, {
-          zIndex: 0,
-        }]}
-        onPress={sidePanelToggle}
-      >
-        <UserIcon
+      <View style={{
+        marginTop: 10,
+        marginLeft: 10,
+        position: "absolute",
+        zIndex: 0,
+      }}>
+        <TouchableHighlight
           style={{
-            width: 64,
-            height: 64,
+            borderRadius: 999,
           }}
-          data={{ uri: publicStorage(user.icon_uri) }}
-        />
-      </TouchableOpacity>
+          underlayColor="#000000C0"
+          // onPress={sidePanelToggle}
+          onLongPress={sidePanelToggle}
+        >
+          <UserIcon
+            style={{
+              width: 64,
+              height: 64,
+            }}
+            data={{ uri: publicStorage(user.icon_uri) }}
+          />
+        </TouchableHighlight>
+      </View>
     }
 
     {!user ? null :
     <Animated.View style={[styles.sidePanel, { left: slidingAnim }]}>
       <ProfileLayout
-        // BackButton={
-        //   <TouchableHighlight
-        //     style={styles.sidePanelButtonContainer}
-        //     underlayColor="#eed"
-        //     onPressIn={sidePanelToggle}
-        //   >
-        //     <BackButton />
-        //   </TouchableHighlight>
-        // }
         innerContainerStyle={{
           paddingBottom: 10,
         }}
         data={{ name: user.name, iconUri: user.icon_uri }}
+        buttonOptions={{
+          backButton: {
+            show: true,
+          },
+          logOut: {
+            show: true,
+            onLongPress: () => {
+              console.log("yo")
+              // auth().signOut()
+              // props.navigation.navigate("Boot", { referrer: "UserDashboard" })
+              // if (expanded) sidePanelToggle()
+            }
+          },
+        }}
         onBack={sidePanelToggle}
       >
-
-        <TouchableOpacity
-          style={styles.logOutButtonContainer}
-          onPress={() => console.log("To-Do: Intuitively shows what the button does")}
-          onLongPress={() => {
-            auth().signOut()
-            props.navigation.navigate("Boot", { referrer: "UserDashboard" })
-            if (expanded) sidePanelToggle()
-          }}
-        >
-          <LogOut
-            style={{
-              width: "100%",
-              height: "100%",
-            }}
-            containerStyle={{
-            }}
-          />
-        </TouchableOpacity>
-
         <CustomButton
           icon={
             <Icon
@@ -294,10 +196,9 @@ export default function UserDashboard(props) {
           }
           title="My Classes"
           onPress={() => {
-            console.log("[USR DHSBRD]  cache.classes", cache.classes)
             props.navigation.navigate(
-              "ScheduleViewer",
-              { classIds: user.active_classes }
+              "ScheduleViewer"
+              // { classIds: user.active_classes }
             )
           }}
         />
@@ -352,31 +253,6 @@ const styles = StyleSheet.create({
     // minHeight: "100%",
     position: "absolute",
     zIndex: 100,
-  },
-  sidePanelButtonContainer: {
-    ...simpleShadow,
-    backgroundColor: "white",
-    marginTop: 10,
-    marginLeft: 10,
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 999,
-    zIndex: 110,
-  },
-  logOutButtonContainer: {
-    width: 64,
-    height: 64,
-    marginTop: 10,
-    marginRight: 10,
-    position: "absolute",
-    right: 0,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "white",
-    borderRadius: 999,
-    ...simpleShadow,
-    zIndex: 110,
   },
   map: {
     width: "100%",

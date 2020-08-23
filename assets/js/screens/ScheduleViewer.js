@@ -7,209 +7,200 @@ import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
 
 import {
-    datestringFromTimestamp,
-    clockFromTimestamp,
-    shortDateFromTimestamp,
-    addFormattingToClassData,
-    addFunctionalityToClassData
+  datestringFromTimestamp,
+  addFormattingToClassData,
+  addFunctionalityToClassData
 } from "../backend/HelperFunctions"
-import { TouchableOpacity } from 'react-native-gesture-handler'
-import { retrieveClassesByIds, retrieveClassesByGymIds } from '../backend/CacheFunctions'
+import {
+  retrieveClassesByIds,
+  retrieveClassesByGymIds,
+  retrieveUserData,
+  retrieveClassesByUser
+} from '../backend/CacheFunctions'
 import { fonts } from '../contexts/Styles'
-
-
-
-// function addFormattingToData(docs) {
-//     if (!(docs instanceof Array)) return
-
-//     return docs.map(doc => {
-//         let formatting = {
-//             dateString: datestringFromTimestamp(doc.begin_time),
-//             formattedDate:
-//                 `${shortDateFromTimestamp(doc.begin_time)}`,
-//             formattedTime:
-//                 `${clockFromTimestamp(doc.begin_time)} – ${clockFromTimestamp(doc.end_time)}`,
-//         }
-
-//         return Object.assign(doc, formatting)
-//     })
-// }
-
-// function addFunctionality({ navigation }, docs) {
-//     if (!(docs instanceof Array)) return
-
-//     docs.forEach(doc => {
-//         doc.onPress = () => {
-//             navigation.navigate("ClassDescription", { data: doc })
-//         }
-//     })
-//     return docs
-// }
+import { colors } from '../contexts/Colors'
+import CustomCapsule from '../components/CustomCapsule'
+import GoBackButton from '../components/buttons/GoBackButton'
+import PlusButton from '../components/buttons/PlusButton'
 
 
 
 export default function ScheduleViewer(props) {
-    let cache = props.route.params.cache
-    let params = props.route.params
+  let cache = props.route.params.cache
+  let params = props.route.params
 
-    const [cacheIsWorking, setCacheIsWorking] = useState(true)
+  // const [cacheIsWorking, setCacheIsWorking] = useState(true)
 
-    const [calendarData, setCalendarData] = useState(null)
-    const [dataIsFormatted, setDataIsFormatted] = useState(false)
-    
-    const [slctdDate, setSlctdDate] = useState(datestringFromTimestamp( Date.now() ))
+  const [calendarData, setCalendarData] = useState(null)
+  const [dataIsFormatted, setDataIsFormatted] = useState(false)
 
-    const [Calendar, CalendarCreate] = useState(null)
-    const [CalendarItemList, CalendarItemListCreate] = useState(null)
+  const [slctdDate, setSlctdDate] = useState(datestringFromTimestamp(Date.now()))
 
-    // useEffect(() => {
-    //     let limit = 20 * (1000 / 200) // seconds * intervals per second
-    //     let initCheck = setInterval(() => {
-    //         limit--
-    //         console.log("Checking...")
-    //         // DO NOT PUT HERE ANYTHING COMPUTATIONALLY INTENSIVE
-    //         // ...
+  const [Calendar, CalendarCreate] = useState(null)
+  const [CalendarItemList, CalendarItemListCreate] = useState(null)
 
-    //         if (!cache.working || !limit) {
-    //             console.log("cache.working", cache.working) //
-    //             cache.working = 0 // reset it for good messure
-    //             // And immediately clear the interval,
-    //             // upon receiving desired outcome
-    //             clearInterval(initCheck)
-    //             console.log("Interval cleared.")
-    //             setCacheIsWorking(false)
-    //         }
-    //     }, /*25*/200)
-    // }, [])
+  const [user, setUser] = useState(null)
 
-    useEffect(() => {
-        // if (cacheIsWorking) return
+  // useEffect(() => {
+  //     let limit = 20 * (1000 / 200) // seconds * intervals per second
+  //     let initCheck = setInterval(() => {
+  //         limit--
+  //         console.log("Checking...")
+  //         // DO NOT PUT HERE ANYTHING COMPUTATIONALLY INTENSIVE
+  //         // ...
 
-        const init = async () => {
-            // Determine which classes to display:
-            // based on the provided gymId or classIds
-            if (params.classIds) {
-                setCalendarData( await retrieveClassesByIds(cache, { classIds: params.classIds }) )
-            } else if (params.gymId) {
-                setCalendarData( await retrieveClassesByGymIds(cache, { gymIds: [params.gymId] }) )
-            } else console.warn("Calendar is missing data. It most likely was not provided.")
-        }
-        init()
-    }, [cacheIsWorking])
+  //         if (!cache.working || !limit) {
+  //             console.log("cache.working", cache.working) //
+  //             cache.working = 0 // reset it for good messure
+  //             // And immediately clear the interval,
+  //             // upon receiving desired outcome
+  //             clearInterval(initCheck)
+  //             console.log("Interval cleared.")
+  //             setCacheIsWorking(false)
+  //         }
+  //     }, /*25*/200)
+  // }, [])
 
-    useEffect(() => {
-        if (!calendarData) return
+  useEffect(() => {
+    // if (cacheIsWorking) return
 
-        calendarData.forEach(({ active_times }) => {
-            addFormattingToClassData(active_times)
-        })
+    const init = async () => {
+      let user = await retrieveUserData(cache)
+      setUser(user)
 
-        addFunctionalityToClassData(calendarData)
+      // Determine which classes to display:
+      // based on the provided gymId or classIds
+      let classes
+      if (params.classIds) {
+        classes = await retrieveClassesByIds(cache, { classIds: params.classIds })
+      } else if (params.gymId) {
+        classes = await retrieveClassesByGymIds(cache, { gymIds: [params.gymId] })
+      // } else console.warn("Calendar is missing data. It most likely was not provided.")
+      } else {
+        classes = await retrieveClassesByUser(cache)
+      }
 
-        console.log("calendarData", calendarData)
+      setCalendarData(classes)
+    }
+    init()
+    // }, [cacheIsWorking])
+  }, [])
 
-        setCalendarData(calendarData)
-        setDataIsFormatted(true)
+  useEffect(() => {
+    if (!calendarData) return
 
+    calendarData.forEach(({ active_times }) => {
+      addFormattingToClassData(active_times)
+    })
 
-        // calendarData = addFormattingToData(calendarData)
-        // calendarData = addFunctionality(props, calendarData)
-        // setCalendarData(addFormattingToData(calendarData))
-        // setCalendarData(addFunctionality(props, calendarData))
-        // setDataIsFormatted(true)
-    }, [calendarData])
+    addFunctionalityToClassData(calendarData, props.navigation)
 
-    useEffect(() => {
-        if (!dataIsFormatted) return
+    setCalendarData(calendarData)
+    setDataIsFormatted(true)
+  }, [calendarData])
 
-        CalendarCreate(
-            <CalendarView
-                data={calendarData}
-                slctdDate={slctdDate}
-                setSlctdDate={setSlctdDate}
-            />
-        )
-        CalendarItemListCreate(
-            <ClassList
-                containerStyle={styles.classListContainer}
-                data={calendarData}
-                dateString={slctdDate}
-            />
-        )
+  useEffect(() => {
+    if (!dataIsFormatted) return
 
-    }, [dataIsFormatted, slctdDate])
-
-    return (
-        <ScrollView contentContainerStyle={styles.scrollView}>
-
-            <AppBackground />
-
-            {/* {cache.user.account_type === "user" ? <View/> :
-            <MenuPanel>
-                <AddNewClass
-                    cache={cache}
-                />
-            </MenuPanel>} */}
-            <View style={{
-                width: 60,
-                height: 60,
-                position: "absolute",
-                zIndex: 110,
-            }}>
-                <TouchableOpacity
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        top: 10,
-                        left: 30,
-                        zIndex: 110,
-                    }}
-                    onPress={() => props.navigation.navigate("SchedulePopulate")}
-                >
-                    <Text style={{
-                        width: "100%",
-                        height: "100%",
-                        textAlign: "center",
-                        textAlignVertical: "center",
-                        backgroundColor: "white",
-                        borderRadius: 999,
-                        fontSize: 40,
-                        fontFamily: fonts.default,
-                    }}>{"+"}</Text>
-                </TouchableOpacity>
-            </View>
-
-            <Text style={{
-                marginVertical: 20,
-                textAlign: "center",
-                fontSize: 30,
-                fontFamily: fonts.default,
-            }}>Schedule</Text>
-            
-            <View style={styles.capsule}>
-                <View style={styles.innerCapsule}>
-                    {Calendar}
-                    {CalendarItemList}
-                </View>
-            </View>
-
-        </ScrollView>
+    CalendarCreate(
+      <CalendarView
+        containerStyle={{
+          borderWidth: 1,
+          borderColor: colors.gray,
+        }}
+        data={calendarData}
+        slctdDate={slctdDate}
+        setSlctdDate={setSlctdDate}
+      />
     )
+    CalendarItemListCreate(
+      <ClassList
+        containerStyle={styles.classListContainer}
+        data={calendarData}
+        dateString={slctdDate}
+      />
+    )
+
+  }, [dataIsFormatted, slctdDate])
+
+
+
+  if (!user) return <View />
+
+  return (
+    <ScrollView contentContainerStyle={styles.scrollView}>
+
+      <AppBackground />
+
+      <CustomCapsule
+        containerStyle={{
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          paddingTop: 0,
+          marginBottom: 20,
+        }}
+        innerContainerStyle={{
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+        }}
+      >
+        <View style={{
+          flexDirection: "row",
+          height: 80,
+          alignItems: "center",
+        }}>
+          <GoBackButton />
+
+          <Text style={{
+            width: "100%",
+            position: "absolute",
+            textAlign: "center",
+            fontSize: 30,
+            fontFamily: fonts.default,
+          }}>Schedule</Text>
+
+          {user.account_type === "partner" ?
+          <PlusButton
+            containerStyle={{
+              position: "absolute",
+              right: 0,//"6%",
+            }}
+            onPress={() => props.navigation.navigate(
+              "SchedulePopulate")}
+          /> : null}
+        </View>
+      </CustomCapsule>
+
+      <View style={styles.capsule}>
+        <View style={styles.innerCapsule}>
+          {Calendar}
+          {CalendarItemList}
+        </View>
+      </View>
+
+    </ScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        minHeight: "100%",
-    },
-    innerCapsule: {
-        width: "100%",
-        marginBottom: 50,
-        paddingBottom: 10,
-        alignSelf: "center",
-        backgroundColor: "#FFFFFF80",
-        borderRadius: 40,
-    },
-    classListContainer: {
-        marginTop: 10,
-    },
+  scrollView: {
+    minHeight: "100%",
+  },
+  innerCapsule: {
+    width: "100%",
+    marginBottom: 50,
+    paddingBottom: 10,
+    alignSelf: "center",
+    // backgroundColor: "#FFFFFF80",
+    backgroundColor: "#00000008",
+    // borderWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 40,
+  },
+  classListContainer: {
+    marginTop: 10,
+  },
 })

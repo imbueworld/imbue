@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -18,8 +19,14 @@ export default function LivestreamMessages(props) {
     const Message = props =>
         <View style={{ flexDirection: props.stickToRight ? "row-reverse" : "row" }}>
             <View style={props.containerStyle}>
-                <Text style={props.labelStyle}>{props.name}</Text>
-                <Text style={props.style}>{props.message}</Text>
+                <Text style={{
+                    fontFamily: fonts.default,
+                    ...props.labelStyle,
+                }}>{props.name}</Text>
+                <Text style={{
+                    fontFamily: fonts.default,
+                    ...props.style,
+                }}>{props.message}</Text>
             </View>
         </View>
     
@@ -27,18 +34,18 @@ export default function LivestreamMessages(props) {
         <Message
             // Message text style
             containerStyle={
-                uid === user.uid
+                uid === user.id
                 ?   styles.selfMsg
                 :   styles.msg
             }
             labelStyle={styles.label}
             style={
-                uid === user.uid
+                uid === user.id
                 ?   styles.selfMsgText
                 :   styles.msgText
             }
             stickToRight={
-                uid === user.uid
+                uid === user.id
                 ?   true
                 :   false
             }

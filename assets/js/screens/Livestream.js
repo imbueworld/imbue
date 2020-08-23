@@ -109,11 +109,11 @@ export default function Livestream(props) {
 
     const activePtcDbRef = database().ref(`livestreams/active_participants/${gymId}`)
     const chatDbRef = database().ref(`livestreams/messages/${gymId}`)
+    const [ptcNodeRef, setPtcNodeRef] = useState(null)
 
     const [user, setUser] = useState(null)
     const [chat, setChat] = useState([])
     const [ptcList, setPtcList] = useState([])
-    console.log("ptcList", ptcList)
     const [playbackLink, setPlaybackLink] = useState(null)
     console.log("playbackLink", playbackLink)
 
@@ -135,10 +135,11 @@ export default function Livestream(props) {
             const ptcNodeRef = await registerParticipant({
                 gymId,
                 name: user.name,
-                uid: user.uid,
+                uid: user.id,
                 icon_uri: user.icon_uri
             })
-            // database().ref(`livestreams/active_participants/${gymId}/${user.uid}`)
+            setPtcNodeRef(ptcNodeRef)
+            // database().ref(`livestreams/active_participants/${gymId}/${user.id}`)
             ptcNodeRef
                 .onDisconnect()
                 .set(null)
@@ -167,11 +168,11 @@ export default function Livestream(props) {
     }, [])
 
     useEffect(() => {
-        bringUpButton(1500 * 93)
+        bringUpButton(1500 * 3)
     }, [])
 
     let buttonPanelTimeout
-    async function bringUpButton(duration=4500) {
+    async function bringUpButton(duration=4500 * 1.5) {
         setButtonPanelPopup(true)
         clearTimeout(buttonPanelTimeout)
         await new Promise(r => {
@@ -214,39 +215,47 @@ export default function Livestream(props) {
         >
             <AppBackground />
 
-            <TouchableWithoutFeedback
+            {/* <TouchableWithoutFeedback
                 style={{
                     zIndex: 101,
                 }}
                 onPress={bringUpButton}
-            />
+            /> */}
 
-            {buttonPanelPopup ?
-            <View style={{
-                ...styles.controlPanelContainer,
-                zIndex: 100,
-            }}>
-                <ChatButton
-                    onPress={() => {
-                        setChatPopup(!chatPopup)
-                        if (ptcListPopup) setPtcList(false)
+            {buttonPanelPopup
+            ?   <View style={{
+                    ...styles.controlPanelContainer,
+                    zIndex: 100,
+                }}>
+                    <ChatButton
+                        onPress={() => {
+                            setChatPopup(!chatPopup)
+                            if (ptcListPopup) setPtcList(false)
+                        }}
+                    />
+                    <CancelButton
+                        title="Leave Workout"
+                        onLongPress={() => {
+                            if (ptcNodeRef) ptcNodeRef.set(null)
+                            chatDbRef.off()
+                            activePtcDbRef.off()
+                            props.navigation.goBack()
+                        }}
+                    />
+                    <ListButton
+                        onPress={() => {
+                            setPtcListPopup(!ptcListPopup)
+                            if (chatPopup) setChatPopup(false)
+                        }}
+                    />
+                </View>
+            :   <TouchableWithoutFeedback
+                    style={{
+                        width: "100%",
+                        height: "100%",
                     }}
-                />
-                <CancelButton
-                    title="Leave Workout"
-                    onLongPress={() => {
-                        chatDbRef.off()
-                        activePtcDbRef.off()
-                        props.navigation.goBack()
-                    }}
-                />
-                <ListButton
-                    onPress={() => {
-                        setPtcListPopup(!ptcListPopup)
-                        if (chatPopup) setChatPopup(false)
-                    }}
-                />
-            </View> : null}
+                    onPress={bringUpButton}
+                />}
 
             { chatPopup
             ?   <Chat
@@ -260,7 +269,7 @@ export default function Livestream(props) {
                         console.log("[Message]", message)
                         sendMessage({
                             gymId,
-                            uid: user.uid,
+                            uid: user.id,
                             name: `${user.first} ${user.last}`,
                             message
                         })

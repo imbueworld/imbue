@@ -4,10 +4,14 @@ import { StyleSheet, ScrollView, View, Text, Image } from 'react-native'
 import CustomCapsule from "./CustomCapsule"
 import { publicStorage } from "../backend/HelperFunctions"
 import { colors } from '../contexts/Colors'
+import { fonts } from '../contexts/Styles'
 
 
 
 export default function ParticipantList(props) {
+    let ptcData = props.data
+    if (!ptcData) return <View />
+
     const Participant = (props) => 
         <View style={styles.ptcContainer}>
             <Image
@@ -17,7 +21,7 @@ export default function ParticipantList(props) {
             <Text style={styles.ptcName}>{props.name}</Text>
         </View>
     
-    const participants = props.data.map(({ name, icon_uri, uid }) => 
+    const participants = ptcData.map(({ name, icon_uri, uid }) => 
         <Participant
             name={name}
             iconUri={publicStorage(icon_uri)}
@@ -68,5 +72,6 @@ const styles = StyleSheet.create({
         flex: 1,
         textAlign: "center",
         fontSize: 20,
+        fontFamily: fonts.default,
     },
 })

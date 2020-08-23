@@ -11,24 +11,7 @@ import { retrieveUserData, retrieveMemberships, retrieveGymsByIds } from '../bac
 import { purchaseMemberships } from "../backend/BackendFunctions"
 import { colors } from '../contexts/Colors'
 import GymLayout from '../layouts/GymLayout'
-import { setWaiter } from "../backend/HelperFunctions"
-
-
-
-// /**
-//  * 1.   Charges user
-//  * 2.   adds gymIds to active_memberships for user in users collection
-//  */
-// async function purchaseMembership(gymIds, creditCardId, price) {
-//     console.log("gymIds", gymIds)
-//     try {
-//         await firebase.functions().httpsCallable("chargeCustomer")({ cardId: creditCardId, amount: price })
-//         await firebase.functions().httpsCallable("registerMemberships")({ gymIds })
-//     } catch(err) {
-//         console.log(err.message)
-//         throw new Error("Something prevented the action.")
-//     }
-// }
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -83,6 +66,11 @@ export default function GymDescription(props) {
     useEffect(() => {
         if (!gym) return
 
+        NameCreate(
+            <View style={styles.nameContainer}>
+                <Text style={styles.nameText}>{gym.name}</Text>
+            </View>
+        )
         GenresCreate(
             <View style={styles.genreContainer}>
                 { gym.genres.map((txt, idx) =>
@@ -101,11 +89,6 @@ export default function GymDescription(props) {
                 </Text>
             </View>
         )
-        NameCreate(
-            <View style={styles.nameContainer}>
-                <Text style={styles.nameText}>{gym.name}</Text>
-            </View>
-        )
     }, [gym])
 
     function openClassesSchedule() {
@@ -113,7 +96,7 @@ export default function GymDescription(props) {
             "ScheduleViewer", { gymId })
     }
 
-    if (!gym) return <View><Text style={{fontSize: 50}}>Loading!</Text></View>
+    if (!gym) return <View />
 
     return (
         <>
@@ -147,75 +130,53 @@ export default function GymDescription(props) {
             onX={() => setPopup(false)}
         />}
 
-        {/* <View style={{ height: "100%" }}> */}
         <GymLayout
             data={gym}
         >
-        {/* <ScrollView contentContainerStyle={styles.scrollView}>
-            <AppBackground /> */}
+            {Name}
+            {Genres}
+            {Desc}
 
-            {/* <CustomCapsule
-                style={styles.container}
-                innerContainerStyle={styles.innerContainer}
-            > */}
+            <CustomButton
+                style={styles.button}
+                title="Visit Classes"
+                onPress={openClassesSchedule}
+            />
 
-                {/* <Image
-                    style={styles.gymImg}
-                    source={require("../components/img/yoga.png")}
-                /> */}
-                
-                {/* <View style={{
-                    paddingHorizontal: 10,
-                }}> */}
-                    {Name}
-                    {Genres}
-                    {Desc}
+            { hasMembership ? null :
+            <>
+            <CustomButton
+                style={styles.button}
+                title="Get Membership"
+                onPress={() => setPopup("membership")}
+            />
+            <CustomButton
+                style={[styles.button, {
+                    marginBottom: 10,
+                }]}
+                title="Get Imbue Universal Membership"
+                onPress={() => props.navigation.navigate("PurchaseUnlimited")}
+            />
+            </>}
+            
+            { hasMembership !== "gym" ? null :
+            <MembershipApprovalBadge
+                containerStyle={{
+                    marginTop: 10,
+                    marginBottom: 10,
+                }}
+                data={gym}
+            />}
 
-                    <CustomButton
-                        style={styles.button}
-                        title="Visit Classes"
-                        onPress={openClassesSchedule}
-                    />
-
-                    { hasMembership ? null :
-                    <>
-                    <CustomButton
-                        style={styles.button}
-                        title="Get Membership"
-                        onPress={() => setPopup("membership")}
-                    />
-                    <CustomButton
-                        style={[styles.button, {
-                            marginBottom: 10,
-                        }]}
-                        title="Get Imbue Universal Membership"
-                        onPress={() => props.navigation.navigate("PurchaseUnlimited")}
-                    />
-                    </>}
-                    
-                    { hasMembership !== "gym" ? null :
-                    <MembershipApprovalBadge
-                        containerStyle={{
-                            marginTop: 10,
-                            marginBottom: 10,
-                        }}
-                        data={gym}
-                    />}
-
-                    { hasMembership !== "imbue" ? null :
-                    <MembershipApprovalBadgeImbue
-                        containerStyle={{
-                            marginTop: 10,
-                            marginBottom: 10,
-                        }}
-                        data={gym}
-                    />}
-                {/* </View> */}
-
-            {/* </CustomCapsule>
-        </ScrollView> */}
+            { hasMembership !== "imbue" ? null :
+            <MembershipApprovalBadgeImbue
+                containerStyle={{
+                    marginTop: 10,
+                    marginBottom: 10,
+                }}
+                data={gym}
+            />}
         </GymLayout>
-        {/* </View> */}
         </>
     )
 }
@@ -250,6 +211,7 @@ const styles = StyleSheet.create({
         marginTop: 20,
         textAlign: "center",
         fontSize: 24,
+        fontFamily: fonts.default,
     },
     genreContainer: {
         marginTop: 20,
@@ -266,6 +228,7 @@ const styles = StyleSheet.create({
     },
     genreText: {
         fontSize: 14,
+        fontFamily: fonts.default,
     },
     descContainer: {
         marginTop: 10,
@@ -278,5 +241,6 @@ const styles = StyleSheet.create({
     descText: {
         fontSize: 16,
         textAlign: "justify",
+        fontFamily: fonts.default,
     },
 })

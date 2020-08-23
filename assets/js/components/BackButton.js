@@ -11,11 +11,13 @@ export default function BackButton(props) {
           // backgroundColor: "white",
           borderRadius: 999,
           ...props.style,
+          ...props.containerStyle,
         }}>
           <Image
             style={{
               width: 64,
               height: 64,
+              ...props.imageStyle,
             }}
             source={require("./img/png/back-button-3.png")}
           />

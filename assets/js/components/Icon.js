@@ -8,6 +8,8 @@ export default function Icon(props) {
         <View style={{
             width: 42,
             height: 42,
+            alignItems: "center",
+            justifyContent: "center",
             ...props.containerStyle,
         }}>
             <Image

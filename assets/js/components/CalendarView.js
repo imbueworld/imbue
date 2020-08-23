@@ -11,15 +11,22 @@ import { Calendar } from "react-native-calendars"
  * .setSlctdDate -- (parent's setState func), must be provided
  */
 export default function CalendarView(props) {
-    if (!props.data) return <View />
+    let calendarData = props.data
+    if (!calendarData) return <View />
 
     useEffect(() => {
+        calendarData.forEach(doc => {
+            if (!(doc.active_times instanceof Array)) return
+        })
+
         // Responsible for meshing together the data provided (props.data)
         // into date-sorted object used by <Calendar />
         let markedDates = {}
-        props.data.forEach(({ dateString }) => {
-            if (!markedDates[dateString]) markedDates[dateString] = { dots: [] }
-            markedDates[dateString].dots.push(workout)
+        calendarData.forEach(({ active_times }) => {
+            active_times.forEach(({ dateString }) => {
+                if (!markedDates[dateString]) markedDates[dateString] = { dots: [] }
+                markedDates[dateString].dots.push(workout)
+            })
         })
 
         // Responsible for meshing together the options for current selected date
@@ -35,7 +42,10 @@ export default function CalendarView(props) {
     const workout = { color: "lightgreen" }
 
     return (
-        <View style={styles.calendarContainer}>
+        <View style={{
+            ...styles.calendarContainer,
+            ...props.containerStyle
+        }}>
             <Calendar
                 markedDates={markedDates}
                 markingType={"multi-dot"}

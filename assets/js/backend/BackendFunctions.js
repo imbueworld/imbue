@@ -42,6 +42,7 @@ export async function initializeAccount(cache, { first, last, email, password, t
             icon_uri: DEFAULT_ICONS[0],
             active_memberships: [],
             active_classes: [],
+            scheduled_classes: [],
         }
         let firestorePromise = firestore()
             .collection(collection)
@@ -98,51 +99,84 @@ export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, c
 }
 
 /**
- * 1.   If the request is valid (the user doesn't already own this class),
- *      documents it in the database
+ * 1.   Checks whether the user already has purchased the class
  * 2.   Charges the user
  * 3.   Updates cache with the new purchase
+ * 4.   Automatically adds the new class to user's schedule
  */
-export async function purchaseClasses(cache, { classIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
+export async function purchaseClasses(cache, { timeIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
     // temporary guard clauses, to get purchaseClasses in code straight
     if (!partnerId) throw new Error("partnerId must be provided in purchaseClasses()")
     if (!purchaseType) throw new Error("purchaseType must be provided in purchaseClasses()")
     if (!gymId) throw new Error("gymId must be provided in purchaseClasses()")
 
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
-    const uid = auth().currentUser.uid
+    const user = retrieveUserData(cache)
 
     const docRef = firestore()
         .collection("users")
-        .doc(uid)
+        .doc(user.id)
 
     try {
+        // Get some up-to-date data
+        const userDoc = ( await docRef.get() ).data()
+        let activeClasses = userDoc.active_classes || []
+        let scheduledClasses = userDoc.scheduled_classes || []
+
+        // Throw error, if user already owns this class
+        const err = new Error("You already own this class.")
+        err.code = "class-already-bought"
+        timeIds.forEach(id => {
+            if (activeClasses.includes(id)) throw err
+        })
+        
         // Charge customer
         const chargeCustomer = functions().httpsCallable("chargeCustomer")
         await chargeCustomer({ cardId: creditCardId, amount: price, description })
         
         // Document payment
         const documentPayment = functions().httpsCallable("documentPayment")
-        await documentPayment({ partnerId, gymId, purchaseType })
+        await documentPayment({ partnerId, gymId, purchaseType, amount: price })
         
         // Register classes for user
-        let activeClasses = ( await docRef.get() ).data().active_classes
-        if (!activeClasses) activeClasses = []
-        await docRef.set(
-            { active_classes: [...activeClasses, ...classIds] },
-            { merge: true }
-        )
+        await docRef.set({
+            active_classes: [...activeClasses, ...timeIds],
+            scheduled_classes: [...scheduledClasses, ...timeIds]
+        }, { merge: true })
 
         // Update cache
-        cache.user.active_classes.push(...classIds)
+        cache.user.active_classes.push(...timeIds)
+        cache.user.scheduled_classes.push(...timeIds)
     } catch(err) {
-        console.error(`[CACHE]  [${err.code}]  ${err.message}`)
-        throw new Error("Something prevented the action.")
+        // console.error(`[CACHE]  [${err.code}]  ${err.message}`)
+        // throw new Error("Something prevented the action.")
+        throw err
     }
+}
 
-    cache.working -= 1
+export async function scheduleClasses(cache, { time_ids }) {
+    const user = await retrieveUserData(cache)
+
+    const docRef = firestore()
+        .collection("users")
+        .doc(user.id)
+    
+    // Retrieve up-to-date relevant data,
+    let scheduledClasses = ( await docRef.get() ).data().scheduled_classes || []
+
+    // Throw error, if a class has been scheduled already
+    const err = new Error("Class has already been added to your schedule.")
+    err.code = "class-already-scheduled"
+    scheduledClasses.forEach(time_id => {
+        if (time_ids.includes(time_id)) throw err
+    })
+
+    // Add to schedule
+    await docRef.set({
+        scheduled_classes: [...scheduledClasses, ...time_ids]
+    }, { merge: true })
+
+    // Update cache
+    user.scheduled_classes.push(...time_ids)
 }
 
 /**
@@ -167,8 +201,7 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
         await chargeCustomer({ cardId: creditCardId, amount: price, description })
 
         // Register membership
-        let activeMemberships = ( await docRef.get() ).data().active_memberships
-        if (!activeMemberships) activeMemberships = []
+        let activeMemberships = ( await docRef.get() ).data().active_memberships || []
         await docRef.set(
             { active_memberships: [...activeMemberships, ...membershipIds] },
             { merge: true }
@@ -204,9 +237,6 @@ export async function cancelMemberships(cache, { membershipIds }) {
  * Merges provided data with the data about the user that lives on the database.
  */
 export async function updateUser(cache, doc) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     const user = await retrieveUserData(cache)
     let collection
     if (user.account_type === "user") collection = "users"
@@ -215,7 +245,7 @@ export async function updateUser(cache, doc) {
     // Update database
     await firestore()
         .collection(collection)
-        .doc(user.uid)
+        .doc(user.id)
         .set(doc, { merge: true })
     
     // Update cache
@@ -228,8 +258,6 @@ export async function updateUser(cache, doc) {
     // [THIS "SHORTCUT" NOTION SHOULD BE DISCONTINUED -- ; TOO INCONVENIENT]
     if (doc.icon_uri) user.icon_uri = `${storage.public}${user.icon_uri}` // This already has a publicStorage() func from HelperFunctions.js
     user.name = `${user.first} ${user.last}`
-
-    cache.working -= 1
 }
 
 /**
@@ -307,6 +335,7 @@ export async function createClass(cache, { instructor, name, description, genres
 
     const partner_id = auth().currentUser.uid
     let form = { instructor, name, description, genres, type, price, gym_id, partner_id }
+    // form.active_times = []
 
     try {
         // Add class to database
@@ -387,9 +416,6 @@ export async function initializeLivestream(cache) {
     const user = retrieveUserData(cache)
     if (cache.user.stream_key) return cache.user.stream_key
 
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     let streamKey
     try {
         // async function getStreamKey() {
@@ -405,7 +431,7 @@ export async function initializeLivestream(cache) {
         for (let i = 0; i < 15; i++) {
             streamKey = (await firestore()
                 .collection("partners")
-                .doc(user.uid)
+                .doc(user.id)
                 .get()
             ).data().stream_key
 
@@ -424,8 +450,6 @@ export async function initializeLivestream(cache) {
     } catch(err) {
         throw new Error("Something prevented the action.")
     }
-
-    cache.working -= 1
 }
 
 

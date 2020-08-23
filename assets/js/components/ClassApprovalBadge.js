@@ -26,7 +26,7 @@ export default function ClassApprovalBadge(props) {
                 paddingRight: 20,
                 textAlign: "justify",
                 fontSize: 13,
-            }}>You have signed up for this class. Now just make sure to reserve your time for when it goes Live!</Text>
+            }}>You have signed up for this class. Now just make sure to be ready for when it goes Live!</Text>
         </Notification>
     )
 }

@@ -8,6 +8,7 @@ import CustomButton from './CustomButton'
 import { populateClass } from '../backend/BackendFunctions'
 import CustomDropDownPicker from './CustomDropDownPicker'
 import { colors } from '../contexts/Colors'
+import { id } from '../backend/HelperFunctions'
 
 
 
@@ -108,6 +109,7 @@ export default function CalendarPopulateForm(props) {
         + dateObj.getTimezoneOffset() * 60 * 1000 // minutes ===> milliseconds
       console.log("getTimezoneOffset()", dateObj.getTimezoneOffset())
       activeTimes.push({
+        time_id: id(),
         begin_time: dateTsLocal + bH + bM,
         end_time: dateTsLocal + eH + eM
       })

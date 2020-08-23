@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Keyboard } from 'react-native'
+import { StyleSheet, View, Text } from 'react-native'
 import CustomTextInput from './CustomTextInput'
 import CustomButton from './CustomButton'
 import CustomSelectButton from './CustomSelectButton'

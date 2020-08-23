@@ -11,6 +11,7 @@ import BackButton from '../components/BackButton'
 import { useNavigation } from '@react-navigation/native'
 import { publicStorage } from '../backend/HelperFunctions'
 import { fonts } from '../contexts/Styles'
+import LogOutButton from '../components/buttons/LogOutButton'
 
 
 
@@ -20,6 +21,15 @@ import { fonts } from '../contexts/Styles'
  */
 export default function ProfileLayout(props) {
   let user = props.data
+  const buttonOptions = props.buttonOptions
+    || {
+      backButton: {
+        show: true,
+      },
+      logOut: {
+        show: false,
+      },
+    }
   let navigation = useNavigation()
 
   function goBack() {
@@ -48,6 +58,7 @@ export default function ProfileLayout(props) {
       <View style={{
         marginVertical: 50,
       }}>
+
         <UserIcon
           containerStyle={{
             position: "absolute",
@@ -74,21 +85,37 @@ export default function ProfileLayout(props) {
             props.innerContainerStyle,
           ]}
         >
+          {!buttonOptions.backButton.show || props.hideBackButton ? null :
+          <TouchableHighlight
+            style={styles.sidePanelButtonContainer}
+            underlayColor="#eed"
+            onPressIn={props.onBack || goBack}
+          >
+            <BackButton
+              imageStyle={{
+                width: 48,
+                height: 48,
+              }}
+            />
+          </TouchableHighlight>}
+
+          {buttonOptions.logOut.show ?
+          <LogOutButton
+            containerStyle={{
+              position: "absolute",
+              top: 10,
+              right: 10,
+            }}
+            onPress={buttonOptions.logOut.onPress}
+            onLongPress={buttonOptions.logOut.onLongPress}
+          /> : null}
+
           <Text
             style={styles.profileName}
             numberOfLines={1}
           >
             {user.name}
           </Text>
-
-          {props.hideBackButton ? null :
-          <TouchableHighlight
-            style={styles.sidePanelButtonContainer}
-            underlayColor="#eed"
-            onPressIn={props.onBack || goBack}
-          >
-            <BackButton />
-          </TouchableHighlight>}
 
           {props.children}
 

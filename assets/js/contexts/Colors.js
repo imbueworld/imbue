@@ -10,10 +10,10 @@ export const simpleShadow = {
         width: 0,
         height: 1,
     },
-    shadowOpacity: 0.20,
-    shadowRadius: 1.41,
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
     
-    elevation: 2,
+    elevation: 3,
 }
 
 // #4b4b43 -- a color less dark than "Material Gray"

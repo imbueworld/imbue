@@ -3,31 +3,28 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
 import { simpleShadow, colors } from "../contexts/Colors"
 import { fonts } from "../contexts/Styles"
+import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
 
 export default function CustomButton(props) {
     return (
-        // <View style={[
-        //     styles.container,
-        //     props.style,
-        // ]}>
-            <TouchableOpacity
-                style={[
-                    styles.button,
-                    simpleShadow,
-                    props.style,
-                    {
-                        paddingLeft: props.icon ? 24 : undefined,
-                        justifyContent: props.icon ? "flex-start" : "center",
-                    },
-                ]}
-                underlayColor="#eee"
+        // <View style={{
+        // }}>
+            <TouchableHighlight
+                style={{
+                    ...styles.button,
+                    ...simpleShadow,
+                    ...props.style,
+                    paddingLeft: props.icon ? 24 : undefined,
+                    justifyContent: props.icon ? "flex-start" : "center",
+                }}
+                underlayColor="#efefef"
                 disabled={props.disabled}
                 onPress={props.onPress || undefined}
                 onLongPress={props.onLongPress || undefined}
             >
-
+                <>
                 {props.icon}
 
                 <Text style={[
@@ -39,28 +36,22 @@ export default function CustomButton(props) {
                 ]}>
                     {props.title}
                 </Text>
-
-            </TouchableOpacity>
+                </>
+            </TouchableHighlight>
         // </View>
     )
 }
 
 const styles = StyleSheet.create({
-    // container: {
-    //     marginVertical: 20,
-    // },
     button: {
-        // flex: 1,
         marginVertical: 10,
         paddingVertical: 20,
-        // paddingLeft: 24, // moved
         flexDirection: "row",
         borderRadius: 999,
         backgroundColor: "white",
     },
     text: {
-        // paddingLeft: 10, // moved
-        color: "#1b1b19",
+        color: colors.gray,
         alignSelf: "center",
         fontSize: 18,
         fontFamily: fonts.default,
