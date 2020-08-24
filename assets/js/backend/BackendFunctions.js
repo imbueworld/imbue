@@ -85,10 +85,7 @@ export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, c
  * 4.   Automatically adds the new class to user's schedule
  */
 export async function purchaseClasses(cache, { classId, timeIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
-    // temporary guard clauses, to get purchaseClasses in code straight
-    if (!partnerId) throw new Error("partnerId must be provided in purchaseClasses()")
-    if (!purchaseType) throw new Error("purchaseType must be provided in purchaseClasses()")
-    if (!gymId) throw new Error("gymId must be provided in purchaseClasses()")
+    if (timeIds.length !== 1) throw new Error("operates on the premise that purchase is being done on only one timeId; violated")
 
     if (cache.working.purchaseClasses) {
         BusyError.message = "A purchase is in process already. Hang tight. (You won't be charged twice)"
@@ -123,8 +120,8 @@ export async function purchaseClasses(cache, { classId, timeIds, creditCardId, p
         await chargeCustomer({ cardId: creditCardId, amount: price, description })
         
         // Document payment
-        const documentPayment = functions().httpsCallable("documentPayment")
-        await documentPayment({ partnerId, gymId, purchaseType, amount: price })
+        const document = functions().httpsCallable("documentClassPurchase")
+        /*await*/ document({ classId, timeId: timeIds[0], partnerId, amount: price }) // operates on the premise that purchase is being done on only one timeId
         
         // Register classes for user
         let newActiveClasses = timeIds.map(timeId => ({
@@ -194,7 +191,7 @@ export async function scheduleClasses(cache, { classId, timeIds }) {
  * 2.   Charges the user
  * 3.   Updates cache with the new purchase
  */
-export async function purchaseMemberships(cache, { membershipIds, creditCardId, price, description, partnerId, gymId, purchaseType }) {
+export async function purchaseMemberships(cache, { membershipIds, creditCardId, price, description, partnerId, gymId }) {
     if (cache.working.purchaseMemberships) {
         BusyError.message = "A purchase is in process already. Hang tight. (You won't be charged twice)"
         throw BusyError
@@ -218,13 +215,13 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
             if (activeMemberships.includes(id)) throw err
         })
 
-        // Charge customer
-        const chargeCustomer = functions().httpsCallable("chargeCustomer")
-        await chargeCustomer({ cardId: creditCardId, amount: price, description })
+        // Charge customer, creating a subscription
+        const subscribeCustomer = functions().httpsCallable("subscribeCustomer")
+        await subscribeCustomer({ gymId, cardId: creditCardId, amount: price, description })
         
         // Document payment
-        const documentPayment = functions().httpsCallable("documentPayment")
-        await documentPayment({ partnerId, gymId, purchaseType, amount: price })
+        const document = functions().httpsCallable("documentMembershipPurchase")
+        /*await*/ document({ partnerId, gymId, amount: price })
 
         // Register membership
         await docRef.set({
@@ -247,10 +244,49 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
  * 2.   If successfully removed the subscription, removes it from the database
  * 2.   Updates cache with the new purchase
  */
-export async function cancelMemberships(cache, { membershipIds }) {
-    // cancelMemberships
+export async function deleteSubscription(cache, { gymIds }) {
+    if (cache.working.deleteSubscription) {
+        BusyError.message = "Cancelling a subscription is already in progress. Hang tight."
+        throw BusyError
+    }
+    cache.working.deleteSubscription = true
 
-    // cache work
+    const user = await retrieveUserData(cache)
+    const userDocRef = firestore()
+        .collection("users")
+        .doc(user.id)
+
+    try {
+        let promises = []
+
+        // Get some up-to-date data
+        const userDoc = ( await userDocRef.get() ).data()
+
+        // Delete subscription
+        const deleteSubscription = functions().httpsCallable("deleteSubscription")
+        promises.push( deleteSubscription({ gymIds }) )
+
+        // Remove it from user doc
+        let newActiveMemberships = userDoc.active_memberships
+            .filter(id => {
+                if (!gymIds.includes(id)) return true
+            })
+        promises.push(
+            userDocRef.set({
+                active_memberships: newActiveMemberships,
+            }, { merge: true })
+        )
+
+        // execution
+        await Promise.all(promises)
+
+        // Update cache
+        cache.user.active_memberships = newActiveMemberships
+    } catch(err) {
+        throw err
+    } finally {
+        cache.working.deleteSubscription = false
+    }
 }
 
 /**

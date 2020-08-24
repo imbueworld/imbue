@@ -3,11 +3,10 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 import MembershipPopup from '../components/popups/MembershipPopup'
-import PopupPurchase from '../components/popups/PopupPurchase'
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 
-import { retrieveUserData, retrieveMemberships, retrieveGymsByIds } from '../backend/CacheFunctions'
+import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
 import { purchaseMemberships } from "../backend/BackendFunctions"
 import { colors } from '../contexts/Colors'
 import GymLayout from '../layouts/GymLayout'
@@ -191,6 +190,7 @@ export default function GymDescription(props) {
                           break
                         default:
                           setErrorMsg("Something prevented the action.")
+                          setErrorMsg(err.message)
                           break
                       }
                     }

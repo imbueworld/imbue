@@ -297,7 +297,20 @@ export function addFunctionalityToClassData(docs, navigation) {
  * Generates a random id
  */
 export function id() {
-    return Math.random().toString(36).substr(2, 9)
+    const random = () => {
+        return Math.random().toString(36).substr(2, 9)
+    }
+    
+    let st = random() + random()
+    let st2 = ""
+    for (let i = 0; i < st.length; i++) {
+        let char = st[i]
+        if (typeof char === "string") {
+            if (Math.random() >= 0.5) st2 += char.toUpperCase()
+            else st2 += char.toLowerCase()
+        } else st2 += char
+    }
+    return st2
 }
 
 export function classType(type) {

@@ -7,19 +7,12 @@ import AppBackground from "../components/AppBackground"
 // import "firebase/auth"
 import auth from "@react-native-firebase/auth"
 import { retrieveUserData } from '../backend/CacheFunctions'
+import { id } from '../backend/HelperFunctions'
 
 
 
 export default function Boot(props) {
     // auth().signOut()
-    // props.route.params.cache.user = null
-    // props.route.params.cache.creditCards = null
-    // props.route.params.cache.classes = null
-    // props.route.params.cache.gyms = null
-    // props.route.params.cache.gymClasses = null
-    // props.route.params.cache.memberships = null
-    // props.route.params.cache.mux = null
-
     let cache = props.route.params.cache
 
     const [booting, setBooting] = useState(true)
@@ -36,6 +29,7 @@ export default function Boot(props) {
             Object.keys(cache).forEach(key => {
                 cache[ key ] = null
             })
+            cache.working = {}
             setBooting(false)
         }, 6100)
 
@@ -74,14 +68,12 @@ export default function Boot(props) {
                             else accountType = ""
                             switch(accountType) {
                                 case "user":
-                                    // props.navigation.navigate("UserDashboard", {referrer: "Boot"})
                                     props.navigation.reset({
                                         index: 0,
                                         routes: [{ name: "UserDashboard" }]
                                     })
                                     break
                                 case "partner":
-                                    // props.navigation.navigate("PartnerDashboard", {referrer: "Boot"})
                                     props.navigation.reset({
                                         index: 0,
                                         routes: [{ name: "PartnerDashboard" }]

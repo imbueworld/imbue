@@ -180,9 +180,9 @@ export default function UserDashboard(props) {
             show: true,
             onLongPress: () => {
               console.log("yo")
-              // auth().signOut()
-              // props.navigation.navigate("Boot", { referrer: "UserDashboard" })
-              // if (expanded) sidePanelToggle()
+              auth().signOut()
+              props.navigation.navigate("Boot", { referrer: "UserDashboard" })
+              if (expanded) sidePanelToggle()
             }
           },
         }}
