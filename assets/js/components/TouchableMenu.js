@@ -48,7 +48,10 @@ export default function TouchableMenu(props) {
                     underlayColor="#00000012"
                     onPress={props.onProceed || undefined}
                 >
-                    <Text style={styles.button}>Confirm</Text>
+                    <Text style={{
+                        ...styles.button,
+                        backgroundColor: "red",
+                    }}>{/*Confirm*/}Remove</Text>
                 </TouchableHighlight>
                 <TouchableHighlight
                     style={{

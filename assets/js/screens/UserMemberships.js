@@ -61,7 +61,15 @@ export default function UserMemberships(props) {
             await deleteSubscription(cache, { gymIds: [membership.id] })
             setSuccessMsg("Subscription canceled!")
           } catch (err) {
-            setErrorMsg(err.message)
+            switch (err.code) {
+              case "busy":
+                setErrorMsg(err.message)
+                break
+              default:
+                setErrorMsg("Something prevented the action.")
+                // setErrorMsg(err.message) //
+                break
+            }
           }
         }}
       >

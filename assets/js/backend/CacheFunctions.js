@@ -394,26 +394,106 @@ export async function retrievePlaybackId(cache, { gymId }) {
     return playback_id
 }
 
+/**
+ * TEMPLATE
+ */
+export async function retrieveAttendees(cache, { classId, timeId }) {
+    if (cache.working.retrieveAttendees) {
+        BusyError.message("TEMPLATE")
+        throw BusyError
+    }
+    cache.working.retrieveAttendees = true
+
+    const activeTimeDocRef = firestore()
+        .collection("classes")
+        .doc(classId)
+        .collection("active_times")
+        .doc(timeId)
+
+    try {
+        // Return data if already in cache
+        if (cache.temp) {
+            if (cache.temp.attendees) {
+                if (cache.temp.attendees[ classId ]) {
+                    if (cache.temp.attendees[ classId ][ timeId ]) {
+                        if (cache.temp.attendees[ classId ][ timeId ].clients) {
+                            return Object.values(
+                                cache.temp.attendees[ classId ][ timeId ].clients
+                            )
+                        }
+                    }
+                }
+            }
+        }
+
+        // Get data
+        const clients = (await activeTimeDocRef
+            .collection("clients")
+            .get()
+        ).docs.map(doc => {
+            let data = doc.data()
+            data.id = doc.id
+            return data
+        })
+
+        // Update cache
+        // cache.classes.forEach(classDoc => {
+        //     if (classDoc.id === classId) {
+        //         classDoc.active_times.forEach(activeTimeDoc => {
+        //             if (activeTimeDoc.time_id === timeId) {
+        //                 activeTimeDoc.clients = clients
+        //             }
+        //         })
+        //     }
+        // })
+        if (!cache.temp) cache.temp = {}
+        if (!cache.temp.attendees) cache.temp.attendees = {}
+
+        let attendees = cache.temp.attendees
+        if (!attendees[ classId ]) attendees[ classId ] = {}
+
+        let classDoc = attendees[ classId ]
+        if (!classDoc[ timeId ]) classDoc[ timeId ] = {}
+
+        let timeDoc = classDoc[ timeId ]
+        if (!timeDoc.clients) timeDoc.clients = {}
+
+        clients.forEach(userDoc => {
+            if (!timeDoc.clients[ userDoc.id ]) {
+                timeDoc.clients[ userDoc.id ] = userDoc
+            }
+        })
+
+        return clients
+    } catch(err) {
+        console.error(err.message)
+        throw new Error("Something prevented the action.")
+    } finally {
+        cache.working.retrieveAttendees = false
+    }
+}
+
+
+
+const BusyError = new Error()
+BusyError.code = "busy"
+
 
 
 /**
  * TEMPLATE
  */
 export async function TEMPLATE(cache) {
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
-    if (!cache.TEMPLATE) {
-        try {
-            let data
-            cache.TEMPLATE = data
-        } catch(err) {
-            console.error(err.message)
-            cache.working -= 1
-            throw new Error("Something prevented the action.")
-        }
+    if (cache.working.TEMPLATE) {
+        BusyError.message("TEMPLATE")
+        throw BusyError
     }
+    cache.working.TEMPLATE = true
 
-    cache.working -= 1
-    return cache.TEMPLATE
+    try {} catch(err) {
+        console.error(err.message)
+        throw new Error("Something prevented the action.")
+    } finally {
+        cache.working.TEMPLATE = false
+    }
 }

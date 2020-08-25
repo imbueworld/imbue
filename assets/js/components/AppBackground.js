@@ -28,6 +28,7 @@ export default function AppBackground(props) {
                 }}
                 disableUserControl
                 randomizeFirstImage
+                imageInterval={40000}
                 data={images}
             />
         </View>

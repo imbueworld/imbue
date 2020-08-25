@@ -3,6 +3,7 @@ import { View } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Icon from '../Icon'
 import { simpleShadow } from '../../contexts/Colors'
+import auth from "@react-native-firebase/auth"
 
 
 
@@ -24,7 +25,7 @@ export default function LogOutButton(props) {
           borderRadius: 999,
         }}
         underlayColor="#00000012"
-        onPress={props.onPress || undefined}
+        onPress={props.onPress || (() => auth().signOut())}
         onLongPress={props.onLongPress || undefined}
       >
         {/* <LogOut
@@ -38,7 +39,7 @@ export default function LogOutButton(props) {
             width: "100%",
             height: "100%",
           }}
-          source={require("../img/png/sign-out-6.png")}
+          source={require("../img/png/sign-out-5.png")}
         />
       </TouchableHighlight>
     </View>

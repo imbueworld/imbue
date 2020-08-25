@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { fonts } from '../contexts/Styles'
-import { colors } from '../contexts/Colors'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Icon from './Icon'
 import { publicStorage } from '../backend/HelperFunctions'
+import LiveSoonIcon from './badges/LiveSoonIcon'
 
 
 
@@ -40,7 +40,16 @@ export default function ClassList(props) {
 
         let items = []
         classes.forEach(doc => {
-            doc.active_times.forEach(({ formattedDate, formattedTime, onPress, begin_time }) => {
+            doc.active_times.forEach(({ formattedDate, formattedTime, onPress, begin_time, livestreamState }) => {
+                const SidePanelContainer = (props) =>
+                    <View style={{
+                        position: "absolute",
+                        height: "100%",
+                        justifyContent: "center",
+                        backgroundColor: "#00000030",
+                        paddingHorizontal: 12,
+                    }}>{ props.children }</View>
+
                 items.push(
                     <TouchableHighlight
                         style={{
@@ -54,22 +63,52 @@ export default function ClassList(props) {
                         onPress={onPress}
                     >
                         <View>
-                        <Icon
-                            containerStyle={{
-                                position: "absolute",
-                                width: "100%",
-                                height: "100%",
-                            }}
-                            source={{ uri: publicStorage("workout.jpg") }}
-                        />
-                        <View style={{
-                            alignItems: "center",
-                        }}>
-                            <Text style={styles.text}>{formattedDate}</Text>
-                            <Text style={styles.text}>{formattedTime}</Text>
-                            <Text style={styles.text}>{doc.name}</Text>
-                            <Text style={styles.text}>{doc.instructor}</Text>
-                        </View>
+                            {livestreamState === "live"
+                            ?   <SidePanelContainer>
+                                    <Icon
+                                        containerStyle={{
+                                            width: 72,
+                                            height: 72,
+                                        }}
+                                        imageStyle={{
+                                            width: "75%",
+                                            height: "75%",
+                                        }}
+                                        source={require("./img/png/live.png")}
+                                    />
+                                </SidePanelContainer>
+                            :   null}
+
+                            {livestreamState === "soon"
+                            ?   <SidePanelContainer>
+                                    <LiveSoonIcon
+                                        containerStyle={{
+                                            width: 72,
+                                            height: 72,
+                                        }}
+                                        value={Math.floor((begin_time - Date.now()) / 1000 / 60)} // This could & should be made update dynamically, even if user doesn't refresh page
+                                    />
+                                </SidePanelContainer>
+                            :   null}
+
+                            <Icon
+                                containerStyle={{
+                                    position: "absolute",
+                                    width: "100%",
+                                    height: "100%",
+                                    zIndex: -100,
+                                }}
+                                source={{ uri: publicStorage("workout.jpg") }}
+                            />
+
+                            <View style={{
+                                alignItems: "center",
+                            }}>
+                                <Text style={styles.text}>{formattedDate}</Text>
+                                <Text style={styles.text}>{formattedTime}</Text>
+                                <Text style={styles.text}>{doc.name}</Text>
+                                <Text style={styles.text}>{doc.instructor}</Text>
+                            </View>
                         </View>
                     </TouchableHighlight>
                 )
@@ -83,7 +122,7 @@ export default function ClassList(props) {
             styles.container,
             props.containerStyle,
         ]}>
-            {Items}
+            { Items }
         </View>
     )
 }

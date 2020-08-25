@@ -1,10 +1,7 @@
-import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, TouchableOpacity, TouchableWithoutFeedback } from 'react-native'
-
-import { colors } from "../contexts/Colors"
+import React from 'react'
+import { View, TouchableWithoutFeedback } from 'react-native'
 
 import CustomCapsule from "../components/CustomCapsule"
-import CustomButton from './CustomButton'
 
 
 
@@ -12,51 +9,44 @@ import CustomButton from './CustomButton'
  * props
  * .onX
  * .children
+ * 
  * .containerStyle
+ * .innerContainerStyle
  */
 export default function CustomPopup(props) {
     return (
-        <View style={[
-            styles.container,
-        ]}>
-            <TouchableWithoutFeedback
-                onPress={props.onX}
-            >
-                <View style={styles.exit}/>
+        <View style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 1000,
+        }}>
+            <TouchableWithoutFeedback onPress={props.onX}>
+                <View style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
+                    backgroundColor: `#00000045`,
+                    zIndex: -1000,
+                }}/>
             </TouchableWithoutFeedback>
             
             <CustomCapsule
-                containerStyle={[
-                    styles.capsule,
-                    props.containerStyle,
-                ]}
-                innerContainerStyle={props.innerContainerStyle}
+                containerStyle={{
+                    width: "94%",
+                    maxHeight: "90%",
+                    // backgroundColor: "lightgray",
+                    ...props.containerStyle,
+                }}
+                innerContainerStyle={{
+                    // height: "100%",
+                    ...props.innerContainerStyle,
+                }}
             >
                 {props.children}
             </CustomCapsule>
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-        height: "100%",
-        position: "absolute",
-        justifyContent: "center",
-        zIndex: 1000,
-    },
-    exit: {
-        width: "100%",
-        height: "100%",
-        position: "absolute",
-        backgroundColor: `#00000045`,//`${colors.gray}40`,
-        zIndex: -1000,
-    },
-    capsule: {
-        width: "88%",
-        height: "88%",
-        alignSelf: "center",
-        backgroundColor: "lightgray",
-    },
-})

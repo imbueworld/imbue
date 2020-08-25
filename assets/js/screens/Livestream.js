@@ -213,8 +213,13 @@ export default function Livestream(props) {
             contentContainerStyle={styles.scrollView}
             keyboardShouldPersistTaps="handled"
         >
-            <AppBackground />
-
+            {/* Some sort of background */}
+            <View style={{
+                backgroundColor: "black",
+                width: "100%",
+                height: "100%",
+            }}/>
+            
             {/* <TouchableWithoutFeedback
                 style={{
                     zIndex: 101,

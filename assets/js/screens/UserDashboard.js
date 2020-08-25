@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, Text, View, TouchableOpacity, Animated, TouchableHighlight } from 'react-native'
+import { StyleSheet, View, Animated, TouchableHighlight } from 'react-native'
 
 import { useDimensions } from '@react-native-community/hooks'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
@@ -8,14 +8,11 @@ import { mapStyle } from "../contexts/MapStyle"
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import UserIcon from "../components/UserIcon"
-
 import CustomButton from "../components/CustomButton"
-
 import GymBadge from "../components/GymBadge"
 
 import auth from "@react-native-firebase/auth"
-import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByGymIds, retrieveClassesByIds, retrieveClassesByUser } from '../backend/CacheFunctions'
-import { simpleShadow } from '../contexts/Colors'
+import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByUser } from '../backend/CacheFunctions'
 import Icon from '../components/Icon'
 import { publicStorage } from '../backend/HelperFunctions'
 
@@ -40,7 +37,6 @@ export default function UserDashboard(props) {
       setUser(user)
       let promises = await Promise.all([
         retrieveGymsByLocation(cache),
-        // retrieveClassesByIds(cache, { classIds: user.active_classes }),
         retrieveClassesByUser(cache),
       ])
       setGyms(promises[0])
@@ -73,9 +69,6 @@ export default function UserDashboard(props) {
                       iconUri={publicStorage(gym.icon_uri)}
                       key={idx}
                       onMoreInfo={() => {
-                        // Does not need await, because utilizes cache.working
-                        // = load into next page instantly
-                        retrieveClassesByGymIds(cache, { gymIds: [gym.id] })
                         props.navigation.navigate(
                           "GymDescription", { gymId: gym.id })
                       }}
@@ -151,8 +144,10 @@ export default function UserDashboard(props) {
             borderRadius: 999,
           }}
           underlayColor="#000000C0"
-          // onPress={sidePanelToggle}
-          onLongPress={sidePanelToggle}
+          onPress={sidePanelToggle}
+          // [uncomment upon start DEBUG]
+          // onLongPress={sidePanelToggle}
+          // [comment upon stop DEBUG]
         >
           <UserIcon
             style={{
@@ -173,13 +168,9 @@ export default function UserDashboard(props) {
         }}
         data={{ name: user.name, iconUri: user.icon_uri }}
         buttonOptions={{
-          backButton: {
-            show: true,
-          },
           logOut: {
             show: true,
             onLongPress: () => {
-              console.log("yo")
               auth().signOut()
               props.navigation.navigate("Boot", { referrer: "UserDashboard" })
               if (expanded) sidePanelToggle()

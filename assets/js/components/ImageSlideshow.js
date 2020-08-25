@@ -8,6 +8,7 @@ import { colors } from '../contexts/Colors'
 
 export default function ImageSlideshow(props) {
     let image_uris = props.data
+    const imageInterval = props.imageInterval || 3500
     const firstImageIdx = props.randomizeFirstImage
         ?   Math.floor(Math.random() * image_uris.length)
         :   0
@@ -24,12 +25,21 @@ export default function ImageSlideshow(props) {
         else setCurrentIdx(image_uris.length - 1)
     }
 
+    // [comment upon start DEBUG]
     // useEffect(() => {
-    //     setInterval(() => {
-    //         console.log("next image...")
-    //         nextImage()
-    //     }, 10000)
-    // }, [])
+    //     let itrvl = setInterval((cIdx => {
+    //         if (cIdx[0] + 1 < image_uris.length) {
+    //             setCurrentIdx(idx => idx + 1)
+    //             cIdx[0]++
+    //         } else {
+    //             setCurrentIdx(0)
+    //             cIdx[0] = 0
+    //         }
+    //     }).bind(null, [cIdx]), imageInterval)
+        
+    //     return () => clearInterval(itrvl)
+    // }, [cIdx])
+    // [uncomment upon stop DEBUG]
 
     const IndicatingDots = image_uris.map((irlvnt, idx) => 
         <View
@@ -55,7 +65,7 @@ export default function ImageSlideshow(props) {
     )
 
     return (
-        <View>
+        <View style={{ zIndex: -100 }}>
             {props.disableUserControl ? null :
             <>
             <View style={{

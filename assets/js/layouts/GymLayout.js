@@ -1,14 +1,17 @@
-import React, { useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, ScrollView, View } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 import CustomCapsule from '../components/CustomCapsule'
-import { publicStorage } from '../backend/HelperFunctions'
 import GoToCalendarButton from '../components/buttons/GoToCalendarButton'
 import AddToCalendarButton from '../components/buttons/AddToCalendarButton'
 import CalendarSuccessButton from '../components/buttons/CalendarSuccessButton'
 import GoBackButton from '../components/buttons/GoBackButton'
 import ImageSlideshow from '../components/ImageSlideshow'
+import { StackActions, useNavigation } from '@react-navigation/native'
+import GoToLivestreamButton from '../components/buttons/GoToLivestreamButton'
+import AttendeesPopup from '../components/popups/AttendeesPopup'
+import CustomButton from '../components/CustomButton'
 
 
 
@@ -20,25 +23,67 @@ import ImageSlideshow from '../components/ImageSlideshow'
  * .children
  */
 export default function GymLayout(props) {
-  // let cache = props.cache
+  let cache = props.cache
   let gym = props.data
-  const buttonOptions = props.buttonOptions
-    || {
-      // not really in use = always show
-      // backButton: {
-      //   show: true,
-      // },
+  let navigation = useNavigation()
+
+  // const [buttonOptions, setButtonOptions] = useState(null)
+  const [customState, setCustomState] = useState({}) // Used only internally, during the lifetime of this component
+  console.log("customState", customState)
+
+  // useEffect(() => {
+    const buttonOptions = {
+      goBackButton: {
+        show: true,
+        onPress: undefined, // ==> defaults to navigation.goBack()
+      },
       addToCalendar: {
         show: false,
-        // state: ...
-        // onPress: ...
+        state: "opportunity" || "fulfilled",
+        onPress: () => {},
       },
       goToCalendar: {
         show: false,
+        onPress: undefined, // ==> defaults to pushing on a stack ScheduleViewer
+      },
+      goToLivestream: {
+        show: false,
+        state: "normal" || "inactive",
+        onPress: () => {
+          const pushAction = StackActions.push("Livestream", { gymId: gym.id })
+          navigation.dispatch(pushAction)
+        },
+      },
+      viewAttendees: {
+        show: false,
+        state: "closed" || "open",
+        data: { classId: null, timeId: null },
+        onPress: () => {},
       },
     }
-
   
+    // Apply props.buttonOptions to buttonOptions
+    if (props.buttonOptions) {
+      Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
+        Object.entries(instructions).forEach(([key, value]) => {
+          buttonOptions[ button ][ key ] = value
+        })
+      })
+    }
+
+    // Apply customState to buttonOptions
+    Object.entries(customState).forEach(([button, instructions]) => {
+      Object.entries(instructions).forEach(([key, value]) => {
+        buttonOptions[ button ][ key ] = value
+      })
+    })
+    // setButtonOptions(defaultButtonOptions)
+  // }, [])
+
+
+
+  if (!buttonOptions) return <View />
+
   const buttonProps = {
     containerStyle: {
       marginLeft: 7,
@@ -53,6 +98,20 @@ export default function GymLayout(props) {
     <ScrollView contentContainerStyle={styles.scrollView}>
       <AppBackground />
 
+      {buttonOptions.viewAttendees.state === "open"
+      ? <AttendeesPopup
+          cache={cache}
+          classId={buttonOptions.viewAttendees.data.classId}
+          timeId={buttonOptions.viewAttendees.data.timeId}
+          onX={() => setCustomState({
+            ...customState,
+            viewAttendees: {
+              state: "closed",
+            }
+          })}
+        />
+      : null}
+
       <CustomCapsule
         containerStyle={[
           styles.container,
@@ -63,12 +122,9 @@ export default function GymLayout(props) {
           props.innerContainerStyle,
         ]}
       >
-        {/* <Image
-          style={styles.image}
-          source={{ uri: publicStorage(gym.image_uris[0]) }}
-        /> */}
         <ImageSlideshow
           imageStyle={styles.image}
+          imageInterval={5000}
           data={gym.image_uris}
         />
 
@@ -77,12 +133,15 @@ export default function GymLayout(props) {
           top: 7,
           left: 7,
         }}>
-          <GoBackButton
-            imageContainerStyle={{
-              width: 42,
-              height: 42,
-            }}
-          />
+          {buttonOptions.goBackButton.show
+          ? <GoBackButton
+              imageContainerStyle={{
+                width: 42,
+                height: 42,
+              }}
+              onPress={buttonOptions.goBackButton.onPress}
+            />
+          : null}
         </View>
 
         <View style={{
@@ -91,6 +150,18 @@ export default function GymLayout(props) {
           right: 7,
           flexDirection: "row",
         }}>
+          {buttonOptions.goToLivestream.show
+          ? buttonOptions.goToLivestream.state === "normal"
+            ? <GoToLivestreamButton
+                {...buttonProps}
+                onPress={buttonOptions.goToLivestream.onPress}
+              />
+            : <GoToLivestreamButton
+                {...buttonProps}
+                inactive
+              />
+          : null}
+
           {buttonOptions.addToCalendar.show
           ? buttonOptions.addToCalendar.state === "opportunity"
             ? <AddToCalendarButton
@@ -101,10 +172,35 @@ export default function GymLayout(props) {
                 {...buttonProps}
               />
           : null}
+          
+          {buttonOptions.viewAttendees.show
+          ? <CustomButton
+              style={{
+                marginVertical: 0,
+                paddingHorizontal: 10,
+                height: 42,
+              }}
+              textStyle={{
+                fontSize: 13,
+              }}
+              title="Attendees"
+              onPress={() => {
+                setCustomState({
+                  ...customState,
+                  viewAttendees: {
+                    state: "open",
+                  }
+                })
+              }}
+            />
+          : null}
+
           {buttonOptions.goToCalendar.show
           ? <GoToCalendarButton
               {...buttonProps}
-            /> : null}
+              onPress={buttonOptions.goToCalendar.onPress}
+            />
+          : null}
         </View>
 
         <View style={{

@@ -8,6 +8,7 @@ import AppBackground from "../components/AppBackground"
 import CompanyLogo from "../components/CompanyLogo"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from '../components/CustomCapsule'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -63,8 +64,10 @@ export default function Home(props) {
                         marginTop: 20,
                         marginBottom: 20,
                         color: colors.gray,
-                        fontSize: 16,
                         textAlign: "center",
+                        fontSize: 16,
+                        textDecorationLine: "underline",
+                        fontFamily: fonts.default,
                     }}>Partner Sign Up</Text>
                 </TouchableOpacity>
             </CustomCapsule>

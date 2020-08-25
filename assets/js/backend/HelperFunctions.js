@@ -277,6 +277,7 @@ export function addFormattingToClassData(docs) {
  */
 export function addFunctionalityToClassData(docs, navigation) {
     if (!(docs instanceof Array)) return
+    const currentTs = Date.now()
 
     docs.forEach(doc => {
         if (!(doc.active_times instanceof Array)) return
@@ -289,6 +290,23 @@ export function addFunctionalityToClassData(docs, navigation) {
                 delete data.active_times
                 navigation.navigate("ClassDescription", { data })
             }
+
+            classDoc.livestreamState = "offline"
+            let timeVal = currentTs - classDoc.begin_time
+            // If livestream scheduled time has come,
+            // but the livestream is not over yet.
+            if (timeVal > 0 && currentTs < classDoc.end_time) {
+                classDoc.livestreamState = "live"
+            }
+            // If livestream is soon to start (30min before)
+            if (timeVal > -1 * (1000 * 60 * 30) && currentTs < classDoc.begin_time) {
+                classDoc.livestreamState = "soon"
+            }
+    
+            // temporary testings
+            // console.log("classDoc.begin_time", classDoc.begin_time)
+            // console.log("classDoc.end_time", classDoc.end_time)
+            // console.log("timeVal", timeVal)
         })
     })
 }

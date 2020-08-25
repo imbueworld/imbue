@@ -121,7 +121,7 @@ export async function purchaseClasses(cache, { classId, timeIds, creditCardId, p
         
         // Document payment
         const document = functions().httpsCallable("documentClassPurchase")
-        /*await*/ document({ classId, timeId: timeIds[0], partnerId, amount: price }) // operates on the premise that purchase is being done on only one timeId
+        /*await*/ document({ classId, timeId: timeIds[0], partnerId, amount: price, user: userDoc }) // operates on the premise that purchase is being done on only one timeId
         
         // Register classes for user
         let newActiveClasses = timeIds.map(timeId => ({
@@ -161,7 +161,8 @@ export async function scheduleClasses(cache, { classId, timeIds }) {
         .doc(user.id)
     
     // Retrieve up-to-date relevant data,
-    let scheduledClasses = ( await docRef.get() ).data().scheduled_classes || []
+    const userDoc = ( await docRef.get() ).data()
+    let scheduledClasses = userDoc.scheduled_classes || []
 
     // Throw error, if a class has been scheduled already
     const err = new Error("Class has already been added to your schedule.")
@@ -179,6 +180,11 @@ export async function scheduleClasses(cache, { classId, timeIds }) {
         // scheduled_classes: [...scheduledClasses, ...timeIds]
         scheduled_classes: [...scheduledClasses, ...newEntries]
     }, { merge: true })
+
+    // For partner's sake, and a feature that let's them see
+    // who has scheduled their class
+    const document = functions().httpsCallable("documentScheduledClass")
+    timeIds.forEach(timeId => document({ classId, timeId, user: userDoc }))
 
     // Update cache
     // user.scheduled_classes.push(...timeIds)

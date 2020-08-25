@@ -12,6 +12,7 @@ import { colors } from '../contexts/Colors'
 import GymLayout from '../layouts/GymLayout'
 import { fonts } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
+import Icon from '../components/Icon'
 
 
 
@@ -137,6 +138,11 @@ export default function GymDescription(props) {
           }}
           title="Visit Classes"
           onPress={openClassesSchedule}
+          Icon={
+            <Icon
+              source={require("../components/img/png/calendar.png")}
+            />
+          }
         />
 
         {errorMsg

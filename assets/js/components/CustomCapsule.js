@@ -32,10 +32,10 @@ const styles = StyleSheet.create({
         padding: 12,
     },
     innerContainer: {
-        // height: "100%",
         borderRadius: 30,
         backgroundColor: "#FFFFFF80",
-        paddingHorizontal: 20,
+        // paddingHorizontal: 20,
+        paddingHorizontal: "6%",
         overflow: "hidden",
     },
 })

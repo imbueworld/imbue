@@ -1,8 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableHighlight } from 'react-native'
-
-import AppBackground from "../components/AppBackground"
-import ProfileRepr from "../components/ProfileRepr"
 
 import CustomCapsule from "../components/CustomCapsule"
 import UserIcon from '../components/UserIcon'
@@ -12,6 +9,8 @@ import { useNavigation } from '@react-navigation/native'
 import { publicStorage } from '../backend/HelperFunctions'
 import { fonts } from '../contexts/Styles'
 import LogOutButton from '../components/buttons/LogOutButton'
+import auth from "@react-native-firebase/auth"
+import AppBackground from '../components/AppBackground'
 
 
 
@@ -21,20 +20,37 @@ import LogOutButton from '../components/buttons/LogOutButton'
  */
 export default function ProfileLayout(props) {
   let user = props.data
-  const buttonOptions = props.buttonOptions
-    || {
-      backButton: {
+  let navigation = useNavigation()
+
+  const [buttonOptions, setButtonOptions] = useState(null)
+
+  useEffect(() => {
+    const defaultButtonOptions = {
+      goBack: {
         show: true,
       },
       logOut: {
-        show: false,
+        show: true,
+        onPress: () => {
+          auth().signOut()
+          navigation.navigate("Boot", { referrer: "PartnerDashboard" })
+        },
       },
     }
-  let navigation = useNavigation()
+  
+    if (props.buttonOptions) {
+      Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
+        Object.entries(instructions).forEach(([key, value]) => {
+          defaultButtonOptions[ button ][ key ] = value
+        })
+      })
+    }
+    setButtonOptions(defaultButtonOptions)
+  }, [])
 
-  function goBack() {
-    navigation.goBack()
-  }
+
+
+  if (!buttonOptions) return <View />
 
   return (
     <>
@@ -85,11 +101,11 @@ export default function ProfileLayout(props) {
             props.innerContainerStyle,
           ]}
         >
-          {!buttonOptions.backButton.show || props.hideBackButton ? null :
+          {!buttonOptions.goBack.show || props.hideBackButton ? null :
           <TouchableHighlight
             style={styles.sidePanelButtonContainer}
             underlayColor="#eed"
-            onPressIn={props.onBack || goBack}
+            onPressIn={props.onBack || (() => navigation.goBack())}
           >
             <BackButton
               imageStyle={{

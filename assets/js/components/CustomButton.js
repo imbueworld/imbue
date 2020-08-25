@@ -8,6 +8,8 @@ import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
 export default function CustomButton(props) {
+    const Icon = props.icon || props.Icon
+
     return (
         // <View style={{
         // }}>
@@ -16,8 +18,8 @@ export default function CustomButton(props) {
                     ...styles.button,
                     ...simpleShadow,
                     ...props.style,
-                    paddingLeft: props.icon ? 24 : undefined,
-                    justifyContent: props.icon ? "flex-start" : "center",
+                    paddingLeft: Icon ? 24 : undefined,
+                    justifyContent: Icon ? "flex-start" : "center",
                 }}
                 underlayColor="#efefef"
                 disabled={props.disabled}
@@ -25,13 +27,13 @@ export default function CustomButton(props) {
                 onLongPress={props.onLongPress || undefined}
             >
                 <>
-                {props.icon}
+                { Icon }
 
                 <Text style={[
                     styles.text,
                     props.textStyle,
                     {
-                        paddingLeft: props.icon ? 10 : undefined,
+                        paddingLeft: Icon ? 10 : undefined,
                     },
                 ]}>
                     {props.title}

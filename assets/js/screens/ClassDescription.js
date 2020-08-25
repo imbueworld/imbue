@@ -86,6 +86,8 @@ export default function ClassDescription(props) {
   }, [activeClassesCount, gym, popup])
 
   useEffect(() => {
+    if (hasMembership === null) return
+
     const Bar = <View style={{
       width: "88%",
       height: 1,
@@ -120,12 +122,15 @@ export default function ClassDescription(props) {
           <Text style={styles.descText}>
             {classData.description}
           </Text>
-          <Text style={{
-            ...styles.descText,
-            alignSelf: "flex-end",
-          }}>
-            {`$${currencyFromZeroDecimal(classData.price)}`}
-          </Text>
+
+          {hasMembership
+          ? null
+          : <Text style={{
+              ...styles.descText,
+              alignSelf: "flex-end",
+            }}>
+              {`$${currencyFromZeroDecimal(classData.price)}`}
+            </Text>}
         </View>
 
       </View>
@@ -164,7 +169,7 @@ export default function ClassDescription(props) {
         </View>
       </CustomPopup>
     )
-  }, [])
+  }, [hasMembership])
 
 
 
@@ -175,6 +180,21 @@ export default function ClassDescription(props) {
     user.scheduled_classes
       .map(active => active.time_id)
       .includes(classData.time_id)
+  
+  function getGoToLivestreamButton() {
+    let options = {
+      show: false,
+      state: "normal",
+    }
+    if (classData.livestreamState === "live") {
+      options.show = true
+    }
+    if (classData.livestreamState === "soon") {
+      options.show = true
+      options.state = "inactive"
+    }
+    return options
+  }
 
   return (
     <GymLayout
@@ -182,6 +202,7 @@ export default function ClassDescription(props) {
       innerContainerStyle={styles.innerContainerStyle}
       data={gym}
       buttonOptions={{
+        goToLivestream: getGoToLivestreamButton(),
         addToCalendar: {
           show: hasMembership ? true : false,
           state: classIsAddedToCalendar ? "fulfilled" : "opportunity",
@@ -193,8 +214,16 @@ export default function ClassDescription(props) {
             refresh(r + 1)
           }
         },
-        goToCalendar: { show: true } //{ show: hasMembership === "class" ? true : false },
+        viewAttendees: {
+          show: user.account_type === "partner" ? true : false,
+          data: {
+            classId: classData.id,
+            timeId: classData.time_id,
+          },
+        },
+        goToCalendar: { show: true },
       }}
+      cache={cache}
     >
       { Content }
 
