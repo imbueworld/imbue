@@ -29,7 +29,6 @@ export default function GymLayout(props) {
 
   // const [buttonOptions, setButtonOptions] = useState(null)
   const [customState, setCustomState] = useState({}) // Used only internally, during the lifetime of this component
-  console.log("customState", customState)
 
   // useEffect(() => {
     const buttonOptions = {

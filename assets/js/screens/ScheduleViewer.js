@@ -164,17 +164,16 @@ export default function ScheduleViewer(props) {
           alignItems: "center",
           justifyContent: "center",
         }}>
-          <View style={{
-            position: "absolute",
-            left: 15,
-          }}>
-            <GoBackButton
-              imageContainerStyle={{
-                width: 48,
-                height: 48,
-              }}
-            />
-          </View>
+          <GoBackButton
+            containerStyle={{
+              position: "absolute",
+              left: 15,
+            }}
+            imageContainerStyle={{
+              width: 48,
+              height: 48,
+            }}
+          />
 
           <View style={{
             position: "absolute",
@@ -198,7 +197,11 @@ export default function ScheduleViewer(props) {
           <PlusButton
             containerStyle={{
               position: "absolute",
-              right: 0,//"6%",
+              right: 15,
+            }}
+            imageContainerStyle={{
+              width: 48,
+              height: 48,
             }}
             onPress={() => props.navigation.navigate(
               "SchedulePopulate")}

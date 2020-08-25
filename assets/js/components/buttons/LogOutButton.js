@@ -20,26 +20,20 @@ export default function LogOutButton(props) {
         style={{
           width: 48,
           height: 48,
-          padding: 10,
-          left: 2,
+          // padding: 10,
+          // left: 2,
           borderRadius: 999,
         }}
         underlayColor="#00000012"
         onPress={props.onPress || (() => auth().signOut())}
         onLongPress={props.onLongPress || undefined}
       >
-        {/* <LogOut
-          containerStyle={{
-            width: 48,
-            height: 48,
-          }}
-        /> */}
         <Icon
           containerStyle={{
             width: "100%",
             height: "100%",
           }}
-          source={require("../img/png/sign-out-5.png")}
+          source={require("../img/png/sign-out-7.png")}
         />
       </TouchableHighlight>
     </View>

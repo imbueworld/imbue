@@ -26,13 +26,13 @@ export default function PlusButton(props) {
           containerStyle={{
             width: 50,
             height: 50,
-            padding: 6,
+            // padding: 6,
             ...props.imageContainerStyle,
           }}
           imageStyle={{
             ...props.imageStyle,
           }}
-          source={require("../img/png/plus.png")}
+          source={require("../img/png/plus-2.png")}
         />
       </TouchableHighlight>
     </View>

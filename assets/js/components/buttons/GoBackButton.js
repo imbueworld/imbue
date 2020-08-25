@@ -34,7 +34,7 @@ export default function GoBackButton(props) {
           imageStyle={{
             ...props.imageStyle,
           }}
-          source={require("../img/png/back-button-3.png")}
+          source={require("../img/png/back-button-4.png")}
         />
       </TouchableHighlight>
     </View>
