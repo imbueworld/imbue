@@ -3,11 +3,8 @@ import { StyleSheet, ScrollView, View, Text, Button } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
-// import firebase from "firebase/app"
-// import "firebase/auth"
 import auth from "@react-native-firebase/auth"
 import { retrieveUserData } from '../backend/CacheFunctions'
-import { id } from '../backend/HelperFunctions'
 
 
 
@@ -88,10 +85,15 @@ export default function Boot(props) {
                 />
 
                 <View style={{ height: 50 }}/>
-
                 <Button
                     title="Livestream"
                     onPress={() => {props.navigation.navigate("Livestream", { gymId: "D4iONGuVmdWwx4zGk4BI" })}}
+                />
+
+                <View style={{ height: 10 }}/>
+                <Button
+                    title="GoLive"
+                    onPress={() => {props.navigation.navigate("GoLive")}}
                 />
 
             </View>

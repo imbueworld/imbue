@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, ScrollView, View, Text, Button, TouchableOpacity } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, Button, TouchableOpacity, Image } from 'react-native'
 
 import { colors } from "../contexts/Colors"
 
@@ -24,7 +24,15 @@ export default function Home(props) {
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
 
-            <AppBackground />
+            {/* <AppBackground /> */}
+            <Image
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
+                }}
+                source={require("../components/img/workout-20.jpg")}
+            />
             <CompanyLogo
                 containerStyle={{
                     top: 0,
@@ -33,7 +41,6 @@ export default function Home(props) {
                 }}
             /> 
 
-            {/* <View style={styles.container}> */}
             <CustomCapsule
                 containerStyle={{
                     width: "88%",
@@ -71,7 +78,6 @@ export default function Home(props) {
                     }}>Partner Sign Up</Text>
                 </TouchableOpacity>
             </CustomCapsule>
-            {/* </View> */}
 
         </ScrollView>
     )

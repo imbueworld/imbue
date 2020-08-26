@@ -4,6 +4,9 @@ import { StyleSheet, ScrollView, View, Text, Image, TouchableOpacity, TextInput 
 import { simpleShadow, colors } from "../contexts/Colors"
 
 import CustomCapsule from "./CustomCapsule"
+import { fonts } from '../contexts/Styles'
+import LivestreamMessages from './LivestreamMessages'
+import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
 
@@ -12,6 +15,9 @@ import CustomCapsule from "./CustomCapsule"
  * props.profileData -- FROM WHICH PROFILE'S PERSPECTIVE TO RENDER
  */
 export default function Chat(props) {
+    const gymId = props.gymId
+    const user = props.user
+
     // const Message = (props) =>
     //     <View style={{ flexDirection: props.stickToRight ? "row-reverse" : "row" }}>
     //         <View style={props.containerStyle}>
@@ -19,7 +25,7 @@ export default function Chat(props) {
     //             <Text style={props.style}>{props.msg}</Text>
     //         </View>
     //     </View>
-    
+
     // const chatContents = props.data.map(({ name, message, msgId, profileId }) =>
     //     <Message
     //         // Message text style
@@ -70,54 +76,58 @@ export default function Chat(props) {
                     <TextInput
                         style={{
                             paddingHorizontal: 10,
+                            color: "white",
+                            fontFamily: fonts.default,
                             ...props.style,
                         }}
                         multiline
+                        blurOnSubmit={false}
                         placeholder="Enter Message..."
                         placeholderTextColor="white"
-                        blurOnSubmit={false}
                         value={msg}
                         onChangeText={setMsg}
-                        onFocus={() => {if (props.onFocus) props.onFocus()}}
-                        onBlur={() => {if (props.onBlur) props.onBlur()}}
-                        onSubmitEditing={() => {
-                            console.log("Yo!")
-                            // props.onPress(msg)
-                            // props.onBlur()
-                        }}
+                        onFocus={props.onFocus}
+                        onBlur={props.onBlur}
                     />
+
+                    <View style={{
+                        width: 50,
+                        height: 50,
+                        position: "absolute",
+                        right: 0,
+                        bottom: 0,
+                        backgroundColor: "white",
+                        borderRadius: 999,
+                        ...simpleShadow,
+                    }}>
+                        <TouchableHighlight
+                            style={{
+                                padding: 10,
+                                borderRadius: 999,
+                            }}
+                            underlayColor="#00000012"
+                            onPress={() => {
+                                if (props.onSend) props.onSend(msg)
+                                setMsg("")
+                            }}
+                        >
+                            <Image
+                                style={{
+                                    width: "100%",
+                                    height: "100%",
+                                    right: 2,
+                                }}
+                                source={require("./img/png/send-3.png")}
+                            />
+                        </TouchableHighlight>
+                    </View>
                 </View>
-                <TouchableOpacity
-                    style={[
-                        {
-                            width: 50,
-                            height: 50,
-                            padding: 10,
-                            backgroundColor: "white",
-                            borderRadius: 999,
-                        },
-                        simpleShadow,
-                    ]}
-                    onPress={() => {
-                        if (!props.onPress) return
-                        props.onPress(msg)
-                        setMsg("")
-                    }}
-                >
-                    <Image
-                        style={{
-                            width: "100%",
-                            height: "100%",
-                        }}
-                        source={require("./img/png/send.png")}
-                    />
-                </TouchableOpacity>
+
             </View>
         )
     }
 
     const inpRef = useRef(null)
-
     function setTextFocus(textFocus) {
         if (!inpRef.current) return
 
@@ -138,10 +148,17 @@ export default function Chat(props) {
                 borderTopRightRadius: 0,
                 height: "95%",
             }
+            scrollAppropriately()
         }
-        style = {...style, ...modifiedStyle}
+        style = { ...style, ...modifiedStyle }
 
         inpRef.current.setNativeProps({ style })
+    }
+
+    const scrollViewRef = useRef(null)
+    function scrollAppropriately() {
+        if (!scrollViewRef.current) return
+        scrollViewRef.current.scrollToEnd()
     }
 
     return (
@@ -152,29 +169,40 @@ export default function Chat(props) {
             }}
             innerContainerStyle={{
                 height: "100%",
+                paddingHorizontal: 0,
             }}
             containerRef={inpRef}
         >
-            {/* <View style={{ flex: 1 }}> */}
             <ScrollView
-                keyboardShouldPersistTaps="handled"
+                ref={scrollViewRef}
+                // onScroll={({ nativeEvent }) => console.log(nativeEvent)}
             >
                 <View style={{
                     paddingTop: 10,
-                    paddingBottom: 10,
+                    paddingBottom: 80,
+                    paddingHorizontal: "6%",
                 }}>
                     {/* {chatContents} */}
-                    {props.children}
+                    {/* {props.children} */}
+
+                    <LivestreamMessages
+                        gymId={gymId}
+                        user={user}
+                        onMessage={scrollAppropriately}
+                    />
                 </View>
             </ScrollView>
-            {/* </View> */}
 
             <SendMessage
                 containerStyle={styles.msgInputContainer}
                 style={styles.msgInput}
-                onPress={props.onPress}
-                onFocus={() => setTextFocus(true)}
-                onBlur={() => setTextFocus(false)}
+                onSend={props.onSend}
+                onFocus={() => {
+                    setTextFocus(true)
+                }}
+                onBlur={() => {
+                    setTextFocus(false)
+                }}
             />
         </CustomCapsule>
     )
@@ -187,6 +215,7 @@ const styles = StyleSheet.create({
 
     msgInputContainer: {
         marginBottom: 11,
+        marginHorizontal: "6%",
         position: "absolute",
         alignSelf: "center",
         bottom: 0,

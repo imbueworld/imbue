@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, View, ScrollView, Text } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, View } from 'react-native'
 
 import Video from 'react-native-video'
-
-import AppBackground from "../components/AppBackground"
 
 import ChatButton from "../components/ChatButton"
 import ListButton from "../components/ListButton"
@@ -107,6 +105,9 @@ export default function Livestream(props) {
     // let gym = props.route.params.gym
     let gymId = props.route.params.gymId
 
+    const [playbackLink, setPlaybackLink] = useState(null)
+    console.log("playbackLink", playbackLink)
+
     const activePtcDbRef = database().ref(`livestreams/active_participants/${gymId}`)
     const chatDbRef = database().ref(`livestreams/messages/${gymId}`)
     const [ptcNodeRef, setPtcNodeRef] = useState(null)
@@ -114,12 +115,9 @@ export default function Livestream(props) {
     const [user, setUser] = useState(null)
     const [chat, setChat] = useState([])
     const [ptcList, setPtcList] = useState([])
-    const [playbackLink, setPlaybackLink] = useState(null)
-    console.log("playbackLink", playbackLink)
 
     const [chatPopup, setChatPopup] = useState(false)
     const [ptcListPopup, setPtcListPopup] = useState(false)
-
     const [buttonPanelPopup, setButtonPanelPopup] = useState(null)
     const [buttonPanelTimeouts, setButtonPanelTimeouts] = useState([])
 
@@ -127,16 +125,14 @@ export default function Livestream(props) {
 
     useEffect(() => {
         const init = async () => {
-            let promises = await Promise.all([
-                retrieveUserData(cache)
-            ])
-            let user = promises[0]
+            let user = await retrieveUserData(cache)
             setUser(user)
+
             const ptcNodeRef = await registerParticipant({
                 gymId,
                 name: user.name,
                 uid: user.id,
-                icon_uri: user.icon_uri
+                icon_uri: user.icon_uri,
             })
             setPtcNodeRef(ptcNodeRef)
             // database().ref(`livestreams/active_participants/${gymId}/${user.id}`)
@@ -209,120 +205,114 @@ export default function Livestream(props) {
     if (!user) return <View />
 
     return (
-        <ScrollView
-            contentContainerStyle={styles.scrollView}
-            keyboardShouldPersistTaps="handled"
-        >
-            {/* Some sort of background */}
-            <View style={{
-                backgroundColor: "black",
-                width: "100%",
-                height: "100%",
-            }}/>
-            
-            {/* <TouchableWithoutFeedback
+        <>
+        {/* Some sort of background */}
+        <View style={{
+            position: "absolute",
+            backgroundColor: "black",
+            width: "100%",
+            height: "100%",
+        }}/>
+        
+        {/* <TouchableWithoutFeedback
+            style={{
+                zIndex: 101,
+            }}
+            onPress={bringUpButton}
+        /> */}
+
+        {buttonPanelPopup
+        ?   <View style={{
+                ...styles.controlPanelContainer,
+                zIndex: 100,
+            }}>
+                <ChatButton
+                    onPress={() => {
+                        setChatPopup(!chatPopup)
+                        if (ptcListPopup) setPtcListPopup(false)
+                    }}
+                />
+                <CancelButton
+                    title="Leave Workout"
+                    onLongPress={() => {
+                        if (ptcNodeRef) ptcNodeRef.set(null)
+                        chatDbRef.off()
+                        activePtcDbRef.off()
+                        props.navigation.goBack()
+                    }}
+                />
+                <ListButton
+                    onPress={() => {
+                        setPtcListPopup(!ptcListPopup)
+                        if (chatPopup) setChatPopup(false)
+                    }}
+                />
+            </View>
+        :   <TouchableWithoutFeedback
                 style={{
-                    zIndex: 101,
+                    width: "100%",
+                    height: "100%",
                 }}
                 onPress={bringUpButton}
-            /> */}
+            />}
 
-            {buttonPanelPopup
-            ?   <View style={{
-                    ...styles.controlPanelContainer,
-                    zIndex: 100,
-                }}>
-                    <ChatButton
-                        onPress={() => {
-                            setChatPopup(!chatPopup)
-                            if (ptcListPopup) setPtcList(false)
-                        }}
-                    />
-                    <CancelButton
-                        title="Leave Workout"
-                        onLongPress={() => {
-                            if (ptcNodeRef) ptcNodeRef.set(null)
-                            chatDbRef.off()
-                            activePtcDbRef.off()
-                            props.navigation.goBack()
-                        }}
-                    />
-                    <ListButton
-                        onPress={() => {
-                            setPtcListPopup(!ptcListPopup)
-                            if (chatPopup) setChatPopup(false)
-                        }}
-                    />
-                </View>
-            :   <TouchableWithoutFeedback
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                    }}
-                    onPress={bringUpButton}
-                />}
+        { chatPopup
+        ?   <Chat
+                containerStyle={styles.chatContainer}
+                // data={chat}
+                // profileData={selfProfileData}
+                // value={message}
+                // onChangeText={setMessage}
+                // chatRef={chatRef}
+                onPress={(message) => {
+                    console.log("[Message]", message)
+                    sendMessage({
+                        gymId,
+                        uid: user.id,
+                        name: `${user.first} ${user.last}`,
+                        message
+                    })
+                    // setChat([{ name: "lmao", message: "wow" }])
 
-            { chatPopup
-            ?   <Chat
-                    containerStyle={styles.chatContainer}
-                    // data={chat}
-                    // profileData={selfProfileData}
-                    // value={message}
-                    // onChangeText={setMessage}
-                    // chatRef={chatRef}
-                    onPress={(message) => {
-                        console.log("[Message]", message)
-                        sendMessage({
-                            gymId,
-                            uid: user.id,
-                            name: `${user.first} ${user.last}`,
-                            message
-                        })
-                        // setChat([{ name: "lmao", message: "wow" }])
-
-                        // setChatMessages(
-                        //     <LivestreamMessages
-                        //         chat={chat}
-                        //         user={user}
-                        //     />
-                        // )
-                        setChat([...chat, { name: user.name, message }])
-                    }}
-                >
-                    <LivestreamMessages
-                        chat={chat}
-                        user={user}
-                    />
-                </Chat>
-            :   <View />}
-
-            { ptcListPopup
-            ?   <ParticipantList
-                    containerStyle={styles.ptcListContainer}
-                    data={ptcList}
+                    // setChatMessages(
+                    //     <LivestreamMessages
+                    //         chat={chat}
+                    //         user={user}
+                    //     />
+                    // )
+                    setChat([...chat, { name: user.name, message }])
+                }}
+            >
+                <LivestreamMessages
+                    chat={chat}
+                    user={user}
                 />
-            :   <View />}
+            </Chat>
+        :   <View />}
 
-            {/* { !playbackLink ? null :
-            <Video
-                style={styles.video}
-                source={{ uri: playbackLink }}
-                onBuffer={() => {console.log("Buffering video...")}}
-                onError={() => {console.log("Error on video!")}}
-                paused={false}
-                resizeMode={"contain"}
-                // repeat={true}
-            />} */}
+        { ptcListPopup
+        ?   <ParticipantList
+                containerStyle={styles.ptcListContainer}
+                data={ptcList}
+            />
+        :   <View />}
 
-        </ScrollView>
+        {/* { !playbackLink ? null :
+        <Video
+            style={styles.video}
+            source={{ uri: playbackLink }}
+            onBuffer={() => {console.log("Buffering video...")}}
+            onError={() => {console.log("Error on video!")}}
+            paused={false}
+            resizeMode={"contain"}
+            // repeat={true}
+        />} */}
+
+        </>
     )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        flex: 1,
-    },
-    // container: {},
     controlPanelContainer: {
         width: "100%",
         paddingHorizontal: 15,

@@ -2,10 +2,10 @@ import database from "@react-native-firebase/database"
 
 
 
-export async function sendMessage({ gymId, uid, name, message }) {
+export async function sendMessage({ gymId, uid, message }) {
     const ref = database().ref(`livestreams/messages/${gymId}`)
     const node = ref.push()
-    node.set({ uid, name, message, timestamp: Date.now() })
+    node.set({ uid, message, timestamp: Date.now() })
     return node
 }
 

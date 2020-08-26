@@ -1,15 +1,35 @@
-import React, { useState } from 'react'
-import { StyleSheet, ScrollView, View, Text, PermissionsAndroid, Platform } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, View, PermissionsAndroid, Platform } from 'react-native'
 
 import { NodeCameraView } from "react-native-nodemediaclient"
 
-import AppBackground from "../components/AppBackground"
-
 import CustomButton from "../components/CustomButton"
+import LivestreamLayout from '../layouts/LivestreamLayout'
+import { retrieveUserData } from '../backend/CacheFunctions'
 
 
 
 export default function GoLive(props) {
+    let cache = props.route.params.cache
+
+    const [user, setUser] = useState(null)
+    const [gymId, setGymId] = useState(null)
+
+    const [isStreaming, setIsStreaming] = useState(false)
+    const [hasAllPermissions, setHasAllPermisions] = useState(false)
+    const [streamKey, setStreamKey] = useState(null)
+
+    useEffect(() => {
+        const init = async () => {
+            let user = await retrieveUserData(cache)
+            setUser(user)
+            setGymId(user.associated_gyms[0])
+        }
+        init()
+    }, [])
+
+    if (!user || !gymId) return <View />
+
     const settings = {
         camera: { cameraId: 1, cameraFrontMirror: true },
         audio: { bitrate: 32000, profile: 1, samplerate: 44100 },
@@ -27,10 +47,6 @@ export default function GoLive(props) {
     }
 
     let stream
-
-    const [isStreaming, setIsStreaming] = useState(false)
-    const [hasAllPermissions, setHasAllPermisions] = useState(false)
-    const [streamKey, setStreamKey] = useState(null)
 
     console.log("isStreaming", isStreaming)
 
@@ -76,49 +92,39 @@ export default function GoLive(props) {
     }
 
     return (
-        <View style={styles.container}>
-            <AppBackground />
-
-            <NodeCameraView
-                style={styles.cameraView}
+        <LivestreamLayout
+            user={user}
+            gymId={gymId}
+            buttonOptions={{
+                leaveLivestream: {
+                    show: false,
+                },
+                goLive: {
+                    // show: true,
+                },
+                viewButtonPanel: {
+                    show: false,
+                    state: "closed",
+                },
+                viewChat: {
+                    state: "open",
+                },
+            }}
+        >
+            {/* <NodeCameraView
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    zIndex: -100,
+                    // position: "absolute",
+                }}
                 ref={vb => { stream = vb }}
                 outputUrl={`${base}${streamKey}`}
                 camera={settings.camera}
                 audio={settings.audio}
                 video={settings.video}
                 autopreview
-            />
-
-            <View style={styles.buttonContainer}>
-                <CustomButton
-                    style={styles.button}
-                    title={isStreaming ? "End Livestream" : "Go Live"}
-                    onLongPress={toggleStream}
-                />
-            </View>
-
-        </View>
+            /> */}
+        </LivestreamLayout>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        height: "100%",
-    },
-    cameraView: {
-        width: "100%",
-        height: "100%",
-        // position: "absolute",
-    },
-    buttonContainer: {
-        width: "100%",
-        height: "100%",
-        position: "absolute",
-        justifyContent: "flex-end",
-    },
-    button: {
-        width: "75%",
-        alignSelf: "center",
-        marginBottom: 35,
-    },
-})

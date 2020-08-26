@@ -5,12 +5,21 @@ import ImageSlideshow from './ImageSlideshow'
 
 
 export default function AppBackground(props) {
+    // For use with pulling from web
+    // const images = [
+    //     "workout-10.jpeg",
+    //     "workout-11.jpg",
+    //     "workout-12.jpg",
+    //     "workout-13.jpg",
+    //     "workout-14.jpg",
+    // ]
+    // Local
     const images = [
-        "workout-10.jpeg",
-        "workout-11.jpg",
-        "workout-12.jpg",
-        "workout-13.jpg",
-        "workout-14.jpg",
+        require("./img/workout-2.jpg"),
+        require("./img/workout-13.jpg"),
+        require("./img/workout-20.jpg"),
+        require("./img/workout-21.jpg"),
+        require("./img/workout-22.jpg"),
     ]
 
     return (
@@ -28,6 +37,7 @@ export default function AppBackground(props) {
                 }}
                 disableUserControl
                 randomizeFirstImage
+                local
                 imageInterval={40000}
                 data={images}
             />

@@ -102,7 +102,9 @@ export default function ImageSlideshow(props) {
                     height: 200,
                     ...props.imageStyle,
                 }}
-                source={{ uri: publicStorage(image_uris[cIdx]) }}
+                source={props.local
+                    ?   image_uris[cIdx]
+                    :   { uri: publicStorage(image_uris[cIdx]) }}
             />
         </View>
     )

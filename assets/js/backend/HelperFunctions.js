@@ -30,17 +30,17 @@ export function datestringFromTimestamp(ts) {
 }
 
 /**
- * Takes UTC milliseconds timestamp
- * Returns local timezone formatted time as -- HH:MM AM/PM
+ * Takes milliseconds timestamp
+ * Returns local timezone formatted time as -- 00:00am/pm
  */
 export function clockFromTimestamp(ts) {
     let date = new Date(ts)
-    let hh = date.getHours() + 1 // idx ===> length
-    let mm = date.getMinutes() // idx ===> length
+    let hh = date.getHours() // idx ===> length
+    let mm = date.getMinutes()
     if (mm < 10) mm = `0${mm}`
-    let ampm
-    if (hh >= 12) { ampm = "pm"; hh -= 12 }
-    else ampm = "am"
+    let ampm = "am"
+    if (hh == 12) ampm = "pm"
+    if (hh > 12) { ampm = "pm"; hh -= 12 }
     return `${hh}:${mm}${ampm}`
 }
 
