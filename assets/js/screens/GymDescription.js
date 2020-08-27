@@ -209,13 +209,26 @@ export default function GymDescription(props) {
                   }}
                   title="Get Membership"
                   onPress={() => setPopup("buy")}
+                  Icon={
+                    <Icon
+                      source={require("../components/img/png/membership.png")}
+                    />
+                  }
                 />
                 <CustomButton
                   style={{
                     marginBottom: 0,
                   }}
+                  textStyle={{
+                    fontSize: 16,
+                  }}
                   title="Get Imbue Universal Membership"
                   onPress={() => props.navigation.navigate("PurchaseUnlimited")}
+                  Icon={
+                    <Icon
+                      source={require("../components/img/png/membership-2.png")}
+                    />
+                  }
                 />
                 </>}
             </>}

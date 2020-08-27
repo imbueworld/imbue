@@ -19,7 +19,9 @@ export default function CustomButton(props) {
                     ...simpleShadow,
                     ...props.style,
                     paddingLeft: Icon ? 24 : undefined,
+                    paddingRight: 24,
                     justifyContent: Icon ? "flex-start" : "center",
+                    alignItems: "center",
                 }}
                 underlayColor="#efefef"
                 disabled={props.disabled}
@@ -34,6 +36,7 @@ export default function CustomButton(props) {
                     props.textStyle,
                     {
                         paddingLeft: Icon ? 10 : undefined,
+                        flexShrink: 1,
                     },
                 ]}>
                     {props.title}
