@@ -15,11 +15,14 @@ export default function AppBackground(props) {
     // ]
     // Local
     const images = [
-        require("./img/workout-2.jpg"),
-        require("./img/workout-13.jpg"),
         require("./img/workout-20.jpg"),
         require("./img/workout-21.jpg"),
         require("./img/workout-22.jpg"),
+        require("./img/workout-23.jpg"),
+        require("./img/workout-24.jpg"),
+        require("./img/workout-25.jpg"),
+        require("./img/workout-kinda.jpg"),
+        require("./img/workout-27.jpg"),
     ]
 
     return (
