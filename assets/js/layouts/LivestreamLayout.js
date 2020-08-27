@@ -19,6 +19,8 @@ import AppBackground from '../components/AppBackground'
 export default function LivestreamLayout(props) {
   const gymId = props.gymId
   const user = props.user
+  if (!gymId) throw new Error("prop gymId must be provided")
+  if (!user) throw new Error("prop user must be provided")
   const Content = props.children
   let navigation = useNavigation()
 
@@ -93,14 +95,16 @@ export default function LivestreamLayout(props) {
         icon_uri: user.icon_uri,
       })
       setPtcNodeRef(ptcNodeRef)
-      ptcNodeRef
-        .onDisconnect()
-        .set(null)
+      // [temporarily commented: must have at least one section where participants are not deleted,
+      // need their icon_uri, name]
+      // ptcNodeRef
+      //   .onDisconnect()
+      //   .set(null)
       
       activePtcNodeRef.on('child_added', snap => {
         setPtcList(ptcList => ([...ptcList, snap.val()]))
       }, err => {
-        console.log("[ERROR ptc 2]", err.message)
+        console.log("[ERROR ptc child_added]", err.message)
       })
       activePtcNodeRef.on('child_removed', snap => {
         const removedUid = snap.val().uid
@@ -109,7 +113,7 @@ export default function LivestreamLayout(props) {
           return true
         }))
       }, err => {
-        console.log("[ERROR ptc 2]", err.message)
+        console.log("[ERROR ptc child_removed]", err.message)
       })
     }
     init()
@@ -185,7 +189,6 @@ export default function LivestreamLayout(props) {
     {buttonOptions.viewButtonPanel.state === "open"
     ? <View style={{
         width: "100%",
-        backgroundColor: "red",
         paddingHorizontal: 15,
         paddingBottom: 15,
         position: "absolute",

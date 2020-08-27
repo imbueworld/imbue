@@ -1,5 +1,6 @@
 import React from 'react'
 import { StyleSheet, TouchableOpacity, Text } from 'react-native'
+import { fonts } from '../contexts/Styles';
 
 
 
@@ -17,7 +18,11 @@ export default function CancelButton(props) {
         >
             <Text
                 style={[
-                    styles.text,
+                    {
+                        fontFamily: fonts.default,
+                        fontSize: 18,
+                        paddingHorizontal: 10,
+                    },
                     props.style,
                 ]}
             >{props.title}</Text>
@@ -27,13 +32,10 @@ export default function CancelButton(props) {
 
 const styles = StyleSheet.create({
     container: {
-        height: 75,
+        height: 50,
         padding: 10,
         justifyContent: "center",
         backgroundColor: "red",
         borderRadius: 999,
-    },
-    text: {
-        fontSize: 20,
     },
 })

@@ -25,9 +25,9 @@ export default function ChatButton(props) {
 
 const styles = StyleSheet.create({
     container: {
-        width: 75,
-        height: 75,
-        padding: 10,
+        width: 50,
+        height: 50,
+        padding: 8,
         backgroundColor: "white",
         borderRadius: 999,
     },

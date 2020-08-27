@@ -25,9 +25,9 @@ export default function ListButton(props) {
 
 const styles = StyleSheet.create({
     container: {
-        width: 75,
-        height: 75,
-        padding: 17,
+        width: 50,
+        height: 50,
+        padding: 14,
         backgroundColor: "white",
         borderRadius: 999,
     },

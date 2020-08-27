@@ -20,6 +20,9 @@ export default function LivestreamMessages(props) {
     const [ptcs, setPtcs] = useState([])
     const [chat, setChat] = useState([])
 
+    console.log("ptcs", ptcs)
+    console.log("chat", chat)
+
     useEffect(() => {
         const init = async () => {
             await ptcsNodeRef.once('value', snap => {
@@ -160,7 +163,7 @@ export default function LivestreamMessages(props) {
         if (props.onMessage) props.onMessage(sortedChat[sortedChat.length - 1])
     })
 
-    return sortedChat.map(({ name="Alfred", message, uid, timestamp, icon_uri="default-icon.png" }, idx) =>
+    return sortedChat.map(({ name="Anonymous", message, uid, timestamp, icon_uri="default-icon.png" }, idx) =>
         <Message
             containerStyle={
                 uid === user.id

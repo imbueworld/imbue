@@ -18,39 +18,6 @@ export default function Chat(props) {
     const gymId = props.gymId
     const user = props.user
 
-    // const Message = (props) =>
-    //     <View style={{ flexDirection: props.stickToRight ? "row-reverse" : "row" }}>
-    //         <View style={props.containerStyle}>
-    //             <Text style={props.labelStyle}>{props.name}</Text>
-    //             <Text style={props.style}>{props.msg}</Text>
-    //         </View>
-    //     </View>
-
-    // const chatContents = props.data.map(({ name, message, msgId, profileId }) =>
-    //     <Message
-    //         // Message text style
-    //         containerStyle={
-    //             profileId === props.profileData.profileId
-    //             ?   styles.selfMsg
-    //             :   styles.msg
-    //         }
-    //         labelStyle={styles.label}
-    //         style={
-    //             profileId === props.profileData.profileId
-    //             ?   styles.selfMsgText
-    //             :   styles.msgText
-    //         }
-    //         stickToRight={
-    //             profileId === props.profileData.profileId
-    //             ?   true
-    //             :   false
-    //         }
-    //         name={name}
-    //         msg={message}
-    //         key={msgId}
-    //     />
-    // )
-
     const SendMessage = (props) => {
         const [msg, setMsg] = useState("")
 
@@ -71,7 +38,6 @@ export default function Chat(props) {
                     borderBottomLeftRadius: 40,
                     borderWidth: 3,
                     borderColor: "#ffffff00"
-                    // borderColor: textFocus ? "#e9e9e980" : "#00000058",
                 }}>
                     <TextInput
                         style={{
