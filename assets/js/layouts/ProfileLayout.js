@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableHighlight } from 'react-native'
 
 import CustomCapsule from "../components/CustomCapsule"
-import UserIcon from '../components/UserIcon'
 import { simpleShadow } from '../contexts/Colors'
 import BackButton from '../components/BackButton'
 import { useNavigation } from '@react-navigation/native'
@@ -11,6 +10,7 @@ import { fonts } from '../contexts/Styles'
 import LogOutButton from '../components/buttons/LogOutButton'
 import auth from "@react-native-firebase/auth"
 import AppBackground from '../components/AppBackground'
+import Icon from '../components/Icon'
 
 
 
@@ -75,12 +75,18 @@ export default function ProfileLayout(props) {
         marginVertical: 50,
       }}>
 
-        <UserIcon
+        <Icon
           containerStyle={{
+            width: 200,
+            height: 200,
             position: "absolute",
             alignSelf: "center",
+            borderRadius: 999,
+            overflow: "hidden",
+            ...simpleShadow,
+            zIndex: 100,
           }}
-          data={{ uri: publicStorage(user.iconUri) }}
+          source={{ uri: publicStorage(user.iconUri) }}
         />
 
         <CustomCapsule

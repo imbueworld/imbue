@@ -1,11 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
-// import GymIcon from "./GymIcon"
-import UserIcon from "./UserIcon"
-
-import CustomCapsule from "./CustomCapsule"
-import { colors } from '../contexts/Colors'
+import { colors, simpleShadow } from '../contexts/Colors'
 import Icon from './Icon'
 import CloseButton from './CloseButton'
 import { fonts } from '../contexts/Styles'
@@ -27,12 +23,15 @@ export default function GymBadge(props) {
             >
                 <View style={styles.infoContainer}>
 
-                    <UserIcon
-                        style={{
+                    <Icon
+                        containerStyle={{
                             width: 75,
                             height: 75,
+                            borderRadius: 999,
+                            overflow: "hidden",
+                            ...simpleShadow,
                         }}
-                        data={{ uri: props.iconUri }}
+                        source={{ uri: props.iconUri }}
                     />
                     <View style={styles.desc}>
                         <Text style={styles.name} numberOfLines={1}>{props.name}</Text>

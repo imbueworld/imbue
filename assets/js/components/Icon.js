@@ -23,5 +23,3 @@ export default function Icon(props) {
         </View>
     )
 }
-
-// const styles = StyleSheet.create({})

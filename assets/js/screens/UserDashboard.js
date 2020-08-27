@@ -7,7 +7,6 @@ import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 import { mapStyle } from "../contexts/MapStyle"
 import ProfileLayout from "../layouts/ProfileLayout"
 
-import UserIcon from "../components/UserIcon"
 import CustomButton from "../components/CustomButton"
 import GymBadge from "../components/GymBadge"
 
@@ -15,6 +14,9 @@ import auth from "@react-native-firebase/auth"
 import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByUser } from '../backend/CacheFunctions'
 import Icon from '../components/Icon'
 import { publicStorage } from '../backend/HelperFunctions'
+import { simpleShadow } from '../contexts/Colors'
+
+// import UserIcon from "../components/not in use/UserIcon"
 
 
 
@@ -146,15 +148,29 @@ export default function UserDashboard(props) {
           underlayColor="#000000C0"
           onPress={sidePanelToggle}
           // [uncomment upon start DEBUG]
-          // onLongPress={sidePanelToggle}
+          onLongPress={sidePanelToggle}
+          // onLongPress={() => console.log("./.../iuyhb")}
           // [comment upon stop DEBUG]
         >
-          <UserIcon
-            style={{
+          {/* <UserIcon
+            containerStyle={{
               width: 64,
               height: 64,
+              borderRadius: 999,
+              overflow: "hidden",
+              ...simpleShadow,
             }}
-            data={{ uri: publicStorage(user.icon_uri) }}
+            source={{ uri: publicStorage(user.icon_uri) }}
+          /> */}
+          <Icon
+            containerStyle={{
+              width: 64,
+              height: 64,
+              borderRadius: 999,
+              overflow: "hidden",
+              ...simpleShadow,
+            }}
+            source={{ uri: publicStorage(user.icon_uri) }}
           />
         </TouchableHighlight>
       </View>
