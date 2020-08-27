@@ -74,6 +74,7 @@ const styles = StyleSheet.create({
         paddingTop: 0,
         paddingBottom: 1,
         textAlign: "center",
+        textAlignVertical: "center",
         fontSize: 20,
         zIndex: 100,
         fontFamily: fonts.default,
