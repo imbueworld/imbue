@@ -5,11 +5,13 @@ import AppBackground from "../components/AppBackground"
 
 import auth from "@react-native-firebase/auth"
 import { retrieveUserData } from '../backend/CacheFunctions'
+import { GoogleSignin } from '@react-native-community/google-signin'
 
 
 
 export default function Boot(props) {
     // auth().signOut()
+    // GoogleSignin.signOut()
     let cache = props.route.params.cache
 
     const [booting, setBooting] = useState(true)

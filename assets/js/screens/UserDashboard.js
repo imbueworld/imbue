@@ -15,6 +15,7 @@ import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByUser } from 
 import Icon from '../components/Icon'
 import { publicStorage } from '../backend/HelperFunctions'
 import { simpleShadow } from '../contexts/Colors'
+import { GoogleSignin } from '@react-native-community/google-signin'
 
 // import UserIcon from "../components/not in use/UserIcon"
 
@@ -188,6 +189,7 @@ export default function UserDashboard(props) {
             show: true,
             onLongPress: () => {
               auth().signOut()
+              GoogleSignin.signOut()
               props.navigation.navigate("Boot", { referrer: "UserDashboard" })
               if (expanded) sidePanelToggle()
             }

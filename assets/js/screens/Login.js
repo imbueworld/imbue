@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
 import CompanyLogo from "../components/CompanyLogo"
-import AltLoginService from "../components/AltLoginService"
 
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 import { signIn } from '../backend/BackendFunctions'
 import { handleAuthErrorAnonymous } from '../backend/HelperFunctions'
+import SocialLogin from '../components/SocialLogin'
+import auth from '@react-native-firebase/auth'
 
 
 
@@ -23,6 +24,17 @@ export default function Login(props) {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
+  useEffect(() => {
+      auth().onAuthStateChanged(async user => {
+      if (user) {
+        console.log(user)
+        console.log("Authentification sequence complete.")
+        // await new Promise(r => setTimeout(r, 200)) // sleep
+        // props.navigation.navigate("Boot", { referrer: "Login" })
+      }
+    })
+  }, [])
 
   function invalidate() {
     let redFields = []
@@ -46,7 +58,14 @@ export default function Login(props) {
 
       <CustomCapsule containerStyle={styles.container}>
 
-        <AltLoginService />
+        <SocialLogin
+          containerStyle={{
+            marginTop: 20,
+            marginBottom: 10,
+            marginHorizontal: 20,
+          }}
+          cache={cache}
+        />
 
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>
@@ -86,9 +105,6 @@ export default function Login(props) {
               
               await signIn(cache, { email, password })
               setSuccessMsg("You've signed in!")
-
-              await new Promise(r => setTimeout(r, 3000)) // sleep
-              props.navigation.navigate("Boot", { referrer: "Login" })
             } catch (err) {
               // If not native (form) error, check for auth error
               if (!errorMsg) {

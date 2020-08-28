@@ -4,7 +4,6 @@ import { StyleSheet, ScrollView, Text } from 'react-native'
 import AppBackground from "../components/AppBackground"
 
 import CompanyLogo from "../components/CompanyLogo"
-import AltSignUpService from "../components/AltSignUpService"
 
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
@@ -12,6 +11,7 @@ import CustomCapsule from "../components/CustomCapsule"
 
 import { initializeAccount } from "../backend/BackendFunctions"
 import { handleAuthError } from '../backend/HelperFunctions'
+import SocialLogin from '../components/SocialLogin'
 
 
 
@@ -68,7 +68,13 @@ export default function SignUp(props) {
 
       <CustomCapsule style={styles.container}>
 
-        <AltSignUpService />
+        <SocialLogin
+          containerStyle={{
+            marginTop: 20,
+            marginBottom: 10,
+            marginHorizontal: 20,
+          }}
+        />
 
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>

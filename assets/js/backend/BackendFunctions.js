@@ -15,37 +15,60 @@ BusyError.code = "busy"
 /**
  * Initializes the user account with necessary data
  */
-export async function initializeAccount(cache, { first, last, email, password, type }) {
-    let collection
-    if (type === "user") collection = "users"
-    if (type === "partner") collection = "partners"
+export async function initializeAccount(cache, { first, last, email, password, type }, options={}) {
+    let account_type
+    let uid
+    let icon_uri_foreign
 
-    try {
-        let user = await auth().createUserWithEmailAndPassword(email, password)
-        const uid = user.user.uid
-        let authPromise = auth().currentUser.updateProfile({
-            displayName: `${type}_${first} ${last}`
-        })
-        let form = {
-            account_type: type,
+    if (!options.user) {
+        // Manual sign up
+        account_type = type
+        const user = await auth().createUserWithEmailAndPassword(email, password)
+        uid = user.user.uid
+    } else {
+        // Sign up through socials
+        account_type = options.accountType
+        const user = options.user
+        uid = user.uid
+        let names = user.displayName.split(" ")
+        first = names[0]
+        last = names.filter((name, idx) => idx !== 0).join(' ')
+        email = user.email
+        icon_uri_foreign = user.photoURL
+
+        console.log({
+            account_type,
+            uid,
             first,
             last,
             email,
-            icon_uri: DEFAULT_ICONS[0],
-            active_memberships: [],
-            active_classes: [],
-            scheduled_classes: [],
-        }
-        let firestorePromise = firestore()
-            .collection(collection)
-            .doc(uid)
-            .set(form)
-        await Promise.all([ authPromise, firestorePromise ])
-    } catch(err) {
-        // For now, need to forward the error to the caller...
-        throw err
-        // throw new Error("Something prevented the action.")
+            icon_uri_foreign
+        })
     }
+
+    let collection
+    if (account_type === "user") collection = "users"
+    if (account_type === "partner") collection = "partners"
+
+    let authPromise = auth().currentUser.updateProfile({
+        displayName: `${account_type}_${first} ${last}`
+    })
+    let form = {
+        account_type,
+        first,
+        last,
+        email,
+        icon_uri: DEFAULT_ICONS[0],
+        icon_uri_foreign,
+        active_memberships: [],
+        active_classes: [],
+        scheduled_classes: [],
+    }
+    let firestorePromise = firestore()
+        .collection(collection)
+        .doc(uid)
+        .set(form)
+    await Promise.all([ authPromise, firestorePromise ])
 }
 
 /**

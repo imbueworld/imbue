@@ -41,6 +41,9 @@ export async function retrieveUserData(cache) {
     if (cache.user) return cache.user
 
     const user = auth().currentUser
+
+    console.log("retrieveUserData", user)
+
     let idx = user.displayName.search("_")
     let account_type = user.displayName.slice(0, idx)
     let collection
@@ -77,6 +80,9 @@ export async function retrieveUserData(cache) {
         console.error(err.message)
         throw new Error("Something prevented the action.")
     }
+
+
+    console.log("[retrieveUserData] cache.user", cache.user)
 
     return cache.user
 }

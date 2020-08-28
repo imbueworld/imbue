@@ -11,6 +11,7 @@ import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 import { initializeAccount } from '../backend/BackendFunctions'
 import { handleAuthError } from '../backend/HelperFunctions'
+import { fonts } from '../contexts/Styles'
 
 
 
@@ -66,11 +67,12 @@ export default function PartnerSignUp(props) {
             <CustomCapsule style={styles.container}>
 
                 <Text style={{
-                    marginTop: 10,
+                    marginTop: 20,
                     marginBottom: 20,
                     alignSelf: "center",
                     fontSize: 25,
                     color: colors.gray,
+                    fontFamily: fonts.default,
                 }}>Partner Sign Up</Text>
 
                 {errorMsg

@@ -7,18 +7,6 @@ import { colors } from '../contexts/Colors'
 
 
 export default function AltLoginService(props) {
-    function googleLogin() {
-        console.log("GOOGLE LOGIN ACTION")
-    }
-    
-    function facebookLogin() {
-        console.log("FACEBOOK LOGIN ACTION")
-    }
-
-    function linkedinLogin() {
-        console.log("LINKEDIN LOGIN ACTION")
-    }
-
     return (
         <View style={styles.container}>
             <TouchableOpacity

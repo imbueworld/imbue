@@ -11,39 +11,36 @@ export default function CustomButton(props) {
     const Icon = props.icon || props.Icon
 
     return (
-        // <View style={{
-        // }}>
-            <TouchableHighlight
-                style={{
-                    ...styles.button,
-                    ...simpleShadow,
-                    ...props.style,
-                    paddingLeft: Icon ? 24 : undefined,
-                    paddingRight: 24,
-                    justifyContent: Icon ? "flex-start" : "center",
-                    alignItems: "center",
-                }}
-                underlayColor="#efefef"
-                disabled={props.disabled}
-                onPress={props.onPress || undefined}
-                onLongPress={props.onLongPress || undefined}
-            >
-                <>
-                { Icon }
+        <TouchableHighlight
+            style={{
+                ...styles.button,
+                ...simpleShadow,
+                ...props.style,
+                paddingLeft: Icon ? 24 : undefined,
+                paddingRight: Icon ? 24 : undefined,
+                justifyContent: Icon ? "flex-start" : "center",
+                alignItems: "center",
+            }}
+            underlayColor="#efefef"
+            disabled={props.disabled}
+            onPress={props.onPress || undefined}
+            onLongPress={props.onLongPress || undefined}
+        >
+            <>
+            { Icon }
 
-                <Text style={[
-                    styles.text,
-                    props.textStyle,
-                    {
-                        paddingLeft: Icon ? 10 : undefined,
-                        flexShrink: 1,
-                    },
-                ]}>
-                    {props.title}
-                </Text>
-                </>
-            </TouchableHighlight>
-        // </View>
+            <Text style={[
+                styles.text,
+                props.textStyle,
+                {
+                    paddingLeft: Icon ? 10 : undefined,
+                    flexShrink: 1,
+                },
+            ]}>
+                {props.title}
+            </Text>
+            </>
+        </TouchableHighlight>
     )
 }
 
