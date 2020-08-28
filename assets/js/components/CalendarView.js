@@ -53,11 +53,11 @@ export default function CalendarView(props) {
                 onDayPress={day => {
                     props.setSlctdDate(day.dateString)
                 }}
-                // [uncomment upon start DEBUG]
+                // [uncomment upon DEBUG start]
                 onDayLongPress={day => {
                     props.setSlctdDate(day.dateString)
                 }}
-                // [comment upon stop DEBUG]
+                // [comment upon DEBUG end]
             />
         </View>
     )

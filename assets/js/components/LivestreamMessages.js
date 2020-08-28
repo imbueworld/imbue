@@ -7,63 +7,67 @@ import database from "@react-native-firebase/database"
 import { clockFromTimestamp, publicStorage } from '../backend/HelperFunctions'
 import Icon from './Icon'
 
+import { cache } from "../backend/CacheFunctions"
+
 
 
 export default function LivestreamMessages(props) {
-    // let chat = props.chat
     const gymId = props.gymId
     const user = props.user
 
-    const ptcsNodeRef = database().ref(`livestreams/active_participants/${gymId}`)
+    const ptcsNodeRef = database().ref(`livestreams/participants/${gymId}`)
     const chatNodeRef = database().ref(`livestreams/messages/${gymId}`)
 
     const [ptcs, setPtcs] = useState([])
     const [chat, setChat] = useState([])
 
-    console.log("ptcs", ptcs)
-    console.log("chat", chat)
+    /**
+     * Forward set functions to cache,
+     * so that they can be called from <LivestreamLayout />
+     * rerendering only and only this very component, not the whole tree,
+     * which would cause problems, like keyboard going down when typing
+     */
+    useEffect(() => {
+        cache("livestream/functions/setParticipants").set(setPtcs)
+        cache("livestream/functions/setChat").set(setChat)
+    }, [])
 
     useEffect(() => {
-        const init = async () => {
-            await ptcsNodeRef.once('value', snap => {
-                let data = snap.val()
-                if (data) setPtcs(Object.values(data))
-            })
-            ptcsNodeRef.limitToLast(1).on('child_added', snap => {
-                setPtcs(ptcs => {
-                    // Do not add, if uid is already in ptcs
-                    let existingUids = ptcs.map(ptc => ptc.uid)
-                    if (existingUids.includes(snap.val().uid)) return ptcs
-                    // Append
-                    return [...ptcs, snap.val()]
-                })
-            })
+        const read = async () => {
+            let ptcs = cache("livestream/participants").get() || []
+            setPtcs(ptcs)
+            let chat = cache("livestream/chat").get() || []
+            setChat(chat)
         }
-        init()
+        read()
     }, [])
 
     useEffect(() => {
         const init = async () => {
-            await chatNodeRef.once('value', snap => {
-                let data = snap.val()
-                if (data) setChat(Object.values(data))
-            })
-            chatNodeRef.limitToLast(1).on('child_added', snap => {
-                setChat(chat => {
-                    let newMessage = snap.val()
-                    // Do not add, if an exact same message is already in chat
-                    let existingMessages = chat.map(msg =>
-                        `${msg.timestamp}${msg.message}`
-                    )
-                    if (existingMessages.includes(
-                        `${newMessage.timestamp}${newMessage.message}`
-                    )) return chat
-                    // Append
-                    return [...chat, newMessage]
-                })
-            }, err => {
-                console.log("[ERROR chat]", err.message)
-            })
+            // await ptcsNodeRef.once('value', async snap => {
+            //     let data = snap.val()
+            //     if (data) {
+            //         let ptcs = Object.entries(data).map(([uid, userData]) => {
+            //             userData.uid = uid
+            //             return userData
+            //         })
+            //         // setPtcs(ptcs)
+            //         // cache.livestream.participants = ptcs
+            //         await AsyncStorage.setItem(
+            //             "livestream/participants",
+            //             JSON.stringify(ptcs)
+            //         )
+            //     }
+            // })
+            // ptcsNodeRef.limitToLast(1).on('child_added', snap => {
+            //     // setPtcs(ptcs => {
+            //     //     // Do not add, if uid is already in ptcs
+            //     //     let existingUids = ptcs.map(ptc => ptc.uid)
+            //     //     if (existingUids.includes(snap.val().uid)) return ptcs
+            //     //     // Append
+            //     //     return [...ptcs, snap.val()]
+            //     // })
+            // })
         }
         init()
     }, [])
@@ -90,8 +94,8 @@ export default function LivestreamMessages(props) {
                 marginRight: stickToRight ? 6 : 0,
                 marginLeft: stickToRight ? 0 : 6,
                 color: colors.grayInactive,
-                textAlignVertical: "bottom",
-                paddingBottom: 1.5,
+                textAlignVertical: "top",
+                paddingTop: 3,
                 fontSize: 12,
                 fontFamily: fonts.default,
             }}>{clockFromTimestamp(props.timestamp)}</Text>
@@ -138,6 +142,7 @@ export default function LivestreamMessages(props) {
                             :   null}
                             <Text style={{
                                 fontFamily: fonts.default,
+                                flexShrink: 1,
                                 ...props.labelStyle,
                             }}>{props.name}</Text>
                             {stickToRight

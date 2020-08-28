@@ -1,12 +1,12 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { View } from 'react-native'
 
 
 
 export default function Component(props) {
     return (
-        <View style={styles.container}></View>
+        <View style={{
+            ...props.containerStyle,
+        }}></View>
     )
 }
-
-const styles = StyleSheet.create({})

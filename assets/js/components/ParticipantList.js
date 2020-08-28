@@ -1,77 +1,59 @@
-import React from 'react'
-import { StyleSheet, ScrollView, View, Text, Image } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { ScrollView, View, Text } from 'react-native'
 
 import CustomCapsule from "./CustomCapsule"
-import { publicStorage } from "../backend/HelperFunctions"
-import { colors } from '../contexts/Colors'
+import AttendeeCard from './AttendeeCard'
+import { cache } from '../backend/CacheFunctions'
 import { fonts } from '../contexts/Styles'
 
 
 
 export default function ParticipantList(props) {
-    let ptcData = props.data
-    if (!ptcData) return <View />
+    const [ptcs, setPtcs] = useState([])
 
-    const Participant = (props) => 
-        <View style={styles.ptcContainer}>
-            <Image
-                style={styles.ptcIcon}
-                source={{ uri: props.iconUri }}
-            />
-            <Text style={styles.ptcName}>{props.name}</Text>
+    useEffect(() => {
+        cache("livestream/functions/setParticipantsList").set(setPtcs)
+    }, [])
+
+    useEffect(() => {
+        let ptcs = cache("livestream/participants").get()
+        setPtcs(ptcs)
+    }, [])
+
+    const filteredPtcs = ptcs.filter(ptc => ptc.here)
+
+    const Participants = filteredPtcs.map(({ name, icon_uri, uid }, idx) =>
+        <View key={idx} style={{
+            marginTop: idx !== 0 ? 10 : 0,
+        }}>
+            <AttendeeCard key={uid} {...{
+                first: name,
+                icon_uri,
+            }}/>
         </View>
-    
-    const participants = ptcData.map(({ name, icon_uri, uid }) => 
-        <Participant
-            name={name}
-            iconUri={publicStorage(icon_uri)}
-            key={uid}
-        />
     )
 
     return (
         <CustomCapsule
-            containerStyle={[
-                styles.container,
-                props.containerStyle,
-            ]}
+            containerStyle={props.containerStyle}
             innerContainerStyle={{
                 height: "100%",
             }}
         >
+            <Text style={{
+                marginTop: 20,
+                marginBottom: 10,
+                alignSelf: "center",
+                fontSize: 20,
+                fontFamily: fonts.default,
+            }}>Users Participating</Text>
             <ScrollView>
                 <View style={{
-                    paddingVertical: 10,
+                    paddingVertical: 15,
                 }}>
-                    {participants}
+                    { Participants }
                 </View>
             </ScrollView>
         </CustomCapsule>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-    },
-    ptcContainer: {
-        marginVertical: 10,
-        flexDirection: "row",
-        alignItems: "center",
-        // backgroundColor: "lightgray",
-        borderWidth: 1,
-        borderColor: colors.gray,
-        borderRadius: 999,
-    },
-    ptcIcon: {
-        width: 75,
-        height: 75,
-        margin: 10,
-        borderRadius: 999,
-    },
-    ptcName: {
-        flex: 1,
-        textAlign: "center",
-        fontSize: 20,
-        fontFamily: fonts.default,
-    },
-})

@@ -92,7 +92,6 @@ export default function ProfileLayout(props) {
         <CustomCapsule
           style={[
             {
-              // marginTop: 150,
               marginTop: 115,
               width: "88%",
               alignSelf: "center",
@@ -101,7 +100,6 @@ export default function ProfileLayout(props) {
           ]}
           innerContainerStyle={[
             {
-              // paddingTop: 135,
               paddingTop: 90,
             },
             props.innerContainerStyle,

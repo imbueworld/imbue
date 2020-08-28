@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Text, Image, TouchableOpacity, TextInput } from 'react-native'
+import React, { useState, useRef } from 'react'
+import { StyleSheet, ScrollView, View, Image, TextInput } from 'react-native'
 
 import { simpleShadow, colors } from "../contexts/Colors"
 
@@ -112,7 +112,7 @@ export default function Chat(props) {
                 marginTop: 0,
                 borderTopLeftRadius: 0,
                 borderTopRightRadius: 0,
-                height: "95%",
+                height: "100%",
             }
             scrollAppropriately()
         }
@@ -146,7 +146,7 @@ export default function Chat(props) {
                 <View style={{
                     paddingTop: 10,
                     paddingBottom: 80,
-                    paddingHorizontal: "6%",
+                    paddingHorizontal: "3%",
                 }}>
                     {/* {chatContents} */}
                     {/* {props.children} */}

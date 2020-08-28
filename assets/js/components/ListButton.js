@@ -1,38 +1,37 @@
 import React from 'react'
-import { StyleSheet, TouchableOpacity, Image } from 'react-native'
+import { Image, View } from 'react-native'
+import { TouchableHighlight } from 'react-native-gesture-handler'
+import { colors } from '../contexts/Colors'
 
 
 
 export default function ListButton(props) {
     return (
-        <TouchableOpacity
-            style={[
-                styles.container,
-                props.containerStyle,
-            ]}
-            onPress={props.onPress}
-        >
-            <Image
-                style={[
-                    styles.image,
-                    props.style,
-                ]}
-                source={require("./img/png/list-icon-3.png")}
-            />
-        </TouchableOpacity>
+        <View style={{
+            backgroundColor: "#ffffff60",
+            borderWidth: 1,
+            borderColor: colors.gray,
+            borderRadius: 999,
+        }}>
+            <TouchableHighlight
+                style={{
+                    width: 50,
+                    height: 50,
+                    padding: 14,
+                    ...props.containerStyle,
+                }}
+                underlayColor="#00000012"
+                onPress={props.onPress}
+            >
+                <Image
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        ...props.imageStyle,
+                    }}
+                    source={require("./img/png/list-icon-3.png")}
+                />
+            </TouchableHighlight>
+        </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        width: 50,
-        height: 50,
-        padding: 14,
-        backgroundColor: "white",
-        borderRadius: 999,
-    },
-    image: {
-        width: "100%",
-        height: "100%",
-    },
-})

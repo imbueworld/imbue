@@ -497,3 +497,31 @@ export async function TEMPLATE(cache) {
         cache.working.TEMPLATE = false
     }
 }
+
+
+
+const Cache = {}
+export function cache(query) {
+    const fields = query.split("/")
+    let nextBase
+    let previousBase
+    fields.forEach(field => {
+        if (nextBase) {
+            previousBase = nextBase
+            if (!nextBase[ field ]) nextBase[ field ] = {}
+            nextBase = nextBase[ field ]
+            return
+        }
+        previousBase = Cache
+        if (!Cache[ field ]) Cache[ field ] = {}
+        nextBase = Cache[ field ]
+    })
+    return {
+        get: () => {
+            return nextBase.data
+        },
+        set: (value) => {
+            previousBase[ fields[fields.length - 1] ].data = value
+        },
+    }
+}

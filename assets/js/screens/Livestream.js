@@ -1,20 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-
-import Video from 'react-native-video'
-
-import ChatButton from "../components/ChatButton"
-import ListButton from "../components/ListButton"
-import CancelButton from "../components/CancelButton"
-
-import Chat from "../components/Chat"
-import ParticipantList from "../components/ParticipantList"
-
-import database from "@react-native-firebase/database"
-import { sendMessage, registerParticipant } from '../backend/LivestreamFunctions'
 import { retrieveUserData, retrievePlaybackId } from '../backend/CacheFunctions'
-import LivestreamMessages from '../components/LivestreamMessages'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import LivestreamLayout from '../layouts/LivestreamLayout'
 
 
@@ -96,7 +82,7 @@ import LivestreamLayout from '../layouts/LivestreamLayout'
 // }
 
 
-  
+
 function getPlaybackLink(playbackId) {
     return `https://stream.mux.com/${playbackId}.m3u8`
 }
@@ -108,21 +94,9 @@ export default function Livestream(props) {
     // let gym = props.route.params.gym
     const gymId = props.route.params.gymId
 
+    const [user, setUser] = useState(null)
     const [playbackLink, setPlaybackLink] = useState(null)
     console.log("playbackLink", playbackLink)
-
-    const activePtcDbRef = database().ref(`livestreams/active_participants/${gymId}`)
-
-    const [user, setUser] = useState(null)
-    const [chat, setChat] = useState([])
-    const [ptcList, setPtcList] = useState([])
-
-    const [chatPopup, setChatPopup] = useState(false)
-    const [ptcListPopup, setPtcListPopup] = useState(false)
-    const [buttonPanelPopup, setButtonPanelPopup] = useState(null)
-    const [buttonPanelTimeouts, setButtonPanelTimeouts] = useState([])
-
-    // const [message, setMessage] = useState("")
 
     useEffect(() => {
         const init = async () => {
@@ -162,33 +136,6 @@ export default function Livestream(props) {
 }
 
 const styles = StyleSheet.create({
-    controlPanelContainer: {
-        width: "100%",
-        paddingHorizontal: 15,
-        paddingBottom: 15,
-        position: "absolute",
-        bottom: 0,
-        flexDirection: "row",
-        justifyContent: "space-between",
-    },
-
-    chatContainer: {
-        width: "88%",
-        height: "70%",
-        // flex: 1,
-        // marginVertical: 50,
-        marginTop: 30,
-        position: "absolute",
-        alignSelf: "center",
-    },
-
-    ptcListContainer: {
-        width: "88%",
-        height: 500,
-        marginVertical: 50,
-        position: "absolute",
-        alignSelf: "center",
-    },
     video: {
         width: "100%",
         height: "100%",

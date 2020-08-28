@@ -25,7 +25,7 @@ export default function ImageSlideshow(props) {
         else setCurrentIdx(image_uris.length - 1)
     }
 
-    // [comment upon start DEBUG]
+    // [comment upon DEBUG start]
     // useEffect(() => {
     //     let itrvl = setInterval((cIdx => {
     //         if (cIdx[0] + 1 < image_uris.length) {
@@ -39,7 +39,7 @@ export default function ImageSlideshow(props) {
         
     //     return () => clearInterval(itrvl)
     // }, [cIdx])
-    // [uncomment upon stop DEBUG]
+    // [uncomment upon DEBUG end]
 
     const IndicatingDots = image_uris.map((irlvnt, idx) => 
         <View

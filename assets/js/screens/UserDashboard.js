@@ -117,15 +117,14 @@ export default function UserDashboard(props) {
     <>
     <MapView
       style={styles.map}
-      // provider={PROVIDER_GOOGLE}
-      // customMapStyle={mapStyle}
-        
-        region= {{
-          latitude: 37.78825,
-          longitude: -122.4324,
-          latitudeDelta: 0.0922,
-          longitudeDelta: 0.0421,
-        }}
+      provider={PROVIDER_GOOGLE}
+      customMapStyle={mapStyle}
+      region= {{
+        latitude: 37.78825,
+        longitude: -122.4324,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+      }}
     >
       {Markers}
     </MapView>
@@ -148,10 +147,10 @@ export default function UserDashboard(props) {
           }}
           underlayColor="#000000C0"
           onPress={sidePanelToggle}
-          // [uncomment upon start DEBUG]
+          // [uncomment upon DEBUG start]
           onLongPress={sidePanelToggle}
           // onLongPress={() => console.log("./.../iuyhb")}
-          // [comment upon stop DEBUG]
+          // [comment upon DEBUG end]
         >
           {/* <UserIcon
             containerStyle={{
