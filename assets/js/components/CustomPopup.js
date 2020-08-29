@@ -1,7 +1,8 @@
-import React from 'react'
-import { View, TouchableWithoutFeedback } from 'react-native'
+import React, { useEffect } from 'react'
+import { View, TouchableWithoutFeedback, BackHandler } from 'react-native'
 
 import CustomCapsule from "../components/CustomCapsule"
+import { cache } from '../backend/CacheFunctions'
 
 
 
@@ -14,6 +15,26 @@ import CustomCapsule from "../components/CustomCapsule"
  * .innerContainerStyle
  */
 export default function CustomPopup(props) {
+    useEffect(() => {
+        const onXRef = cache("CustomPopup/onX")
+        const onXEnabledRef = cache("CustomPopup/onX/enabled")
+
+        onXRef.set(() => {
+            if (onXEnabledRef.get()) {
+                if (props.onX) props.onX()
+                onXEnabledRef.set(false)
+                return true
+            }
+        })
+
+        onXEnabledRef.set(true)
+        BackHandler.addEventListener('hardwareBackPress', onXRef.get())
+
+        return () => {
+            BackHandler.removeEventListener('hardwareBackPress', onXRef.get())
+        }
+    }, [])
+
     return (
         <View style={{
             width: "100%",

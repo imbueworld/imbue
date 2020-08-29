@@ -22,7 +22,7 @@ export default function CreditCardBadge(props) {
                 source={source}
             />
             <Text numberOfLines={1} style={styles.creditCardText}>
-                {`**** ${CC.last4}  |  ${CC.exp_month}/${CC.exp_year}`}
+                {`•••• ${CC.last4}  |  ${CC.exp_month}/${CC.exp_year}`}
             </Text>
         </View>
     )

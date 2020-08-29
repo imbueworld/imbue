@@ -16,13 +16,11 @@ import { handleAuthError } from '../backend/HelperFunctions'
 export default function ProfileSettings(props) {
     let cache = props.route.params.cache
     const [user, setUser] = useState(null)
-    const [firebaseUser, setFirebaseUser] = useState(null)
 
     useEffect(() => {
         const init = async() => {
             let user = await retrieveUserData(cache)
             setUser(user)
-            setFirebaseUser( 123 )
         }
         init()
     }, [])
@@ -36,10 +34,9 @@ export default function ProfileSettings(props) {
     }, [user])
 
     const [redFields, setRedFields] = useState([])
-    console.log("redFields", redFields)
     const [errorMsg, setErrorMsg] = useState("")
     const [successMsg, setSuccessMsg] = useState("")
-    const [changing, change] = useState("safeInfo") // or "password"
+    const [changing, change] = useState("safeInfo") // || "password"
 
     const [firstNameField, setFirstNameField] = useState("")
     const [lastNameField, setLastNameField] = useState("")
@@ -166,10 +163,16 @@ export default function ProfileSettings(props) {
         /> */}
 
         <ProfileLayout
+            cache={cache}
             innerContainerStyle={{
                 paddingBottom: 10,
             }}
             data={{ name: user.name , iconUri: user.icon_uri }}
+            buttonOptions={{
+                editPfp: {
+                    show: true,
+                },
+            }}
         >
             {changing === "safeInfo"
             ?   <CustomButton

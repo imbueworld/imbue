@@ -2,9 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import CustomPopup from '../CustomPopup'
 import { retrieveAttendees } from '../../backend/CacheFunctions'
-import Icon from '../Icon'
-import { publicStorage } from '../../backend/HelperFunctions'
-import { colors } from '../../contexts/Colors'
 import { fonts } from '../../contexts/Styles'
 import { ScrollView } from 'react-native-gesture-handler'
 import AttendeeCard from '../AttendeeCard'
@@ -53,36 +50,6 @@ export default function AttendeesPopup(props) {
         setByPurchase(byPurchase)
         setBySchedule(bySchedule)
     }, [attendees])
-
-    // const AttendeeCard = ({ icon_uri, first, last }) =>
-    //     <View style={{
-    //         flexDirection: "row",
-    //         flexWrap: "nowrap",
-    //         height: 72,
-    //         paddingHorizontal: "6%",
-    //         justifyContent: "space-between",
-    //         alignItems: "center",
-    //         backgroundColor: "#00000012",
-    //         borderColor: colors.gray,
-    //         borderWidth: 1,
-    //         borderRadius: 40,
-    //     }}>
-    //         <Icon
-    //             containerStyle={{
-    //                 width: 54,
-    //                 height: 54,
-    //                 borderRadius: 999,
-    //                 overflow: "hidden",
-    //             }}
-    //             source={{ uri: publicStorage(icon_uri) }}
-    //         />
-    //         <Text style={{
-    //             flex: 1,
-    //             textAlign: "center",
-    //             fontSize: 18,
-    //             fontFamily: fonts.default,
-    //         }}>{`${first} ${last}`}</Text>
-    //     </View>
     
     useEffect(() => {
         if (!byPurchase) return

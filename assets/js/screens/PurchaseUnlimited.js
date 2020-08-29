@@ -1,25 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 import CompanyLogo from "../components/CompanyLogo"
 
-import CustomText from "../components/CustomText"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
-import CustomBar from "../components/CustomBar"
-import CustomPopup from '../components/CustomPopup'
-
-import CreditCardSelection from '../components/CreditCardSelection'
 
 import {
-  retrievePaymentMethods,
   retrieveUserData,
   retrieveGymsByIds
 } from '../backend/CacheFunctions'
 import { purchaseMemberships } from '../backend/BackendFunctions'
 import { colors } from '../contexts/Colors'
-import PopupPurchase from '../components/popups/PopupPurchase'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'

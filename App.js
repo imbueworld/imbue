@@ -1,7 +1,6 @@
 import 'react-native-gesture-handler'
 
-import React, { useState } from 'react'
-import { View, Text } from 'react-native'
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -11,12 +10,10 @@ import SignUp from "./assets/js/screens/SignUp"
 import Login from "./assets/js/screens/Login"
 import UserDashboard from "./assets/js/screens/UserDashboard"
 
-// import UserClasses from "./assets/js/screens/UserClasses"
 import UserMemberships from "./assets/js/screens/UserMemberships"
 import ProfileSettings from "./assets/js/screens/ProfileSettings"
 import PaymentSettings from "./assets/js/screens/PaymentSettings"
 import AddPaymentMethod from "./assets/js/screens/AddPaymentMethod"
-// import PurchaseOnline from "./assets/js/screens/PurchaseOnline"
 import PurchaseUnlimited from "./assets/js/screens/PurchaseUnlimited"
 import GymDescription from "./assets/js/screens/GymDescription"
 
@@ -24,7 +21,6 @@ import PartnerSignUp from "./assets/js/screens/PartnerSignUp"
 import PartnerDashboard from "./assets/js/screens/PartnerDashboard"
 import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
 import PartnerUpdateMemberships from "./assets/js/screens/PartnerUpdateMemberships"
-// import ClassesSchedule from "./assets/js/screens/ClassesSchedule"
 import ScheduleViewer from "./assets/js/screens/ScheduleViewer"
 import SchedulePopulate from "./assets/js/screens/SchedulePopulate"
 import PartnerRevenueInfo from "./assets/js/screens/PartnerRevenueInfo"
@@ -82,12 +78,6 @@ export default function App() {
                     options={{ title: "Dashboard" }}
                     initialParams={{ user: user, cache }}
                 />
-                {/* <Stack.Screen
-                    name="UserClasses"
-                    component={UserClasses}
-                    options={{ title: "My Classes" }}
-                    initialParams={{ user: user, cache }}
-                /> */}
                 <Stack.Screen
                     name="UserMemberships"
                     component={UserMemberships}
@@ -142,12 +132,6 @@ export default function App() {
                     options={{ title: "Revenue" }}
                     initialParams={{ user: user, cache }}
                 />
-                {/* <Stack.Screen
-                    name="PurchaseOnline"
-                    component={PurchaseOnline}
-                    options={{ title: "Purchase A Class" }}
-                    initialParams={{ user: user, cache }}
-                /> */}
                 <Stack.Screen
                     name="PurchaseUnlimited"
                     component={PurchaseUnlimited}

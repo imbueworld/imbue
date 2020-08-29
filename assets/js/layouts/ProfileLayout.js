@@ -5,12 +5,14 @@ import CustomCapsule from "../components/CustomCapsule"
 import { simpleShadow } from '../contexts/Colors'
 import BackButton from '../components/BackButton'
 import { useNavigation } from '@react-navigation/native'
-import { publicStorage } from '../backend/HelperFunctions'
 import { fonts } from '../contexts/Styles'
 import LogOutButton from '../components/buttons/LogOutButton'
 import auth from "@react-native-firebase/auth"
 import AppBackground from '../components/AppBackground'
 import Icon from '../components/Icon'
+import { retrieveUserData } from '../backend/CacheFunctions'
+import { pickAndUploadFile } from '../backend/BackendFunctions'
+import EditButton from '../components/buttons/EditButton'
 
 
 
@@ -19,10 +21,24 @@ import Icon from '../components/Icon'
  * .data -- has to have { name, iconUri }
  */
 export default function ProfileLayout(props) {
-  let user = props.data
+  let cache = props.cache // Is not always passed, cache reworking in need
   let navigation = useNavigation()
 
+  const [errorMsg, setErrorMsg] = useState("")
+
+  const [user, setUser] = useState(props.data) // Default to provided data
+
   const [buttonOptions, setButtonOptions] = useState(null)
+
+  useEffect(() => {
+    const init = async () => {
+      if (cache) { // cache optional
+        let user = await retrieveUserData(cache)
+        setUser(user)
+      }
+    }
+    init()
+  }, [])
 
   useEffect(() => {
     const defaultButtonOptions = {
@@ -30,11 +46,14 @@ export default function ProfileLayout(props) {
         show: true,
       },
       logOut: {
-        show: true,
+        show: false,
         onPress: () => {
           auth().signOut()
           navigation.navigate("Boot", { referrer: "PartnerDashboard" })
         },
+      },
+      editPfp: { // Requires props.cache currently to function
+        show: false,
       },
     }
   
@@ -50,11 +69,10 @@ export default function ProfileLayout(props) {
 
 
 
-  if (!buttonOptions) return <View />
+  if (!user || !buttonOptions) return <View />
 
   return (
     <>
-
     <View style={{
       width: "100%",
       height: "100%",
@@ -62,7 +80,6 @@ export default function ProfileLayout(props) {
       left: 25,
       backgroundColor: "#eee",
       borderRadius: 40,
-      // zIndex: -110,
     }}/>
 
     <ScrollView
@@ -74,7 +91,6 @@ export default function ProfileLayout(props) {
       <View style={{
         marginVertical: 50,
       }}>
-
         <Icon
           containerStyle={{
             width: 200,
@@ -86,8 +102,30 @@ export default function ProfileLayout(props) {
             ...simpleShadow,
             zIndex: 100,
           }}
-          source={{ uri: publicStorage(user.iconUri) }}
+          source={{ uri: user.iconUri || user.icon_uri }}
         />
+        <View style={{
+          width: 200,
+          height: 200,
+          position: "absolute",
+          alignSelf: "center",
+          alignItems: "center",
+          ...simpleShadow,
+          zIndex: 110,
+        }}>
+          {buttonOptions.editPfp.show
+          ? <EditButton
+              containerStyle={{
+                top: 145,
+                left: 65,
+              }}
+              onPress={() => pickAndUploadFile(cache, setErrorMsg)}
+              // [uncomment upon DEBUG start]
+              onLongPress={() => pickAndUploadFile(cache, setErrorMsg)}
+              // [comment upon DEBUG end]
+            />
+          : null}
+        </View>
 
         <CustomCapsule
           style={[
@@ -105,6 +143,10 @@ export default function ProfileLayout(props) {
             props.innerContainerStyle,
           ]}
         >
+          {errorMsg && errorMsg.length
+          ? <Text style={{ color: "red" }}>{ errorMsg }</Text>
+          : null}
+
           {!buttonOptions.goBack.show || props.hideBackButton ? null :
           <TouchableHighlight
             style={styles.sidePanelButtonContainer}

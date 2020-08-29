@@ -1,4 +1,5 @@
-import { storage } from "../contexts/Links"
+import LINKS from "../contexts/Links"
+import storage from "@react-native-firebase/storage"
 
 /**
  * inp -- must be passed in the format of [YYYY-MM-DD HH-MM]
@@ -249,14 +250,6 @@ export function setWaiter(callBackFn, cache, ms) {
             clearInterval(check)
         }
     }, interval)
-}
-
-/**
- * Converts a just file name string into a fully functioning uri
- * to retrieve a file from Google Cloud Storage.
- */
-export function publicStorage(fileName) {
-    return `${storage.public}${fileName}`
 }
 
 /**

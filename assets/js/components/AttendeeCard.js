@@ -1,13 +1,25 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
-import { publicStorage } from '../backend/HelperFunctions'
+import { publicStorage } from '../backend/CacheFunctions'
 import Icon from './Icon'
 import { fonts } from '../contexts/Styles'
 
 
 
 export default function AttendeeCard({ icon_uri, first, last }) {
+    const [iconUri, setIconUri] = useState("")
+
+    useEffect(() => {
+        const init = async () => {
+            let iconUri = await publicStorage(icon_uri)
+            setIconUri(iconUri)
+        }
+        init()
+    }, [])
+
+    // if (!iconUri) return <View />
+
     return (
         <View style={{
             flexDirection: "row",
@@ -30,7 +42,7 @@ export default function AttendeeCard({ icon_uri, first, last }) {
                     borderRadius: 999,
                     overflow: "hidden",
                 }}
-                source={{ uri: publicStorage(icon_uri) }}
+                source={{ uri: iconUri }}
             />
             <Text style={{
                 flex: 1,

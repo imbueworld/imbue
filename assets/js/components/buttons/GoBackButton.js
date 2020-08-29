@@ -22,7 +22,7 @@ export default function GoBackButton(props) {
         style={{
           borderRadius: 999,
         }}
-        underlayColor="#00000012"
+        underlayColor="#00000020"
         onPress={props.onPress || (() => navigation.goBack())}
       >
         <Icon

@@ -7,6 +7,7 @@ import CustomCapsule from "../components/CustomCapsule"
 import CreditCardBadge from "../components/CreditCardBadge"
 import { retrievePaymentMethods } from '../backend/CacheFunctions'
 import { colors } from '../contexts/Colors'
+import ProfileLayout from '../layouts/ProfileLayout'
 
 
 
@@ -44,22 +45,20 @@ export default function PaymentSettings(props) {
     }, [creditCards.length])//, cache.creditCards.length])
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollView}>
-            <AppBackground />
-            <CustomCapsule style={styles.container}>
+        // <ScrollView contentContainerStyle={styles.scrollView}>
+        //     <AppBackground />
+        //     <CustomCapsule style={styles.container}>
 
-                {/* <CustomCapsule style={{
-                    paddingHorizontal: 20,
-                    paddingVertical: 0,
-                    borderRadius: 30,
-                }}> */}
+                <ProfileLayout
+                    cache={cache}
+                >
                     <View style={{
                         borderRadius: 20,
                         overflow: "hidden",
                         maxHeight: 450,
                     }}>
                         <ScrollView>
-                            {CreditCards}
+                            { CreditCards }
                         </ScrollView>
                     </View>
 
@@ -74,11 +73,11 @@ export default function PaymentSettings(props) {
                             )
                         }}
                     />
-                {/* </CustomCapsule> */}
+                </ProfileLayout>
 
 
-            </CustomCapsule>
-        </ScrollView>
+        //     </CustomCapsule>
+        // </ScrollView>
     )
 }
 

@@ -7,7 +7,7 @@ import auth from "@react-native-firebase/auth"
 
 
 
-export default function LogOutButton(props) {
+export default function EditButton(props) {
   return (
     <View style={{
       backgroundColor: "white",
@@ -25,7 +25,7 @@ export default function LogOutButton(props) {
           borderRadius: 999,
         }}
         underlayColor="#00000020"
-        onPress={props.onPress || (() => auth().signOut())}
+        onPress={props.onPress || undefined}
         onLongPress={props.onLongPress || undefined}
       >
         <>
@@ -44,7 +44,7 @@ export default function LogOutButton(props) {
             padding: 11,
             left: 2,
           }}
-          source={require("../img/png/sign-out-8.png")}
+          source={require("../img/png/edit.png")}
         />
         </>
       </TouchableHighlight>

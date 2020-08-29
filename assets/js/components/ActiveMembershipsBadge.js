@@ -1,10 +1,9 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { colors } from '../contexts/Colors'
 import { fonts } from '../contexts/Styles'
-import { TouchableHighlight } from 'react-native-gesture-handler'
 import Icon from './Icon'
-import { publicStorage } from '../backend/HelperFunctions'
+import { publicStorage } from '../backend/CacheFunctions'
 
 
 
@@ -15,6 +14,18 @@ import { publicStorage } from '../backend/HelperFunctions'
  */
 export default function ActiveMembershipBadge(props) {
     let membership = props.data
+
+    const [iconUri, setIconUri] = useState(null)
+
+    useEffect(() => {
+        const init = async () => {
+            let iconUri = await publicStorage(membership.icon_uri)
+            setIconUri(iconUri)
+        }
+        init()
+    }, [])
+
+    if (!iconUri) return <View />
 
     return (
         <View style={styles.container}>

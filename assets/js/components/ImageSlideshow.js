@@ -1,34 +1,54 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Image } from 'react-native'
-import { publicStorage } from '../backend/HelperFunctions'
+import { publicStorage } from '../backend/CacheFunctions'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { colors } from '../contexts/Colors'
 
 
 
 export default function ImageSlideshow(props) {
-    let image_uris = props.data
+    let rawImageUris = props.data
+    const imageCount = props.data.length
     const imageInterval = props.imageInterval || 3500
     const firstImageIdx = props.randomizeFirstImage
-        ?   Math.floor(Math.random() * image_uris.length)
+        ?   Math.floor(Math.random() * imageCount)
         :   0
 
     const [cIdx, setCurrentIdx] = useState(firstImageIdx) // current idx
 
+    const [imageUris, setImageUris] = useState(null)
+
+    useEffect(() => {
+        if (!props.local) {
+            const init = async () => {
+                let promises = []
+                rawImageUris.forEach(uri => promises.push(publicStorage(uri)))
+                setImageUris(await Promise.all(promises))
+            }
+            init()
+        } else {
+            setImageUris(rawImageUris)
+        }
+    }, [])
+
+
+    if (!imageUris) return <View />
+
+
     function nextImage() {
-        if (cIdx + 1 < image_uris.length) setCurrentIdx(cIdx + 1)
+        if (cIdx + 1 < imageCount) setCurrentIdx(cIdx + 1)
         else setCurrentIdx(0)
     }
 
     function previousImage() {
         if (cIdx - 1 >= 0) setCurrentIdx(cIdx - 1)
-        else setCurrentIdx(image_uris.length - 1)
+        else setCurrentIdx(imageCount - 1)
     }
 
     // [comment upon DEBUG start]
     // useEffect(() => {
     //     let itrvl = setInterval((cIdx => {
-    //         if (cIdx[0] + 1 < image_uris.length) {
+    //         if (cIdx[0] + 1 < imageCount) {
     //             setCurrentIdx(idx => idx + 1)
     //             cIdx[0]++
     //         } else {
@@ -41,7 +61,7 @@ export default function ImageSlideshow(props) {
     // }, [cIdx])
     // [uncomment upon DEBUG end]
 
-    const IndicatingDots = image_uris.map((irlvnt, idx) => 
+    const IndicatingDots = imageUris.map((irlvnt, idx) => 
         <View
             style={{
                 flexDirection: "row",
@@ -56,7 +76,7 @@ export default function ImageSlideshow(props) {
                 borderWidth: 0.5,
                 borderColor: colors.gray,
             }}/>
-            {idx !== image_uris.length - 1
+            {idx !== imageCount - 1
             ?   <View style={{
                     width: 15,
                 }}/>
@@ -103,8 +123,8 @@ export default function ImageSlideshow(props) {
                     ...props.imageStyle,
                 }}
                 source={props.local
-                    ?   image_uris[cIdx]
-                    :   { uri: publicStorage(image_uris[cIdx]) }}
+                    ?   imageUris[cIdx]
+                    :   { uri: imageUris[cIdx] }}
             />
         </View>
     )

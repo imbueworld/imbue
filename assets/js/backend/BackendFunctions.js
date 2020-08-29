@@ -3,7 +3,7 @@ import firestore from "@react-native-firebase/firestore"
 import functions from "@react-native-firebase/functions"
 import { DEFAULT_ICONS } from "../contexts/Constants"
 import { retrieveUserData } from "./CacheFunctions"
-import { storage } from "../contexts/Links"
+import LINKS from "../contexts/Links"
 
 
 
@@ -15,7 +15,7 @@ BusyError.code = "busy"
 /**
  * Initializes the user account with necessary data
  */
-export async function initializeAccount(cache, { first, last, email, password, type }, options={}) {
+export async function initializeAccount(cache, { first, last, email, password, type }, options = {}) {
     let account_type
     let uid
     let icon_uri_foreign
@@ -68,7 +68,7 @@ export async function initializeAccount(cache, { first, last, email, password, t
         .collection(collection)
         .doc(uid)
         .set(form)
-    await Promise.all([ authPromise, firestorePromise ])
+    await Promise.all([authPromise, firestorePromise])
 }
 
 /**
@@ -90,12 +90,12 @@ export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, c
     try {
         // Add payment method
         const addPaymentMethod = functions().httpsCallable("addPaymentMethod")
-        let paymentMethod = ( await addPaymentMethod(
-            { cardNumber, expMonth, expYear, cvc, cardHolderName, zip }) ).data
+        let paymentMethod = (await addPaymentMethod(
+            { cardNumber, expMonth, expYear, cvc, cardHolderName, zip })).data
 
         // Update cache
         user.payment_methods.push(paymentMethod)
-    } catch(err) {
+    } catch (err) {
         console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         throw new Error("Something prevented the action.")
     }
@@ -123,7 +123,7 @@ export async function purchaseClasses(cache, { classId, timeIds, creditCardId, p
             .doc(user.id)
 
         // Get some up-to-date data
-        const userDoc = ( await docRef.get() ).data()
+        const userDoc = (await docRef.get()).data()
         let activeClasses = userDoc.active_classes || []
         let scheduledClasses = userDoc.scheduled_classes || []
 
@@ -137,15 +137,15 @@ export async function purchaseClasses(cache, { classId, timeIds, creditCardId, p
         timeIds.forEach(id => {
             if (activeTimeIds.includes(id)) throw err
         })
-        
+
         // Charge customer
         const chargeCustomer = functions().httpsCallable("chargeCustomer")
         await chargeCustomer({ cardId: creditCardId, amount: price, description })
-        
+
         // Document payment
         const document = functions().httpsCallable("documentClassPurchase")
         /*await*/ document({ classId, timeId: timeIds[0], partnerId, amount: price, user: userDoc }) // operates on the premise that purchase is being done on only one timeId
-        
+
         // Register classes for user
         let newActiveClasses = timeIds.map(timeId => ({
             class_id: classId,
@@ -167,7 +167,7 @@ export async function purchaseClasses(cache, { classId, timeIds, creditCardId, p
         // cache.user.scheduled_classes.push(...timeIds)
         cache.user.active_classes.push(...newActiveClasses)
         cache.user.scheduled_classes.push(...newScheduleEntries)
-    } catch(err) {
+    } catch (err) {
         // console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         // throw new Error("Something prevented the action.")
         throw err
@@ -182,9 +182,9 @@ export async function scheduleClasses(cache, { classId, timeIds }) {
     const docRef = firestore()
         .collection("users")
         .doc(user.id)
-    
+
     // Retrieve up-to-date relevant data,
-    const userDoc = ( await docRef.get() ).data()
+    const userDoc = (await docRef.get()).data()
     let scheduledClasses = userDoc.scheduled_classes || []
 
     // Throw error, if a class has been scheduled already
@@ -232,9 +232,9 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
         const docRef = firestore()
             .collection("users")
             .doc(user.id)
-        
+
         // Get some up-to-date data
-        const userDoc = ( await docRef.get() ).data()
+        const userDoc = (await docRef.get()).data()
         let activeMemberships = userDoc.active_memberships || []
 
         // Throw error, if user already owns this membership
@@ -247,7 +247,7 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
         // Charge customer, creating a subscription
         const subscribeCustomer = functions().httpsCallable("subscribeCustomer")
         await subscribeCustomer({ gymId, cardId: creditCardId, amount: price, description })
-        
+
         // Document payment
         const document = functions().httpsCallable("documentMembershipPurchase")
         /*await*/ document({ partnerId, gymId, amount: price })
@@ -259,7 +259,7 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
 
         // Update cache
         cache.user.active_memberships.push(...membershipIds)
-    } catch(err) {
+    } catch (err) {
         // console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         // throw new Error("Something prevented the action.")
         throw err
@@ -289,11 +289,11 @@ export async function deleteSubscription(cache, { gymIds }) {
         let promises = []
 
         // Get some up-to-date data
-        const userDoc = ( await userDocRef.get() ).data()
+        const userDoc = (await userDocRef.get()).data()
 
         // Delete subscription
         const deleteSubscription = functions().httpsCallable("deleteSubscription")
-        promises.push( deleteSubscription({ gymIds }) )
+        promises.push(deleteSubscription({ gymIds }))
 
         // Remove it from user doc
         let newActiveMemberships = userDoc.active_memberships
@@ -311,7 +311,7 @@ export async function deleteSubscription(cache, { gymIds }) {
 
         // Update cache
         cache.user.active_memberships = newActiveMemberships
-    } catch(err) {
+    } catch (err) {
         throw err
     } finally {
         cache.working.deleteSubscription = false
@@ -332,16 +332,15 @@ export async function updateUser(cache, doc) {
         .collection(collection)
         .doc(user.id)
         .set(doc, { merge: true })
-    
+
     // Update cache
-    Object.entries(doc).forEach(([ key, value ]) => {
+    Object.entries(doc).forEach(([key, value]) => {
         cache.user[key] = value
     })
 
     // Update the field shortcuts, that are obligatory,
     // and are seen instantiated in retrieveUserDate() as well.
     // [THIS "SHORTCUT" NOTION SHOULD BE DISCONTINUED -- ; TOO INCONVENIENT]
-    if (doc.icon_uri) user.icon_uri = `${storage.public}${user.icon_uri}` // This already has a publicStorage() func from HelperFunctions.js
     user.name = `${user.first} ${user.last}`
 }
 
@@ -361,16 +360,16 @@ export async function updateGym(cache, { gymId, doc }) {
             .set(doc, { merge: true })
 
         // Update cache
-        Object.entries(doc).forEach(([ key, value ]) => {
+        Object.entries(doc).forEach(([key, value]) => {
             cache.gyms.forEach(gym => {
                 if (gym.id === gymId) {
-                    Object.entries(gym).forEach(([ key2, value2 ]) => {
-                        gym[ key ] = value
+                    Object.entries(gym).forEach(([key2, value2]) => {
+                        gym[key] = value
                     })
                 }
             })
         })
-    } catch(err) {
+    } catch (err) {
         console.error(err.message)
         throw new Error("Something prevented the action.")
     }
@@ -416,10 +415,10 @@ export async function createClass(cache, { instructor, name, description, genres
         await firestore()
             .collection("classes")
             .add(form)
-        
+
         // Update cache
         cache.classes.push(form)
-    } catch(err) {
+    } catch (err) {
         console.error(`[CACHE]  [${err.code}]  ${err.message}`)
         throw new Error("Something prevented the action.")
     }
@@ -433,7 +432,7 @@ export async function populateClass(cache, { class_id, active_times }) {
 
     try {
         // Retrieve already added active_times
-        let existingTimes = ( await classDocRef.get() ).data().active_times || []
+        let existingTimes = (await classDocRef.get()).data().active_times || []
 
         // Make sure that the times don't overlap; it's not allowed
         existingTimes.forEach(({ begin_time, end_time }) => {
@@ -442,7 +441,7 @@ export async function populateClass(cache, { class_id, active_times }) {
                 let end_time_NEW = doc.end_time
 
                 const err = new Error("Some class times overlap with already existing class times.")
-                
+
                 if (begin_time_NEW > begin_time
                     && begin_time_NEW < end_time) {
                     throw err
@@ -469,7 +468,7 @@ export async function populateClass(cache, { class_id, active_times }) {
         //     if (doc.id === class_id) cache.classes[idx].active_classes.push(active_classes)
         // })
         // [UNTESTED]
-    } catch(err) {
+    } catch (err) {
         console.error(`[CACHE populateClass]  [${err.code}]  ${err.message}`)
         // throw new Error("Something prevented the action.")
         throw err
@@ -495,7 +494,7 @@ export async function initializeLivestream(cache) {
         // }
 
         // 15 Attempts to retrieve stream key after stream has been created
-        // for the first time, or insta return they key
+        // for the first time, or insta return the key
         for (let i = 0; i < 15; i++) {
             streamKey = (await firestore()
                 .collection("partners")
@@ -515,9 +514,78 @@ export async function initializeLivestream(cache) {
 
         // Update cache
         cache.user.stream_key = streamKey
-    } catch(err) {
+    } catch (err) {
         throw new Error("Something prevented the action.")
     }
+}
+
+
+
+import storage from '@react-native-firebase/storage'
+import ImagePicker from "react-native-image-picker"
+import { PermissionsAndroid, Platform } from "react-native"
+
+export async function pickAndUploadFile(cache, setErrorMsg) {
+    const user = await retrieveUserData(cache)
+
+    if (Platform.OS = "android") {
+        const granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+        ])
+        Object.values(granted).forEach(status => {
+            if (status !== "granted") {
+                // const err = new Error("Not all permissions fulfilled.")
+                // err.code = "permissions"
+                // throw err
+                setErrorMsg("Not all permissions fulfilled.")
+            }
+        })
+    }
+
+    ImagePicker.showImagePicker({}, async res => {
+        if (res.didCancel) {
+            // const err = new Error("Upload cancelled.")
+            // err.code = "canceled"
+            // throw err
+        }
+        else if (res.error) {
+            console.error(res.error)
+            // const err = new Error("Upload failed.")
+            // err.code = "failed"
+            // throw err
+            setErrorMsg("Something prevented the action.")
+        } else {
+            const filePath = res.path
+            const fileExt = res.type.split("/")[1]
+
+            const fileSize = res.fileSize
+            if (fileSize > 8 * 1024 * 1024) {
+                // const err = new Error("File size must be less than 8MB.")
+                // err.code = "file-size"
+                // throw err
+                setErrorMsg("File size must be less than 8MB.")
+            }
+
+            try {
+                const fileRef = storage().ref(user.id)
+                let theNewLinkPog = await fileRef.putFile(filePath)
+                console.log(333, theNewLinkPog)
+
+                /**
+                 * This is currently unneeded;
+                 * The way icons are retrieved for users is based off their uids and whether
+                 * uid.png/jpeg is in Firebase Storage, then, if not, they receive default icon.
+                 */
+                // await updateUser(cache, {
+                //     icon_uri: await storage().ref(user.id).getDownloadURL(),
+                // })
+                setErrorMsg(null)
+            } catch(err) {
+                setErrorMsg("Something prevented the action.")
+            }
+        }
+    })
 }
 
 
@@ -526,7 +594,7 @@ export async function initializeLivestream(cache) {
  * TEMPLATE
  */
 export async function TEMPLATE(cache) {
-    try {} catch(err) {
+    try { } catch (err) {
         throw new Error("Something prevented the action.")
     }
 }

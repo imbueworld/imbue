@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Text, Button } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, Button, BackHandler } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -22,11 +22,11 @@ export default function Boot(props) {
             setBooting(false)
         }
         setBooting(true)
-        
+
         let bootWithoutUser = setTimeout(() => {
             console.log("After 6 seconds, no user was found to be logged in.")
             Object.keys(cache).forEach(key => {
-                cache[ key ] = null
+                cache[key] = null
             })
             cache.working = {}
             setBooting(false)
@@ -65,7 +65,7 @@ export default function Boot(props) {
                             let accountType
                             if (cache.user) accountType = cache.user.account_type
                             else accountType = ""
-                            switch(accountType) {
+                            switch (accountType) {
                                 case "user":
                                     props.navigation.reset({
                                         index: 0,
@@ -79,23 +79,23 @@ export default function Boot(props) {
                                     })
                                     break
                                 default:
-                                    props.navigation.navigate("Home", {referrer: "Boot"})
+                                    props.navigation.navigate("Home", { referrer: "Boot" })
                                     break
                             }
                         }
                     }}
                 />
 
-                <View style={{ height: 50 }}/>
+                <View style={{ height: 50 }} />
                 <Button
                     title="Livestream"
-                    onPress={() => {props.navigation.navigate("Livestream", { gymId: "D4iONGuVmdWwx4zGk4BI" })}}
+                    onPress={() => { props.navigation.navigate("Livestream", { gymId: "D4iONGuVmdWwx4zGk4BI" }) }}
                 />
 
-                <View style={{ height: 10 }}/>
+                <View style={{ height: 10 }} />
                 <Button
                     title="GoLive"
-                    onPress={() => {props.navigation.navigate("GoLive")}}
+                    onPress={() => { props.navigation.navigate("GoLive") }}
                 />
 
             </View>

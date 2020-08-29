@@ -22,7 +22,7 @@ export default function GoToCalendarButton(props) {
         style={{
           borderRadius: 999,
         }}
-        underlayColor="#00000012"
+        underlayColor="#00000020"
         // onPress={props.onPress || (() => navigation.navigate("ScheduleViewer"))}
         onPress={props.onPress || (() => {
           let pushAction = StackActions.push("ScheduleViewer")

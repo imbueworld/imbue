@@ -2,7 +2,8 @@
 // import "firebase/functions"
 import auth from "@react-native-firebase/auth"
 import firestore from "@react-native-firebase/firestore"
-import { storage } from "../contexts/Links"
+import storage from "@react-native-firebase/storage"
+import LINKS from "../contexts/Links"
 
 
 
@@ -42,8 +43,6 @@ export async function retrieveUserData(cache) {
 
     const user = auth().currentUser
 
-    console.log("retrieveUserData", user)
-
     let idx = user.displayName.search("_")
     let account_type = user.displayName.slice(0, idx)
     let collection
@@ -67,9 +66,12 @@ export async function retrieveUserData(cache) {
         // add shortcuts / necessary data adjustments for ease of access
         // SIGNIFICANT PARTS OF CODE OF THE APP DEPEND ON THIS
         let userData = doc.data()
-        // userData.uid = doc.id // removed
-        // userData.icon_uri = `${storage.public}${userData.icon_uri}` // moved to doing publicStorage() from "HelperFunctions.js" instead
         userData.name = `${userData.first} ${userData.last}`
+        try {
+            userData.icon_uri = await storage().ref(userData.id).getDownloadURL()
+        } catch(err) {
+            userData.icon_uri = LINKS.defaultIcons[0]
+        }
         // These 3 should be there at all times, since account creation, however -- another layer of making sure
         if (!userData.active_classes) userData.active_classes = []
         if (!userData.active_memberships) userData.active_memberships = []
@@ -477,6 +479,21 @@ export async function retrieveAttendees(cache, { classId, timeId }) {
     } finally {
         cache.working.retrieveAttendees = false
     }
+}
+
+/**
+ * Converts a just file name string into a fully functioning uri
+ * to retrieve a file from Google Cloud Storage.
+ */
+export async function publicStorage(fileName) {
+    // return `${LINKS.storage.public}${fileName}`
+
+    let file = cache(`files/${fileName}`).get()
+    if (!file) {
+        file = await storage().ref(fileName).getDownloadURL()
+        cache(`files/${fileName}`).set(file)
+    }
+    return file
 }
 
 

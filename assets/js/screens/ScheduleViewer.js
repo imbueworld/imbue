@@ -31,8 +31,6 @@ export default function ScheduleViewer(props) {
   let cache = props.route.params.cache
   let params = props.route.params
 
-  // const [cacheIsWorking, setCacheIsWorking] = useState(true)
-
   const [calendarData, setCalendarData] = useState(null)
   const [dataIsFormatted, setDataIsFormatted] = useState(false)
 
@@ -46,29 +44,7 @@ export default function ScheduleViewer(props) {
   const [title, setTitle] = useState("")
   const [subtitle, setSubtitle] = useState("")
 
-  // useEffect(() => {
-  //     let limit = 20 * (1000 / 200) // seconds * intervals per second
-  //     let initCheck = setInterval(() => {
-  //         limit--
-  //         console.log("Checking...")
-  //         // DO NOT PUT HERE ANYTHING COMPUTATIONALLY INTENSIVE
-  //         // ...
-
-  //         if (!cache.working || !limit) {
-  //             console.log("cache.working", cache.working) //
-  //             cache.working = 0 // reset it for good messure
-  //             // And immediately clear the interval,
-  //             // upon receiving desired outcome
-  //             clearInterval(initCheck)
-  //             console.log("Interval cleared.")
-  //             setCacheIsWorking(false)
-  //         }
-  //     }, /*25*/200)
-  // }, [])
-
   useEffect(() => {
-    // if (cacheIsWorking) return
-
     const init = async () => {
       let user = await retrieveUserData(cache)
       setUser(user)
@@ -96,7 +72,6 @@ export default function ScheduleViewer(props) {
       setCalendarData(classes)
     }
     init()
-    // }, [cacheIsWorking])
   }, [])
 
   useEffect(() => {
@@ -112,33 +87,9 @@ export default function ScheduleViewer(props) {
     setDataIsFormatted(true)
   }, [calendarData])
 
-  useEffect(() => {
-    if (!dataIsFormatted) return
-
-    CalendarCreate(
-      <CalendarView
-        containerStyle={{
-          borderWidth: 1,
-          borderColor: colors.gray,
-        }}
-        data={calendarData}
-        slctdDate={slctdDate}
-        setSlctdDate={setSlctdDate}
-      />
-    )
-    CalendarItemListCreate(
-      <ClassList
-        containerStyle={styles.classListContainer}
-        data={calendarData}
-        dateString={slctdDate}
-      />
-    )
-
-  }, [dataIsFormatted, slctdDate])
 
 
-
-  if (!user) return <View />
+  if (!user || !dataIsFormatted) return <View />
 
   return (
     <ScrollView contentContainerStyle={styles.scrollView}>
@@ -211,8 +162,23 @@ export default function ScheduleViewer(props) {
 
       <View style={styles.capsule}>
         <View style={styles.innerCapsule}>
-          {Calendar}
-          {CalendarItemList}
+
+          <CalendarView
+            containerStyle={{
+              borderWidth: 1,
+              borderColor: colors.gray,
+            }}
+            data={calendarData}
+            slctdDate={slctdDate}
+            setSlctdDate={setSlctdDate}
+          />
+
+          <ClassList
+            containerStyle={styles.classListContainer}
+            data={calendarData}
+            dateString={slctdDate}
+          />
+
         </View>
       </View>
 

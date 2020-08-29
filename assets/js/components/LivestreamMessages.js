@@ -88,6 +88,15 @@ export default function LivestreamMessages(props) {
     const sortedChat = newChat
 
     const Message = props => {
+        const [iconUri, setIconUri] = useState(null)
+        useEffect(() => {
+            const init = async () => {
+                let iconUri = await publicStorage(props.icon_uri)
+                setIconUri = iconUri
+            }
+            init()
+        }, [])
+
         const stickToRight = props.stickToRight
         const Time =
             <Text style={{
@@ -107,7 +116,7 @@ export default function LivestreamMessages(props) {
                     borderRadius: 999,
                     overflow: "hidden",
                 }}
-                source={{ uri: publicStorage(props.icon_uri) }}
+                source={{ uri: iconUri }}
             />
         
         return (

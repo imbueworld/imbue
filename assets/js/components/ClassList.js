@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { fonts } from '../contexts/Styles'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Icon from './Icon'
-import { publicStorage } from '../backend/HelperFunctions'
+import { publicStorage } from '../backend/CacheFunctions'
 import LiveSoonIcon from './badges/LiveSoonIcon'
 
 
@@ -18,6 +18,16 @@ export default function ClassList(props) {
 
     const [Items, ItemsCreate] = useState(null)
     const [classes, setClasses] = useState(null)
+
+    const [iconUri, setIconUri] = useState(null)
+
+    useEffect(() => {
+        const init = async () => {
+            let iconUri = await publicStorage("workout.jpg") // To-Do
+            setIconUri(iconUri)
+        }
+        init()
+    }, [])
 
     useEffect(() => {
         if (!(calendarData instanceof Array)) return
@@ -37,6 +47,7 @@ export default function ClassList(props) {
 
     useEffect(() => {
         if (!classes) return
+        if (!iconUri) return
 
         let items = []
         classes.forEach(doc => {
@@ -98,7 +109,7 @@ export default function ClassList(props) {
                                     height: "100%",
                                     zIndex: -100,
                                 }}
-                                source={{ uri: publicStorage("workout.jpg") }}
+                                source={{ uri: iconUri }}
                             />
 
                             <View style={{
@@ -115,7 +126,7 @@ export default function ClassList(props) {
             })
         })
         ItemsCreate(items)
-    }, [classes])
+    }, [classes, iconUri])
 
     return (
         <View style={[

@@ -15,7 +15,7 @@ export default function GoogleLoginButton(props) {
                 borderRadius: 999,
                 ...props.containerStyle,
             }}
-            underlayColor="#00000012"
+            underlayColor="#00000020"
             onPress={() => GoogleLogin(cache, accountType)}
         >
             <Icon

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
-import MembershipPopup from '../components/popups/MembershipPopup'
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 
@@ -112,144 +111,133 @@ export default function GymDescription(props) {
   if (!gym) return <View />
 
   return (
-    <>
-      {popup !== "membership" ? null :
-        <MembershipPopup
-          data={{
-            name: gym.name
-          }}
-          onProceed={() => setPopup("buy")}
-          onX={() => setPopup(false)}
-        />}
+    <GymLayout
+      innerContainerStyle={{
+        paddingBottom: 10,
+      }}
+      data={gym}
+    >
+      {Name}
+      {Genres}
+      {Desc}
 
-      <GymLayout
-        innerContainerStyle={{
-          paddingBottom: 10,
+      <CustomButton
+        style={{
+          marginBottom: 0,
         }}
-        data={gym}
-      >
-        {Name}
-        {Genres}
-        {Desc}
+        title="Visit Classes"
+        onPress={openClassesSchedule}
+        Icon={
+          <Icon
+            source={require("../components/img/png/calendar.png")}
+          />
+        }
+      />
 
-        <CustomButton
-          style={{
-            marginBottom: 0,
-          }}
-          title="Visit Classes"
-          onPress={openClassesSchedule}
-          Icon={
-            <Icon
-              source={require("../components/img/png/calendar.png")}
-            />
-          }
-        />
+      {errorMsg
+      ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+      : null}
+      {successMsg
+      ? <Text style={{ color: "green" }}>{successMsg}</Text>
+      : null}
 
-        {errorMsg
-        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-        : null}
-        {successMsg
-        ? <Text style={{ color: "green" }}>{successMsg}</Text>
-        : null}
+      {/* if null, it means it hasn't been initialized yet. */}
+      {hasMembership === null ? <View /> :
+        hasMembership ? null :
+          <>
+          {popup === "buy"
+            ? <CreditCardSelectionV2
+                containerStyle={styles.cardSelectionContainer}
+                title={
+                  <Text>
+                    {`Confirm payment for ${gym.name} `}
+                    <Text style={{
+                      textDecorationLine: "underline"
+                    }}>Gym Online Membership</Text>
+                  </Text>
+                }
+                cache={cache}
+                onX={() => setPopup(null)}
+                onCardSelect={async cardId => {
+                  try {
+                    console.log("Book!")
+                    setErrorMsg("")
+                    setSuccessMsg("")
 
-        {/* if null, it means it hasn't been initialized yet. */}
-        {hasMembership === null ? <View /> :
-          hasMembership ? null :
-            <>
-            {popup === "buy"
-              ? <CreditCardSelectionV2
-                  containerStyle={styles.cardSelectionContainer}
-                  title={
-                    <Text>
-                      {`Confirm payment for ${gym.name} `}
-                      <Text style={{
-                        textDecorationLine: "underline"
-                      }}>Gym Online Membership</Text>
-                    </Text>
-                  }
-                  cache={cache}
-                  onX={() => setPopup(null)}
-                  onCardSelect={async cardId => {
-                    try {
-                      console.log("Book!")
-                      setErrorMsg("")
-                      setSuccessMsg("")
+                    await purchaseMemberships(cache, {
+                      membershipIds: [gym.id],
+                      creditCardId: cardId,
+                      price: gym.membership_price,
+                      description: `Gym Online Membership for ${gym.name}`,
+                      partnerId: gym.partner_id,
+                      gymId: gym.id,
+                      purchaseType: "membership",
+                    })
 
-                      await purchaseMemberships(cache, {
-                        membershipIds: [gym.id],
-                        creditCardId: cardId,
-                        price: gym.membership_price,
-                        description: `Gym Online Membership for ${gym.name}`,
-                        partnerId: gym.partner_id,
-                        gymId: gym.id,
-                        purchaseType: "membership",
-                      })
-
-                      refresh(r + 1)
-                    } catch (err) {
-                      switch (err.code) {
-                        case "busy":
-                          setErrorMsg(err.message)
-                          break
-                        case "membership-already-bought":
-                          setSuccessMsg(err.message)
-                          break
-                        default:
-                          setErrorMsg("Something prevented the action.")
-                          setErrorMsg(err.message)
-                          break
-                      }
+                    refresh(r + 1)
+                  } catch (err) {
+                    switch (err.code) {
+                      case "busy":
+                        setErrorMsg(err.message)
+                        break
+                      case "membership-already-bought":
+                        setSuccessMsg(err.message)
+                        break
+                      default:
+                        setErrorMsg("Something prevented the action.")
+                        setErrorMsg(err.message)
+                        break
                     }
-                  }}
-                />
-              : <>
-                <CustomButton
-                  style={{
-                    marginBottom: 0,
-                  }}
-                  title="Get Membership"
-                  onPress={() => setPopup("buy")}
-                  Icon={
-                    <Icon
-                      source={require("../components/img/png/membership.png")}
-                    />
                   }
-                />
-                <CustomButton
-                  style={{
-                    marginBottom: 0,
-                  }}
-                  textStyle={{
-                    fontSize: 16,
-                  }}
-                  title="Get Imbue Universal Membership"
-                  onPress={() => props.navigation.navigate("PurchaseUnlimited")}
-                  Icon={
-                    <Icon
-                      source={require("../components/img/png/membership-2.png")}
-                    />
-                  }
-                />
-                </>}
-            </>}
+                }}
+              />
+            : <>
+              <CustomButton
+                style={{
+                  marginBottom: 0,
+                }}
+                title="Get Membership"
+                onPress={() => setPopup("buy")}
+                Icon={
+                  <Icon
+                    source={require("../components/img/png/membership.png")}
+                  />
+                }
+              />
+              <CustomButton
+                style={{
+                  marginBottom: 0,
+                }}
+                textStyle={{
+                  fontSize: 16,
+                }}
+                title="Get Imbue Universal Membership"
+                onPress={() => props.navigation.navigate("PurchaseUnlimited")}
+                Icon={
+                  <Icon
+                    source={require("../components/img/png/membership-2.png")}
+                  />
+                }
+              />
+              </>}
+          </>}
 
-        {hasMembership === "gym" ?
-          <MembershipApprovalBadge
-            containerStyle={{
-              marginTop: 10,
-            }}
-            data={gym}
-          /> : null}
+      {hasMembership === "gym" ?
+        <MembershipApprovalBadge
+          containerStyle={{
+            marginTop: 10,
+          }}
+          data={gym}
+        /> : null}
 
-        {hasMembership === "imbue" ?
-          <MembershipApprovalBadgeImbue
-            containerStyle={{
-              marginTop: 10,
-            }}
-            data={gym}
-          /> : null}
-      </GymLayout>
-    </>
+      {hasMembership === "imbue" ?
+        <MembershipApprovalBadgeImbue
+          containerStyle={{
+            marginTop: 10,
+          }}
+          data={gym}
+        /> : null}
+    </GymLayout>
   )
 }
 

@@ -40,14 +40,14 @@ export default function GymBadge(props) {
                     
                 </View>
 
-                <View style={styles.infoContainer}>
+                {/* <View style={styles.infoContainer}>
                     <Text style={styles.font}>
                         {props.rating}
                     </Text>
                     <Text style={styles.font}>
                         {props.relativeDistance}
                     </Text>
-                </View>
+                </View> */}
 
             </View>
 

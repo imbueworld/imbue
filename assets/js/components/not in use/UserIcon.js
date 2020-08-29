@@ -1,6 +1,6 @@
 import React from 'react'
 import { StyleSheet, Image, View } from 'react-native'
-import { colors, simpleShadow } from '../contexts/Colors'
+import { simpleShadow } from '../../contexts/Colors'
 
 
 

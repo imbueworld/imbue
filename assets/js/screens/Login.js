@@ -28,10 +28,9 @@ export default function Login(props) {
   useEffect(() => {
       auth().onAuthStateChanged(async user => {
       if (user) {
-        console.log(user)
-        console.log("Authentification sequence complete.")
-        // await new Promise(r => setTimeout(r, 200)) // sleep
-        // props.navigation.navigate("Boot", { referrer: "Login" })
+        console.log("[Login] Authentification sequence complete.")
+        await new Promise(r => setTimeout(r, 200)) // sleep
+        props.navigation.navigate("Boot", { referrer: "Login" })
       }
     })
   }, [])

@@ -37,6 +37,11 @@ export default function PartnerDashboard(props) {
             }}
             hideBackButton={true}
             data={{ name: user.name, iconUri: user.icon_uri }}
+            buttonOptions={{
+                logOut: {
+                    show: true,
+                },
+            }}
         >
             {/* <TouchableOpacity
                 style={styles.logOutButtonContainer}
@@ -83,6 +88,16 @@ export default function PartnerDashboard(props) {
                 onPress={() => {props.navigation.navigate(
                     "ScheduleViewer",
                     { gymId: user.associated_gyms[0] })}}
+            />
+            <CustomButton
+              icon={
+                <Icon
+                  source={require("../components/img/png/profile.png")}
+                />
+              }
+              title="Edit Profile"
+              onPress={() => props.navigation.navigate(
+                "ProfileSettings")}
             />
             <CustomButton
                 icon={

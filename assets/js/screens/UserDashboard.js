@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, View, Animated, TouchableHighlight } from 'react-native'
+import { StyleSheet, View, Animated, TouchableHighlight, BackHandler } from 'react-native'
 
 import { useDimensions } from '@react-native-community/hooks'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
@@ -13,18 +13,19 @@ import GymBadge from "../components/GymBadge"
 import auth from "@react-native-firebase/auth"
 import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByUser } from '../backend/CacheFunctions'
 import Icon from '../components/Icon'
-import { publicStorage } from '../backend/HelperFunctions'
+import { publicStorage } from '../backend/CacheFunctions'
 import { simpleShadow } from '../contexts/Colors'
 import { GoogleSignin } from '@react-native-community/google-signin'
-
-// import UserIcon from "../components/not in use/UserIcon"
+import { cache as CACHE } from "../backend/CacheFunctions"
 
 
 
 export default function UserDashboard(props) {
   let cache = props.route.params.cache
+  const navigation = props.navigation
 
-  const [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(null)
+
   const { width, height } = useDimensions().window
   const slidingAnim = useRef(new Animated.Value(-1 * width - 25)).current
 
@@ -47,6 +48,68 @@ export default function UserDashboard(props) {
     init()
   }, [])
 
+  /**
+   * Some logic to control Native Back Button
+   */
+  useEffect(() => {
+    CACHE("UserDashboard/toggleMenu").set(() => setExpanded(expanded => !expanded))
+
+    // if (expanded) {
+    //   // CACHE("device/onBack").set(() => setExpanded(expanded => !expanded))
+    //   CACHE("device/onBack/controlled").set(true)
+    // } else {
+    //   CACHE("device/onBack/controlled").set(false)
+    //   // CACHE("device/onBack").set(() => {})
+    // }
+    // Takes control or releases it upon each toggle of the side menu
+    if (expanded) CACHE("UserDashboard/toggleMenu/enabled").set(true)
+    else CACHE("UserDashboard/toggleMenu/enabled").set(false)
+
+    // Stops listening upon leaving screen
+    navigation.addListener("blur", () => {
+      CACHE("UserDashboard/toggleMenu/enabled").set(false)
+      // CACHE("device/onBack").set(() => {})
+    })
+
+    // Continues listening upon coming back to screen
+    navigation.addListener("focus", () => {
+      if (expanded === null) return // do not run on initial render
+      // CACHE("device/onBack").set(() => setExpanded(expanded => !expanded))
+      CACHE("UserDashboard/toggleMenu/enabled").set(true)
+    })
+
+    const onBack = () => {
+      const controlled = CACHE("UserDashboard/toggleMenu/enabled").get()
+      const toggleMenu = CACHE("UserDashboard/toggleMenu").get()
+
+      if (controlled) {
+        toggleMenu()
+        return true
+      }
+    }
+    
+    // Even though this is called every expanded state change,
+    // assuming it doesn't matter how many listeners are added
+    BackHandler.addEventListener('hardwareBackPress', onBack)
+  }, [expanded])
+
+  // /**
+  //  * 
+  //  */
+  // useEffect(() => {
+  //     function onBack() {
+  //         const controlled = CACHE("device/onBack/controlled").get()
+
+  //         if (controlled) {
+  //             const handler = CACHE("device/onBack").get()
+  //             handler()
+  //             return true
+  //         }
+  //     }
+
+  //     BackHandler.addEventListener('hardwareBackPress', onBack)
+  // }, [])
+
   useEffect(() => {
     if (!gyms) return
 
@@ -57,7 +120,9 @@ export default function UserDashboard(props) {
         <Marker
           coordinate={gym.coordinate}
           key={idx}
-          onPress={() => {
+          onPress={async () => {
+            const gymIconUri = await publicStorage(gym.icon_uri)
+
             GymBadgeCreate(
               gyms
                 .filter((gym, idx2) => idx2 === idx)
@@ -69,7 +134,7 @@ export default function UserDashboard(props) {
                       desc={gym.description}
                       rating={`${gym.rating} (${gym.rating_weight})`}
                       relativeDistance={""}
-                      iconUri={publicStorage(gym.icon_uri)}
+                      iconUri={gymIconUri}
                       key={idx}
                       onMoreInfo={() => {
                         props.navigation.navigate(
@@ -87,20 +152,9 @@ export default function UserDashboard(props) {
     ))
   }, [gyms])
 
-  function sidePanelToggle() {
-    if (expanded) {
-      sidePanelSlideIn()
-      setExpanded(false)
-    }
-    else {
-      sidePanelSlideOut()
-      setExpanded(true)
-    }
-  }
-
   function sidePanelSlideIn() {
     Animated.timing(slidingAnim, {
-      toValue: -1 * width - 25, // -35 to hide the added side in <ProfileLayout /> as well
+      toValue: -1 * width - 25, // -25 to hide the added side in <ProfileLayout /> as well
       duration: 275,
       useNativeDriver: false,
     }).start()
@@ -114,13 +168,21 @@ export default function UserDashboard(props) {
     }).start()
   }
 
+  useEffect(() => {
+    if (expanded === null) return // do not run on initial render
+    if (expanded) sidePanelSlideOut()
+    else sidePanelSlideIn()
+  }, [expanded])
+
+
+
   return (
     <>
     <MapView
       style={styles.map}
       provider={PROVIDER_GOOGLE}
       customMapStyle={mapStyle}
-      region= {{
+      initialRegion={{
         latitude: 37.78825,
         longitude: -122.4324,
         latitudeDelta: 0.0922,
@@ -130,8 +192,7 @@ export default function UserDashboard(props) {
       {Markers}
     </MapView>
 
-    {CurrentGymBadge}
-    {/* {Menu} */}
+    { CurrentGymBadge }
 
     {
     !user ? null :
@@ -147,22 +208,11 @@ export default function UserDashboard(props) {
             borderRadius: 999,
           }}
           underlayColor="#000000C0"
-          onPress={sidePanelToggle}
+          onPress={() => setExpanded(!expanded)}
           // [uncomment upon DEBUG start]
-          onLongPress={sidePanelToggle}
-          // onLongPress={() => console.log("./.../iuyhb")}
+          onLongPress={() => setExpanded(!expanded)}
           // [comment upon DEBUG end]
         >
-          {/* <UserIcon
-            containerStyle={{
-              width: 64,
-              height: 64,
-              borderRadius: 999,
-              overflow: "hidden",
-              ...simpleShadow,
-            }}
-            source={{ uri: publicStorage(user.icon_uri) }}
-          /> */}
           <Icon
             containerStyle={{
               width: 64,
@@ -171,7 +221,7 @@ export default function UserDashboard(props) {
               overflow: "hidden",
               ...simpleShadow,
             }}
-            source={{ uri: publicStorage(user.icon_uri) }}
+            source={{ uri: user.icon_uri }}
           />
         </TouchableHighlight>
       </View>
@@ -191,11 +241,11 @@ export default function UserDashboard(props) {
               auth().signOut()
               GoogleSignin.signOut()
               props.navigation.navigate("Boot", { referrer: "UserDashboard" })
-              if (expanded) sidePanelToggle()
+              if (expanded) setExpanded(false)
             }
           },
         }}
-        onBack={sidePanelToggle}
+        onBack={() => setExpanded(!expanded)}
       >
         <CustomButton
           icon={

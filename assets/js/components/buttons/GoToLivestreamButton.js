@@ -45,7 +45,7 @@ export default function GoToLivestreamButton(props) {
         style={{
           borderRadius: 999,
         }}
-        underlayColor="#00000012"
+        underlayColor="#00000020"
         onPress={props.onPress || undefined}
       >
         <Icon
