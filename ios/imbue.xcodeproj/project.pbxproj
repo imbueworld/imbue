@@ -20,6 +20,10 @@
 		9691B7744B618B692C08F747 /* libPods-imbue-imbueTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E69046DEA1292F60F8ACAFA7 /* libPods-imbue-imbueTests.a */; };
 		E9F56F7F74BD47956B793E22 /* libPods-imbue-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC67F81747655B2D41DD92B2 /* libPods-imbue-tvOS.a */; };
 		FD16BBEAABDD9926C9394FF8 /* libPods-imbue-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C8439C25D4C985BB8AAF41 /* libPods-imbue-tvOSTests.a */; };
+		BA7CE4AD297A4E7E99680861 /* LuloClean-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */; };
+		1FCF1D7A77C24747939CD2E9 /* PlayfairDisplay-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */; };
+		D9940140254844E8A0D6F785 /* PlayfairDisplay-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */; };
+		E7595D1ECE484D39AACDEA2B /* PlayfairDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -67,6 +71,10 @@
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
 		F44C31C387D2C408067B8B61 /* Pods-imbue-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-imbue-tvOSTests/Pods-imbue-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
+		1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */ = {isa = PBXFileReference; name = "LuloClean-Bold.ttf"; path = "../assets/fonts/LuloClean-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */ = {isa = PBXFileReference; name = "PlayfairDisplay-Black.ttf"; path = "../assets/fonts/PlayfairDisplay-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */ = {isa = PBXFileReference; name = "PlayfairDisplay-Medium.ttf"; path = "../assets/fonts/PlayfairDisplay-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
+		61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */ = {isa = PBXFileReference; name = "PlayfairDisplay-Regular.ttf"; path = "../assets/fonts/PlayfairDisplay-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +189,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				1F4E5398FA30E3178C690799 /* Pods */,
+				44D42B1E87904BDE8A505917 /* Resources */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -197,6 +206,18 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		44D42B1E87904BDE8A505917 /* Resources */ = {
+			isa = "PBXGroup";
+			children = (
+				1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */,
+				F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */,
+				88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */,
+				61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+			path = "";
 		};
 /* End PBXGroup section */
 
@@ -343,6 +364,10 @@
 			files = (
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				BA7CE4AD297A4E7E99680861 /* LuloClean-Bold.ttf in Resources */,
+				1FCF1D7A77C24747939CD2E9 /* PlayfairDisplay-Black.ttf in Resources */,
+				D9940140254844E8A0D6F785 /* PlayfairDisplay-Medium.ttf in Resources */,
+				E7595D1ECE484D39AACDEA2B /* PlayfairDisplay-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,6 +7,7 @@ import FacebookLoginButton from './buttons/FacebookLoginButton'
 
 export default function SocialLogin(props) {
   let cache = props.cache
+  const onAuthChange = props.onAuthChange
 
   if (props.options) {
     for (let option in props.options) {
@@ -24,11 +25,13 @@ export default function SocialLogin(props) {
         cache={cache}
         accountType={options.accountType}
         imageStyle={styles.socialIcon}
+        onAuthChange={onAuthChange}
       />
       <FacebookLoginButton
         cache={cache}
         accountType={options.accountType}
         imageStyle={styles.socialIcon}
+        onAuthChange={onAuthChange}
       />
     </View>
   )

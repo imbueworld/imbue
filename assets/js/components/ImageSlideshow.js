@@ -74,7 +74,8 @@ export default function ImageSlideshow(props) {
                 backgroundColor: idx === cIdx ? `#ffffffA0` : "#00000012",
                 borderRadius: 999,
                 borderWidth: 0.5,
-                borderColor: colors.gray,
+                // borderColor: colors.gray,
+                borderColor: colors.buttonFill,
             }}/>
             {idx !== imageCount - 1
             ?   <View style={{
@@ -85,7 +86,7 @@ export default function ImageSlideshow(props) {
     )
 
     return (
-        <View style={{ zIndex: -100 }}>
+        <View style={props.containerStyle}>
             {props.disableUserControl ? null :
             <>
             <View style={{
@@ -129,5 +130,3 @@ export default function ImageSlideshow(props) {
         </View>
     )
 }
-
-const styles = StyleSheet.create({})

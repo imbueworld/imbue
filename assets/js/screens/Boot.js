@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Text, Button, BackHandler } from 'react-native'
+import { StyleSheet, ScrollView, View, Text, Button } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
 import auth from "@react-native-firebase/auth"
 import { retrieveUserData } from '../backend/CacheFunctions'
 import { GoogleSignin } from '@react-native-community/google-signin'
+import { LoginManager } from 'react-native-fbsdk';
+import { StackActions } from '@react-navigation/native'
 
 
 
 export default function Boot(props) {
     // auth().signOut()
     // GoogleSignin.signOut()
+    // LoginManager.logOut()
     let cache = props.route.params.cache
 
     const [booting, setBooting] = useState(true)
@@ -97,6 +100,37 @@ export default function Boot(props) {
                     title="GoLive"
                     onPress={() => { props.navigation.navigate("GoLive") }}
                 />
+
+                <View style={{ height: 10, borderBottomWidth: 1, }} />
+
+                <View style={{ height: 10 }} />
+                <Button
+                    title="AddPaymentMethod"
+                    onPress={() => {
+                        const pushAction = StackActions.push("AddPaymentMethod")
+                        props.navigation.dispatch(pushAction)
+                    }}
+                />
+
+                <View style={{ height: 10 }} />
+                <Button
+                    title="ClassDescription"
+                    onPress={() => {
+                        const pushAction = StackActions.push("ClassDescription", { gymId: "4qmQLlVGU5Jgd0NLv3Wr" })
+                        props.navigation.dispatch(pushAction)
+                    }}
+                />
+
+                <View style={{ height: 10 }} />
+                <Button
+                    title="GymDescription"
+                    onPress={() => {
+                        const pushAction = StackActions.push("GymDescription", { gymId: "4qmQLlVGU5Jgd0NLv3Wr" })
+                        props.navigation.dispatch(pushAction)
+                    }}
+                />
+
+                <View style={{ height: 10, borderBottomWidth: 1, }} />
 
             </View>
         </ScrollView>

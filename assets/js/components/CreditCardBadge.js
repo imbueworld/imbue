@@ -33,7 +33,8 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         flexWrap: "nowrap",
         borderWidth: 1,
-        borderColor: colors.gray,
+        // borderColor: colors.gray,
+        borderColor: colors.buttonFill,
         borderRadius: 30,
         marginTop: 9, // 19
         marginBottom: 1,
@@ -42,7 +43,8 @@ const styles = StyleSheet.create({
     creditCardText: {
         marginLeft: 10,
         alignSelf: "center",
-        color: colors.gray,
+        // color: colors.gray,
+        color: colors.buttonFill,
         fontSize: 20,
     },
 })

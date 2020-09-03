@@ -1,4 +1,7 @@
+import firestore from "@react-native-firebase/firestore"
+import functions from "@react-native-firebase/functions"
 import database from "@react-native-firebase/database"
+import { retrieveUserData } from "./CacheFunctions"
 
 
 
@@ -11,9 +14,7 @@ export async function sendMessage({ gymId, uid, message }) {
 
 export async function registerParticipant({ gymId, uid, name, icon_uri }) {
     const ref = database().ref(`livestreams/participants/${gymId}`)
-    // const node = ref.push()
-    // await node.set({ uid, name, icon_uri })
-    // return node
+
     let doc = {}
     doc[ uid ] = {
         name,
@@ -23,41 +24,44 @@ export async function registerParticipant({ gymId, uid, name, icon_uri }) {
     ref.update(doc)
 }
 
-// export async function addParticipantListener(cache, gymId, participantHandler) {
-//     if (!cache.livestream) cache.livestream = {}
-//     if (cache.livestream.initialized) return
-//     const ptcsNodeRef = database().ref(`livestreams/participants/${gymId}`)
 
-//     await ptcsNodeRef.once('value', snap => {
-//         cache.livestream.participants = Object.values(snap.val() || [])
 
-//     })
+/**
+ * TEMPLATE
+ */
+export async function initializeLivestream(cache) {
+    const user = await retrieveUserData(cache)
+    if (cache.user.stream_key) return cache.user.stream_key
 
-//     ptcsNodeRef.limitToLast(1).on('child_added', snap => {
-//         const ptc = snap.val()
-//         console.log("ptcs", cache.livestream.participants)
+    let streamKey
+    try {
+        // 15 Attempts to retrieve stream key after stream has been created
+        // for the first time, or insta return the key
+        for (let i = 0; i < 15; i++) {
+            streamKey = (await firestore()
+                .collection("partners")
+                .doc(user.id)
+                .get()
+            ).data().stream_key
 
-//         // Do not add, if uid is already in ptcs
-//         let existingUids = cache.livestream.participants.map(ptc => ptc.uid)
-//         if (existingUids.includes(ptc.uid)) {
-//             participantHandler(cache.livestream.participants)
-//             return
-//         }
-//         // Append
-//         cache.livestream.participants = [...cache.livestream.participants, ptc]
-//         participantHandler(cache.livestream.participants)
-//     })
+            if (!streamKey && i === 0) {
+                console.log("Creating a brand new stream.")
+                const createLivestream = functions().httpsCallable("createLivestream")
+                await createLivestream()
+            } else if (!streamKey) {
+                console.log("Waiting for 4.5s.")
+                await new Promise(r => setTimeout(r, 4500))
+            } else {
+                break
+            }
+        }
 
-//     cache.livestream.initialized = true
+        // Update cache
+        cache.user.stream_key = streamKey
 
-//     // function participantListener() {
-//     //     let length = 0
-//     //     let i = 0
-//     //         if (i < 100) {console.log(i); i++}
-//     //         if (cache.livestream.participants.length !== length) {
-//     //             length = cache.livestream.participants.length
-//     //             participantHandler(cache.livestream.participants)
-//     //         }
-//     // }
-//     // participantListener()
-// }
+        return streamKey
+    } catch (err) {
+        console.error(err)
+        throw new Error("Something prevented the action.")
+    }
+}

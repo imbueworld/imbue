@@ -61,7 +61,7 @@ export default function PartnerGymSettings(props) {
             innerContainerStyle={{
                 paddingBottom: 10,
             }}
-            data={{ name: user.name, iconUri: user.icon_uri }}
+            data={{ name: user.name, iconUri: user.icon_uri_full }}
         >
 
             {errorMsg

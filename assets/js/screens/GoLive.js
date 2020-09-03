@@ -6,6 +6,9 @@ import { NodeCameraView } from "react-native-nodemediaclient"
 import CustomButton from "../components/CustomButton"
 import LivestreamLayout from '../layouts/LivestreamLayout'
 import { retrieveUserData } from '../backend/CacheFunctions'
+import { initializeLivestream } from '../backend/LivestreamFunctions'
+
+import { cache as CACHE } from "../backend/CacheFunctions"
 
 
 
@@ -46,7 +49,7 @@ export default function GoLive(props) {
         }
     }
 
-    let stream
+    // let stream
 
     console.log("isStreaming", isStreaming)
 
@@ -58,17 +61,15 @@ export default function GoLive(props) {
                 PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
                 PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
             ])
-            let hasAllPermissions = true
+            // let hasAllPermissions = true
             Object.keys(granted).forEach(key => {
-                // key: the name of the object key
-                // index: the ordinal position of the key within the object
                 if (granted[key] !== "granted") {
-                    console.log("Does not have permission for: ", granted[key])
-                    hasAllPermissions = false
+                    console.log("Does not have permission for: ", key)
+                    // hasAllPermissions = false
                 }
             })
-            console.log("hasAllPermissions: ", hasAllPermissions)
-            setHasAllPermisions(hasAllPermissions)
+            // console.log("hasAllPermissions: ", hasAllPermissions)
+            // setHasAllPermisions(hasAllPermissions)
         } catch (err) {
             console.error(err)
         }
@@ -78,20 +79,24 @@ export default function GoLive(props) {
 
     const toggleStream = async () => {
         if (Platform.OS === "android") {
-            if (!hasAllPermissions) {
-                checkPermissions()
-                return
-            }
+            // if (!hasAllPermissions) {
+                await checkPermissions()
+            // }
         }
 
-        setStreamKey( await initializeStream(cache) )
+        let streamKey = await initializeLivestream(cache)
+        setStreamKey(streamKey)
+        console.log("Returned stream key:", streamKey)
 
+        const stream = CACHE("streamRef").get()
+        console.log("stream", stream)
         if (isStreaming) stream.stop()
         else stream.start()
         setIsStreaming(!isStreaming)
     }
 
     return (
+        <>
         <LivestreamLayout
             user={user}
             gymId={gymId}
@@ -99,32 +104,41 @@ export default function GoLive(props) {
                 leaveLivestream: {
                     show: false,
                 },
+                goBack: {
+                    show: true,
+                },
                 goLive: {
-                    // show: true,
-                },
-                viewButtonPanel: {
-                    show: false,
-                    state: "closed",
-                },
-                viewChat: {
-                    state: "open",
+                    show: true,
+                    onLongPress: toggleStream,
                 },
             }}
-        >
-            {/* <NodeCameraView
+        />
+
+        <View style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            zIndex: -100,
+            ...props.containerStyle,
+        }}>
+            <NodeCameraView
                 style={{
                     width: "100%",
                     height: "100%",
                     zIndex: -100,
                     // position: "absolute",
                 }}
-                ref={vb => { stream = vb }}
+                ref={vb => {
+                    // stream = vb
+                    CACHE("streamRef").set(vb)
+                }}
                 outputUrl={`${base}${streamKey}`}
                 camera={settings.camera}
                 audio={settings.audio}
                 video={settings.video}
                 autopreview
-            /> */}
-        </LivestreamLayout>
+            />
+        </View>
+        </>
     )
 }

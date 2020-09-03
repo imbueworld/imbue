@@ -13,7 +13,8 @@ export default function CustomBar(props) {
 const styles = StyleSheet.create({
     bar: {
         marginVertical: 15,
-        borderColor: colors.gray,
+        // borderColor: colors.gray,
+        borderColor: colors.buttonFill,
         borderTopWidth: 1,
     },
 })

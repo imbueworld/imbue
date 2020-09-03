@@ -1,21 +1,9 @@
 import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
+import { initializeAccount } from './BackendFunctions';
 
-export async function FacebookLogin(accountType) {
-  auth().onAuthStateChanged(user => {
-    if (user) {
-      if (user.displayName.substring(0, 5) === "user_") {
-        console.log("Recognized user account.")
-      } else if (user.displayName.substring(0, 8) === "partner_") {
-        console.log("Recognized partner account.")
-      } else {
-        let options = {
-          user,
-          accountType,
-        }
-        initializeAccount(cache, {}, options)
-      }
-    }
+export async function FacebookLogin(cache, accountType, onAuthChange) {
+  auth().onAuthStateChanged(async user => {
   })
   
 
@@ -37,5 +25,20 @@ export async function FacebookLogin(accountType) {
   const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
 
   // Sign-in the user with the credential
-  return auth().signInWithCredential(facebookCredential);
+  const { user } = auth().signInWithCredential(facebookCredential);
+
+  if (user) {
+    if (user.displayName.substring(0, 5) === "user_") {
+      console.log("Recognized user account.")
+    } else if (user.displayName.substring(0, 8) === "partner_") {
+      console.log("Recognized partner account.")
+    } else {
+      let options = {
+        user,
+        accountType,
+      }
+      await initializeAccount(cache, {}, options)
+    }
+    onAuthChange(user)
+  }
 }

@@ -28,7 +28,7 @@ export default function SchedulePopulate(props) {
                 paddingHorizontal: 0,
                 paddingBottom: 10,
             }}
-            data={{ name: user.name, iconUri: user.icon_uri }}
+            data={{ name: user.name, iconUri: user.icon_uri_full }}
         >
             <CalendarPopulateForm
                 containerStyle={{

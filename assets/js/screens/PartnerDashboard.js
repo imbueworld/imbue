@@ -36,33 +36,13 @@ export default function PartnerDashboard(props) {
                 padding: 10,
             }}
             hideBackButton={true}
-            data={{ name: user.name, iconUri: user.icon_uri }}
+            data={{ name: user.name, iconUri: user.icon_uri_full }}
             buttonOptions={{
                 logOut: {
                     show: true,
                 },
             }}
         >
-            {/* <TouchableOpacity
-                style={styles.logOutButtonContainer}
-                onPress={() => console.log("To-Do: Intuitively shows what the button does")}
-                onLongPress={() => {
-                    auth().signOut()
-                    props.navigation.navigate("Boot", { referrer: "PartnerDashboard" })
-                }}
-            >
-                <LogOut
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                    }}
-                    containerStyle={{
-                        left: 1.35, // Make-up for the icon's flaw regarding centering
-                        padding: 10,
-                    }}
-                />
-            </TouchableOpacity> */}
-
             <CustomButton
                 icon={
                     <Icon

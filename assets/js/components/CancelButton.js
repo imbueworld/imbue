@@ -14,7 +14,8 @@ export default function CancelButton(props) {
         <View style={{
             backgroundColor: "#00000060",
             borderWidth: 1,
-            borderColor: colors.gray,
+            // borderColor: colors.gray,
+            borderColor: colors.buttonFill,
             borderRadius: 999,
         }}>
             {holdToExit
@@ -38,12 +39,13 @@ export default function CancelButton(props) {
                 style={{
                     height: 50,
                     padding: 10,
+                    borderRadius: 999,
                     justifyContent: "center",
                     ...props.containerStyle,
                 }}
                 underlayColor="#00000012"
                 onPress={() => helpUser(true)}
-                onLongPress={props.onLongPress}
+                onLongPress={props.onLongPress || undefined}
             >
                 <Text style={{
                     color: "white",

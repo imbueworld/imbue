@@ -15,6 +15,7 @@ import { handleAuthError } from '../backend/HelperFunctions'
 
 export default function ProfileSettings(props) {
     let cache = props.route.params.cache
+    console.log(cache)
     const [user, setUser] = useState(null)
 
     useEffect(() => {
@@ -167,7 +168,7 @@ export default function ProfileSettings(props) {
             innerContainerStyle={{
                 paddingBottom: 10,
             }}
-            data={{ name: user.name , iconUri: user.icon_uri }}
+            data={{ name: user.name , iconUri: user.icon_uri_full }}
             buttonOptions={{
                 editPfp: {
                     show: true,
@@ -177,11 +178,13 @@ export default function ProfileSettings(props) {
             {changing === "safeInfo"
             ?   <CustomButton
                     style={styles.button}
+                    textStyle={styles.buttonText}
                     title="Change password"
                     onPress={() => change("password")}
                 />
             :   <CustomButton
                     style={styles.button}
+                    textStyle={styles.buttonText}
                     title="Change profile data"
                     onPress={() => change("safeInfo")}
                 />}
@@ -281,5 +284,8 @@ const styles = StyleSheet.create({
     button: {
         paddingVertical: 10,
         marginHorizontal: 30,
+    },
+    buttonText: {
+        fontSize: 14,
     },
 })

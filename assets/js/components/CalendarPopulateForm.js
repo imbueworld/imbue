@@ -209,7 +209,16 @@ export default function CalendarPopulateForm(props) {
                   { class_id, active_times })
               setSuccessMsg("Successfully added class dates to the gym's official calendar.")
             } catch(err) {
-              setErrorMsg(err.message)
+              switch(err.code) {
+                case "asdfg":
+                  setErrorMsg("asdfg")
+                  break
+                default:
+                  setErrorMsg("Something prevented the action.")
+                  // DEBUG
+                  setErrorMsg(err.message)
+                  break
+              }
             }
           }}
         />
@@ -229,7 +238,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     padding: 10,
     borderWidth: 1,
-    borderColor: colors.gray,
+    // borderColor: colors.gray,
+    borderColor: colors.buttonFill,
     borderRadius: 40,
     overflow: "hidden",
     backgroundColor: "white",
@@ -246,7 +256,8 @@ const styles = StyleSheet.create({
     marginTop: 20,
     backgroundColor: undefined,
     borderWidth: 1,
-    borderColor: colors.gray,
+    // borderColor: colors.gray,
+    borderColor: colors.buttonFill,
     borderRadius: 30,
     overflow: "hidden",
   },

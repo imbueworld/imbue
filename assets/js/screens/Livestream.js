@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { retrieveUserData, retrievePlaybackId } from '../backend/CacheFunctions'
 import LivestreamLayout from '../layouts/LivestreamLayout'
+import Video from 'react-native-video'
 
 
 
@@ -117,21 +118,24 @@ export default function Livestream(props) {
     if (!user) return <View />
 
     return (
+        <>
         <LivestreamLayout
             gymId={gymId}
             user={user}
-        >
-            {/* { !playbackLink ? null :
-            <Video
+        />
+        
+        {   playbackLink
+        ?   <Video
                 style={styles.video}
                 source={{ uri: playbackLink }}
-                onBuffer={() => {console.log("Buffering video...")}}
-                onError={() => {console.log("Error on video!")}}
+                onBuffer={() => { console.log("Buffering video...") }}
+                onError={() => { console.log("Error on video!") }}
                 paused={false}
                 resizeMode={"contain"}
                 // repeat={true}
-            />} */}
-        </LivestreamLayout>
+            />
+        :   null }
+        </>
     )
 }
 

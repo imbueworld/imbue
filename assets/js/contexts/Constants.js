@@ -11,19 +11,7 @@ export const STORAGE = {
 }
 
 export const GENRES = [
-    { label: "Yoga", value: "yoga", /*icon: () => <Icon />*/ },
-    { label: "Muscular Strength", value: "muscular_strength" },
-    { label: "Anaerobic Fitness", value: "anaerobic_fitness" },
-    { label: "Endurance", value: "endurance" },
-    { label: "Yoga", value: "123", /*icon: () => <Icon />*/ },
-    { label: "Muscular Strength", value: "muscular_strength" },
-    { label: "Anaerobic Fitness", value: "anaerobic_fitness" },
-    { label: "Endurance", value: "endurance" },
-    { label: "Yoga", value: "321", /*icon: () => <Icon />*/ },
-    { label: "Muscular Strength", value: "muscular_strength" },
-    { label: "Anaerobic Fitness", value: "anaerobic_fitness" },
-    { label: "Endurance", value: "endurance" },
-    { label: "Yoga", value: "45", /*icon: () => <Icon />*/ },
+    { label: "Yoga", value: "yoga"/*, icon: () => <Icon />*/ },
     { label: "Muscular Strength", value: "muscular_strength" },
     { label: "Anaerobic Fitness", value: "anaerobic_fitness" },
     { label: "Endurance", value: "endurance" },

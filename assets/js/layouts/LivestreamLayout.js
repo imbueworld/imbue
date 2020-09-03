@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text } from 'react-native'
+import { View, Text, BackHandler } from 'react-native'
 
 import database from "@react-native-firebase/database"
 
@@ -9,13 +9,13 @@ import ListButton from '../components/ListButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { useNavigation } from '@react-navigation/native'
 import { registerParticipant, sendMessage } from '../backend/LivestreamFunctions'
-import CustomButton from '../components/CustomButton'
 import ParticipantList from '../components/ParticipantList'
 import Chat from '../components/Chat'
 import AppBackground from '../components/AppBackground'
 import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge'
-import { colors } from '../contexts/Colors'
 import { cache } from '../backend/CacheFunctions'
+import GoLiveButton from '../components/buttons/GoLiveButton'
+import GoBackButton from '../components/buttons/GoBackButton'
 
 
 
@@ -26,8 +26,13 @@ const layoutOptions = {
 }
 
 const buttonOptions = {
+  goBack: {
+    show: false,
+  },
   goLive: {
     show: false,
+    state: "idle" || "streaming",
+    onLongPress: () => {},
   },
   leaveLivestream: {
     show: true,
@@ -60,13 +65,15 @@ export default function LivestreamLayout(props) {
   const [r, refresh] = useState(0)
 
   // Apply props.buttonOptions to buttonOptions
-  if (props.buttonOptions) {
-    Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
-      Object.entries(instructions).forEach(([key, value]) => {
-        buttonOptions[ button ][ key ] = value
+  useEffect(() => {
+    if (props.buttonOptions) {
+      Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
+        Object.entries(instructions).forEach(([key, value]) => {
+          buttonOptions[ button ][ key ] = value
+        })
       })
-    })
-  }
+    }
+  }, [])
 
   // Determine and set the initial customState value
   // This is required for:
@@ -222,6 +229,10 @@ export default function LivestreamLayout(props) {
         const setPtcsList = cache("livestream/functions/setParticipantsList").get()
         if (typeof setPtcsList === "function") setPtcsList(newSetOfPtcs)
       })
+
+      ptcsNodeRef.child(user.id).onDisconnect().update({
+        here: false,
+      })
     }
     init()
 
@@ -251,27 +262,42 @@ export default function LivestreamLayout(props) {
   // }
 
   function setDeck(state) {
-    clearTimeout(buttonOptions.viewButtonPanel.data)
-    buttonOptions.viewButtonPanel.state = state
-
-    if (state === "open") {
-      let timeout = setTimeout(() => {
-        if (buttonOptions.viewChat.state === "open"
-            ||buttonOptions.viewParticipants.state === "open") {
-            return
-          }
-
-        buttonOptions.viewButtonPanel.state = "closed"
-        refresh(r => r + 1)
-      }, 4500)
-      buttonOptions.viewButtonPanel.data = timeout
-    }
-
+    // [uncomment upon DEBUG start]
+    buttonOptions.viewButtonPanel.state = "open"
     refresh(r => r + 1)
+    // [comment upon DEBUG end]
+    
+    // [comment upon DEBUG start]
+    // clearTimeout(buttonOptions.viewButtonPanel.data)
+    // buttonOptions.viewButtonPanel.state = state
+
+    // if (state === "open") {
+    //   let timeout = setTimeout(() => {
+    //     if (buttonOptions.viewChat.state === "open"
+    //         ||buttonOptions.viewParticipants.state === "open") {
+    //         return
+    //       }
+
+    //     buttonOptions.viewButtonPanel.state = "closed"
+    //     refresh(r => r + 1)
+    //   }, 4500)
+    //   buttonOptions.viewButtonPanel.data = timeout
+    // }
+
+    // refresh(r => r + 1)
+    // [uncomment upon DEBUG end]
   }
 
   useEffect(() => {
     setDeck("open")
+  }, [])
+
+  // Disable native device return button, to prevent accidental touch
+  useEffect(() => {
+    const goBack = () => true
+    BackHandler.addEventListener('hardwareBackPress', goBack)
+
+    return () => BackHandler.removeEventListener('hardwareBackPress', goBack)
   }, [])
 
 
@@ -279,23 +305,13 @@ export default function LivestreamLayout(props) {
   return (
     <>
     <View style={{
-      width: "100%",
-      height: "100%",
-      position: "absolute",
-      zIndex: -100,
-      ...props.containerStyle,
-    }}>
-      { Content }
-    </View>
-
-    {/* <View style={{
       position: "absolute",
       backgroundColor: "black",
       width: "100%",
       height: "100%",
       zIndex: -110,
-    }} /> */}
-    <AppBackground />
+    }} />
+    {/* <AppBackground /> */}
 
     {buttonOptions.viewButtonPanel.show
     ? <TouchableWithoutFeedback
@@ -317,11 +333,21 @@ export default function LivestreamLayout(props) {
         position: "absolute",
         zIndex: 105,
       }}>
+        { buttonOptions.goBack.show
+        ? <View style={{
+          position: "absolute",
+          top: 10,
+          left: 10,
+        }}>
+            <GoBackButton />
+          </View>
+        : null }
+
         <TouchableWithoutFeedback
           containerStyle={{
             position: "absolute",
-            top: 10,
-            right: 15,
+            top: 19,
+            right: 20,
           }}
           onPress={() => {
             layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
@@ -348,100 +374,77 @@ export default function LivestreamLayout(props) {
           flexDirection: "row",
           justifyContent: "space-between",
         }}>
-        {buttonOptions.viewChat.show
-        ? <ChatButton
-            onPress={() => {
-              let ptcState, chatState
-              switch (customState.viewChat.state) {
-                case "open":
-                  chatState = "closed"
-                  ptcState = "closed"
-                  setDeck("open") // closes after 4500ms
-                  break
-                case "closed":
-                  chatState = "open"
-                  ptcState = "closed"
-                  break
-              }
-
-              // setCustomState({
-              //   ...customState,
-              //   viewChat: {
-              //     state: chatState,
-              //   },
-              //   viewParticipants: {
-              //     state: ptcState,
-              //   },
-              // })
-
-              console.log("chatState", chatState)
-              console.log("ptcState", ptcState)
-              buttonOptions.viewChat.state = chatState
-              buttonOptions.viewParticipants.state = ptcState
-              refresh(r => r + 1)
-            }}
-          />
-        : null}
-
-        {buttonOptions.leaveLivestream.show
-        ? <CancelButton
-            title="Leave Workout"
-            onLongPress={() => navigation.goBack()}
-          />
-        : null}
-
-        {buttonOptions.goLive.show
-        ? <View style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            justifyContent: "flex-end",
-          }}>
-            <CustomButton
-              style={{
-                width: "75%",
-                alignSelf: "center",
-                marginBottom: 35,
+          {buttonOptions.viewChat.show
+          ? <ChatButton
+              onPress={() => {
+                let ptcState, chatState
+                switch (buttonOptions.viewChat.state) {
+                  case "open":
+                    chatState = "closed"
+                    ptcState = "closed"
+                    setDeck("open") // closes after 4500ms
+                    break
+                  case "closed":
+                    chatState = "open"
+                    ptcState = "closed"
+                    break
+                }
+                buttonOptions.viewChat.state = chatState
+                buttonOptions.viewParticipants.state = ptcState
+                refresh(r => r + 1)
               }}
-              title="ok"
-              // title={isStreaming ? "End Livestream" : "Go Live"}
-              // onLongPress={toggleStream}
             />
-          </View>
-        : null}
-        
-        {buttonOptions.viewParticipants.show
-        ? <ListButton
-            onPress={() => {
-              let ptcState, chatState
-              switch (customState.viewParticipants.state) {
-                case "open":
-                  ptcState = "closed"
-                  chatState = "closed"
-                  setDeck("open") // closes after 4500ms
-                  break
-                case "closed":
-                  ptcState = "open"
-                  chatState = "closed"
-                  break
-              }
+          : null}
 
-              // setCustomState({
-              //   ...customState,
-              //   viewParticipants: {
-              //     state: ptcState,
-              //   },
-              //   viewChat: {
-              //     state: chatState,
-              //   },
-              // })
+          {buttonOptions.leaveLivestream.show
+          ? <CancelButton
+              title="Leave Workout"
+              onLongPress={() => navigation.goBack()}
+            />
+          : null}
 
-              buttonOptions.viewParticipants.state = ptcState
-              buttonOptions.viewChat.state = chatState
-              refresh(r => r + 1)
-            }}
-          />
-        : null}
+          { buttonOptions.goLive.show
+          ? <GoLiveButton
+              title={buttonOptions.goLive.state === "streaming" ? "End Livestream" : "Go Live"}
+              onLongPress={() => {
+                switch(buttonOptions.goLive.state) {
+                  case "streaming":
+                    buttonOptions.goLive.state = "idle"
+                    buttonOptions.goBack.show = true
+                    break
+                  case "idle":
+                    buttonOptions.goLive.state = "streaming"
+                    buttonOptions.goBack.show = false
+                    break
+                }
+                refresh(r => r + 1)
+                
+                buttonOptions.goLive.onLongPress()
+              }}
+            />
+          : null }
+          
+          {buttonOptions.viewParticipants.show
+          ? <ListButton
+              onPress={() => {
+                let ptcState, chatState
+                switch (buttonOptions.viewParticipants.state) {
+                  case "open":
+                    ptcState = "closed"
+                    chatState = "closed"
+                    setDeck("open") // closes after 4500ms
+                    break
+                  case "closed":
+                    ptcState = "open"
+                    chatState = "closed"
+                    break
+                }
+                buttonOptions.viewParticipants.state = ptcState
+                buttonOptions.viewChat.state = chatState
+                refresh(r => r + 1)
+              }}
+            />
+          : null}
         </View>
 
       </View>
@@ -460,6 +463,9 @@ export default function LivestreamLayout(props) {
         gymId={gymId}
         user={user}
         onSend={message => {
+          message = message.trim()
+          if (!message) return
+
           sendMessage({
             gymId,
             uid: user.id,

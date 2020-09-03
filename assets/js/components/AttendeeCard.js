@@ -8,17 +8,15 @@ import { fonts } from '../contexts/Styles'
 
 
 export default function AttendeeCard({ icon_uri, first, last }) {
-    const [iconUri, setIconUri] = useState("")
+    // const [iconUri, setIconUri] = useState("")
 
-    useEffect(() => {
-        const init = async () => {
-            let iconUri = await publicStorage(icon_uri)
-            setIconUri(iconUri)
-        }
-        init()
-    }, [])
-
-    // if (!iconUri) return <View />
+    // useEffect(() => {
+    //     const init = async () => {
+    //         let iconUri = await publicStorage(icon_uri)
+    //         setIconUri(iconUri)
+    //     }
+    //     init()
+    // }, [])
 
     return (
         <View style={{
@@ -31,7 +29,8 @@ export default function AttendeeCard({ icon_uri, first, last }) {
             justifyContent: "space-between",
             alignItems: "center",
             backgroundColor: "#00000012",
-            borderColor: colors.gray,
+            // borderColor: colors.gray,
+            borderColor: colors.buttonFill,
             borderWidth: 1,
             borderRadius: 40,
         }}>
@@ -42,7 +41,7 @@ export default function AttendeeCard({ icon_uri, first, last }) {
                     borderRadius: 999,
                     overflow: "hidden",
                 }}
-                source={{ uri: iconUri }}
+                source={{ uri: icon_uri/*iconUri*/ }}
             />
             <Text style={{
                 flex: 1,

@@ -111,7 +111,7 @@ export default function GymLayout(props) {
         />
       : null}
 
-      <CustomCapsule
+      {/* <CustomCapsule
         containerStyle={[
           styles.container,
           props.containerStyle,
@@ -120,7 +120,7 @@ export default function GymLayout(props) {
           styles.innerContainer,
           props.innerContainerStyle,
         ]}
-      >
+      > */}
         <ImageSlideshow
           imageStyle={styles.image}
           imageInterval={5000}
@@ -208,7 +208,7 @@ export default function GymLayout(props) {
           {props.children}
         </View>
 
-      </CustomCapsule>
+      {/* </CustomCapsule> */}
     </ScrollView>
   )
 }
@@ -229,8 +229,8 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     height: 300,
-    borderRadius: 30,
-    borderBottomLeftRadius: 0,
-    borderBottomRightRadius: 0,
+    // borderRadius: 30,
+    // borderBottomLeftRadius: 0,
+    // borderBottomRightRadius: 0,
   }
 })

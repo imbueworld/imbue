@@ -56,7 +56,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 30,
         borderWidth: 1,
-        borderColor: colors.gray,
+        // borderColor: colors.gray,
+        borderColor: colors.buttonFill,
     },
     text: {
         flex: 1,

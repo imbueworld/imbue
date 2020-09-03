@@ -4,6 +4,24 @@ import { StyleSheet, View } from 'react-native'
 
 
 export default function CustomCapsule(props) {
+    /**
+     * CustomCapsule no longer to be a thing,
+     * so just return an arbitrary <View /> container
+     */
+    const Children = props.children
+    return (
+        <View ref={props.containerRef} style={[
+            props.style,
+            props.containerStyle,
+        ]}>
+            <View style={[
+                props.innerContainerStyle,
+            ]}>
+                { Children }
+            </View>
+        </View>
+    )
+
     return (
         <View
             style={[
@@ -26,14 +44,14 @@ export default function CustomCapsule(props) {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 40,
-        backgroundColor: "#FFFFFF80", // "#e6e6e6",
+        backgroundColor: "#FFFFFFA0", // "#e6e6e6",
         // paddingBottom: 12,
         // paddingRight: 12,
         padding: 12,
     },
     innerContainer: {
         borderRadius: 30,
-        backgroundColor: "#FFFFFF80",
+        backgroundColor: "#FFFFFFC0",
         // paddingHorizontal: 20,
         paddingHorizontal: "6%",
         overflow: "hidden",

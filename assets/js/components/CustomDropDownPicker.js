@@ -29,7 +29,8 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 30,
         borderBottomLeftRadius: 30,
         borderBottomRightRadius: 30,
-        borderColor: colors.gray,
+        // borderColor: colors.gray,
+        borderColor: colors.buttonFill,
         backgroundColor: "#ffffff00",
     },
     pickerDropDown: {

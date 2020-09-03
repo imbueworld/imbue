@@ -10,7 +10,8 @@ export default function ChatButton(props) {
         <View style={{
             backgroundColor: "#ffffff60",
             borderWidth: 1,
-            borderColor: colors.gray,
+            // borderColor: colors.gray,
+            borderColor: colors.buttonFill,
             borderRadius: 999,
         }}>
             <TouchableHighlight
@@ -18,6 +19,7 @@ export default function ChatButton(props) {
                     width: 50,
                     height: 50,
                     padding: 8,
+                    borderRadius: 999,
                     ...props.containerStyle,
                 }}
                 underlayColor="#00000012"

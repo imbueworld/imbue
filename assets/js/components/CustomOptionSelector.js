@@ -135,7 +135,8 @@ const styles = StyleSheet.create({
     unselected: {
         // backgroundColor: "lightgray",
         borderWidth: 1,
-        borderColor: colors.gray,
+        // borderColor: colors.gray,
+        borderColor: colors.buttonFill,
         borderRadius: 999,
     },
     font: {

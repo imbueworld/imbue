@@ -4,7 +4,7 @@ import { StyleSheet, View, Animated, TouchableHighlight, BackHandler } from 'rea
 import { useDimensions } from '@react-native-community/hooks'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
-import { mapStyle } from "../contexts/MapStyle"
+import { mapStyle, mapStyle2 } from "../contexts/MapStyle"
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomButton from "../components/CustomButton"
@@ -17,6 +17,7 @@ import { publicStorage } from '../backend/CacheFunctions'
 import { simpleShadow } from '../contexts/Colors'
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { cache as CACHE } from "../backend/CacheFunctions"
+import { LoginManager } from 'react-native-fbsdk'
 
 
 
@@ -181,7 +182,7 @@ export default function UserDashboard(props) {
     <MapView
       style={styles.map}
       provider={PROVIDER_GOOGLE}
-      customMapStyle={mapStyle}
+      customMapStyle={mapStyle2}
       initialRegion={{
         latitude: 37.78825,
         longitude: -122.4324,
@@ -221,7 +222,7 @@ export default function UserDashboard(props) {
               overflow: "hidden",
               ...simpleShadow,
             }}
-            source={{ uri: user.icon_uri }}
+            source={{ uri: user.icon_uri_full }}
           />
         </TouchableHighlight>
       </View>
@@ -233,13 +234,14 @@ export default function UserDashboard(props) {
         innerContainerStyle={{
           paddingBottom: 10,
         }}
-        data={{ name: user.name, iconUri: user.icon_uri }}
+        data={{ name: user.name, iconUri: user.icon_uri_full }}
         buttonOptions={{
           logOut: {
             show: true,
             onLongPress: () => {
               auth().signOut()
               GoogleSignin.signOut()
+              LoginManager.logOut()
               props.navigation.navigate("Boot", { referrer: "UserDashboard" })
               if (expanded) setExpanded(false)
             }

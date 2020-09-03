@@ -2,7 +2,7 @@ import auth from "@react-native-firebase/auth"
 import firestore from "@react-native-firebase/firestore"
 import functions from "@react-native-firebase/functions"
 import { DEFAULT_ICONS } from "../contexts/Constants"
-import { retrieveUserData } from "./CacheFunctions"
+import { retrieveUserData, publicStorage } from "./CacheFunctions"
 import LINKS from "../contexts/Links"
 
 
@@ -18,7 +18,7 @@ BusyError.code = "busy"
 export async function initializeAccount(cache, { first, last, email, password, type }, options = {}) {
     let account_type
     let uid
-    let icon_uri_foreign
+    let icon_uri_foreign = null
 
     if (!options.user) {
         // Manual sign up
@@ -35,15 +35,6 @@ export async function initializeAccount(cache, { first, last, email, password, t
         last = names.filter((name, idx) => idx !== 0).join(' ')
         email = user.email
         icon_uri_foreign = user.photoURL
-
-        console.log({
-            account_type,
-            uid,
-            first,
-            last,
-            email,
-            icon_uri_foreign
-        })
     }
 
     let collection
@@ -54,11 +45,12 @@ export async function initializeAccount(cache, { first, last, email, password, t
         displayName: `${account_type}_${first} ${last}`
     })
     let form = {
+        id: uid,
         account_type,
         first,
         last,
         email,
-        icon_uri: DEFAULT_ICONS[0],
+        icon_uri: "default-icon.png",
         icon_uri_foreign,
         active_memberships: [],
         active_classes: [],
@@ -69,6 +61,13 @@ export async function initializeAccount(cache, { first, last, email, password, t
         .doc(uid)
         .set(form)
     await Promise.all([authPromise, firestorePromise])
+
+    // Update cache
+    form.icon_uri_full =
+        form.icon_uri_foreign
+        || await publicStorage("default-icon.png")
+
+    cache.user = form
 }
 
 /**
@@ -476,49 +475,6 @@ export async function populateClass(cache, { class_id, active_times }) {
 
 }
 
-/**
- * TEMPLATE
- */
-export async function initializeLivestream(cache) {
-    const user = retrieveUserData(cache)
-    if (cache.user.stream_key) return cache.user.stream_key
-
-    let streamKey
-    try {
-        // async function getStreamKey() {
-        //     return (await firestore()
-        //         .collection("partners")
-        //         .doc(user.uid)
-        //         .get()
-        //     ).data().stream_key
-        // }
-
-        // 15 Attempts to retrieve stream key after stream has been created
-        // for the first time, or insta return the key
-        for (let i = 0; i < 15; i++) {
-            streamKey = (await firestore()
-                .collection("partners")
-                .doc(user.id)
-                .get()
-            ).data().stream_key
-
-            if (!streamKey && i === 0) {
-                const createLivestream = functions().httpsCallable("createLivestream")
-                await createLivestream()
-            } else if (!streamKey) {
-                await new Promise(r => setTimeout(r, 4500))
-            } else {
-                break
-            }
-        }
-
-        // Update cache
-        cache.user.stream_key = streamKey
-    } catch (err) {
-        throw new Error("Something prevented the action.")
-    }
-}
-
 
 
 import storage from '@react-native-firebase/storage'
@@ -569,17 +525,11 @@ export async function pickAndUploadFile(cache, setErrorMsg) {
 
             try {
                 const fileRef = storage().ref(user.id)
-                let theNewLinkPog = await fileRef.putFile(filePath)
-                console.log(333, theNewLinkPog)
+                await fileRef.putFile(filePath)
 
-                /**
-                 * This is currently unneeded;
-                 * The way icons are retrieved for users is based off their uids and whether
-                 * uid.png/jpeg is in Firebase Storage, then, if not, they receive default icon.
-                 */
-                // await updateUser(cache, {
-                //     icon_uri: await storage().ref(user.id).getDownloadURL(),
-                // })
+                await updateUser(cache, {
+                    icon_uri: user.id,
+                })
                 setErrorMsg(null)
             } catch(err) {
                 setErrorMsg("Something prevented the action.")

@@ -11,7 +11,7 @@ import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
 import { purchaseClasses, scheduleClasses } from "../backend/BackendFunctions"
 import GymLayout from '../layouts/GymLayout'
 import { colors } from "../contexts/Colors"
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
 
@@ -353,11 +353,15 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 27,
     fontFamily: fonts.default,
+    // ...FONTS.title,
+    // ...FONTS.luloClean,
   },
   instructorText: {
     textAlign: "center",
     fontSize: 22,
     fontFamily: fonts.default,
+    // ...FONTS.subtitle,
+    // ...FONTS.luloClean,
   },
   // timeContainer: {
   //   marginTop: 20,
@@ -372,6 +376,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     textAlign: "center",
     fontFamily: fonts.default,
+    // ...FONTS.subtitle,
+    // ...FONTS.luloClean,
   },
   descContainer: {
     // marginTop: 10,
@@ -387,5 +393,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: "justify",
     fontFamily: fonts.default,
+    // ...FONTS.body,
+    // ...FONTS.luloClean,
   },
 })

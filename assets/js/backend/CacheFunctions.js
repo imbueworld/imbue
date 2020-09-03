@@ -41,10 +41,10 @@ export async function retrievePaymentMethods(cache) {
 export async function retrieveUserData(cache) {
     if (cache.user) return cache.user
 
-    const user = auth().currentUser
+    const firebaseUser = auth().currentUser
 
-    let idx = user.displayName.search("_")
-    let account_type = user.displayName.slice(0, idx)
+    let idx = firebaseUser.displayName.search("_")
+    let account_type = firebaseUser.displayName.slice(0, idx)
     let collection
     switch(account_type) {
         case "user":
@@ -54,37 +54,35 @@ export async function retrieveUserData(cache) {
             collection = "partners"
             break
         default:
-            cache.working -= 1
             throw new Error("Badly initialized user account. (Lacks 'partner_' or 'user_' handle in displayName)")
     }
     
     try {
         let doc = await firestore()
             .collection(collection)
-            .doc(user.uid)
+            .doc(firebaseUser.uid)
             .get()
+        const user = doc.data()
         // add shortcuts / necessary data adjustments for ease of access
         // SIGNIFICANT PARTS OF CODE OF THE APP DEPEND ON THIS
-        let userData = doc.data()
-        userData.name = `${userData.first} ${userData.last}`
-        try {
-            userData.icon_uri = await storage().ref(userData.id).getDownloadURL()
-        } catch(err) {
-            userData.icon_uri = LINKS.defaultIcons[0]
-        }
+        user.name = `${user.first} ${user.last}`
+
+        // Icon
+        if (!user.icon_uri) user.icon_uri = "default-icon.png"
+        user.icon_uri_full =
+            await publicStorage(user.id)
+            || user.icon_uri_foreign
+            || await publicStorage("default-icon.png")
+
         // These 3 should be there at all times, since account creation, however -- another layer of making sure
-        if (!userData.active_classes) userData.active_classes = []
-        if (!userData.active_memberships) userData.active_memberships = []
-        if (!userData.scheduled_classes) userData.scheduled_classes = []
-        cache.user = userData
+        if (!user.active_classes) user.active_classes = []
+        if (!user.active_memberships) user.active_memberships = []
+        if (!user.scheduled_classes) user.scheduled_classes = []
+
+        cache.user = user
     } catch(err) {
-        cache.working -= 1
-        console.error(err.message)
         throw new Error("Something prevented the action.")
     }
-
-
-    console.log("[retrieveUserData] cache.user", cache.user)
 
     return cache.user
 }
@@ -372,9 +370,6 @@ export async function retrievePlaybackId(cache, { gymId }) {
     if (cache.livestreams[ gymId ].playback_id)
         return cache.livestreams[ gymId ].playback_id
 
-    if (!cache.working) cache.working = 0
-    cache.working += 1
-
     let playback_id
     try {
         let partnerId = (await firestore()
@@ -391,14 +386,10 @@ export async function retrievePlaybackId(cache, { gymId }) {
             .get()
         ).data().playback_id
     } catch(err) {
-        console.error(err.message)
-        cache.working -= 1
         throw new Error("Something prevented the action.")
     }
 
     cache.livestreams[ gymId ].playback_id = playback_id
-
-    cache.working -= 1
     return playback_id
 }
 
@@ -486,14 +477,15 @@ export async function retrieveAttendees(cache, { classId, timeId }) {
  * to retrieve a file from Google Cloud Storage.
  */
 export async function publicStorage(fileName) {
-    // return `${LINKS.storage.public}${fileName}`
-
     let file = cache(`files/${fileName}`).get()
-    if (!file) {
-        file = await storage().ref(fileName).getDownloadURL()
-        cache(`files/${fileName}`).set(file)
+    if (!file || !fileName) {
+        try {
+            console.log("Triggerring storage")
+            file = await storage().ref(fileName).getDownloadURL()
+            cache(`files/${fileName}`).set(file)
+        } catch(err) {}
     }
-    return file
+    return file || ""
 }
 
 

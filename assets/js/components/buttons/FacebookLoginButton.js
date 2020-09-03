@@ -6,7 +6,8 @@ import Icon from '../Icon'
 
 
 export default function FacebookLoginButton(props) {
-    let accountType = props.accountType
+    const accountType = props.accountType
+    const onAuthChange = props.onAuthChange
     
     return (
         <TouchableHighlight
@@ -15,7 +16,7 @@ export default function FacebookLoginButton(props) {
                 ...props.containerStyle,
             }}
             underlayColor="#00000020"
-            onPress={() => FacebookLogin(accountType)}
+            onPress={() => FacebookLogin(accountType, onAuthChange)}
         >
             <Icon
                 containerStyle={props.imageStyle}

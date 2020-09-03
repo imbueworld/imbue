@@ -9,7 +9,7 @@ import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
 import { purchaseMemberships } from "../backend/BackendFunctions"
 import { colors } from '../contexts/Colors'
 import GymLayout from '../layouts/GymLayout'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import Icon from '../components/Icon'
 
@@ -277,8 +277,9 @@ const styles = StyleSheet.create({
   nameText: {
     marginTop: 20,
     textAlign: "center",
-    fontSize: 24,
-    fontFamily: fonts.default,
+    fontSize: 27,
+    // fontFamily: fonts.default,
+    ...FONTS.title,
   },
   genreContainer: {
     marginTop: 20,
@@ -295,7 +296,8 @@ const styles = StyleSheet.create({
   },
   genreText: {
     fontSize: 14,
-    fontFamily: fonts.default,
+    // fontFamily: fonts.default,
+    ...FONTS.subtitle,
   },
   descContainer: {
     marginTop: 10,
@@ -308,6 +310,7 @@ const styles = StyleSheet.create({
   descText: {
     fontSize: 16,
     textAlign: "justify",
-    fontFamily: fonts.default,
+    // fontFamily: fonts.default,
+    ...FONTS.body,
   },
 })

@@ -77,7 +77,7 @@ export default function AddPaymentMethod(props) {
     return (
         <ProfileLayout
             innerContainerStyle={styles.innerContainer}
-            data={{ name: user.name, iconUri: user.icon_uri }}
+            data={{ name: user.name, iconUri: user.icon_uri_full }}
         >
             <Text style={{ color: "red" }}>{errorMsg}</Text>
 

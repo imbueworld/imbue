@@ -24,15 +24,15 @@ export default function Home(props) {
     return (
         <ScrollView contentContainerStyle={styles.scrollView}>
 
-            {/* <AppBackground /> */}
-            <Image
+            <AppBackground />
+            {/* <Image
                 style={{
                     width: "100%",
                     height: "100%",
                     position: "absolute",
                 }}
                 source={require("../components/img/workout-20.jpg")}
-            />
+            /> */}
             <CompanyLogo
                 containerStyle={{
                     top: 0,
@@ -57,6 +57,7 @@ export default function Home(props) {
                     title="Sign Up"
                 />
                 <CustomButton
+                    styleIsInverted
                     style={{
                         marginTop: 20,
                         marginBottom: 0,
@@ -75,7 +76,7 @@ export default function Home(props) {
                         fontSize: 16,
                         textDecorationLine: "underline",
                         fontFamily: fonts.default,
-                    }}>Partner Sign Up</Text>
+                    }}>Gym / Influencer Sign Up</Text>
                 </TouchableOpacity>
             </CustomCapsule>
 

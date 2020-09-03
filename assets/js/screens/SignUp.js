@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { StyleSheet, ScrollView, Text } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, ScrollView, Text, Image } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -12,6 +12,7 @@ import CustomCapsule from "../components/CustomCapsule"
 import { initializeAccount } from "../backend/BackendFunctions"
 import { handleAuthError } from '../backend/HelperFunctions'
 import SocialLogin from '../components/SocialLogin'
+import { StackActions } from '@react-navigation/native'
 
 
 
@@ -27,7 +28,6 @@ export default function SignUp(props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
-
 
   function invalidate() {
     let redFields = []
@@ -64,15 +64,28 @@ export default function SignUp(props) {
     >
 
       <AppBackground />
+      {/* <Image
+          style={{
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+          }}
+          source={require("../components/img/workout-21.jpg")}
+      /> */}
       <CompanyLogo />
 
       <CustomCapsule style={styles.container}>
 
         <SocialLogin
+          cache={cache}
           containerStyle={{
             marginTop: 20,
             marginBottom: 10,
             marginHorizontal: 20,
+          }}
+          onAuthChange={() => {
+            const pushAction = StackActions.push("Boot")
+            props.navigation.dispatch(pushAction)
           }}
         />
 
@@ -142,8 +155,9 @@ export default function SignUp(props) {
               await initializeAccount(cache, { first, last, email, password, type })
               setSuccessMsg("You've been signed up!")
 
-              await new Promise(r => setTimeout(r, 3000)) // sleep
-              props.navigation.navigate("Boot", { referrer: "SignUp" })
+              // Navigate
+              const pushAction = StackActions.push("Boot")
+              props.navigation.dispatch(pushAction)
             } catch (err) {
               // If not native (form) error, check for auth error
               if (!errorMsg) {

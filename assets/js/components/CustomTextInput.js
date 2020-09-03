@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
 import { colors } from '../contexts/Colors'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 
 
 
@@ -43,7 +43,7 @@ export default function CustomTextInput(props) {
                 keyboardType={props.keyboardType || "default"}
                 value={props.value !== undefined ? props.value : undefined}
                 placeholder={props.placeholder}
-                placeholderTextColor={colors.grayInactive}//"white"
+                placeholderTextColor={colors.textInputPlaceholder}
                 value={props.value || undefined}
                 onChangeText={text => {
                     if (props.info) props.info[0] = text
@@ -65,7 +65,9 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         borderRadius: 30,
         borderWidth: 1,
-        borderColor: colors.gray,
+        backgroundColor: colors.textInputFill,
+        // borderColor: colors.gray,
+        borderColor: colors.textInputBorder,
         overflow: "hidden",
     },
     input: {
@@ -77,7 +79,8 @@ const styles = StyleSheet.create({
         textAlignVertical: "center",
         fontSize: 20,
         zIndex: 100,
-        fontFamily: fonts.default,
+        // fontFamily: fonts.default,
+        ...FONTS.subtitle,
     },
     // placeholderContainer: {
     //     width: "100%",

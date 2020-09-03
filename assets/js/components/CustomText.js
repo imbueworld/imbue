@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { colors } from "../contexts/Colors"
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 
 
 
@@ -39,22 +39,27 @@ const styles = StyleSheet.create({
         borderRadius: 30,
         // backgroundColor: "lightgray",
         borderWidth: 1,
-        borderColor: colors.gray,
-        padding: 5,
+        // borderColor: colors.gray,
+        borderColor: colors.buttonFill,
         overflow: "hidden",
     },
     text: {
+        marginVertical: 5,
         textAlign: "justify",
         fontSize: 18,
     },
     label: {
+        paddingVertical: 3,
         borderTopWidth: 1,
-        borderColor: `${colors.grayInactive}80`,
-        color: colors.grayInactive,
+        // borderColor: `${colors.grayInactive}80`,
+        // color: colors.grayInactive,
+        borderColor: colors.buttonFill,
+        color: colors.buttonFill,
         textAlign: "center",
         fontSize: 14,
     },
     font: {
-        fontFamily: fonts.default,
+        // fontFamily: fonts.default,
+        ...FONTS.body,
     },
 })

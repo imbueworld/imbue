@@ -5,7 +5,7 @@ import CustomCapsule from "../components/CustomCapsule"
 import { simpleShadow } from '../contexts/Colors'
 import BackButton from '../components/BackButton'
 import { useNavigation } from '@react-navigation/native'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 import LogOutButton from '../components/buttons/LogOutButton'
 import auth from "@react-native-firebase/auth"
 import AppBackground from '../components/AppBackground'
@@ -102,7 +102,7 @@ export default function ProfileLayout(props) {
             ...simpleShadow,
             zIndex: 100,
           }}
-          source={{ uri: user.iconUri || user.icon_uri }}
+          source={{ uri: user.iconUri || user.icon_uri_full }}
         />
         <View style={{
           width: 200,
@@ -198,7 +198,8 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: "center",
     fontSize: 22,
-    fontFamily: fonts.default,
+    // fontFamily: fonts.default,
+    ...FONTS.title,
   },
   sidePanelButtonContainer: {
     ...simpleShadow,

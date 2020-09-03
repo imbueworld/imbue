@@ -27,7 +27,8 @@ export default function Chat(props) {
                 flexDirection: "row",
                 backgroundColor: "#00000058",
                 borderWidth: 1,
-                borderColor: colors.gray,
+                // borderColor: colors.gray,
+                borderColor: colors.buttonFill,
                 borderRadius: 40,
                 ...props.containerStyle,
             }}>
@@ -127,6 +128,8 @@ export default function Chat(props) {
         scrollViewRef.current.scrollToEnd()
     }
 
+    const currentScrollValue = []
+
     return (
         <CustomCapsule
             containerStyle={{
@@ -139,25 +142,12 @@ export default function Chat(props) {
             }}
             containerRef={inpRef}
         >
-            <ScrollView
-                ref={scrollViewRef}
-                // onScroll={({ nativeEvent }) => console.log(nativeEvent)}
-            >
-                <View style={{
-                    paddingTop: 10,
-                    paddingBottom: 80,
-                    paddingHorizontal: "3%",
-                }}>
-                    {/* {chatContents} */}
-                    {/* {props.children} */}
-
-                    <LivestreamMessages
-                        gymId={gymId}
-                        user={user}
-                        onMessage={scrollAppropriately}
-                    />
-                </View>
-            </ScrollView>
+            <LivestreamMessages
+                user={user}
+                scrollToBottom={scrollAppropriately}
+                currentScrollValue={currentScrollValue}
+                scrollViewRef={scrollViewRef}
+            />
 
             <SendMessage
                 containerStyle={styles.msgInputContainer}
@@ -165,6 +155,7 @@ export default function Chat(props) {
                 onSend={props.onSend}
                 onFocus={() => {
                     setTextFocus(true)
+                    scrollAppropriately()
                 }}
                 onBlur={() => {
                     setTextFocus(false)

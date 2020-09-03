@@ -16,7 +16,8 @@ export default function TransactionView(props) {
                 padding: 14,
                 flexDirection: "row",
                 borderWidth: 1,
-                borderColor: colors.gray,
+                // borderColor: colors.gray,
+                borderColor: colors.buttonFill,
                 borderRadius: 30,
                 backgroundColor: `#00000008`,
             }}

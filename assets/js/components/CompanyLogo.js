@@ -23,7 +23,7 @@ export default function CompanyLogo(props) {
                         image,
                         props.style,
                     ]}
-                    source={require("./img/imbue-logo.png")}
+                    source={require("./img/imbue-logo.jpeg")}
                 />
             </View>
         </View>

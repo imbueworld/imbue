@@ -25,7 +25,6 @@ export default function PaymentSettings(props) {
     useEffect(() => {
         const init = async() => {
             let creditCards = await retrievePaymentMethods(cache)
-            console.log("Cache", cache.user.payment_methods)
             setCreditCards(creditCards)
         }
         init()

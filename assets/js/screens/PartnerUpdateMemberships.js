@@ -10,7 +10,7 @@ import { retrieveUserData, retrieveGyms, retrieveGymsByIds } from '../backend/Ca
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import { addDataToGym, updateGym } from '../backend/BackendFunctions'
 import { colors } from '../contexts/Colors'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 
 
 
@@ -65,14 +65,15 @@ export default function PartnerUpdateMemberships(props) {
             innerContainerStyle={{
                 paddingBottom: 10,
             }}
-            data={{ name: user.name, iconUri: user.icon_uri }}
+            data={{ name: user.name, iconUri: user.icon_uri_full }}
         >
             
             <Text style={{
                 alignSelf: "center",
                 paddingBottom: 10,
                 fontSize: 20,
-                fontFamily: fonts.default,
+                // fontFamily: fonts.default,
+                ...FONTS.subtitle,
             }}>{"Memberships & Pricing"}</Text>
 
             {errorMsg
@@ -143,7 +144,6 @@ const styles = StyleSheet.create({
         marginVertical: 10,
         flexDirection: "row",
         justifyContent: "space-between",
-        // backgroundColor: "lightgray",
         borderWidth: 1,
         borderColor: colors.gray,
         borderRadius: 30,
@@ -153,13 +153,14 @@ const styles = StyleSheet.create({
         paddingVertical: 20,
         paddingLeft: 20,
         alignSelf: "center",
-        fontFamily: fonts.default,
+        // fontFamily: fonts.default,
+        ...FONTS.body,
     },
     priceContainer: {
         flex: 1,
         marginRight: 10,
         alignSelf: "center",
-        borderRadius: 999,
+        borderRadius: 30,
     },
     price: {
         fontSize: 20,

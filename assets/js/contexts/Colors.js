@@ -1,8 +1,15 @@
 export const colors = {
-    gray: "#1b1b19", // "Material Gray" ?
+    gray: "#242426", // same as buttonFill
     grayInactive: "#696461",
     checkmarkgreen: "#cbe558", // "#b2c94b"
-    // #4b4b43 -- a color less dark than "Material Gray"
+
+    bg: "#F9F9F9",
+    buttonFill: "#242426",
+    buttonAccent: "#F9F9F9",
+    textInputFill: "#7676801F",
+    textInputPlaceholder: "#3C3C439A",
+    textInputBorder: "#242426", // same as buttonFill
+    title: "#242426", // same as buttonFill
 }
 
 export const simpleShadow = {

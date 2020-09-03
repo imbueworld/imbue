@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { colors, simpleShadow } from '../contexts/Colors'
 import Icon from './Icon'
 import CloseButton from './CloseButton'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 
 
 
@@ -93,18 +93,21 @@ const styles = StyleSheet.create({
     },
     name: {
         fontSize: 20,
-        fontFamily: fonts.default,
+        // fontFamily: fonts.default,
+        ...FONTS.title,
     },
     slogan: {
         fontSize: 15,
-        fontFamily: fonts.default,
+        // fontFamily: fonts.default,
+        ...FONTS.body,
     },
     // subInfoContainer: {},
     moreInfoContainer: {
         paddingVertical: 10,
         alignItems: "center",
         backgroundColor: "#FFFFFFD0",
-        borderColor: `${colors.gray}80`,
+        // borderColor: `${colors.gray}80`,
+        borderColor: `${colors.buttonFill}80`,
         borderTopWidth: 1,
         borderBottomLeftRadius: 40,
         borderBottomRightRadius: 40,
@@ -113,7 +116,8 @@ const styles = StyleSheet.create({
         fontSize: 13,
     },
     font: {
-        fontFamily: fonts.default,
+        // fontFamily: fonts.default,
+        ...FONTS.body,
     },
     X: {
         width: 35,

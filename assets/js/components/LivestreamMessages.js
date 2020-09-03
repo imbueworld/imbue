@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
 import { fonts } from '../contexts/Styles'
 
 import database from "@react-native-firebase/database"
-import { clockFromTimestamp, publicStorage } from '../backend/HelperFunctions'
+import { clockFromTimestamp } from '../backend/HelperFunctions'
 import Icon from './Icon'
 
-import { cache } from "../backend/CacheFunctions"
+import { cache, publicStorage } from "../backend/CacheFunctions"
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 
 
 
 export default function LivestreamMessages(props) {
-    const gymId = props.gymId
     const user = props.user
 
-    const ptcsNodeRef = database().ref(`livestreams/participants/${gymId}`)
-    const chatNodeRef = database().ref(`livestreams/messages/${gymId}`)
+    const currentScrollValue = props.currentScrollValue
+    const scrollViewRef = props.scrollViewRef
+    const moreMessagesRef = useRef(false)
 
     const [ptcs, setPtcs] = useState([])
     const [chat, setChat] = useState([])
@@ -42,48 +43,22 @@ export default function LivestreamMessages(props) {
         read()
     }, [])
 
-    useEffect(() => {
-        const init = async () => {
-            // await ptcsNodeRef.once('value', async snap => {
-            //     let data = snap.val()
-            //     if (data) {
-            //         let ptcs = Object.entries(data).map(([uid, userData]) => {
-            //             userData.uid = uid
-            //             return userData
-            //         })
-            //         // setPtcs(ptcs)
-            //         // cache.livestream.participants = ptcs
-            //         await AsyncStorage.setItem(
-            //             "livestream/participants",
-            //             JSON.stringify(ptcs)
-            //         )
-            //     }
-            // })
-            // ptcsNodeRef.limitToLast(1).on('child_added', snap => {
-            //     // setPtcs(ptcs => {
-            //     //     // Do not add, if uid is already in ptcs
-            //     //     let existingUids = ptcs.map(ptc => ptc.uid)
-            //     //     if (existingUids.includes(snap.val().uid)) return ptcs
-            //     //     // Append
-            //     //     return [...ptcs, snap.val()]
-            //     // })
-            // })
-        }
-        init()
-    }, [])
-
     let newChat = chat.sort((a, b) => {
         let ts1 = a.timestamp
         let ts2 = b.timestamp
         return ts1 - ts2
     })
-    newChat.forEach(message => {
+    newChat.forEach((message, idx) => {
         ptcs.forEach(ptc => {
             if (message.uid === ptc.uid) {
                  message.icon_uri = ptc.icon_uri
                  message.name = ptc.name
             }
         })
+    })
+    // Filter out to last 40 messages
+    newChat = newChat.filter((message, idx) => {
+        if (idx + 1 > newChat.length - 40) return true
     })
     const sortedChat = newChat
 
@@ -92,7 +67,7 @@ export default function LivestreamMessages(props) {
         useEffect(() => {
             const init = async () => {
                 let iconUri = await publicStorage(props.icon_uri)
-                setIconUri = iconUri
+                setIconUri(iconUri)
             }
             init()
         }, [])
@@ -128,7 +103,8 @@ export default function LivestreamMessages(props) {
                     paddingRight: stickToRight ? 7 : 15,
                     paddingLeft: stickToRight ? 15 : 7,
                     borderWidth: 1,
-                    borderColor: colors.gray,
+                    // borderColor: colors.gray,
+                    borderColor: colors.buttonFill,
                     borderRadius: 30,
                     flexDirection: "row",
                     ...props.containerStyle,
@@ -173,11 +149,7 @@ export default function LivestreamMessages(props) {
         )
     }
 
-    useEffect(() => {
-        if (props.onMessage) props.onMessage(sortedChat[sortedChat.length - 1])
-    })
-
-    return sortedChat.map(({ name="Anonymous", message, uid, timestamp, icon_uri="default-icon.png" }, idx) =>
+    const Messages = sortedChat.map(({ name="Anonymous", message, uid, timestamp, icon_uri="default-icon.png" }) =>
         <Message
             containerStyle={
                 uid === user.id
@@ -201,8 +173,93 @@ export default function LivestreamMessages(props) {
                 timestamp,
                 icon_uri,
             }}
-            key={idx}
+            key={`${uid}${timestamp}`}
         />
+    )
+
+    useEffect(() => {
+        if (props.scrollToBottom) {
+            if (currentScrollValue[0] > 50) {
+                return
+            }
+            props.scrollToBottom()
+        }
+    })
+
+    function hideMoreMessagesPopup() {
+        if (!moreMessagesRef.current) return
+        moreMessagesRef.current.setNativeProps({
+            style: {
+                height: 0,
+            },
+        })
+    }
+    function showMoreMessagesPopup() {
+        moreMessagesRef.current.setNativeProps({
+            style: {
+                height: 30,
+            },
+        })
+    }
+
+
+
+    return (
+        <>
+        <View ref={moreMessagesRef} style={{
+            width: "50%",
+            height: 30,
+            position: "absolute",
+            bottom: 85,
+            alignSelf: "center",
+            zIndex: 110,
+        }}>
+            <TouchableOpacity
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    backgroundColor: "#00000025",
+                }}
+                onPress={() => {
+                    props.scrollToBottom()
+                    hideMoreMessagesPopup()
+                }}
+            >
+                <Text style={{
+                    fontFamily: fonts.default,
+                }}>More messages below</Text>
+            </TouchableOpacity>
+        </View>
+
+        <ScrollView
+            ref={scrollViewRef}
+            onScroll={({ nativeEvent }) => {
+                const contentHeight = nativeEvent.contentSize.height
+                const userScrollProgress =
+                    nativeEvent.contentOffset.y +
+                    nativeEvent.layoutMeasurement.height
+                currentScrollValue[0] = contentHeight - userScrollProgress
+
+                if (currentScrollValue[0] < 50) {
+                    hideMoreMessagesPopup()
+                } else {
+                    // Show only if velocity is negative (scrolling upwards),
+                    // to prevent the popup from flickering when pressing on it to make it disappear
+                    if (nativeEvent.velocity.y < 0) showMoreMessagesPopup()
+                }
+            }}
+        >
+            <View style={{
+                paddingTop: 10,
+                paddingBottom: 80,
+                paddingHorizontal: "3%",
+            }}>
+                { Messages }
+            </View>
+        </ScrollView>
+        </>
     )
 }
 

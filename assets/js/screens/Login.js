@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, ScrollView } from 'react-native'
+import { StyleSheet, Text, ScrollView, Image } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -11,7 +11,7 @@ import CustomCapsule from "../components/CustomCapsule"
 import { signIn } from '../backend/BackendFunctions'
 import { handleAuthErrorAnonymous } from '../backend/HelperFunctions'
 import SocialLogin from '../components/SocialLogin'
-import auth from '@react-native-firebase/auth'
+import { StackActions } from '@react-navigation/native'
 
 
 
@@ -24,16 +24,6 @@ export default function Login(props) {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
-  useEffect(() => {
-      auth().onAuthStateChanged(async user => {
-      if (user) {
-        console.log("[Login] Authentification sequence complete.")
-        await new Promise(r => setTimeout(r, 200)) // sleep
-        props.navigation.navigate("Boot", { referrer: "Login" })
-      }
-    })
-  }, [])
 
   function invalidate() {
     let redFields = []
@@ -53,17 +43,29 @@ export default function Login(props) {
     >
 
       <AppBackground />
+      {/* <Image
+          style={{
+              width: "100%",
+              height: "100%",
+              position: "absolute",
+          }}
+          source={require("../components/img/workout-23.jpg")}
+      /> */}
       <CompanyLogo />
 
       <CustomCapsule containerStyle={styles.container}>
 
         <SocialLogin
+          cache={cache}
           containerStyle={{
             marginTop: 20,
             marginBottom: 10,
             marginHorizontal: 20,
           }}
-          cache={cache}
+          onAuthChange={() => {
+            const pushAction = StackActions.push("Boot")
+            props.navigation.dispatch(pushAction)
+          }}
         />
 
         {errorMsg
@@ -99,11 +101,17 @@ export default function Login(props) {
 
             let errorMsg
             try {
+              // Validate
               errorMsg = invalidate()
               if (errorMsg) throw new Error(errorMsg)
               
+              // Log in
               await signIn(cache, { email, password })
               setSuccessMsg("You've signed in!")
+
+              // Navigate
+              const pushAction = StackActions.push("Boot")
+              props.navigation.dispatch(pushAction)
             } catch (err) {
               // If not native (form) error, check for auth error
               if (!errorMsg) {

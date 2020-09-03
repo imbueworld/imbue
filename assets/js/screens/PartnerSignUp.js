@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
 
 import { colors } from "../contexts/Colors"
 
@@ -11,7 +11,7 @@ import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 import { initializeAccount } from '../backend/BackendFunctions'
 import { handleAuthError } from '../backend/HelperFunctions'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 
 
 
@@ -60,8 +60,16 @@ export default function PartnerSignUp(props) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollView}>
+        <ScrollView contentContaineStyle={styles.scrollView}>
             <AppBackground />
+            {/* <Image
+                style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
+                }}
+                source={require("../components/img/workout-24.jpg")}
+            /> */}
             <CompanyLogo />
 
             <CustomCapsule style={styles.container}>
@@ -72,7 +80,8 @@ export default function PartnerSignUp(props) {
                     alignSelf: "center",
                     fontSize: 25,
                     color: colors.gray,
-                    fontFamily: fonts.default,
+                    // fontFamily: fonts.default,
+                    ...FONTS.title,
                 }}>Partner Sign Up</Text>
 
                 {errorMsg
