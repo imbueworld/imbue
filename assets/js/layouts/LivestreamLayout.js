@@ -455,7 +455,7 @@ export default function LivestreamLayout(props) {
         containerStyle={{
           width: "94%",
           height: "70%",
-          marginTop: 50,
+          marginTop: 70,
           position: "absolute",
           alignSelf: "center",
           zIndex: 110,
@@ -481,7 +481,7 @@ export default function LivestreamLayout(props) {
         containerStyle={{
           width: "94%",
           height: 500,
-          marginTop: 50,
+          marginTop: 70,
           position: "absolute",
           alignSelf: "center",
           zIndex: 110,

@@ -3,6 +3,7 @@ import { StyleSheet, View, Text } from 'react-native'
 import { imageSourceFromCCBrand } from '../backend/HelperFunctions'
 import Icon from './Icon'
 import { colors } from '../contexts/Colors'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -46,5 +47,7 @@ const styles = StyleSheet.create({
         // color: colors.gray,
         color: colors.buttonFill,
         fontSize: 20,
+        ...FONTS.subtitle,
+        paddingBottom: 7,
     },
 })

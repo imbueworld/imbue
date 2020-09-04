@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import CustomPopup from '../CustomPopup'
-import { retrieveAttendees } from '../../backend/CacheFunctions'
+import { retrieveAttendees, publicStorage } from '../../backend/CacheFunctions'
 import { fonts } from '../../contexts/Styles'
 import { ScrollView } from 'react-native-gesture-handler'
 import AttendeeCard from '../AttendeeCard'
+import { colors } from '../../contexts/Colors'
 
 
 
@@ -15,6 +16,7 @@ export default function AttendeesPopup(props) {
     let [classId, timeId] = [props.classId, props.timeId]
 
     const [attendees, setAttendees] = useState(null)
+    const [iconUris, setIconUris] = useState(null)
     const [byPurchase, setByPurchase] = useState(null)
     const [bySchedule, setBySchedule] = useState(null)
 
@@ -30,25 +32,49 @@ export default function AttendeesPopup(props) {
     }, [])
 
     // Separates the attendees into two categories:
-    //   -  Those who pruchased One Time Class
+    //   -  Those who purchased One Time Class
     //   -  Those who scheduled it on the basis of having a membership
     useEffect(() => {
         if (!attendees) return
 
-        let byPurchase = []
-        let bySchedule = []
-        attendees.forEach(client => {
-            switch (client.purchase_method) {
-                case "class":
-                    byPurchase.push(client)
-                    break
-                case "membership":
-                    bySchedule.push(client)
-                    break
-            }
-        })
-        setByPurchase(byPurchase)
-        setBySchedule(bySchedule)
+        const init = async () => {
+            console.log(1, attendees)
+    
+            let promises = []
+            attendees.forEach(client => {
+                promises.push( publicStorage(client.icon_uri) )
+            })
+            // Last icon will always be default-icon.png,
+            // for use with the placeholder / "Your future client" below
+            promises.push( publicStorage("default-icon.png") )
+            let iconUris = await Promise.all(promises)
+            setIconUris(iconUris)
+            const processedAttendees = attendees.map((client, idx) => {
+                return ({
+                    ...client,
+                    icon_uri: iconUris[idx]
+                })
+            })
+    
+            console.log(2, attendees)
+            console.log(3, processedAttendees)
+    
+            let byPurchase = []
+            let bySchedule = []
+            processedAttendees.forEach(client => {
+                switch (client.purchase_method) {
+                    case "class":
+                        byPurchase.push(client)
+                        break
+                    case "membership":
+                        bySchedule.push(client)
+                        break
+                }
+            })
+            setByPurchase(byPurchase)
+            setBySchedule(bySchedule)
+        }
+        init()
     }, [attendees])
     
     useEffect(() => {
@@ -81,6 +107,7 @@ export default function AttendeesPopup(props) {
 
     
     if (!ByPurchase || !BySchedule) return <View />
+    if (!attendees || !iconUris) return <View />
 
     const FauxUser = 
         <View style={{
@@ -89,38 +116,47 @@ export default function AttendeesPopup(props) {
             <AttendeeCard {...{
                 first: `Your future client`,
                 last: `\n(will show up here)`,
-                icon_uri: "default-icon.png",
+                icon_uri: iconUris[iconUris.length - 1],
             }} />
         </View>
 
     return (
         <CustomPopup onX={props.onX}>
-            <ScrollView>
-                <View style={{
-                    marginVertical: 20,
-                }}>
-                    <Text style={styles.title}>
-                        People who have purchased the class
-                    </Text>
-                    {ByPurchase.length === 0
-                    ? FauxUser
-                    : ByPurchase}
-                    
+            <View style={{
+                paddingHorizontal: 10,
+                overflow: "hidden",
+                borderWidth: 1,
+                borderColor: colors.textInputBorder,
+                borderRadius: 30,
+                backgroundColor: colors.buttonAccent,
+            }}>
+                <ScrollView>
                     <View style={{
-                        height: 20,
-                    }}/>
+                        marginVertical: 20,
+                    }}>
+                        <Text style={styles.title}>
+                            People who have purchased the class
+                        </Text>
+                        {ByPurchase.length === 0
+                        ? FauxUser
+                        : ByPurchase}
+                        
+                        <View style={{
+                            height: 20,
+                        }}/>
 
-                    <Text style={styles.title}>
-                        People who have this class on their schedule
-                    </Text>
-                    <Text style={styles.subtitle}>
-                        (excludes people in the list above)
-                    </Text>
-                    {BySchedule.length === 0
-                    ? FauxUser
-                    : BySchedule}
-                </View>
-            </ScrollView>
+                        <Text style={styles.title}>
+                            People who have this class on their schedule
+                        </Text>
+                        <Text style={styles.subtitle}>
+                            (excludes people in the list above)
+                        </Text>
+                        {BySchedule.length === 0
+                        ? FauxUser
+                        : BySchedule}
+                    </View>
+                </ScrollView>
+            </View>
         </CustomPopup>
     )
 }

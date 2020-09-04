@@ -8,6 +8,9 @@ import LINKS from "../contexts/Links"
 
 
 /**
+ * Does:
+ *      [Read]  stripe_customers > (uid) > payment_methods
+ * 
  * Retrieves credit card from cache, or
  * calls cloud for it and stores it in cache
  */
@@ -34,6 +37,34 @@ export async function retrievePaymentMethods(cache) {
 }
 
 /**
+ * Does:
+ *      [Read]  stripe_customers > (uid) > payments
+ * 
+ * Retrieves past transactinos from "stripe_users" collection
+ */
+export async function retrievePastTransactions(cache) {
+    const user = await retrieveUserData(cache)
+    if (user.pastTransactions) return user.pastTransactions
+
+    user.pastTransactions = []
+    
+    let transactions = (await firestore()
+        .collection("stripe_customers")
+        .doc(user.id)
+        .collection("payments")
+        .get()
+    ).docs.map(doc => doc.data())
+
+    user.pastTransactions = transactions
+
+    return transactions
+}
+
+/**
+ * Does:
+ *      [Read]  users > (uid)
+ *      [Read]  partners > (uid)
+ * 
  * Retrieves user data,
  * first from cache, if not there,
  * then from cloud, and saves into cache.
@@ -88,27 +119,6 @@ export async function retrieveUserData(cache) {
 }
 
 /**
- * Retrieves past transactinos from "stripe_users" collection
- */
-export async function retrievePastTransactions(cache) {
-    const user = await retrieveUserData(cache)
-    if (user.pastTransactions) return user.pastTransactions
-
-    user.pastTransactions = []
-    
-    let transactions = (await firestore()
-        .collection("stripe_customers")
-        .doc(user.id)
-        .collection("payments")
-        .get()
-    ).docs.map(doc => doc.data())
-
-    user.pastTransactions = transactions
-
-    return transactions
-}
-
-/**
  * Checks whether all of the classes in users.active_classes have data about them
  * added in cache.classes, if something is missing it is added.
  * by Class Ids.
@@ -147,6 +157,9 @@ export async function retrieveClassesByIds(cache, { classIds }) {
 }
 
 /**
+ * Does:
+ *      [Read]  classes > (where gymId, multiple)
+ * 
  * Checks whether all of the classes in users.active_classes have data about them
  * added in cache.classes, if something is missing it is added.
  * by Gym Ids.
@@ -175,6 +188,9 @@ export async function retrieveClassesByGymIds(cache, { gymIds }) {
 }
 
 /**
+ * Does:
+ *      [Read]  classes > (where id, multiple)
+ * 
  * Retrieves class entities ("classes" collection),
  * based on user's active_classes (user.active_classses),
  * which stores time_ids (class_entity.active_times).
@@ -262,6 +278,8 @@ export async function retrieveClassesByUser(cache) {
 }
 
 /**
+ * [Essentialy belongs in HelperFunctions.js]
+ * 
  * Filters out the time_ids from class doc,
  * that the user hasn't signed up for.
  */
@@ -283,22 +301,9 @@ export async function filterUserClasses(cache) {
 }
 
 /**
- * memebershipIds -- optional,
- *  if passed in, retrieves only those,
- *  if not, gets all user's memebrships (cache.user.active_memberships)
- */
-// export async function retrieveMemberships(cache, { membershipIds }) {
-//     throw new Error("Not Implemented")
-// }
-
-/**
- * Retrieves data about each class that is tied to a gym (gmy id)
- */
-// export async function retrieveGymClasses(cache, gymId) {
-//     throw new Error("Not Implemented") // Same same; up above
-// }
-
-/**
+ * Does:
+ *      [Read]  gyms > (where id, multiple)
+ * 
  * Retrieve gyms by their ids
  */
 export async function retrieveGymsByIds(cache, { gymIds }) {
@@ -324,6 +329,9 @@ export async function retrieveGymsByIds(cache, { gymIds }) {
 }
 
 /**
+ * Does:
+ *      [Read]  gyms > ALL
+ * 
  * Retrieve gyms by their geolocation
  * [NOT YET IMPLEMENTED]
  * [DEFAULTING TO:  GET ALL]
@@ -355,13 +363,10 @@ export async function retrieveGymsByLocation(cache, /*{ coordinate }*/) {
 }
 
 /**
- * TEMPLATE
- */
-// export async function retrieveGyms(cache, { gymIds }) {
-//     throw new Error("Not Implemented")
-// }
-
-/**
+ * Does:
+ *      [Read]  gyms > (gym_id)
+ *      [Read]  partners > (partner_id) > public > ("livestream")
+ * 
  * TEMPLATE
  */
 export async function retrievePlaybackId(cache, { gymId }) {
@@ -394,6 +399,9 @@ export async function retrievePlaybackId(cache, { gymId }) {
 }
 
 /**
+ * Does:
+ *      [Read]  classes > (class_id) > active_times > (time_id) > clients
+ * 
  * TEMPLATE
  */
 export async function retrieveAttendees(cache, { classId, timeId }) {
@@ -473,6 +481,9 @@ export async function retrieveAttendees(cache, { classId, timeId }) {
 }
 
 /**
+ * Does:
+ *      [Read]  from Firebase Storage (from a Googe Cloud Storage Bucket)
+ * 
  * Converts a just file name string into a fully functioning uri
  * to retrieve a file from Google Cloud Storage.
  */
@@ -480,7 +491,6 @@ export async function publicStorage(fileName) {
     let file = cache(`files/${fileName}`).get()
     if (!file || !fileName) {
         try {
-            console.log("Triggerring storage")
             file = await storage().ref(fileName).getDownloadURL()
             cache(`files/${fileName}`).set(file)
         } catch(err) {}

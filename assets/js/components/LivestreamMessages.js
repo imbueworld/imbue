@@ -17,7 +17,7 @@ export default function LivestreamMessages(props) {
 
     const currentScrollValue = props.currentScrollValue
     const scrollViewRef = props.scrollViewRef
-    const moreMessagesRef = useRef(false)
+    const moreMessagesRef = useRef(null)
 
     const [ptcs, setPtcs] = useState([])
     const [chat, setChat] = useState([])
@@ -206,32 +206,34 @@ export default function LivestreamMessages(props) {
 
     return (
         <>
-        <View ref={moreMessagesRef} style={{
-            width: "50%",
-            height: 30,
-            position: "absolute",
-            bottom: 85,
-            alignSelf: "center",
-            zIndex: 110,
-        }}>
-            <TouchableOpacity
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    backgroundColor: "#00000025",
-                }}
-                onPress={() => {
-                    props.scrollToBottom()
-                    hideMoreMessagesPopup()
-                }}
-            >
-                <Text style={{
-                    fontFamily: fonts.default,
-                }}>More messages below</Text>
-            </TouchableOpacity>
-        </View>
+        {   chat.length >= 7
+        ?   <View ref={moreMessagesRef} style={{
+                width: "50%",
+                height: 30,
+                position: "absolute",
+                bottom: 85,
+                alignSelf: "center",
+                zIndex: 110,
+            }}>
+                <TouchableOpacity
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        backgroundColor: "#00000025",
+                    }}
+                    onPress={() => {
+                        props.scrollToBottom()
+                        hideMoreMessagesPopup()
+                    }}
+                >
+                    <Text style={{
+                        fontFamily: fonts.default,
+                    }}>More messages below</Text>
+                </TouchableOpacity>
+            </View>
+        :   null }
 
         <ScrollView
             ref={scrollViewRef}

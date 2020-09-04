@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, Text } from 'react-native'
 
 import ProfileLayout from '../layouts/ProfileLayout'
 import NewClassForm from '../components/NewClassForm'
 import CustomSmallButton from '../components/CustomSmallButton'
 import ClassList from '../components/ClassList'
 import { retrieveUserData, retrieveClassesByGymIds } from '../backend/CacheFunctions'
+import { colors } from '../contexts/Colors'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -28,6 +30,24 @@ export default function PartnerUpdateClasses(props) {
 
     if (!user || !classes) return <View />
 
+    const Classes = classes.map((classDoc, idx) => 
+        <View style={{
+            height: 72,
+            marginTop: idx !== 0 ? 10 : 0,
+            backgroundColor: colors.buttonFill,
+            borderRadius: 30,
+            overflow: "hidden",
+            justifyContent: "center",
+            alignItems: "center",
+        }}>
+            <Text style={{
+                color: colors.buttonAccent,
+                fontSize: 20,
+                ...FONTS.body,
+            }}>{classDoc.name}</Text>
+        </View>
+    )
+
     let PageContent
     switch(page) {
         case "overview":
@@ -37,7 +57,17 @@ export default function PartnerUpdateClasses(props) {
                     title="Create New Class"
                     onPress={() => setPage("new_class")}
                 />
-                <ClassList data={classes} />
+                {/* <ClassList data={classes} /> */}
+                <View>
+                    <Text style={{
+                        marginTop: 5,
+                        marginBottom: 20,
+                        alignSelf: "center",
+                        fontSize: 20,
+                        ...FONTS.subtitle,
+                    }}>List of Classes</Text>
+                    { Classes }
+                </View>
                 </>
             break
         case "new_class":
@@ -59,7 +89,7 @@ export default function PartnerUpdateClasses(props) {
             }}
             data={{ name: user.name, iconUri: user.icon_uri_full }}
         >
-            {PageContent}
+            { PageContent }
         </ProfileLayout>
     )
 }

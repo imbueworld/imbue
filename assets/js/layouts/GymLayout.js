@@ -122,6 +122,9 @@ export default function GymLayout(props) {
         ]}
       > */}
         <ImageSlideshow
+          containerStyle={{
+            zIndex: -100,
+          }}
           imageStyle={styles.image}
           imageInterval={5000}
           data={gym.image_uris}
@@ -228,7 +231,7 @@ const styles = StyleSheet.create({
   image: {
     width: "100%",
     height: "100%",
-    height: 300,
+    height: 450,
     // borderRadius: 30,
     // borderBottomLeftRadius: 0,
     // borderBottomRightRadius: 0,

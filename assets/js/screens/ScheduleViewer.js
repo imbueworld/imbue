@@ -36,9 +36,6 @@ export default function ScheduleViewer(props) {
 
   const [slctdDate, setSlctdDate] = useState(datestringFromTimestamp(Date.now()))
 
-  const [Calendar, CalendarCreate] = useState(null)
-  const [CalendarItemList, CalendarItemListCreate] = useState(null)
-
   const [user, setUser] = useState(null)
 
   const [title, setTitle] = useState("")
@@ -57,11 +54,13 @@ export default function ScheduleViewer(props) {
         classes = await retrieveClassesByIds(cache, { classIds: params.classIds })
       } else if (params.gymId) {
         let gyms = await retrieveGymsByIds(cache, { gymIds: [params.gymId] })
+        console.log("gyms", gyms) //
         let gym = gyms[0]
         setTitle(gym.name)
         setSubtitle("Schedule")
 
         classes = await retrieveClassesByGymIds(cache, { gymIds: [params.gymId] })
+        console.log("classes", classes) //
       } else {
         setTitle("My Classes")
 

@@ -1,9 +1,12 @@
 import auth from "@react-native-firebase/auth"
 import firestore from "@react-native-firebase/firestore"
 import functions from "@react-native-firebase/functions"
+import storage from '@react-native-firebase/storage'
 import { DEFAULT_ICONS } from "../contexts/Constants"
 import { retrieveUserData, publicStorage } from "./CacheFunctions"
 import LINKS from "../contexts/Links"
+import ImagePicker from "react-native-image-picker"
+import { PermissionsAndroid, Platform } from "react-native"
 
 
 
@@ -13,6 +16,10 @@ BusyError.code = "busy"
 
 
 /**
+ * Does:
+ *      [Write]  users > (uid) > USER_DOC
+ *      [Write]  partners > (uid) > USER_DOC
+ * 
  * Initializes the user account with necessary data
  */
 export async function initializeAccount(cache, { first, last, email, password, type }, options = {}) {
@@ -71,6 +78,8 @@ export async function initializeAccount(cache, { first, last, email, password, t
 }
 
 /**
+ * [Essentially does not require to be an external function from component]
+ * 
  * Logs user in, sets their data in cache
  * Returns user data.
  */
@@ -79,6 +88,9 @@ export async function signIn(cache, { email, password }) {
 }
 
 /**
+ * Does:
+ *      [Call]  addPaymentMethod
+ * 
  * Takes:
  *  form -- must include { cardNumber, expMonth, expYear, cvc, name, address_zip }
  */
@@ -101,6 +113,12 @@ export async function addPaymentMethod(cache, { cardNumber, expMonth, expYear, c
 }
 
 /**
+ * Does:
+ *      [Read]   users > (uid)
+ *      [Call]   chargeCustomer
+ *      [Call]   documentClassPurchase
+ *      [Write]  users > (uid) > { active_classes, scheduled_classes }
+ * 
  * 1.   Checks whether the user already has purchased the class
  * 2.   Charges the user
  * 3.   Updates cache with the new purchase
@@ -175,6 +193,11 @@ export async function purchaseClasses(cache, { classId, timeIds, creditCardId, p
     }
 }
 
+/**
+ * Does:
+ *      [Read]   users > (uid)
+ *      [Write]  users > (uid) > { scheduled_classes }
+ */
 export async function scheduleClasses(cache, { classId, timeIds }) {
     const user = await retrieveUserData(cache)
 
@@ -214,6 +237,12 @@ export async function scheduleClasses(cache, { classId, timeIds }) {
 }
 
 /**
+ * Does:
+ *      [Read]   users > (uid)
+ *      [Call]   subscribeCustomer
+ *      [Call]   documentMembershipPurchase
+ *      [Write]  users > (uid) > { active_memberships }
+ * 
  * 1.   If the request is valid (the user doesn't already own this membership),
  *      documents it in the database
  * 2.   Charges the user
@@ -268,6 +297,11 @@ export async function purchaseMemberships(cache, { membershipIds, creditCardId, 
 }
 
 /**
+ * Does:
+ *      [Read]   users > (uid)
+ *      [Call]   deleteSubscription
+ *      [Write]  users > (uid) > { active_memberships }
+ * 
  * 1.   Removes subscription
  * 2.   If successfully removed the subscription, removes it from the database
  * 2.   Updates cache with the new purchase
@@ -318,6 +352,9 @@ export async function deleteSubscription(cache, { gymIds }) {
 }
 
 /**
+ * Does:
+ *      [Write]  users > (uid) > USER_DOC
+ * 
  * Merges provided data with the data about the user that lives on the database.
  */
 export async function updateUser(cache, doc) {
@@ -344,6 +381,9 @@ export async function updateUser(cache, doc) {
 }
 
 /**
+ * Does:
+ *      [Write]  gyms > (gym_id) > GYM_DOC
+ * 
  * Merges data with a gym of the provided gymId
  */
 export async function updateGym(cache, { gymId, doc }) {
@@ -375,45 +415,35 @@ export async function updateGym(cache, { gymId, doc }) {
 }
 
 /**
- * [CURRENTLY NOT UTILIZNG MANY SETTINGS,
- * WHEREFORE CREATING A NEW COLLECTION "settings" DOESN'T SEEM NECESSARY]
- */
-// export async function updateUserSetting(cache, doc) {
-
-//     const user = retrieveUserData(cache)
-
-//     try {
-//         await firestore()
-//             .collection("settings")
-//             .doc(user.uid)
-//             .set(doc, { merge: true })
-//     } catch(err) {
-//         throw new Error("Something prevented the action.")
-//     }
-
-// }
-
-/**
- * Merges provided data with the data about the gym that lives on the database.
- */
-// export async function addDataToGym(cache, { gymId, data }) {
-//     throw new Error("Not Implemented")
-// }
-
-/**
+ * Does:
+ *      [Write]  classes > (+) > CLASS_ENTITY_DOC
+ *      [Read]   partners > (uid)
+ *      [Write]  partners > (uid) > { associated_classes }
+ * 
  * Compiles the form data of <NewClassForm />,
  * pushes it to database and updates cache.
  */
 export async function createClass(cache, { instructor, name, description, genres, type, price, gym_id }) {
     const partner_id = auth().currentUser.uid
     let form = { instructor, name, description, genres, type, price, gym_id, partner_id }
-    // form.active_times = []
+    form.active_times = []
 
     try {
         // Add class to database
-        await firestore()
+        let newClassRef = await firestore()
             .collection("classes")
             .add(form)
+        
+        // Update partner's associated classes
+        let existingAssociatedClasses = (await firestore()
+            .collection("partners")
+            .doc(partner_id)
+            .get()
+        ).data().associated_classes
+
+        await updateUser(cache, {
+            associated_classes: [...existingAssociatedClasses, newClassRef.id],
+        })
 
         // Update cache
         cache.classes.push(form)
@@ -424,6 +454,10 @@ export async function createClass(cache, { instructor, name, description, genres
 }
 
 /**
+ * Does:
+ *      [Read]   classes > (class_id)
+ *      [Write]  classes > (class_id) > { active_times }
+ * 
  * TEMPLATE
  */
 export async function populateClass(cache, { class_id, active_times }) {
@@ -463,10 +497,9 @@ export async function populateClass(cache, { class_id, active_times }) {
             }, { merge: true })
 
         // Update cache
-        // cache.classes.forEach((doc, idx) => {
-        //     if (doc.id === class_id) cache.classes[idx].active_classes.push(active_classes)
-        // })
-        // [UNTESTED]
+        cache.classes.forEach((doc, idx) => {
+            if (doc.id === class_id) cache.classes[idx].active_times.push(...active_times)
+        })
     } catch (err) {
         console.error(`[CACHE populateClass]  [${err.code}]  ${err.message}`)
         // throw new Error("Something prevented the action.")
@@ -475,12 +508,10 @@ export async function populateClass(cache, { class_id, active_times }) {
 
 }
 
-
-
-import storage from '@react-native-firebase/storage'
-import ImagePicker from "react-native-image-picker"
-import { PermissionsAndroid, Platform } from "react-native"
-
+/**
+ * Does:
+ *      [Write]  to Firebase Storage
+ */
 export async function pickAndUploadFile(cache, setErrorMsg) {
     const user = await retrieveUserData(cache)
 
@@ -548,3 +579,22 @@ export async function TEMPLATE(cache) {
         throw new Error("Something prevented the action.")
     }
 }
+
+/**
+ * [CURRENTLY NOT UTILIZNG MANY SETTINGS,
+ * WHEREFORE CREATING A NEW COLLECTION "settings" DOESN'T SEEM NECESSARY]
+ */
+// export async function updateUserSetting(cache, doc) {
+
+//     const user = retrieveUserData(cache)
+
+//     try {
+//         await firestore()
+//             .collection("settings")
+//             .doc(user.uid)
+//             .set(doc, { merge: true })
+//     } catch(err) {
+//         throw new Error("Something prevented the action.")
+//     }
+
+// }

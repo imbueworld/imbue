@@ -34,7 +34,6 @@ export default function PartnerGymSettings(props) {
             gym = gym[0]
             setGym(gym)
 
-            console.log(gym)
             setName(gym.name)
             setDescription(gym.description)
             setAddress(gym.address)
@@ -74,6 +73,9 @@ export default function PartnerGymSettings(props) {
                 onChangeText={setName}
             />
             <CustomTextInput
+                containerStyle={{
+                    height: 200,
+                }}
                 placeholder="Gym Description"
                 value={description}
                 onChangeText={setDescription}

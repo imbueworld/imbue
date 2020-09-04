@@ -12,7 +12,7 @@ import { retrievePastTransactions, retrieveUserData, retrieveGymsByIds } from '.
 import TransactionView from '../components/TransactionView'
 import CloseButton from '../components/CloseButton'
 import TouchableMenu from '../components/TouchableMenu'
-import { highShadow } from '../contexts/Colors'
+import { highShadow, colors } from '../contexts/Colors'
 
 
 
@@ -92,13 +92,16 @@ export default function UserMemberships(props) {
           }}
           onX={() => setPopup(false)}
         >
-          <CloseButton
-            containerStyle={styles.X}
-            onPress={() => setPopup(false)}
-          />
-          <View style={{ paddingHorizontal: 10 }}>
+          <View style={{
+            paddingHorizontal: 10,
+            overflow: "hidden",
+            borderWidth: 1,
+            borderColor: colors.textInputBorder,
+            borderRadius: 30,
+            backgroundColor: colors.buttonAccent,
+          }}>
             <ScrollView>
-              {PastTransactions}
+              { PastTransactions }
               <View style={{ height: 10 }} />
             </ScrollView>
           </View>
@@ -142,20 +145,14 @@ export default function UserMemberships(props) {
 const styles = StyleSheet.create({
   container: {},
   button: {
-    paddingVertical: 10,
     marginTop: 0,
     marginBottom: 20,
     marginHorizontal: 30,
+    paddingVertical: 10,
+    paddingHorizontal: 24,
+    flexShrink: 1,
   },
   buttonText: {
     fontSize: 14,
-  },
-  X: {
-    width: 35,
-    height: 35,
-    position: "absolute",
-    right: 0,
-    marginTop: 10,
-    marginRight: 10,
   },
 })

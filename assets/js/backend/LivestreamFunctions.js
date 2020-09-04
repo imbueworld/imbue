@@ -27,7 +27,9 @@ export async function registerParticipant({ gymId, uid, name, icon_uri }) {
 
 
 /**
- * TEMPLATE
+ * Does:
+ *      [Read]   partners > (partner_id)
+ *      [Call]   createLivestream
  */
 export async function initializeLivestream(cache) {
     const user = await retrieveUserData(cache)

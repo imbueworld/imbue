@@ -167,6 +167,10 @@ export default function Chat(props) {
 
 const styles = StyleSheet.create({
     container: {
+        backgroundColor: colors.buttonAccent,
+        borderRadius: 30,
+        borderWidth: 1,
+        borderColor: colors.buttonFill,
         overflow: "hidden",
     },
 

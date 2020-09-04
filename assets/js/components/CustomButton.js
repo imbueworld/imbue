@@ -12,41 +12,44 @@ export default function CustomButton(props) {
     const inverted = props.styleIsInverted
 
     return (
-        <TouchableHighlight
-            style={{
-                backgroundColor: inverted ? colors.buttonAccent : colors.buttonFill, 
-                ...styles.button,
-                ...props.style,
-                
-                // Icons disabled
-                // paddingLeft: Icon ? 24 : undefined,
-                // paddingRight: Icon ? 24 : undefined,
-                // justifyContent: Icon ? "flex-start" : "center",
-                justifyContent: "center",
+        <View>
+            <TouchableHighlight
+                style={{
+                    backgroundColor: inverted ? colors.buttonAccent : colors.buttonFill,
+                    
+                    // Icons disabled
+                    // paddingLeft: Icon ? 24 : undefined,
+                    // paddingRight: Icon ? 24 : undefined,
+                    // justifyContent: Icon ? "flex-start" : "center",
+                    justifyContent: "center",
 
-                alignItems: "center",
-            }}
-            underlayColor={`${inverted ? `#00000008` : `${colors.buttonFill}DD`}`}
-            disabled={props.disabled}
-            onPress={props.onPress || undefined}
-            onLongPress={props.onLongPress || undefined}
-        >
-            <>
-            {/* { Icon } // Icons disabled */}
+                    alignItems: "center",
+                    
+                    ...styles.button,
+                    ...props.style,
+                }}
+                underlayColor={`${inverted ? `#00000008` : `${colors.buttonFill}DD`}`}
+                disabled={props.disabled}
+                onPress={props.onPress || undefined}
+                onLongPress={props.onLongPress || undefined}
+            >
+                <>
+                {/* { Icon } // Icons disabled */}
 
-            <Text style={[
-                styles.text,
-                props.textStyle,
-                {
-                    color: inverted ? colors.buttonFill : colors.buttonAccent,
-                    paddingLeft: Icon ? 10 : undefined,
-                    flexShrink: 1,
-                },
-            ]}>
-                {props.title}
-            </Text>
-            </>
-        </TouchableHighlight>
+                <Text style={[
+                    styles.text,
+                    props.textStyle,
+                    {
+                        color: inverted ? colors.buttonFill : colors.buttonAccent,
+                        paddingLeft: Icon ? 10 : undefined,
+                        flexShrink: 1,
+                    },
+                ]}>
+                    {props.title}
+                </Text>
+                </>
+            </TouchableHighlight>
+        </View>
     )
 }
 

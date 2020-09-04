@@ -5,6 +5,7 @@ import CustomCapsule from "./CustomCapsule"
 import AttendeeCard from './AttendeeCard'
 import { cache, publicStorage } from '../backend/CacheFunctions'
 import { fonts } from '../contexts/Styles'
+import { colors } from '../contexts/Colors'
 
 
 
@@ -55,7 +56,15 @@ export default function ParticipantList(props) {
 
     return (
         <CustomCapsule
-            containerStyle={props.containerStyle}
+            containerStyle={{
+                paddingHorizontal: 20,
+                backgroundColor: colors.buttonAccent,
+                borderRadius: 30,
+                borderWidth: 1,
+                borderColor: colors.buttonFill,
+                overflow: "hidden",
+                ...props.containerStyle,
+            }}
             innerContainerStyle={{
                 height: "100%",
             }}

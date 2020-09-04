@@ -54,6 +54,7 @@ export default function AppBackground(props) {
             height: "100%",
             position: "absolute",
             backgroundColor: colors.bg,
+            zIndex: -110,
         }}/>
     )
 }

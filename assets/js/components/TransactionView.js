@@ -16,14 +16,13 @@ export default function TransactionView(props) {
                 padding: 14,
                 flexDirection: "row",
                 borderWidth: 1,
-                // borderColor: colors.gray,
-                borderColor: colors.buttonFill,
                 borderRadius: 30,
-                backgroundColor: `#00000008`,
+                backgroundColor: colors.buttonFill,
             }}
         >
             <Text style={{
                 flex: 2,
+                color: colors.buttonAccent,
                 // textAlign: "justify",
                 textAlignVertical: "center",
                 fontSize: 16,
@@ -31,6 +30,7 @@ export default function TransactionView(props) {
             }}>{description}</Text>
             <Text style={{
                 flex: 1,
+                color: colors.buttonAccent,
                 textAlign: "center",
                 textAlignVertical: "center",
                 fontSize: 16,

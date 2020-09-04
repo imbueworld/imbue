@@ -8,7 +8,7 @@ import { createClass } from '../backend/BackendFunctions'
 import DropDownPicker from "react-native-dropdown-picker"
 import { GENRES } from '../contexts/Constants'
 import { simpleShadow, colors } from '../contexts/Colors'
-import { retrieveUserData, retrieveGyms, retrieveClassesByGymIds, retrieveGymsByIds } from '../backend/CacheFunctions'
+import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
 import { zeroDecimalFromCurrency } from '../backend/HelperFunctions'
 
 

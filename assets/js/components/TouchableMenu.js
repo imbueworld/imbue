@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { fonts } from '../contexts/Styles'
-import { highShadow } from '../contexts/Colors'
+import { highShadow, colors } from '../contexts/Colors'
 
 
 
@@ -25,7 +25,7 @@ export default function TouchableMenu(props) {
                     height: "100%",
                     position: "absolute",
                     left: 0,
-                    backgroundColor: "#68cc75",// "#15c12c80",
+                    backgroundColor: colors.buttonFill,
                     zIndex: -100,
                     ...props.style,
                 }}
@@ -36,32 +36,35 @@ export default function TouchableMenu(props) {
                 position: "absolute",
                 flexDirection: "row",
                 alignItems: "center",
-                justifyContent: "space-around",
                 backgroundColor: "#00000030", //"#00000060",
                 zIndex: 110,
                 ...props.style,
             }}>
-                <TouchableHighlight
-                    style={{
-                        borderRadius: 999,
-                    }}
-                    underlayColor="#00000012"
-                    onPress={props.onProceed || undefined}
-                >
-                    <Text style={{
-                        ...styles.button,
-                        backgroundColor: "red",
-                    }}>{/*Confirm*/}Remove</Text>
-                </TouchableHighlight>
-                <TouchableHighlight
-                    style={{
-                        borderRadius: 999,
-                    }}
-                    underlayColor="#00000012"
-                    onPress={() => setActive(false)}
-                >
-                    <Text style={styles.button}>Cancel</Text>
-                </TouchableHighlight>
+                <View style={{ flex: 1, marginHorizontal: "10%", }}>
+                    <TouchableHighlight
+                        style={{
+                            borderRadius: 30,
+                        }}
+                        underlayColor="#00000012"
+                        onPress={props.onProceed || undefined}
+                    >
+                        <Text style={{
+                            ...styles.button,
+                            backgroundColor: "red",
+                        }}>{/*Confirm*/}Remove</Text>
+                    </TouchableHighlight>
+                </View>
+                <View style={{ flex: 1, marginHorizontal: "10%", }}>
+                    <TouchableHighlight
+                        style={{
+                            borderRadius: 30,
+                        }}
+                        underlayColor="#00000012"
+                        onPress={() => setActive(false)}
+                    >
+                        <Text style={styles.button}>Cancel</Text>
+                    </TouchableHighlight>
+                </View>
             </View>
             </> : null}
             <TouchableHighlight
@@ -81,9 +84,10 @@ export default function TouchableMenu(props) {
 
 const styles = StyleSheet.create({
     button: {
+        padding: 10,
         backgroundColor: "white",
         borderRadius: 999,
-        padding: 10,
+        textAlign: "center",
         fontFamily: fonts.default,
     },
 })

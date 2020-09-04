@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Icon from './Icon'
 import { publicStorage } from '../backend/CacheFunctions'
 import LiveSoonIcon from './badges/LiveSoonIcon'
+import { colors } from '../contexts/Colors'
 
 
 
@@ -23,8 +24,8 @@ export default function ClassList(props) {
 
     useEffect(() => {
         const init = async () => {
-            let iconUri = await publicStorage("workout.jpg") // To-Do
-            setIconUri(iconUri)
+            // let iconUri = await publicStorage("workout.jpg") // To-Do
+            // setIconUri(iconUri)
         }
         init()
     }, [])
@@ -47,7 +48,7 @@ export default function ClassList(props) {
 
     useEffect(() => {
         if (!classes) return
-        if (!iconUri) return
+        // if (!iconUri) return
 
         let items = []
         classes.forEach(doc => {
@@ -57,7 +58,8 @@ export default function ClassList(props) {
                         position: "absolute",
                         height: "100%",
                         justifyContent: "center",
-                        backgroundColor: "#00000030",
+                        // backgroundColor: "#00000030",
+                        backgroundColor: `${colors.buttonAccent}`,
                         paddingHorizontal: 12,
                     }}>{ props.children }</View>
 
@@ -67,13 +69,16 @@ export default function ClassList(props) {
                             ...styles.listItem,
                             borderRadius: 30,
                             borderWidth: 1,
-                            borderColor: "lightgreen",
+                            // borderColor: "lightgreen",
                         }}
-                        underlayColor="#83b02a"
+                        // underlayColor="#83b02a"
+                        underlayColor="#00000008"
                         key={begin_time}
                         onPress={onPress}
                     >
-                        <View>
+                        <View style={{
+                            backgroundColor: colors.buttonFill,
+                        }}>
                             {livestreamState === "live"
                             ?   <SidePanelContainer>
                                     <Icon
@@ -102,7 +107,7 @@ export default function ClassList(props) {
                                 </SidePanelContainer>
                             :   null}
 
-                            <Icon
+                            {/* <Icon
                                 containerStyle={{
                                     position: "absolute",
                                     width: "100%",
@@ -110,7 +115,7 @@ export default function ClassList(props) {
                                     zIndex: -100,
                                 }}
                                 source={{ uri: iconUri }}
-                            />
+                            /> */}
 
                             <View style={{
                                 alignItems: "center",
@@ -154,7 +159,7 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     text: {
-        color: "white",
-        fontFamily: fonts.default,
+        color: colors.buttonAccent,
+        ...FONTS.body,
     },
 })

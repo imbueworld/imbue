@@ -3,6 +3,7 @@ import { View, TouchableWithoutFeedback, BackHandler } from 'react-native'
 
 import CustomCapsule from "../components/CustomCapsule"
 import { cache } from '../backend/CacheFunctions'
+import CloseButton from './CloseButton'
 
 
 
@@ -66,6 +67,18 @@ export default function CustomPopup(props) {
                     ...props.innerContainerStyle,
                 }}
             >
+                <CloseButton
+                    containerStyle={{
+                    width: 35,
+                    height: 35,
+                    marginTop: 10,
+                    marginRight: 10,
+                    position: "absolute",
+                    right: 0,
+                    }}
+                    onPress={props.onX}
+                />
+                
                 {props.children}
             </CustomCapsule>
         </View>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { colors } from '../contexts/Colors'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 import Icon from './Icon'
 import { publicStorage } from '../backend/CacheFunctions'
 
@@ -40,7 +40,7 @@ export default function ActiveMembershipBadge(props) {
                 imageStyle={{
                     borderRadius: 999,
                 }}
-                source={{ uri: publicStorage(membership.icon_uri) }}
+                source={{ uri: iconUri }}
             />
         </View>
     )
@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
     text: {
         flex: 1,
         fontSize: 20,
-        fontFamily: fonts.default,
+        ...FONTS.body,
     },
 })

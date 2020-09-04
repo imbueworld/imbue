@@ -3,7 +3,7 @@ import { View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
 import { publicStorage } from '../backend/CacheFunctions'
 import Icon from './Icon'
-import { fonts } from '../contexts/Styles'
+import { fonts, FONTS } from '../contexts/Styles'
 
 
 
@@ -23,14 +23,9 @@ export default function AttendeeCard({ icon_uri, first, last }) {
             flexDirection: "row",
             flexWrap: "nowrap",
             height: 72,
-            paddingLeft: 9,
-            paddingRight: "6%",
-            // paddingHorizontal: "6%",
             justifyContent: "space-between",
             alignItems: "center",
-            backgroundColor: "#00000012",
-            // borderColor: colors.gray,
-            borderColor: colors.buttonFill,
+            backgroundColor: colors.buttonFill,
             borderWidth: 1,
             borderRadius: 40,
         }}>
@@ -38,16 +33,22 @@ export default function AttendeeCard({ icon_uri, first, last }) {
                 containerStyle={{
                     width: 54,
                     height: 54,
+                    position: "absolute",
+                    left: 9,
+                    alignSelf: "center",
                     borderRadius: 999,
                     overflow: "hidden",
                 }}
                 source={{ uri: icon_uri/*iconUri*/ }}
             />
             <Text style={{
-                flex: 1,
+                position: "absolute",
+                width: "100%",
+                flexShrink: 1,
+                color: colors.buttonAccent,
                 textAlign: "center",
                 fontSize: 18,
-                fontFamily: fonts.default,
+                ...FONTS.body,
             }}>{`${first || ""}${last ? " " : ""}${last || ""}`}</Text>
         </View>
     )
