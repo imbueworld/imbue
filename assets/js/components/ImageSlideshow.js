@@ -31,10 +31,6 @@ export default function ImageSlideshow(props) {
         }
     }, [])
 
-
-    if (!imageUris) return <View />
-
-
     function nextImage() {
         if (cIdx + 1 < imageCount) setCurrentIdx(cIdx + 1)
         else setCurrentIdx(0)
@@ -46,20 +42,24 @@ export default function ImageSlideshow(props) {
     }
 
     // [comment upon DEBUG start]
-    // useEffect(() => {
-    //     let itrvl = setInterval((cIdx => {
-    //         if (cIdx[0] + 1 < imageCount) {
-    //             setCurrentIdx(idx => idx + 1)
-    //             cIdx[0]++
-    //         } else {
-    //             setCurrentIdx(0)
-    //             cIdx[0] = 0
-    //         }
-    //     }).bind(null, [cIdx]), imageInterval)
+    useEffect(() => {
+        let itrvl = setInterval((cIdx => {
+            if (cIdx[0] + 1 < imageCount) {
+                setCurrentIdx(idx => idx + 1)
+                cIdx[0]++
+            } else {
+                setCurrentIdx(0)
+                cIdx[0] = 0
+            }
+        }).bind(null, [cIdx]), imageInterval)
         
-    //     return () => clearInterval(itrvl)
-    // }, [cIdx])
+        return () => clearInterval(itrvl)
+    }, [cIdx])
     // [uncomment upon DEBUG end]
+
+
+    
+    if (!imageUris) return <View />
 
     const IndicatingDots = imageUris.map((irlvnt, idx) => 
         <View
@@ -84,7 +84,7 @@ export default function ImageSlideshow(props) {
             :   null}
         </View>
     )
-
+    
     return (
         <View style={props.containerStyle}>
             {props.disableUserControl ? null :

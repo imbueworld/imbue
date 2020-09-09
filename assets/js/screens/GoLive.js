@@ -1,14 +1,35 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, PermissionsAndroid, Platform } from 'react-native'
+import { View, PermissionsAndroid, Platform } from 'react-native'
 
 import { NodeCameraView } from "react-native-nodemediaclient"
 
-import CustomButton from "../components/CustomButton"
 import LivestreamLayout from '../layouts/LivestreamLayout'
 import { retrieveUserData } from '../backend/CacheFunctions'
 import { initializeLivestream } from '../backend/LivestreamFunctions'
 
 import { cache as CACHE } from "../backend/CacheFunctions"
+
+
+
+async function checkPermissions() {
+    try {
+        const granted = await PermissionsAndroid.requestMultiple([
+            PermissionsAndroid.PERMISSIONS.CAMERA,
+            PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+            PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        ])
+        let hasAllPermissions = true
+        Object.keys(granted).forEach(key => {
+            if (granted[key] !== "granted") {
+                hasAllPermissions = false
+            }
+        })
+        return hasAllPermissions
+    } catch (err) {
+        console.error(err)
+        return false
+    }
+}
 
 
 
@@ -18,7 +39,6 @@ export default function GoLive(props) {
     const [user, setUser] = useState(null)
     const [gymId, setGymId] = useState(null)
 
-    const [isStreaming, setIsStreaming] = useState(false)
     const [hasAllPermissions, setHasAllPermisions] = useState(false)
     const [streamKey, setStreamKey] = useState(null)
 
@@ -31,7 +51,18 @@ export default function GoLive(props) {
         init()
     }, [])
 
+    useEffect(() => {
+        const init = async () => {
+            if (Platform.OS === "android") {
+                let has = await checkPermissions()
+                setHasAllPermisions(has)
+            }
+        }
+        init()
+    }, [])
+
     if (!user || !gymId) return <View />
+    if (Platform.OS === "android" && !hasAllPermissions) return <View style={{ backgroundColor: "black", width: "100%", height: "100%", position: "absolute" }}/>
 
     const settings = {
         camera: { cameraId: 1, cameraFrontMirror: true },
@@ -49,50 +80,23 @@ export default function GoLive(props) {
         }
     }
 
-    // let stream
-
-    console.log("isStreaming", isStreaming)
-
-    const checkPermissions = async () => {
-        console.log("Checking Permissions Android")
-        try {
-            const granted = await PermissionsAndroid.requestMultiple([
-                PermissionsAndroid.PERMISSIONS.CAMERA,
-                PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-                PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-            ])
-            // let hasAllPermissions = true
-            Object.keys(granted).forEach(key => {
-                if (granted[key] !== "granted") {
-                    console.log("Does not have permission for: ", key)
-                    // hasAllPermissions = false
-                }
-            })
-            // console.log("hasAllPermissions: ", hasAllPermissions)
-            // setHasAllPermisions(hasAllPermissions)
-        } catch (err) {
-            console.error(err)
-        }
-    }
-
     const base = "rtmp://global-live.mux.com:5222/app/"
 
     const toggleStream = async () => {
-        if (Platform.OS === "android") {
-            // if (!hasAllPermissions) {
-                await checkPermissions()
-            // }
+        const stream = CACHE("streamRef").get()
+        const isStreaming = CACHE("isStreaming").get()
+
+        if (isStreaming) {
+            stream.stop()
+            CACHE("isStreaming").set(false)
+            return
         }
 
         let streamKey = await initializeLivestream(cache)
         setStreamKey(streamKey)
-        console.log("Returned stream key:", streamKey)
 
-        const stream = CACHE("streamRef").get()
-        console.log("stream", stream)
-        if (isStreaming) stream.stop()
-        else stream.start()
-        setIsStreaming(!isStreaming)
+        stream.start()
+        CACHE("isStreaming").set(true)
     }
 
     return (
@@ -121,23 +125,25 @@ export default function GoLive(props) {
             zIndex: -100,
             ...props.containerStyle,
         }}>
-            <NodeCameraView
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    zIndex: -100,
-                    // position: "absolute",
-                }}
-                ref={vb => {
-                    // stream = vb
-                    CACHE("streamRef").set(vb)
-                }}
-                outputUrl={`${base}${streamKey}`}
-                camera={settings.camera}
-                audio={settings.audio}
-                video={settings.video}
-                autopreview
-            />
+            {   hasAllPermissions
+            ?    <NodeCameraView
+                    style={{
+                        width: "100%",
+                        height: "100%",
+                        zIndex: -100,
+                        // position: "absolute",
+                    }}
+                    ref={vb => {
+                        // stream = vb
+                        CACHE("streamRef").set(vb)
+                    }}
+                    outputUrl={`${base}${streamKey}`}
+                    camera={settings.camera}
+                    audio={settings.audio}
+                    video={settings.video}
+                    autopreview
+                />
+            :   null }
         </View>
         </>
     )

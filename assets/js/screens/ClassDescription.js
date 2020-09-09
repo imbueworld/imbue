@@ -255,7 +255,6 @@ export default function ClassDescription(props) {
                 onX={() => setPopup(null)}
                 onCardSelect={async cardId => {
                   try {
-                    console.log("Book!")
                     setErrorMsg("")
                     setSuccessMsg("")
 

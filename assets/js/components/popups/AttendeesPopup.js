@@ -38,8 +38,6 @@ export default function AttendeesPopup(props) {
         if (!attendees) return
 
         const init = async () => {
-            console.log(1, attendees)
-    
             let promises = []
             attendees.forEach(client => {
                 promises.push( publicStorage(client.icon_uri) )
@@ -55,9 +53,6 @@ export default function AttendeesPopup(props) {
                     icon_uri: iconUris[idx]
                 })
             })
-    
-            console.log(2, attendees)
-            console.log(3, processedAttendees)
     
             let byPurchase = []
             let bySchedule = []

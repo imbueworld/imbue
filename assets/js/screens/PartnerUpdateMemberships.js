@@ -28,7 +28,6 @@ function validateInput(inp) {
     }
     else b = "00"
 
-    console.log(202, `${a}${b}`)
     return Number.parseInt(`${a}${b}`)
 }
 
@@ -90,7 +89,6 @@ export default function PartnerUpdateMemberships(props) {
                     // placeholder="Enter price..."
                     value={priceUnlimited}
                     onChangeText={text => {
-                        console.log(text)
                         if (text.length <= 1) setPriceUnlimited("$")
                         if (!text.includes("$")) return
                         if (text.match(/[A-Za-z]/g)) return

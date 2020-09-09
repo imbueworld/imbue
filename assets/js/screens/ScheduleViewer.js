@@ -54,13 +54,11 @@ export default function ScheduleViewer(props) {
         classes = await retrieveClassesByIds(cache, { classIds: params.classIds })
       } else if (params.gymId) {
         let gyms = await retrieveGymsByIds(cache, { gymIds: [params.gymId] })
-        console.log("gyms", gyms) //
         let gym = gyms[0]
         setTitle(gym.name)
         setSubtitle("Schedule")
 
         classes = await retrieveClassesByGymIds(cache, { gymIds: [params.gymId] })
-        console.log("classes", classes) //
       } else {
         setTitle("My Classes")
 

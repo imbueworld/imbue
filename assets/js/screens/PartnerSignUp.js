@@ -39,7 +39,6 @@ export default function PartnerSignUp(props) {
         if (!passwordConfirm) redFields.push("passwordConfirm")
 
         if (redFields.length) {
-            console.log(33, redFields)
             setRedFields(redFields)
             return "Required fields need to be filled."
         }

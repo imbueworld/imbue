@@ -57,7 +57,6 @@ export default function UserMemberships(props) {
           setSuccessMsg("")
 
           try {
-            console.log("delete!")
             await deleteSubscription(cache, { gymIds: [membership.id] })
             setSuccessMsg("Subscription canceled!")
           } catch (err) {

@@ -70,7 +70,6 @@ export default function AddNewClass(props) {
     function enterTime(text, setField) {
         let colons = text.match(/:/g)
         let letters = text.match(/[a-zA-Z]/g)
-        console.log(colons)
         if (colons || letters) {
             if (colons && colons.length > 1) {
                 // setForm("error/invalid_time_format")

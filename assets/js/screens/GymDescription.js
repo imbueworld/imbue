@@ -160,7 +160,6 @@ export default function GymDescription(props) {
                 onX={() => setPopup(null)}
                 onCardSelect={async cardId => {
                   try {
-                    console.log("Book!")
                     setErrorMsg("")
                     setSuccessMsg("")
 
@@ -185,7 +184,6 @@ export default function GymDescription(props) {
                         break
                       default:
                         setErrorMsg("Something prevented the action.")
-                        setErrorMsg(err.message)
                         break
                     }
                   }

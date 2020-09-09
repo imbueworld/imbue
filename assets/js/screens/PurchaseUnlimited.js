@@ -155,7 +155,6 @@ export default function PurchaseUnlimited(props) {
                   onX={() => setPopup(null)}
                   onCardSelect={async cardId => {
                     try {
-                      console.log("Book!")
                       setErrorMsg("")
                       setSuccessMsg("")
 

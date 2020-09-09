@@ -29,8 +29,6 @@ export default function PartnerRevenueInfo(props) {
         init()
     }, [])
 
-    console.log(gym)
-
     if (!user || !gym) return <View />
 
     return (

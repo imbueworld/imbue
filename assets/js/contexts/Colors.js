@@ -3,7 +3,9 @@ export const colors = {
     grayInactive: "#696461",
     checkmarkgreen: "#cbe558", // "#b2c94b"
 
-    bg: "#F9F9F9",
+    // bg: "#F9F9F9",
+    bg: "#F7F7F7", // because the icon bg is this -- a slight adjustment
+    bgIcon: "#F7F7F7",
     buttonFill: "#242426",
     buttonAccent: "#F9F9F9",
     textInputFill: "#7676801F",

@@ -121,7 +121,7 @@ export default function ProfileLayout(props) {
               }}
               onPress={() => pickAndUploadFile(cache, setErrorMsg)}
               // [uncomment upon DEBUG start]
-              onLongPress={() => pickAndUploadFile(cache, setErrorMsg)}
+              // onLongPress={() => pickAndUploadFile(cache, setErrorMsg)}
               // [comment upon DEBUG end]
             />
           : null}

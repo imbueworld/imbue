@@ -16,7 +16,6 @@ export default function Component(props) {
             <CustomButton
                 title="My Classes"
                 onPress={() => {
-                    console.log("cache.classes", cache.classes)
                     props.navigation.navigate(
                         "ScheduleViewer", { data: cache.classes })
                 }}

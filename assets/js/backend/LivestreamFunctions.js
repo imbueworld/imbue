@@ -33,7 +33,7 @@ export async function registerParticipant({ gymId, uid, name, icon_uri }) {
  */
 export async function initializeLivestream(cache) {
     const user = await retrieveUserData(cache)
-    if (cache.user.stream_key) return cache.user.stream_key
+    if (user.stream_key) return user.stream_key
 
     let streamKey
     try {
@@ -47,11 +47,12 @@ export async function initializeLivestream(cache) {
             ).data().stream_key
 
             if (!streamKey && i === 0) {
-                console.log("Creating a brand new stream.")
+                // console.log("Creating a brand new stream.")
                 const createLivestream = functions().httpsCallable("createLivestream")
                 await createLivestream()
+                // console.log("Awaiting of createLivestream() done")
             } else if (!streamKey) {
-                console.log("Waiting for 4.5s.")
+                // console.log("Waiting for 4.5s.")
                 await new Promise(r => setTimeout(r, 4500))
             } else {
                 break
@@ -60,6 +61,8 @@ export async function initializeLivestream(cache) {
 
         // Update cache
         cache.user.stream_key = streamKey
+
+        // console.log("Got some sort of streamKey, returning:", streamKey)
 
         return streamKey
     } catch (err) {

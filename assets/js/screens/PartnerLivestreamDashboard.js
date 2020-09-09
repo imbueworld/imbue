@@ -53,7 +53,6 @@ export default function PartnerLivestreamDashboard(props) {
         // })
 
         let x = await functions().httpsCallable("createLivestream")()
-        console.log("x in", x)
 
         refresh(r + 1)
     }

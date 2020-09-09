@@ -71,9 +71,6 @@ export default function CalendarPopulateForm(props) {
         + dateObj.getTimezoneOffset() * 60 * 1000 // minutes ===> milliseconds
         + bH + bM
 
-      console.log("dateTsLocal", dateTsLocal)
-      console.log("Date.now()", Date.now())
-
       if (dateTsLocal < Date.now()) {
         setRedFields(["calendar"])
         throw new Error("The class date and time must be in the future.")
@@ -107,7 +104,6 @@ export default function CalendarPopulateForm(props) {
       const dateObj = new Date(dateString)
       const dateTsLocal = dateObj.getTime()
         + dateObj.getTimezoneOffset() * 60 * 1000 // minutes ===> milliseconds
-      console.log("getTimezoneOffset()", dateObj.getTimezoneOffset())
       activeTimes.push({
         time_id: id(),
         begin_time: dateTsLocal + bH + bM,

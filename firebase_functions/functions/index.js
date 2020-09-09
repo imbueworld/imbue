@@ -23,13 +23,6 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
     let data = JSON.parse(xhr.responseText).data
     let { stream_key, playback_ids } = data
     let playback_id = playback_ids[0].id
-    // admin
-    //   .firestore()
-    //   .collection("gyms")
-    //   .doc(gymId)
-    //   .set({
-    //     playback_id,
-    //   }, { merge: true })
     await admin
       .firestore()
       .collection("partners")
@@ -37,7 +30,16 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
       .set({
         playback_id,
         stream_key,
-        // the: data,
+      }, { merge: true })
+    // Public portion
+    await admin
+      .firestore()
+      .collection("partners")
+      .doc(context.auth.uid)
+      .collection("public")
+      .doc("livestream")
+      .set({
+        playback_id,
       }, { merge: true })
     console.log("[END OF ONLOAD SCOPE]")
   }

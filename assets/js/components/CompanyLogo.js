@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, View, Button, Image } from 'react-native'
+import { StyleSheet, View, Image } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
 
 

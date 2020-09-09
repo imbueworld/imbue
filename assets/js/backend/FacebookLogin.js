@@ -29,9 +29,9 @@ export async function FacebookLogin(cache, accountType, onAuthChange) {
 
   if (user) {
     if (user.displayName.substring(0, 5) === "user_") {
-      console.log("Recognized user account.")
+      // console.log("Recognized user account.")
     } else if (user.displayName.substring(0, 8) === "partner_") {
-      console.log("Recognized partner account.")
+      // console.log("Recognized partner account.")
     } else {
       let options = {
         user,

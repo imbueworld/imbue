@@ -2,9 +2,7 @@ import auth from "@react-native-firebase/auth"
 import firestore from "@react-native-firebase/firestore"
 import functions from "@react-native-firebase/functions"
 import storage from '@react-native-firebase/storage'
-import { DEFAULT_ICONS } from "../contexts/Constants"
 import { retrieveUserData, publicStorage } from "./CacheFunctions"
-import LINKS from "../contexts/Links"
 import ImagePicker from "react-native-image-picker"
 import { PermissionsAndroid, Platform } from "react-native"
 

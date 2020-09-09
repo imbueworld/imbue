@@ -15,7 +15,6 @@ import { handleAuthError } from '../backend/HelperFunctions'
 
 export default function ProfileSettings(props) {
     let cache = props.route.params.cache
-    console.log(cache)
     const [user, setUser] = useState(null)
 
     useEffect(() => {
