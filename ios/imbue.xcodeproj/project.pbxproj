@@ -11,6 +11,7 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		1FCF1D7A77C24747939CD2E9 /* PlayfairDisplay-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */; };
 		2D02E4BC1E0B4A80006451C7 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -18,12 +19,12 @@
 		6688A99FCD99A382A389371A /* libPods-imbue.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F64434AC2E40E20BB5CAA76 /* libPods-imbue.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9691B7744B618B692C08F747 /* libPods-imbue-imbueTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E69046DEA1292F60F8ACAFA7 /* libPods-imbue-imbueTests.a */; };
-		E9F56F7F74BD47956B793E22 /* libPods-imbue-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC67F81747655B2D41DD92B2 /* libPods-imbue-tvOS.a */; };
-		FD16BBEAABDD9926C9394FF8 /* libPods-imbue-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C8439C25D4C985BB8AAF41 /* libPods-imbue-tvOSTests.a */; };
+		AAD5F608250AA1AF00DFC2A2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AAD5F607250AA1AF00DFC2A2 /* GoogleService-Info.plist */; };
 		BA7CE4AD297A4E7E99680861 /* LuloClean-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */; };
-		1FCF1D7A77C24747939CD2E9 /* PlayfairDisplay-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */; };
 		D9940140254844E8A0D6F785 /* PlayfairDisplay-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */; };
 		E7595D1ECE484D39AACDEA2B /* PlayfairDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */; };
+		E9F56F7F74BD47956B793E22 /* libPods-imbue-tvOS.a in Frameworks */ = {isa = PBXBuildFile; fileRef = DC67F81747655B2D41DD92B2 /* libPods-imbue-tvOS.a */; };
+		FD16BBEAABDD9926C9394FF8 /* libPods-imbue-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 77C8439C25D4C985BB8AAF41 /* libPods-imbue-tvOSTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -55,26 +56,27 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = imbue/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = imbue/main.m; sourceTree = "<group>"; };
 		16364B0BDBF22C28C13B702E /* Pods-imbue-imbueTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-imbueTests.release.xcconfig"; path = "Target Support Files/Pods-imbue-imbueTests/Pods-imbue-imbueTests.release.xcconfig"; sourceTree = "<group>"; };
+		1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "LuloClean-Bold.ttf"; path = "../assets/fonts/LuloClean-Bold.ttf"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* imbue-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "imbue-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* imbue-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "imbue-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BF63932ABF99113572CDD0C /* Pods-imbue.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue.debug.xcconfig"; path = "Target Support Files/Pods-imbue/Pods-imbue.debug.xcconfig"; sourceTree = "<group>"; };
 		5A96DE6184D15C480B5EC26F /* Pods-imbue-imbueTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-imbueTests.debug.xcconfig"; path = "Target Support Files/Pods-imbue-imbueTests/Pods-imbue-imbueTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DF24790B4A1095F17FACB40 /* Pods-imbue-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-tvOS.release.xcconfig"; path = "Target Support Files/Pods-imbue-tvOS/Pods-imbue-tvOS.release.xcconfig"; sourceTree = "<group>"; };
+		61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PlayfairDisplay-Regular.ttf"; path = "../assets/fonts/PlayfairDisplay-Regular.ttf"; sourceTree = "<group>"; };
 		62296BC60828C2C336EB0657 /* Pods-imbue.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue.release.xcconfig"; path = "Target Support Files/Pods-imbue/Pods-imbue.release.xcconfig"; sourceTree = "<group>"; };
 		678804FC2ECC29F5160FC9D7 /* Pods-imbue-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-imbue-tvOS/Pods-imbue-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		77C8439C25D4C985BB8AAF41 /* libPods-imbue-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-imbue-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F64434AC2E40E20BB5CAA76 /* libPods-imbue.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-imbue.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = imbue/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		88C4EF73F9BE330693BDD103 /* Pods-imbue-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-imbue-tvOSTests/Pods-imbue-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
+		88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PlayfairDisplay-Medium.ttf"; path = "../assets/fonts/PlayfairDisplay-Medium.ttf"; sourceTree = "<group>"; };
+		AAD5F607250AA1AF00DFC2A2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "imbue/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DC67F81747655B2D41DD92B2 /* libPods-imbue-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-imbue-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E69046DEA1292F60F8ACAFA7 /* libPods-imbue-imbueTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-imbue-imbueTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PlayfairDisplay-Black.ttf"; path = "../assets/fonts/PlayfairDisplay-Black.ttf"; sourceTree = "<group>"; };
 		F44C31C387D2C408067B8B61 /* Pods-imbue-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-imbue-tvOSTests/Pods-imbue-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
-		1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */ = {isa = PBXFileReference; name = "LuloClean-Bold.ttf"; path = "../assets/fonts/LuloClean-Bold.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */ = {isa = PBXFileReference; name = "PlayfairDisplay-Black.ttf"; path = "../assets/fonts/PlayfairDisplay-Black.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */ = {isa = PBXFileReference; name = "PlayfairDisplay-Medium.ttf"; path = "../assets/fonts/PlayfairDisplay-Medium.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
-		61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */ = {isa = PBXFileReference; name = "PlayfairDisplay-Regular.ttf"; path = "../assets/fonts/PlayfairDisplay-Regular.ttf"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = unknown; explicitFileType = undefined; includeInIndex = 0; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -139,6 +141,7 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
+				AAD5F607250AA1AF00DFC2A2 /* GoogleService-Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = imbue;
@@ -156,7 +159,6 @@
 				F44C31C387D2C408067B8B61 /* Pods-imbue-tvOSTests.debug.xcconfig */,
 				88C4EF73F9BE330693BDD103 /* Pods-imbue-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -171,6 +173,17 @@
 				77C8439C25D4C985BB8AAF41 /* libPods-imbue-tvOSTests.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		44D42B1E87904BDE8A505917 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */,
+				F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */,
+				88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */,
+				61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -206,18 +219,6 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
-		};
-		44D42B1E87904BDE8A505917 /* Resources */ = {
-			isa = "PBXGroup";
-			children = (
-				1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */,
-				F1FA40DE7BFF4F7D959A2278 /* PlayfairDisplay-Black.ttf */,
-				88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */,
-				61233499EC91468EB7A9D6F0 /* PlayfairDisplay-Regular.ttf */,
-			);
-			name = Resources;
-			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 
@@ -316,6 +317,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
+						DevelopmentTeam = REXTSR32K7;
 						LastSwiftMigration = 1120;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -368,6 +370,7 @@
 				1FCF1D7A77C24747939CD2E9 /* PlayfairDisplay-Black.ttf in Resources */,
 				D9940140254844E8A0D6F785 /* PlayfairDisplay-Medium.ttf in Resources */,
 				E7595D1ECE484D39AACDEA2B /* PlayfairDisplay-Regular.ttf in Resources */,
+				AAD5F608250AA1AF00DFC2A2 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,13 +503,17 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-imbue/Pods-imbue-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates-Cpp.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates-Cpp.bundle",
 			);
@@ -522,13 +529,17 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-imbue-imbueTests/Pods-imbue-imbueTests-resources.sh",
+				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
 				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 				"${PODS_CONFIGURATION_BUILD_DIR}/gRPC-C++/gRPCCertificates-Cpp.bundle",
 			);
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/gRPCCertificates-Cpp.bundle",
 			);
@@ -700,6 +711,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = REXTSR32K7;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = imbue/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -723,6 +735,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = REXTSR32K7;
 				INFOPLIST_FILE = imbue/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (

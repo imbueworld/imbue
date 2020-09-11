@@ -11,10 +11,20 @@ export const fonts = {
 }
 
 export const FONTS = {
-    luloClean: {
-        fontFamily: 'LuloClean-Bold',
-        fontWeight: 'normal',
-    },
+    ...Platform.select({
+        ios: {
+            luloClean: {
+                fontFamily: 'LuloCleanW01-OneBold',
+                fontWeight: 'normal',
+            }
+        },
+        android: {
+            luloClean: {
+                fontFamily: 'LuloClean-Bold',
+                fontWeight: 'normal',
+            }
+        },
+    }),
     title: {
         fontFamily: 'PlayfairDisplay-Black',
         fontWeight: '900',
