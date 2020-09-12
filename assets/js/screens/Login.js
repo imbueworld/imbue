@@ -66,6 +66,10 @@ export default function Login(props) {
             const pushAction = StackActions.push("Boot")
             props.navigation.dispatch(pushAction)
           }}
+          // onError={err => {
+          //   // setErrorMsg(err.message)
+          //   setErrorMsg(`${err.code}  |  ${err.message}`)
+          // }}
         />
 
         {errorMsg

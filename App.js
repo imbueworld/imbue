@@ -31,7 +31,6 @@ import Livestream from "./assets/js/screens/Livestream"
 import ClassDescription from "./assets/js/screens/ClassDescription"
 
 
-import TestScreen from "./assets/js/TestScreen"
 import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
 const Stack = createStackNavigator()
 
@@ -172,12 +171,6 @@ export default function App() {
                     name="ClassDescription"
                     component={ClassDescription}
                     options={{ title: "Class" }}
-                    initialParams={{ user: user, cache }}
-                />
-                <Stack.Screen
-                    name="TestScreen"
-                    component={TestScreen}
-                    options={{ title: "TestScreen" }}
                     initialParams={{ user: user, cache }}
                 />
                 <Stack.Screen

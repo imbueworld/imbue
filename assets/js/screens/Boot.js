@@ -93,7 +93,7 @@ export default function Boot(props) {
                 })
                 break
               default:
-                props.navigation.navigate("Home", { referrer: "Boot" })
+                props.navigation.navigate("Home")
                 break
             }
           }}

@@ -55,13 +55,6 @@ export default function UserDashboard(props) {
   useEffect(() => {
     CACHE("UserDashboard/toggleMenu").set(() => setExpanded(expanded => !expanded))
 
-    // if (expanded) {
-    //   // CACHE("device/onBack").set(() => setExpanded(expanded => !expanded))
-    //   CACHE("device/onBack/controlled").set(true)
-    // } else {
-    //   CACHE("device/onBack/controlled").set(false)
-    //   // CACHE("device/onBack").set(() => {})
-    // }
     // Takes control or releases it upon each toggle of the side menu
     if (expanded) CACHE("UserDashboard/toggleMenu/enabled").set(true)
     else CACHE("UserDashboard/toggleMenu/enabled").set(false)
@@ -69,13 +62,11 @@ export default function UserDashboard(props) {
     // Stops listening upon leaving screen
     navigation.addListener("blur", () => {
       CACHE("UserDashboard/toggleMenu/enabled").set(false)
-      // CACHE("device/onBack").set(() => {})
     })
 
     // Continues listening upon coming back to screen
     navigation.addListener("focus", () => {
       if (expanded === null) return // do not run on initial render
-      // CACHE("device/onBack").set(() => setExpanded(expanded => !expanded))
       CACHE("UserDashboard/toggleMenu/enabled").set(true)
     })
 
@@ -93,23 +84,6 @@ export default function UserDashboard(props) {
     // assuming it doesn't matter how many listeners are added
     BackHandler.addEventListener('hardwareBackPress', onBack)
   }, [expanded])
-
-  // /**
-  //  * 
-  //  */
-  // useEffect(() => {
-  //     function onBack() {
-  //         const controlled = CACHE("device/onBack/controlled").get()
-
-  //         if (controlled) {
-  //             const handler = CACHE("device/onBack").get()
-  //             handler()
-  //             return true
-  //         }
-  //     }
-
-  //     BackHandler.addEventListener('hardwareBackPress', onBack)
-  // }, [])
 
   useEffect(() => {
     if (!gyms) return
@@ -242,7 +216,7 @@ export default function UserDashboard(props) {
               auth().signOut()
               GoogleSignin.signOut()
               LoginManager.logOut()
-              props.navigation.navigate("Boot", { referrer: "UserDashboard" })
+              props.navigation.navigate("Boot")
               if (expanded) setExpanded(false)
             }
           },

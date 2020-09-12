@@ -13,9 +13,8 @@ export default function TouchableMenu(props) {
     return (
         <View style={{
             borderRadius: 10,
-            ...shadow,
             ...props.containerStyle,
-            backgroundColor: "#ffffff00", // needed for shadow to activate; reason unknown
+            ...shadow,
         }}>
             {active ?
             <>
@@ -25,7 +24,7 @@ export default function TouchableMenu(props) {
                     height: "100%",
                     position: "absolute",
                     left: 0,
-                    backgroundColor: colors.buttonFill,
+                    backgroundColor: colors.bg,
                     zIndex: -100,
                     ...props.style,
                 }}
@@ -50,8 +49,9 @@ export default function TouchableMenu(props) {
                     >
                         <Text style={{
                             ...styles.button,
-                            backgroundColor: "red",
-                        }}>{/*Confirm*/}Remove</Text>
+                            backgroundColor: props.confirmColor || "#68cc75",
+                            fontWeight: "bold",
+                        }}>{props.confirmText || "Confirm"}</Text>
                     </TouchableHighlight>
                 </View>
                 <View style={{ flex: 1, marginHorizontal: "10%", }}>
@@ -67,12 +67,12 @@ export default function TouchableMenu(props) {
                 </View>
             </View>
             </> : null}
+
             <TouchableHighlight
                 style={{
                     ...props.style,
                     zIndex: 100,
                 }}
-                delayLongPress={3500}
                 underlayColor="#00000012"
                 onLongPress={() => setActive(true)}
             >

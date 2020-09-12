@@ -43,7 +43,8 @@ yarn-error.log
 # BUCK
 buck-out/
 \.buckd/
-*.keystore
+# For simplicity this is commented
+# *.keystore
 !debug.keystore
 
 # fastlane

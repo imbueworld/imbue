@@ -13,6 +13,7 @@ import TransactionView from '../components/TransactionView'
 import CloseButton from '../components/CloseButton'
 import TouchableMenu from '../components/TouchableMenu'
 import { highShadow, colors } from '../contexts/Colors'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -46,12 +47,15 @@ export default function UserMemberships(props) {
 
     MembershipsCreate(memberships.map(membership =>
       <TouchableMenu
+        key={membership.name}
         containerStyle={{
           marginBottom: 15,
         }}
         style={{
           borderRadius: 30,
         }}
+        confirmColor="red"
+        confirmText="Remove"
         onProceed={async () => {
           setErrorMsg("")
           setSuccessMsg("")
@@ -79,6 +83,8 @@ export default function UserMemberships(props) {
       </TouchableMenu>
     ))
   }, [memberships, successMsg])
+
+
 
   if (!user) return <View />
 
@@ -116,7 +122,7 @@ export default function UserMemberships(props) {
           ? <Text style={{ color: "green" }}>{successMsg}</Text>
           : null}
 
-        {Memberships}
+        { Memberships }
 
         <CustomButton
           style={styles.button}
@@ -135,6 +141,13 @@ export default function UserMemberships(props) {
             )
           }}
         />
+
+        <Text style={{
+          width: "88%",
+          alignSelf: "center",
+          textAlign: "justify",
+          ...FONTS.body,
+        }}>In order to cancel a membership, tap and hold it's respective card and tap remove.</Text>
 
       </ProfileLayout>
     </>

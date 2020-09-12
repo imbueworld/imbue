@@ -8,7 +8,8 @@ import Icon from '../Icon'
 export default function GoogleLoginButton(props) {
     let cache = props.cache
     const accountType = props.accountType
-    const onAuthChange = props.onAuthChange
+    const onAuthChange = props.onAuthChange || (() => {})
+    const onError = props.onError || (() => {})
 
     return (
         <TouchableHighlight
@@ -17,7 +18,7 @@ export default function GoogleLoginButton(props) {
                 ...props.containerStyle,
             }}
             underlayColor="#00000020"
-            onPress={() => GoogleLogin(cache, accountType, onAuthChange)}
+            onPress={() => GoogleLogin(cache, accountType, onAuthChange, onError)}
         >
             <Icon
                 containerStyle={props.imageStyle}

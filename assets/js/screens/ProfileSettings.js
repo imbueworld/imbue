@@ -46,22 +46,20 @@ export default function ProfileSettings(props) {
     const [changePasswordField, setChangePasswordField] = useState("")
     const [changePasswordFieldConfirm, setChangePasswordFieldConfirm] = useState("")
 
+    console.log(redFields)
+
     async function updateSafeInfo() {
         setRedFields([])
         setErrorMsg("")
         setSuccessMsg("")
-        let redFields = []
 
-        // if (firstNameField.length === 0) setRedFields([...redFields, "first"])
-        // if (lastNameField.length === 0) setRedFields([...redFields, "last"])
-        // if (emailField.length === 0) setRedFields([...redFields, "email"])
-        // if (passwordField.length === 0) setRedFields([...redFields, "main_password"])
+        let redFields = []
         if (firstNameField.length === 0) redFields.push("first")
         if (lastNameField.length === 0) redFields.push("last")
         if (emailField.length === 0) redFields.push("email")
         if (passwordField.length === 0) redFields.push("main_password")
-
         setRedFields(redFields)
+
         if (redFields.length) {
             setErrorMsg("Required fields need to be filled.")
             return
@@ -135,33 +133,6 @@ export default function ProfileSettings(props) {
     if (!user) return <View />
 
     return (
-        <>
-        {/* { pwForm
-        ?   <View style={{
-                width: "85%",
-                height: "100%",
-                position: "absolute",
-                justifyContent: "center",
-                alignSelf: "center",
-                zIndex: 200,
-            }}>
-                <PasswordConfirmation
-                    onSuccess={changePassword}
-                    onX={() => setPwForm(false)}
-                />
-            </View>
-        :   <View />} */}
-
-        {/* <PasswordConfirmation
-            capsuleStyle={{
-                // marginTop: 10,
-                marginVertical: 10,
-            }}
-            onSuccess={changePassword}
-            onFail={setFormState}
-            onX={() => setPwForm(false)}
-        /> */}
-
         <ProfileLayout
             cache={cache}
             innerContainerStyle={{
@@ -250,7 +221,7 @@ export default function ProfileSettings(props) {
             
             <CustomTextInput
                 containerStyle={{
-                    borderColor: redFields.includes("password")
+                    borderColor: redFields.includes("main_password")
                         ? "red" : undefined
                 }}
                 placeholder="Current Password"
@@ -275,7 +246,6 @@ export default function ProfileSettings(props) {
                 }}
             />
         </ProfileLayout>
-        </>
     )
 }
 

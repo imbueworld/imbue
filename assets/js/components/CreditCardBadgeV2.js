@@ -23,7 +23,7 @@ export default function CreditCardBadgeV2(props) {
                     padding: 20,
                 }}
                 underlayColor="#00000012"
-                delayLongPress={3500}
+                delayLongPress={3000}
                 onLongPress={() => props.onLongPress(CC.id)}
             >
                 <View style={{

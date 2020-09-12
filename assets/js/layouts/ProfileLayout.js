@@ -47,10 +47,6 @@ export default function ProfileLayout(props) {
       },
       logOut: {
         show: false,
-        onPress: () => {
-          auth().signOut()
-          navigation.navigate("Boot", { referrer: "PartnerDashboard" })
-        },
       },
       editPfp: { // Requires props.cache currently to function
         show: false,
@@ -151,7 +147,7 @@ export default function ProfileLayout(props) {
           <TouchableHighlight
             style={styles.sidePanelButtonContainer}
             underlayColor="#eed"
-            onPressIn={props.onBack || (() => navigation.goBack())}
+            onPress={props.onBack || (() => navigation.goBack())}
           >
             <BackButton
               imageStyle={{
