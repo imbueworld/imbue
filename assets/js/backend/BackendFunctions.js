@@ -49,18 +49,39 @@ export async function initializeAccount(cache, { first, last, email, password, t
     let authPromise = auth().currentUser.updateProfile({
         displayName: `${account_type}_${first} ${last}`
     })
-    let form = {
-        id: uid,
-        account_type,
-        first,
-        last,
-        email,
-        icon_uri: "default-icon.png",
-        icon_uri_foreign,
-        active_memberships: [],
-        active_classes: [],
-        scheduled_classes: [],
+
+    let form
+    if (account_type === "partner") {
+        form = {
+            id: uid,
+            account_type,
+            first,
+            last,
+            email,
+            icon_uri: "default-icon.png",
+            icon_uri_foreign,
+
+            associated_classes: [],
+            associated_gyms: [],
+            revenue: 0,
+            revenue_total: 0,
+        }
+    } else {
+        form = {
+            id: uid,
+            account_type,
+            first,
+            last,
+            email,
+            icon_uri: "default-icon.png",
+            icon_uri_foreign,
+
+            active_memberships: [],
+            active_classes: [],
+            scheduled_classes: [],
+        }
     }
+
     let firestorePromise = firestore()
         .collection(collection)
         .doc(uid)

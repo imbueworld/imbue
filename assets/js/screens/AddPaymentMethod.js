@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
@@ -14,14 +14,14 @@ import { addPaymentMethod } from '../backend/BackendFunctions'
 // 4000000760000002 // Visa
 // 5555555555554444 // Mastercard
 // 6011111111111117 // Discover
-const exampleUser = {
-    cardNumber: "4000000760000002",
-    expMonth: "12",
-    expYear: "69",
-    cvc: "699",
-    name: "Oskar Tree",
-    address_zip: "699",
-}
+// const exampleUser = {
+//     cardNumber: "4000000760000002",
+//     expMonth: "12",
+//     expYear: "69",
+//     cvc: "699",
+//     name: "Oskar Tree",
+//     address_zip: "699",
+// }
 
 
 
@@ -60,7 +60,6 @@ export default function AddPaymentMethod(props) {
         }
 
         try {
-            form = exampleUser
             await addPaymentMethod(cache, form)
             if (!params.referrer) {
                 props.navigation.goBack()

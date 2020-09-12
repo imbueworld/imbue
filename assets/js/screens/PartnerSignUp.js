@@ -160,8 +160,7 @@ export default function PartnerSignUp(props) {
                                 await initializeAccount(cache, { first, last, email, password, type })
                                 setSuccessMsg("You've been signed up!")
 
-                                await new Promise(r => setTimeout(r, 3000)) // sleep
-                                props.navigation.navigate("Boot", { referrer: "PartnerSignUp" })
+                                props.navigation.navigate("Boot")
                             } catch (err) {
                                 console.error(err)
                                 // If not native (form) error, check for auth error
