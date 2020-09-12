@@ -85,6 +85,7 @@ export default function Login(props) {
           onChangeText={setEmail}
         />
         <CustomTextInput
+          secureTextEntry
           containerStyle={{
             borderColor: redFields.includes("password") ? "red" : undefined,
           }}

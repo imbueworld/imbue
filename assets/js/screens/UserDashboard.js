@@ -18,6 +18,7 @@ import { simpleShadow } from '../contexts/Colors'
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { cache as CACHE } from "../backend/CacheFunctions"
 import { LoginManager } from 'react-native-fbsdk'
+import { StackActions } from '@react-navigation/native'
 
 
 
@@ -216,7 +217,8 @@ export default function UserDashboard(props) {
               auth().signOut()
               GoogleSignin.signOut()
               LoginManager.logOut()
-              props.navigation.navigate("Boot")
+              const pushAction = StackActions.push("Boot")
+              navigation.dispatch(pushAction)
               if (expanded) setExpanded(false)
             }
           },
@@ -231,10 +233,7 @@ export default function UserDashboard(props) {
           }
           title="My Classes"
           onPress={() => {
-            props.navigation.navigate(
-              "ScheduleViewer"
-              // { classIds: user.active_classes }
-            )
+            props.navigation.navigate("ScheduleViewer")
           }}
         />
         <CustomButton

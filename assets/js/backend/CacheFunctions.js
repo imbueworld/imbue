@@ -125,35 +125,35 @@ export async function retrieveUserData(cache) {
  */
 export async function retrieveClassesByIds(cache, { classIds }) {
     throw new Error("Is this function really needed here? if yes, have to make it work properly")
-    if (!classIds) throw new Error("classIds must be provided.")
-    if (!cache.classes) cache.classes = []
+    // if (!classIds) throw new Error("classIds must be provided.")
+    // if (!cache.classes) cache.classes = []
 
-    console.log("classIds", classIds)
+    // console.log("classIds", classIds)
 
-    let queue = classIds.filter(classId => {
-        cache.classes.forEach(({ id }) => {
-            console.log("id", id)
-            console.log("classId", classId)
-            if (classId === id) return false
-        })
-        return true
-    })
-    console.log("cache.classes", cache.classes)
-    console.log("queue", queue)
+    // let queue = classIds.filter(classId => {
+    //     cache.classes.forEach(({ id }) => {
+    //         console.log("id", id)
+    //         console.log("classId", classId)
+    //         if (classId === id) return false
+    //     })
+    //     return true
+    // })
+    // console.log("cache.classes", cache.classes)
+    // console.log("queue", queue)
 
-    let classes = []
-    if (queue.length) {
-        classes = (await firestore()
-            .collection("classes")
-            .where("id", "in", queue)
-            .get()
-        ).docs.map(doc => doc.data())
-    }
+    // let classes = []
+    // if (queue.length) {
+    //     classes = (await firestore()
+    //         .collection("classes")
+    //         .where("id", "in", queue)
+    //         .get()
+    //     ).docs.map(doc => doc.data())
+    // }
 
-    // Update cache
-    cache.classes = [...cache.classes, ...classes]
+    // // Update cache
+    // cache.classes = [...cache.classes, ...classes]
 
-    return cache.classes.filter(({ id }) => classIds.includes(id))
+    // return cache.classes.filter(({ id }) => classIds.includes(id))
 }
 
 /**

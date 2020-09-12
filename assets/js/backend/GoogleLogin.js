@@ -13,17 +13,11 @@ export async function GoogleLogin(cache, accountType, onAuthChange=(() => {}), o
   // Get the users ID token
   const { idToken } = await GoogleSignin.signIn();
 
-  console.log(1, "[GoogleLogin] Got this far.") //
-
   // Create a Google credential with the token
   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-  console.log(2, "[GoogleLogin] Got this far.") //
-
   // Sign-in the user with the credential
   const { user } = await auth().signInWithCredential(googleCredential);
-
-  console.log(3, "[GoogleLogin] Got this far.") //
 
   if (user) {
     if (user.displayName.substring(0, 5) === "user_") {
@@ -37,8 +31,6 @@ export async function GoogleLogin(cache, accountType, onAuthChange=(() => {}), o
       }
       await initializeAccount(cache, {}, options)
     }
-
-    console.log(4, "[GoogleLogin] Got this far.") //
 
     onAuthChange(user)
   }

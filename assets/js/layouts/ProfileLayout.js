@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableHighlight } from 'react-na
 import CustomCapsule from "../components/CustomCapsule"
 import { simpleShadow } from '../contexts/Colors'
 import BackButton from '../components/BackButton'
-import { useNavigation } from '@react-navigation/native'
+import { StackActions, useNavigation } from '@react-navigation/native'
 import { fonts, FONTS } from '../contexts/Styles'
 import LogOutButton from '../components/buttons/LogOutButton'
 import auth from "@react-native-firebase/auth"
@@ -13,6 +13,8 @@ import Icon from '../components/Icon'
 import { retrieveUserData } from '../backend/CacheFunctions'
 import { pickAndUploadFile } from '../backend/BackendFunctions'
 import EditButton from '../components/buttons/EditButton'
+import { GoogleSignin } from '@react-native-community/google-signin'
+import { LoginManager } from 'react-native-fbsdk'
 
 
 
@@ -22,7 +24,7 @@ import EditButton from '../components/buttons/EditButton'
  */
 export default function ProfileLayout(props) {
   let cache = props.cache // Is not always passed, cache reworking in need
-  let navigation = useNavigation()
+  const navigation = useNavigation()
 
   const [errorMsg, setErrorMsg] = useState("")
 
@@ -47,6 +49,13 @@ export default function ProfileLayout(props) {
       },
       logOut: {
         show: false,
+        onLongPress: () => {
+          auth().signOut()
+          GoogleSignin.signOut()
+          LoginManager.logOut()
+          const pushAction = StackActions.push("Boot")
+          navigation.dispatch(pushAction)
+        },
       },
       editPfp: { // Requires props.cache currently to function
         show: false,

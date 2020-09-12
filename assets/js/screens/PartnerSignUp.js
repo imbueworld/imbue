@@ -12,6 +12,7 @@ import CustomCapsule from "../components/CustomCapsule"
 import { initializeAccount } from '../backend/BackendFunctions'
 import { handleAuthError } from '../backend/HelperFunctions'
 import { fonts, FONTS } from '../contexts/Styles'
+import { StackActions } from '@react-navigation/native'
 
 
 
@@ -160,7 +161,8 @@ export default function PartnerSignUp(props) {
                                 await initializeAccount(cache, { first, last, email, password, type })
                                 setSuccessMsg("You've been signed up!")
 
-                                props.navigation.navigate("Boot")
+                                const pushAction = StackActions.push("Boot")
+                                props.navigation.dispatch(pushAction)
                             } catch (err) {
                                 console.error(err)
                                 // If not native (form) error, check for auth error
