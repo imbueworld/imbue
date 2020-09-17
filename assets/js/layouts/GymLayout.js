@@ -31,52 +31,52 @@ export default function GymLayout(props) {
   const [customState, setCustomState] = useState({}) // Used only internally, during the lifetime of this component
 
   // useEffect(() => {
-    const buttonOptions = {
-      goBackButton: {
-        show: true,
-        onPress: undefined, // ==> defaults to navigation.goBack()
+  const buttonOptions = {
+    goBackButton: {
+      show: true,
+      onPress: undefined, // ==> defaults to navigation.goBack()
+    },
+    addToCalendar: {
+      show: false,
+      state: "opportunity" || "fulfilled",
+      onPress: () => { },
+    },
+    goToCalendar: {
+      show: false,
+      onPress: undefined, // ==> defaults to pushing on a stack ScheduleViewer
+    },
+    goToLivestream: {
+      show: false,
+      state: "normal" || "inactive",
+      onPress: () => {
+        const pushAction = StackActions.push("Livestream", { gymId: gym.id })
+        navigation.dispatch(pushAction)
       },
-      addToCalendar: {
-        show: false,
-        state: "opportunity" || "fulfilled",
-        onPress: () => {},
-      },
-      goToCalendar: {
-        show: false,
-        onPress: undefined, // ==> defaults to pushing on a stack ScheduleViewer
-      },
-      goToLivestream: {
-        show: false,
-        state: "normal" || "inactive",
-        onPress: () => {
-          const pushAction = StackActions.push("Livestream", { gymId: gym.id })
-          navigation.dispatch(pushAction)
-        },
-      },
-      viewAttendees: {
-        show: false,
-        state: "closed" || "open",
-        data: { classId: null, timeId: null },
-        onPress: () => {},
-      },
-    }
+    },
+    viewAttendees: {
+      show: false,
+      state: "closed" || "open",
+      data: { classId: null, timeId: null },
+      onPress: () => { },
+    },
+  }
   
-    // Apply props.buttonOptions to buttonOptions
-    if (props.buttonOptions) {
-      Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
-        Object.entries(instructions).forEach(([key, value]) => {
-          buttonOptions[ button ][ key ] = value
-        })
-      })
-    }
-
-    // Apply customState to buttonOptions
-    Object.entries(customState).forEach(([button, instructions]) => {
+  // Apply props.buttonOptions to buttonOptions
+  if (props.buttonOptions) {
+    Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
       Object.entries(instructions).forEach(([key, value]) => {
-        buttonOptions[ button ][ key ] = value
+        buttonOptions[button][key] = value
       })
     })
-    // setButtonOptions(defaultButtonOptions)
+  }
+
+  // Apply customState to buttonOptions
+  Object.entries(customState).forEach(([button, instructions]) => {
+    Object.entries(instructions).forEach(([key, value]) => {
+      buttonOptions[button][key] = value
+    })
+  })
+  // setButtonOptions(defaultButtonOptions)
   // }, [])
 
 
@@ -127,6 +127,7 @@ export default function GymLayout(props) {
           }}
           imageStyle={styles.image}
           imageInterval={5000}
+          // data={"https://firebasestorage.googleapis.com/v0/b/spring-ranger-281214.appspot.com/o/imbue%202.jpg?alt=media&token=8c430e5f-05d3-43f5-9320-0ebe163c99bd"}
           data={gym.image_uris}
         />
 

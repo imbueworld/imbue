@@ -57,7 +57,7 @@ export default function ImageSlideshow(props) {
     }, [cIdx])
     // [uncomment upon DEBUG end]
 
-
+    console.log("Image URIS: " + imageUris)
     
     if (!imageUris) return <View />
 
@@ -84,6 +84,8 @@ export default function ImageSlideshow(props) {
             :   null}
         </View>
     )
+
+    console.log(imageUris[cIdx])
     
     return (
         <View style={props.containerStyle}>
@@ -116,13 +118,14 @@ export default function ImageSlideshow(props) {
             </View>
             </>
             }
-
+            
             <Image
                 style={{
                     width: 200,
                     height: 200,
                     ...props.imageStyle,
                 }}
+                // source={["https://firebasestorage.googleapis.com/v0/b/spring-ranger-281214.appspot.com/o/imbue%20fitness.jpg?alt=media&token=531e2117-b602-4597-83fb-0c4a7c024699","https://firebasestorage.googleapis.com/v0/b/spring-ranger-281214.appspot.com/o/imbue%202.jpg?alt=media&token=8c430e5f-05d3-43f5-9320-0ebe163c99bd"]}
                 source={props.local
                     ?   imageUris[cIdx]
                     :   { uri: imageUris[cIdx] }}

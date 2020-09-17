@@ -110,7 +110,7 @@ export default function UserDashboard(props) {
                       desc={gym.description}
                       rating={`${gym.rating} (${gym.rating_weight})`}
                       relativeDistance={""}
-                      iconUri={gymIconUri}
+                      iconUri={gym.icon_uri}
                       key={idx}
                       onMoreInfo={() => {
                         props.navigation.navigate(
@@ -156,7 +156,7 @@ export default function UserDashboard(props) {
     <>
     <MapView
       style={styles.map}
-      provider={PROVIDER_GOOGLE}
+      // provider={PROVIDER_GOOGLE}
       customMapStyle={mapStyle2}
       initialRegion={{
         latitude: 37.78825,
