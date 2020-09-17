@@ -19,16 +19,18 @@ export default function ImageSlideshow(props) {
     const [imageUris, setImageUris] = useState(null)
 
     useEffect(() => {
-        if (!props.local) {
-            const init = async () => {
-                let promises = []
-                rawImageUris.forEach(uri => promises.push(publicStorage(uri)))
-                setImageUris(await Promise.all(promises))
-            }
-            init()
-        } else {
-            setImageUris(rawImageUris)
-        }
+        // Temporary fix for images not loading
+        setImageUris(rawImageUris)
+        // if (!props.local) {
+        //     const init = async () => {
+        //         let promises = []
+        //         rawImageUris.forEach(uri => promises.push(publicStorage(uri)))
+        //         setImageUris(await Promise.all(promises))
+        //     }
+        //     init()
+        // } else {
+        //     setImageUris(rawImageUris)
+        // }
     }, [])
 
     function nextImage() {
@@ -57,8 +59,7 @@ export default function ImageSlideshow(props) {
     }, [cIdx])
     // [uncomment upon DEBUG end]
 
-    console.log("Image URIS: " + imageUris)
-    
+
     if (!imageUris) return <View />
 
     const IndicatingDots = imageUris.map((irlvnt, idx) => 
