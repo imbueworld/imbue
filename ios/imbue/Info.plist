@@ -30,13 +30,23 @@
 				<string>com.googleusercontent.apps.736868821-bg0lq5rree7lbelj1dispkod8n6rlqr5</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>fb700483400823842</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>FacebookAppID</key>
-	<string>472586343541363</string>
+	<string>700483400823842</string>
 	<key>FacebookDispayName</key>
 	<string>Imbue</string>
+	<key>LSApplicationCategoryType</key>
+	<string></string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>
