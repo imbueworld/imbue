@@ -93,7 +93,6 @@ export default function UserDashboard(props) {
       if (gym.hidden_on_map) return
 
       return (
-        <SafeAreaView>
         <Marker
           coordinate={gym.coordinate}
           key={idx}
@@ -124,7 +123,6 @@ export default function UserDashboard(props) {
             )
           }}
           />
-        </SafeAreaView>
       )
     }
     ))
@@ -172,12 +170,13 @@ export default function UserDashboard(props) {
 
     { CurrentGymBadge }
 
+
     {
     !user ? null :
     expanded ? null :
       <View style={{
-        marginTop: 10,
-        marginLeft: 10,
+        marginTop: 50,
+        marginLeft: 15,
         position: "absolute",
         zIndex: 0,
       }}>
@@ -270,9 +269,11 @@ export default function UserDashboard(props) {
         />
 
       </ProfileLayout>
-    </Animated.View>}
-          </>
+          </Animated.View>}
+      </>
+     
   )
+    
 }
 
 const styles = StyleSheet.create({

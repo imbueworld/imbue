@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -89,6 +89,7 @@ export default function ScheduleViewer(props) {
   if (!user || !dataIsFormatted) return <View />
 
   return (
+    <SafeAreaView style={{backgroundColor: "#F9F9F9"}}>
     <ScrollView contentContainerStyle={styles.scrollView}>
 
       <AppBackground />
@@ -179,7 +180,8 @@ export default function ScheduleViewer(props) {
         </View>
       </View>
 
-    </ScrollView>
+      </ScrollView>
+      </SafeAreaView>
   )
 }
 

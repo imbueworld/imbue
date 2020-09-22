@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableHighlight, SafeAreaView  } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
@@ -12,7 +12,6 @@ import GymLayout from '../layouts/GymLayout'
 import { fonts, FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import Icon from '../components/Icon'
-
 
 
 export default function GymDescription(props) {
@@ -235,7 +234,7 @@ export default function GymDescription(props) {
           }}
           data={gym}
         /> : null}
-    </GymLayout>
+      </GymLayout>
   )
 }
 
