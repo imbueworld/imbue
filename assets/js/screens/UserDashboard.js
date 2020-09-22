@@ -9,6 +9,8 @@ import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomButton from "../components/CustomButton"
 import GymBadge from "../components/GymBadge"
+import CustomTextInput from "../components/CustomTextInput"
+
 
 import auth from "@react-native-firebase/auth"
 import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByUser } from '../backend/CacheFunctions'
@@ -19,6 +21,7 @@ import { GoogleSignin } from '@react-native-community/google-signin'
 import { cache as CACHE } from "../backend/CacheFunctions"
 import { LoginManager } from 'react-native-fbsdk'
 import { StackActions } from '@react-navigation/native'
+import { TextInput } from 'react-native-gesture-handler'
 
 
 
@@ -170,6 +173,22 @@ export default function UserDashboard(props) {
 
     { CurrentGymBadge }
 
+       <CustomTextInput
+          containerStyle={{
+            // borderColor: redFields.includes("first") ? "red" : undefined,
+            position: "absolute", paddingTop: 0, top: 170, left: 35, width: 300, height: 60, textAlign: "center", backgroundColor: "#fff", fontSize: 24
+          }}
+        placeholder="Saerch for a gym"
+        multiline={false}
+        numberOfLines={1}
+          // value={first}
+          // onChangeText={setFirst}
+        />
+      {/* <CustomTextInput style={{ position: "absolute", top: 170, left: 35, width: 300, height: 60, textAlign: "center", backgroundColor: "#fff", fontSize: 24 }} placeholderTextColor={"#000"} placeholder={
+        "Testing"
+      }>
+        
+    </CustomTextInput> */}
 
     {
     !user ? null :
@@ -202,7 +221,8 @@ export default function UserDashboard(props) {
           />
         </TouchableHighlight>
       </View>
-    }
+      }
+      
 
     {!user ? null :
     <Animated.View style={[styles.sidePanel, { left: slidingAnim }]}>

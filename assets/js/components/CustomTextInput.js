@@ -38,8 +38,8 @@ export default function CustomTextInput(props) {
                     props.style
                 ]}
                 secureTextEntry={secureTextEntry}
-                multiline={multiline}
-                numberOfLines={props.numberOfLines || 1}
+                // multiline={multiline}
+                // numberOfLines={props.numberOfLines || 1}
                 keyboardType={props.keyboardType || "default"}
                 value={props.value !== undefined ? props.value : undefined}
                 placeholder={props.placeholder}

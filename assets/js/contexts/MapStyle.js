@@ -1,4 +1,4 @@
-export const mapStyle = [
+ const mapStyle = [
   {
     "featureType": "administrative.land_parcel",
     "elementType": "labels",
@@ -128,7 +128,7 @@ export const mapStyle = [
 ]
 
 
-export const mapStyle2 = [
+ const mapStyle2 = [
   {
     "elementType": "geometry",
     "stylers": [
