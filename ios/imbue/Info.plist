@@ -23,11 +23,13 @@
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
+			<key>CFBundleIdentifier</key>
+			<string></string>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.736868821-bg0lq5rree7lbelj1dispkod8n6rlqr5</string>
+				<string>com.googleusercontent.apps.736868821-kf9o1qalpaee63uo1bkd9m5hh52g660l</string>
 			</array>
 		</dict>
 		<dict>
@@ -40,7 +42,7 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>
 	<string>700483400823842</string>
 	<key>FacebookDispayName</key>

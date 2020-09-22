@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>736868821-bg0lq5rree7lbelj1dispkod8n6rlqr5.apps.googleusercontent.com</string>
+	<string>736868821-kf9o1qalpaee63uo1bkd9m5hh52g660l.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.736868821-bg0lq5rree7lbelj1dispkod8n6rlqr5</string>
+	<string>com.googleusercontent.apps.736868821-kf9o1qalpaee63uo1bkd9m5hh52g660l</string>
 	<key>ANDROID_CLIENT_ID</key>
-	<string>736868821-fvo1gfmfra2sttvh1uab88oe9k4qq9v4.apps.googleusercontent.com</string>
+	<string>736868821-1vof7nsel90ofe75gumnaom633jvo53s.apps.googleusercontent.com</string>
 	<key>API_KEY</key>
 	<string>AIzaSyDMqJscgDIPOIIKsIoXevLJhFW8Qbx7OK4</string>
 	<key>GCM_SENDER_ID</key>
@@ -15,7 +15,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.imbue</string>
+	<string>com.ImbueFitness.Imbue</string>
 	<key>PROJECT_ID</key>
 	<string>spring-ranger-281214</string>
 	<key>STORAGE_BUCKET</key>
@@ -31,7 +31,7 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:736868821:ios:13b080060dc4b4d5c5e55c</string>
+	<string>1:736868821:ios:3ca2307e38e507b5c5e55c</string>
 	<key>DATABASE_URL</key>
 	<string>https://spring-ranger-281214.firebaseio.com</string>
 </dict>

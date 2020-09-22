@@ -19,6 +19,7 @@
 		6688A99FCD99A382A389371A /* libPods-imbue.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F64434AC2E40E20BB5CAA76 /* libPods-imbue.a */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9691B7744B618B692C08F747 /* libPods-imbue-imbueTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E69046DEA1292F60F8ACAFA7 /* libPods-imbue-imbueTests.a */; };
+		AABCC65525169CE60020D3BF /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = AABCC65425169CE60020D3BF /* File.swift */; };
 		AAD5F608250AA1AF00DFC2A2 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = AAD5F607250AA1AF00DFC2A2 /* GoogleService-Info.plist */; };
 		BA7CE4AD297A4E7E99680861 /* LuloClean-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 1CE706EBDC61430FBC91B825 /* LuloClean-Bold.ttf */; };
 		D9940140254844E8A0D6F785 /* PlayfairDisplay-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */; };
@@ -70,6 +71,8 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = imbue/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		88C4EF73F9BE330693BDD103 /* Pods-imbue-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-imbue-tvOSTests/Pods-imbue-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		88FA9EB30F2C4AF1ABF1C149 /* PlayfairDisplay-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "PlayfairDisplay-Medium.ttf"; path = "../assets/fonts/PlayfairDisplay-Medium.ttf"; sourceTree = "<group>"; };
+		AABCC65325169CE60020D3BF /* imbue-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "imbue-Bridging-Header.h"; sourceTree = "<group>"; };
+		AABCC65425169CE60020D3BF /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		AAD5F607250AA1AF00DFC2A2 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "imbue/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		DC67F81747655B2D41DD92B2 /* libPods-imbue-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-imbue-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E69046DEA1292F60F8ACAFA7 /* libPods-imbue-imbueTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-imbue-imbueTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -143,6 +146,8 @@
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				AAD5F607250AA1AF00DFC2A2 /* GoogleService-Info.plist */,
 				13B07FB71A68108700A75B9A /* main.m */,
+				AABCC65425169CE60020D3BF /* File.swift */,
+				AABCC65325169CE60020D3BF /* imbue-Bridging-Header.h */,
 			);
 			name = imbue;
 			sourceTree = "<group>";
@@ -317,8 +322,8 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = REXTSR32K7;
-						LastSwiftMigration = 1120;
+						DevelopmentTeam = YFG259Y45C;
+						LastSwiftMigration = 1200;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
 						CreatedOnToolsVersion = 8.2.1;
@@ -624,6 +629,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				AABCC65525169CE60020D3BF /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -665,6 +671,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5A96DE6184D15C480B5EC26F /* Pods-imbue-imbueTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
@@ -688,6 +695,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 16364B0BDBF22C28C13B702E /* Pods-imbue-imbueTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
 				INFOPLIST_FILE = imbueTests/Info.plist;
@@ -710,8 +718,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = REXTSR32K7;
+				CURRENT_PROJECT_VERSION = 1.0.3.1;
+				DEVELOPMENT_TEAM = YFG259Y45C;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = imbue/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -720,8 +728,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ImbueFitness.Imbue;
 				PRODUCT_NAME = imbue;
+				SWIFT_OBJC_BRIDGING_HEADER = "imbue-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
@@ -734,8 +743,8 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = REXTSR32K7;
+				CURRENT_PROJECT_VERSION = 1.0.3.1;
+				DEVELOPMENT_TEAM = YFG259Y45C;
 				INFOPLIST_FILE = imbue/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
@@ -743,8 +752,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.ImbueFitness.Imbue;
 				PRODUCT_NAME = imbue;
+				SWIFT_OBJC_BRIDGING_HEADER = "imbue-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				VERSIONING_SYSTEM = "apple-generic";
 			};

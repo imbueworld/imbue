@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Image } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView, TouchableHighlight} from 'react-native'
 
 import { colors } from "../contexts/Colors"
 
@@ -12,12 +12,15 @@ import CustomCapsule from "../components/CustomCapsule"
 import { initializeAccount } from '../backend/BackendFunctions'
 import { handleAuthError } from '../backend/HelperFunctions'
 import { fonts, FONTS } from '../contexts/Styles'
-import { StackActions } from '@react-navigation/native'
+import { StackActions, useNavigation } from '@react-navigation/native'
+
+import BackButton from '../components/BackButton'
 
 
 
 export default function PartnerSignUp(props) {
     let cache = props.route.params.cache
+    const navigation = useNavigation()
 
     const [redFields, setRedFields] = useState([])
     const [errorMsg, setErrorMsg] = useState("")
@@ -60,7 +63,21 @@ export default function PartnerSignUp(props) {
     }
 
     return (
-        <ScrollView contentContaineStyle={styles.scrollView}>
+        <SafeAreaView>
+            <ScrollView contentContaineStyle={styles.scrollView}>
+            {/* back button */}
+            <TouchableHighlight
+                    style={styles.sidePanelButtonContainer}
+                    underlayColor="#eed"
+                    onPress={props.onBack || (() => navigation.goBack())}
+                >
+                    <BackButton
+                    imageStyle={{
+                        width: 48,
+                        height: 48,
+                    }}
+                    />
+            </TouchableHighlight>
             <AppBackground />
             {/* <Image
                 style={{
@@ -70,7 +87,9 @@ export default function PartnerSignUp(props) {
                 }}
                 source={require("../components/img/workout-24.jpg")}
             /> */}
-            <CompanyLogo />
+                <CompanyLogo />
+                
+      
 
             <CustomCapsule style={styles.container}>
 
@@ -182,7 +201,8 @@ export default function PartnerSignUp(props) {
 
             </CustomCapsule>
 
-        </ScrollView>
+            </ScrollView>
+            </SafeAreaView>
     )
 }
 
@@ -195,4 +215,14 @@ const styles = StyleSheet.create({
         marginBottom: 30,
         alignSelf: "center",
     },
+    sidePanelButtonContainer: {
+        backgroundColor: "white",
+        marginTop: 10,
+        marginLeft: 10,
+        position: "absolute",
+        justifyContent: "center",
+        alignItems: "center",
+        borderRadius: 999,
+        zIndex: 110,
+      },
 })

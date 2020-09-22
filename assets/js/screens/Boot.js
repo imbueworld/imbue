@@ -18,6 +18,7 @@ const DEBUG = false
 
 
 export default function Boot(props) {
+  //signs out user on app load
   // auth().signOut()
   // GoogleSignin.signOut()
   // LoginManager.logOut()
@@ -143,7 +144,7 @@ export default function Boot(props) {
         <View style={{ height: 10, borderBottomWidth: 1, }} />
 
       </View>
-    </ScrollView>
+      </ScrollView>
   )
 }
 

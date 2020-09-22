@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, ScrollView, Image } from 'react-native'
+import { StyleSheet, Text, ScrollView, Image, TouchableHighlight, SafeAreaView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -11,12 +11,14 @@ import CustomCapsule from "../components/CustomCapsule"
 import { signIn } from '../backend/BackendFunctions'
 import { handleAuthErrorAnonymous } from '../backend/HelperFunctions'
 import SocialLogin from '../components/SocialLogin'
-import { StackActions } from '@react-navigation/native'
+import { StackActions, useNavigation } from '@react-navigation/native'
 
+import BackButton from '../components/BackButton'
 
 
 export default function Login(props) {
   let cache = props.route.params.cache
+  const navigation = useNavigation()
 
   const [redFields, setRedFields] = useState([])
   const [successMsg, setSuccessMsg] = useState("")
@@ -24,6 +26,8 @@ export default function Login(props) {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+
+  // const { state, navigate } = this.props.navigation; 
 
   function invalidate() {
     let redFields = []
@@ -36,12 +40,16 @@ export default function Login(props) {
     }
   }
 
+     
+
+
   return (
+    <SafeAreaView>
     <ScrollView
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"
     >
-
+       
       <AppBackground />
       {/* <Image
           style={{
@@ -52,6 +60,20 @@ export default function Login(props) {
           source={require("../components/img/workout-23.jpg")}
       /> */}
       <CompanyLogo />
+
+      {/* back button */}
+      <TouchableHighlight
+            style={styles.sidePanelButtonContainer}
+            underlayColor="#eed"
+            onPress={props.onBack || (() => navigation.goBack())}
+          >
+            <BackButton
+              imageStyle={{
+                width: 48,
+                height: 48,
+              }}
+            />
+      </TouchableHighlight>
 
       <CustomCapsule containerStyle={styles.container}>
 
@@ -133,8 +155,8 @@ export default function Login(props) {
         />
       </CustomCapsule>
 
-    </ScrollView>
-  )
+      </ScrollView>
+      </SafeAreaView>  )
 }
 
 const styles = StyleSheet.create({
@@ -145,5 +167,15 @@ const styles = StyleSheet.create({
     width: "88%",
     marginBottom: 30,
     alignSelf: "center",
+  },
+  sidePanelButtonContainer: {
+    backgroundColor: "white",
+    marginTop: 10,
+    marginLeft: 10,
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 999,
+    zIndex: 110,
   },
 })

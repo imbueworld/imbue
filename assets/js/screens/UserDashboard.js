@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, View, Animated, TouchableHighlight, BackHandler } from 'react-native'
+import { StyleSheet, View, Animated, TouchableHighlight, BackHandler, SafeAreaView } from 'react-native'
 
 import { useDimensions } from '@react-native-community/hooks'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
@@ -93,6 +93,7 @@ export default function UserDashboard(props) {
       if (gym.hidden_on_map) return
 
       return (
+        <SafeAreaView>
         <Marker
           coordinate={gym.coordinate}
           key={idx}
@@ -122,7 +123,8 @@ export default function UserDashboard(props) {
                 })
             )
           }}
-        />
+          />
+        </SafeAreaView>
       )
     }
     ))
@@ -269,7 +271,7 @@ export default function UserDashboard(props) {
 
       </ProfileLayout>
     </Animated.View>}
-    </>
+          </>
   )
 }
 

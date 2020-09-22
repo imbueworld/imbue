@@ -17,6 +17,8 @@ target 'imbue' do
 
   pod 'react-native-video', :path => '../node_modules/react-native-video'
 
+  pod 'react-native-safe-area-context', :path => '../node_modules/react-native-safe-area-context'
+
   target 'imbueTests' do
     inherit! :complete
     # Pods for testing

@@ -146,7 +146,7 @@ export default function ProfileLayout(props) {
               paddingTop: 90,
             },
             props.innerContainerStyle,
-          ]}
+          ]} 
         >
           {errorMsg && errorMsg.length
           ? <Text style={{ color: "red" }}>{ errorMsg }</Text>
