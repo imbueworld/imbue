@@ -1,9 +1,6 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView, TouchableHighlight } from 'react-native'
-<<<<<<< HEAD
-=======
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
->>>>>>> d607238d408dd7d4b445f9ac85555eba8092e516
 
 import { colors } from "../contexts/Colors"
 
@@ -15,7 +12,7 @@ import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 import { initializeAccount } from '../backend/BackendFunctions'
 import { handleAuthError } from '../backend/HelperFunctions'
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import { StackActions, useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
