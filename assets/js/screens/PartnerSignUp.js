@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView, TouchableHighlight} from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView, TouchableHighlight } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { colors } from "../contexts/Colors"
 
@@ -63,8 +64,7 @@ export default function PartnerSignUp(props) {
     }
 
     return (
-        <SafeAreaView>
-            <ScrollView contentContaineStyle={styles.scrollView}>
+        <KeyboardAwareScrollView contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
             {/* back button */}
             <TouchableHighlight
                     style={styles.sidePanelButtonContainer}
@@ -200,9 +200,7 @@ export default function PartnerSignUp(props) {
                 </View>
 
             </CustomCapsule>
-
-            </ScrollView>
-            </SafeAreaView>
+        </KeyboardAwareScrollView>
     )
 }
 
@@ -217,7 +215,7 @@ const styles = StyleSheet.create({
     },
     sidePanelButtonContainer: {
         backgroundColor: "white",
-        marginTop: 10,
+        marginTop: 40,
         marginLeft: 10,
         position: "absolute",
         justifyContent: "center",

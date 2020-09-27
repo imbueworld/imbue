@@ -22,8 +22,7 @@ export default function Home(props) {
     }
 
     return (
-        <ScrollView contentContainerStyle={styles.scrollView}>
-
+        <ScrollView alwaysBounceVertical={false}  contentContainerStyle={styles.scrollView}>
             <AppBackground />
             {/* <Image
                 style={{
@@ -88,10 +87,12 @@ const styles = StyleSheet.create({
     scrollView: {
         minHeight: "100%",
         flexDirection: "column-reverse",
+        backgroundColor: "#F9F9F9",
         // alignItems: "center",
     },
     container: {
         width: "80%",
         marginBottom: 50,
+        backgroundColor: "#F9F9F9",
     },
 })

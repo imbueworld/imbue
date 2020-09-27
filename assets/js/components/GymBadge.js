@@ -15,7 +15,7 @@ export default function GymBadge(props) {
             <View
                 style={{
                     padding: 12,
-                    backgroundColor: "#FFFFFF80",
+                    backgroundColor: "#FFFFFF",
                     borderRadius: 40,
                     borderBottomLeftRadius: 0,
                     borderBottomRightRadius: 0,
@@ -105,7 +105,8 @@ const styles = StyleSheet.create({
     moreInfoContainer: {
         paddingVertical: 10,
         alignItems: "center",
-        backgroundColor: "#FFFFFFD0",
+        backgroundColor: "#000",
+        
         // borderColor: `${colors.gray}80`,
         borderColor: `${colors.buttonFill}80`,
         borderTopWidth: 1,
@@ -114,6 +115,7 @@ const styles = StyleSheet.create({
     },
     moreInfoText: {
         fontSize: 13,
+        color: "#fff",
     },
     font: {
         // fontFamily: fonts.default,

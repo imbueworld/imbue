@@ -83,13 +83,14 @@ export default function ProfileLayout(props) {
       height: "100%",
       position: "absolute",
       left: 25,
-      backgroundColor: "#eee",
+      backgroundColor: "#F9F9F9",
       borderRadius: 40,
     }}/>
 
     <ScrollView
       contentContainerStyle={styles.scrollView}
-      keyboardShouldPersistTaps="handled"
+        keyboardShouldPersistTaps="handled"
+        alwaysBounceVertical={false} 
     >
       <AppBackground />
 

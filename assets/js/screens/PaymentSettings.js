@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, ScrollView, View, Text } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 
 import AppBackground from "../components/AppBackground"
 import CustomButton from "../components/CustomButton"
@@ -47,7 +49,13 @@ export default function PaymentSettings(props) {
         // <ScrollView contentContainerStyle={styles.scrollView}>
         //     <AppBackground />
         //     <CustomCapsule style={styles.container}>
+        <KeyboardAwareScrollView
+            style={{ backgroundColor: '#f9f9f9' }}
+            resetScrollToCoords={{ x: 0, y: 0 }}
 
+        contentContainerStyle={styles.container}
+        scrollEnabled={false}
+       >
                 <ProfileLayout
                     cache={cache}
                 >
@@ -73,10 +81,11 @@ export default function PaymentSettings(props) {
                         }}
                     />
                 </ProfileLayout>
-
+                </KeyboardAwareScrollView>
 
         //     </CustomCapsule>
         // </ScrollView>
+       
     )
 }
 
@@ -85,9 +94,8 @@ const styles = StyleSheet.create({
         minHeight: "100%",
     },
     container: {
-        marginTop: 50,
         // paddingBottom: 0,
-        width: "88%",
+        width: "100%",
         alignSelf: "center",
     },
     buttonSmall: {

@@ -4,7 +4,7 @@ export const colors = {
     checkmarkgreen: "#cbe558", // "#b2c94b"
 
     // bg: "#F9F9F9",
-    bg: "#F7F7F7", // because the icon bg is this -- a slight adjustment
+    bg: "#F9F9F9", // because the icon bg is this -- a slight adjustment
     bgIcon: "#F7F7F7",
     buttonFill: "#242426",
     buttonAccent: "#F9F9F9",

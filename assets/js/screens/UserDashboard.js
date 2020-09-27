@@ -178,7 +178,7 @@ export default function UserDashboard(props) {
             // borderColor: redFields.includes("first") ? "red" : undefined,
             position: "absolute", paddingTop: 0, top: 170, left: 35, width: 300, height: 60, textAlign: "center", backgroundColor: "#fff", fontSize: 24
           }}
-        placeholder="Saerch for a gym"
+        placeholder="Search for a gym"
         multiline={false}
         numberOfLines={1}
           // value={first}

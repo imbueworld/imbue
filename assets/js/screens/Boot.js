@@ -12,9 +12,7 @@ import { StackActions } from '@react-navigation/native'
 import { colors } from '../contexts/Colors'
 
 
-
 const DEBUG = false
-
 
 
 export default function Boot(props) {
@@ -151,6 +149,10 @@ export default function Boot(props) {
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
+    backgroundColor: "#F9F9F9",
   },
-  container: {},
+  container: {
+    backgroundColor: "#F9F9F9",
+  },
+  
 })

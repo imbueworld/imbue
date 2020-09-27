@@ -89,8 +89,7 @@ export default function ScheduleViewer(props) {
   if (!user || !dataIsFormatted) return <View />
 
   return (
-    <SafeAreaView style={{backgroundColor: "#F9F9F9"}}>
-    <ScrollView contentContainerStyle={styles.scrollView}>
+    <ScrollView contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
 
       <AppBackground />
 
@@ -99,6 +98,7 @@ export default function ScheduleViewer(props) {
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
           paddingTop: 0,
+          marginTop: 40,
           marginBottom: 20,
         }}
         innerContainerStyle={{
@@ -181,7 +181,6 @@ export default function ScheduleViewer(props) {
       </View>
 
       </ScrollView>
-      </SafeAreaView>
   )
 }
 

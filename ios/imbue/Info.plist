@@ -20,6 +20,10 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+        <string>fbauth2</string>
+	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
