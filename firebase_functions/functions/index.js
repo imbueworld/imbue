@@ -15,6 +15,43 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
 const MUX_TOKEN_ID = "45fba3d3-8c60-48c6-a767-e87270351be8"
 const MUX_TOKEN_SECRET = "XRuq11za83MwMYHgbhYYKwktVG7v0bkmHajeB2YglnRZhzPyN85XL5C3oKAog2oGUS3yzo9i9EP"
 
+const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
+
+
+
+/**
+ * Geocodes text address into a { lat, long } using Google's Geocoding API.
+ * Validates whether address is a street address.
+ * Returns coordinates or null.
+ */
+// exports.geocodeAddress = functions.https.onCall(async (data, context) => {
+//   const { address } = data
+//   let geolocation
+
+//   let xhr = new XMLHttpRequest()
+//   xhr.onload = async () => {
+//     console.log("xhr onload firing ..")
+//     const res = JSON.parse(xhr.responseText)
+//     console.log("res", res)
+//     geolocation = res.results.geometry.location
+//   }
+
+//   xhr.open(
+//     'GET',
+//     `https://maps.googleapis.com/maps/api/geocode/json`
+//     + `?address=${address}`
+//     + `&key=${GOOGLE_API_KEY}`)
+  
+//   // await xhr.send()
+//   xhr.send()
+
+//   // console.log("probably not finished yet, although await has been used", xhr.responseText)
+//   console.log("probably not finished yet", xhr.responseText)
+
+//   await new Promise(r => setTimeout(r, 4500))
+//   return geolocation || null
+// })
+
 exports.createLivestream = functions.https.onCall(async (data, context) => {
   // console.log("[START]")
   let xhr = new XMLHttpRequest()

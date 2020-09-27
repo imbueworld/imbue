@@ -226,17 +226,6 @@ dependencies {
     // v added manually v //////
     compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
-
-    // implementation 'com.stripe:stripe-android:15.0.1'
-
-    // Added for LivestreamModule.java
-    // compile group: 'org.bytedeco', name: 'javacv', version: '1.4.3'
-    // // compile group: 'org.bytedeco', name: 'javacpp', version: '1.4.3'
-    // compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.3', classifier: 'android-arm'
-    // compile group: 'org.bytedeco.javacpp-presets', name: 'opencv', version: '3.4.3-1.4.3', classifier: 'android-x86'
-    // compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '4.0.2-1.4.3', classifier: 'android-arm'
-    // compile group: 'org.bytedeco.javacpp-presets', name: 'ffmpeg', version: '4.0.2-1.4.3', classifier: 'android-x86'
-    // ^ added manually ^ //////
 }
 
 // Run this once to be able to run the application with BUCK
