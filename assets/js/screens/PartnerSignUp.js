@@ -1,5 +1,9 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView, TouchableHighlight } from 'react-native'
+<<<<<<< HEAD
+=======
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+>>>>>>> d607238d408dd7d4b445f9ac85555eba8092e516
 
 import { colors } from "../contexts/Colors"
 
@@ -63,144 +67,131 @@ export default function PartnerSignUp(props) {
   }
 
   return (
-    <SafeAreaView>
-      <ScrollView contentContaineStyle={styles.scrollView}>
-        {/* back button */}
-        <TouchableHighlight
-          style={styles.sidePanelButtonContainer}
-          underlayColor="#eed"
-          onPress={props.onBack || (() => navigation.goBack())}
-        >
-          <BackButton
-            imageStyle={{
-              width: 48,
-              height: 48,
+    <KeyboardAwareScrollView contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
+      {/* back button */}
+      <TouchableHighlight
+        style={styles.sidePanelButtonContainer}
+        underlayColor="#eed"
+        onPress={props.onBack || (() => navigation.goBack())}
+      >
+        <BackButton
+          imageStyle={{
+            width: 48,
+            height: 48,
+          }}
+        />
+      </TouchableHighlight>
+
+      <AppBackground />
+      <CompanyLogo />
+
+      <CustomCapsule style={styles.container}>
+        <Text style={{
+          marginTop: 20,
+          marginBottom: 20,
+          alignSelf: "center",
+          fontSize: 25,
+          color: colors.gray,
+          ...FONTS.title,
+        }}>Partner Sign Up</Text>
+
+        {errorMsg
+          ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+          : <Text style={{ color: "green" }}>{successMsg}</Text>}
+
+        <View>
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("first") ? "red" : undefined,
+            }}
+            placeholder="First Name"
+            value={first}
+            onChangeText={setFirst}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("last") ? "red" : undefined,
+            }}
+            placeholder="Last Name"
+            value={last}
+            onChangeText={setLast}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("gymName") ? "red" : undefined,
+            }}
+            placeholder="Gym Name"
+            value={gymName}
+            onChangeText={setGymName}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("email") ? "red" : undefined,
+            }}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("password") ? "red" : undefined,
+            }}
+            multiline={false}
+            secureTextEntry
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("passwordConfirm") ? "red" : undefined,
+            }}
+            multiline={false}
+            secureTextEntry
+            placeholder="Confirm Password"
+            value={passwordConfirm}
+            onChangeText={setPasswordConfirm}
+          />
+          <CustomButton
+            style={{
+              marginBottom: 20,
+            }}
+            title="Sign Up"
+            onPress={async () => {
+              setRedFields([])
+              setErrorMsg("")
+              setSuccessMsg("")
+
+              let errorMsg
+              try {
+                let type = "partner"
+
+                errorMsg = invalidate()
+                if (errorMsg) throw new Error(errorMsg)
+
+                await initializeAccount(cache, { first, last, email, password, type })
+                setSuccessMsg("You've been signed up!")
+
+                const pushAction = StackActions.push("Boot")
+                props.navigation.dispatch(pushAction)
+              } catch (err) {
+                // If not form error, check for auth error
+                if (!errorMsg) {
+                  let [errorMsg, redFields] = handleAuthError(err)
+                  setRedFields(redFields)
+                  setErrorMsg(errorMsg)
+                  return
+                }
+                // Otherwise...
+                // setRedFields(redFields)
+                setErrorMsg(errorMsg)
+              }
             }}
           />
-        </TouchableHighlight>
-        <AppBackground />
-        {/* <Image
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-          }}
-          source={require("../components/img/workout-24.jpg")}
-        /> */}
-        <CompanyLogo />
+        </View>
 
-
-
-        <CustomCapsule style={styles.container}>
-
-          <Text style={{
-            marginTop: 20,
-            marginBottom: 20,
-            alignSelf: "center",
-            fontSize: 25,
-            color: colors.gray,
-            ...FONTS.title,
-          }}>Partner Sign Up</Text>
-
-          {errorMsg
-            ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-            : <Text style={{ color: "green" }}>{successMsg}</Text>}
-
-          <View>
-            <CustomTextInput
-              containerStyle={{
-                borderColor: redFields.includes("first") ? "red" : undefined,
-              }}
-              placeholder="First Name"
-              value={first}
-              onChangeText={setFirst}
-            />
-            <CustomTextInput
-              containerStyle={{
-                borderColor: redFields.includes("last") ? "red" : undefined,
-              }}
-              placeholder="Last Name"
-              value={last}
-              onChangeText={setLast}
-            />
-            <CustomTextInput
-              containerStyle={{
-                borderColor: redFields.includes("gymName") ? "red" : undefined,
-              }}
-              placeholder="Gym Name"
-              value={gymName}
-              onChangeText={setGymName}
-            />
-            <CustomTextInput
-              containerStyle={{
-                borderColor: redFields.includes("email") ? "red" : undefined,
-              }}
-              placeholder="Email"
-              value={email}
-              onChangeText={setEmail}
-            />
-            <CustomTextInput
-              containerStyle={{
-                borderColor: redFields.includes("password") ? "red" : undefined,
-              }}
-              multiline={false}
-              secureTextEntry
-              placeholder="Password"
-              value={password}
-              onChangeText={setPassword}
-            />
-            <CustomTextInput
-              containerStyle={{
-                borderColor: redFields.includes("passwordConfirm") ? "red" : undefined,
-              }}
-              multiline={false}
-              secureTextEntry
-              placeholder="Confirm Password"
-              value={passwordConfirm}
-              onChangeText={setPasswordConfirm}
-            />
-            <CustomButton
-              style={{
-                marginBottom: 20,
-              }}
-              title="Sign Up"
-              onPress={async () => {
-                setRedFields([])
-                setErrorMsg("")
-                setSuccessMsg("")
-
-                let errorMsg
-                try {
-                  let type = "partner"
-
-                  errorMsg = invalidate()
-                  if (errorMsg) throw new Error(errorMsg)
-
-                  await initializeAccount(cache, { first, last, email, password, type })
-                  setSuccessMsg("You've been signed up!")
-
-                  const pushAction = StackActions.push("Boot")
-                  props.navigation.dispatch(pushAction)
-                } catch (err) {
-                  // If not form error, check for auth error
-                  if (!errorMsg) {
-                    let [errorMsg, redFields] = handleAuthError(err)
-                    setRedFields(redFields)
-                    setErrorMsg(errorMsg)
-                    return
-                  }
-                  // Otherwise...
-                  // setRedFields(redFields)
-                  setErrorMsg(errorMsg)
-                }
-              }}
-            />
-          </View>
-
-        </CustomCapsule>
-
-      </ScrollView>
-    </SafeAreaView>
+      </CustomCapsule>
+    </KeyboardAwareScrollView>
   )
 }
 
@@ -215,7 +206,7 @@ const styles = StyleSheet.create({
   },
   sidePanelButtonContainer: {
     backgroundColor: "white",
-    marginTop: 10,
+    marginTop: 40,
     marginLeft: 10,
     position: "absolute",
     justifyContent: "center",

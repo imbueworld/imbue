@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, ScrollView, Text, Image, TouchableHighlight, SafeAreaView } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import AppBackground from "../components/AppBackground"
 
@@ -61,10 +62,10 @@ export default function SignUp(props) {
   }
 
   return (
-    <SafeAreaView>
-    <ScrollView
+    <KeyboardAwareScrollView
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"
+      alwaysBounceVertical={false} 
     >
 
       <AppBackground />
@@ -194,8 +195,7 @@ export default function SignUp(props) {
 
       </CustomCapsule>
 
-      </ScrollView>
-    </SafeAreaView>
+      </KeyboardAwareScrollView>
   )
 }
 
@@ -210,7 +210,7 @@ const styles = StyleSheet.create({
   },
   sidePanelButtonContainer: {
     backgroundColor: "white",
-    marginTop: 10,
+    marginTop: 40,
     marginLeft: 10,
     position: "absolute",
     justifyContent: "center",

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
@@ -74,6 +76,7 @@ export default function AddPaymentMethod(props) {
     if (!user) return <View />
 
     return (
+        <KeyboardAwareScrollView>
         <ProfileLayout
             innerContainerStyle={styles.innerContainer}
             data={{ name: user.name, iconUri: user.icon_uri_full }}
@@ -109,7 +112,8 @@ export default function AddPaymentMethod(props) {
                 title="Save"
                 onPress={validateAndProceed}
             />
-        </ProfileLayout>
+            </ProfileLayout>
+        </KeyboardAwareScrollView>
     )
 }
 

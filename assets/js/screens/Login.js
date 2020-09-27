@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, ScrollView, Image, TouchableHighlight, SafeAreaView } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import AppBackground from "../components/AppBackground"
 
@@ -44,12 +45,11 @@ export default function Login(props) {
 
 
   return (
-    <SafeAreaView>
-    <ScrollView
+    <KeyboardAwareScrollView
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"
+      alwaysBounceVertical={false} 
     >
-       
       <AppBackground />
       {/* <Image
           style={{
@@ -155,22 +155,25 @@ export default function Login(props) {
         />
       </CustomCapsule>
 
-      </ScrollView>
-      </SafeAreaView>  )
+      </KeyboardAwareScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
+    backgroundColor: "#F9F9F9",
+    
   },
   container: {
     width: "88%",
     marginBottom: 30,
     alignSelf: "center",
+    backgroundColor: "#F9F9F9",
   },
   sidePanelButtonContainer: {
     backgroundColor: "white",
-    marginTop: 10,
+    marginTop: 40,
     marginLeft: 10,
     position: "absolute",
     justifyContent: "center",

@@ -15,7 +15,6 @@ import { colors } from '../contexts/Colors'
 import CACHE from '../backend/storage/cache'
 
 
-
 export default function Boot(props) {
   // signs out user on app load
   // auth().signOut()
@@ -161,6 +160,9 @@ export default function Boot(props) {
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
+    backgroundColor: "#F9F9F9",
   },
-  container: {},
+  container: {
+    backgroundColor: "#F9F9F9",
+  },
 })
