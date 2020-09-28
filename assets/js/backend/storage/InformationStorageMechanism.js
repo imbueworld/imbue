@@ -18,6 +18,7 @@ export default function InformationStorageMechanism(Database, query) {
   })
 
   const queriedField = nextBase
+  if (!queriedField._data) queriedField._data = {}
   if (!queriedField._listeners) queriedField._listeners = []
 
   // Return interactable functions

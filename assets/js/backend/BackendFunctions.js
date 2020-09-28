@@ -408,33 +408,33 @@ export async function updateUser(cache, doc) {
  * 
  * Merges data with a gym of the provided gymId
  */
-export async function updateGym(cache, { gymId, doc }) {
-  if (!gymId) throw new Error("gymId must be provided in updateGym()")
+// export async function updateGym(cache, { gymId, doc }) {
+//   if (!gymId) throw new Error("gymId must be provided in updateGym()")
 
-  if (!cache.gyms) cache.gyms = []
+//   if (!cache.gyms) cache.gyms = []
 
-  try {
-    // Update gym
-    await firestore()
-      .collection("gyms")
-      .doc(gymId)
-      .set(doc, { merge: true })
+//   try {
+//     // Update gym
+//     await firestore()
+//       .collection("gyms")
+//       .doc(gymId)
+//       .set(doc, { merge: true })
 
-    // Update cache
-    Object.entries(doc).forEach(([key, value]) => {
-      cache.gyms.forEach(gym => {
-        if (gym.id === gymId) {
-          Object.entries(gym).forEach(([key2, value2]) => {
-            gym[key] = value
-          })
-        }
-      })
-    })
-  } catch (err) {
-    console.error(err.message)
-    throw new Error("Something prevented the action.")
-  }
-}
+//     // Update cache
+//     Object.entries(doc).forEach(([key, value]) => {
+//       cache.gyms.forEach(gym => {
+//         if (gym.id === gymId) {
+//           Object.entries(gym).forEach(([key2, value2]) => {
+//             gym[key] = value
+//           })
+//         }
+//       })
+//     })
+//   } catch (err) {
+//     console.error(err.message)
+//     throw new Error("Something prevented the action.")
+//   }
+// }
 
 /**
  * Does:
@@ -687,24 +687,24 @@ const defaultOptions = {
 
 
 
-export function updateGymAddress(address, callback) {
-  geocodeAddress(address, async res => {
-    if (!res) {
-      callback(null)
-      return
-    }
+// export function updateGymAddress(address, callback) {
+//   geocodeAddress(address, async res => {
+//     if (!res) {
+//       callback(null)
+//       return
+//     }
 
-    const { location, formatted_address } = res
-    const gymId = cache('user').get('throw').associated_gyms[0]
+//     const { location, formatted_address } = res
+//     const gymId = cache('user').get('throw').associated_gyms[0]
 
-    await firestore()
-      .collection('gyms')
-      .doc(gymId)
-      .set({
-        coordinate: location,
-        address: formatted_address,
-      }, { merge: true })
+//     await firestore()
+//       .collection('gyms')
+//       .doc(gymId)
+//       .set({
+//         coordinate: location,
+//         address: formatted_address,
+//       }, { merge: true })
     
-    callback('OK')
-  })
-}
+//     callback('OK')
+//   })
+// }

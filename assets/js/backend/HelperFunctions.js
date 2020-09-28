@@ -307,7 +307,7 @@ export function addFunctionalityToClassData(docs, navigation) {
 /**
  * Generates a random id
  */
-export function id() {
+export function getRandomId() {
     const random = () => {
         return Math.random().toString(36).substr(2, 9)
     }

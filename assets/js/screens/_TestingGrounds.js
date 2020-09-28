@@ -1,18 +1,17 @@
-import React, { useEffect } from 'react';
-import { View } from 'react-native';
-import { geocodeAddress } from '../backend/BackendFunctions';
+import React, { useEffect } from 'react'
+import { View } from 'react-native'
+import Gym from '../backend/Gym'
+import cache from '../backend/storage/cache';
 
 
 
 export default function _TestingGrounds(props) {
   useEffect(() => {
     const init = async () => {
-      geocodeAddress('Restaurant', res => {
-        if (res === null) return
-        console.log("!!!", res.location)
-      })
-    }
-    init()
+      const gym = new Gym()
+      const p = console.log
+      let x
+    }; init()
   }, [])
 
   return (

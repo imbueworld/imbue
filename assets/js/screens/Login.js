@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, ScrollView, Image, TouchableHighlight, SafeAreaView } from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, Text, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import AppBackground from "../components/AppBackground"
