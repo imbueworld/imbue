@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Image, SafeAreaView, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { colors } from "../contexts/Colors"
@@ -12,7 +12,7 @@ import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 import { initializeAccount } from '../backend/BackendFunctions'
 import { handleAuthError } from '../backend/HelperFunctions'
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import { StackActions, useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
@@ -20,207 +20,195 @@ import BackButton from '../components/BackButton'
 
 
 export default function PartnerSignUp(props) {
-    let cache = props.route.params.cache
-    const navigation = useNavigation()
+  let cache = props.route.params.cache
+  const navigation = useNavigation()
 
-    const [redFields, setRedFields] = useState([])
-    const [errorMsg, setErrorMsg] = useState("")
-    const [successMsg, setSuccessMsg] = useState("")
+  const [redFields, setRedFields] = useState([])
+  const [errorMsg, setErrorMsg] = useState("")
+  const [successMsg, setSuccessMsg] = useState("")
 
-    const [first, setFirst] = useState("")
-    const [last, setLast] = useState("")
-    const [gymName, setGymName] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const [passwordConfirm, setPasswordConfirm] = useState("")
+  const [first, setFirst] = useState("")
+  const [last, setLast] = useState("")
+  const [gymName, setGymName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [passwordConfirm, setPasswordConfirm] = useState("")
 
-    function invalidate() {
-        let redFields = []
-        if (!first) redFields.push("first")
-        if (!last) redFields.push("last")
-        if (!email) redFields.push("email")
-        if (!gymName) redFields.push("gymName")
-        if (!password) redFields.push("password")
-        if (!passwordConfirm) redFields.push("passwordConfirm")
+  function invalidate() {
+    let redFields = []
+    if (!first) redFields.push("first")
+    if (!last) redFields.push("last")
+    if (!email) redFields.push("email")
+    if (!gymName) redFields.push("gymName")
+    if (!password) redFields.push("password")
+    if (!passwordConfirm) redFields.push("passwordConfirm")
 
-        if (redFields.length) {
-            setRedFields(redFields)
-            return "Required fields need to be filled."
-        }
-
-        if (password !== passwordConfirm) {
-            setRedFields(["password", "passwordConfirm"])
-            setPasswordConfirm("")
-            return "Passwords did not match"
-        }
-
-        if (password.length < 8
-            || !password.match(/[A-Z]/g)
-            || !password.match(/[a-z]/g)) {
-            setRedFields(["password", "passwordConfirm"])
-            return "Password must consist of at least 8 characters, " +
-                   "and at least 1 lowercase and uppercase letter."
-        }
+    if (redFields.length) {
+      setRedFields(redFields)
+      return "Required fields need to be filled."
     }
 
-    return (
-        <KeyboardAwareScrollView contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
-            {/* back button */}
-            <TouchableHighlight
-                    style={styles.sidePanelButtonContainer}
-                    underlayColor="#eed"
-                    onPress={props.onBack || (() => navigation.goBack())}
-                >
-                    <BackButton
-                    imageStyle={{
-                        width: 48,
-                        height: 48,
-                    }}
-                    />
-            </TouchableHighlight>
-            <AppBackground />
-            {/* <Image
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                }}
-                source={require("../components/img/workout-24.jpg")}
-            /> */}
-                <CompanyLogo />
-                
-      
+    if (password !== passwordConfirm) {
+      setRedFields(["password", "passwordConfirm"])
+      setPasswordConfirm("")
+      return "Passwords did not match"
+    }
 
-            <CustomCapsule style={styles.container}>
+    if (password.length < 8
+      || !password.match(/[A-Z]/g)
+      || !password.match(/[a-z]/g)) {
+      setRedFields(["password", "passwordConfirm"])
+      return "Password must consist of at least 8 characters, " +
+        "and at least 1 lowercase and uppercase letter."
+    }
+  }
 
-                <Text style={{
-                    marginTop: 20,
-                    marginBottom: 20,
-                    alignSelf: "center",
-                    fontSize: 25,
-                    color: colors.gray,
-                    // fontFamily: fonts.default,
-                    ...FONTS.title,
-                }}>Partner Sign Up</Text>
+  return (
+    <KeyboardAwareScrollView contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
+      {/* back button */}
+      <TouchableHighlight
+        style={styles.sidePanelButtonContainer}
+        underlayColor="#eed"
+        onPress={props.onBack || (() => navigation.goBack())}
+      >
+        <BackButton
+          imageStyle={{
+            width: 48,
+            height: 48,
+          }}
+        />
+      </TouchableHighlight>
 
-                {errorMsg
-                    ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-                    : <Text style={{ color: "green" }}>{successMsg}</Text>}
+      <AppBackground />
+      <CompanyLogo />
 
-                <View>
-                    <CustomTextInput
-                        containerStyle={{
-                            borderColor: redFields.includes("first") ? "red" : undefined,
-                        }}
-                        placeholder="First Name"
-                        value={first}
-                        onChangeText={setFirst}
-                    />
-                    <CustomTextInput
-                        containerStyle={{
-                            borderColor: redFields.includes("last") ? "red" : undefined,
-                        }}
-                        placeholder="Last Name"
-                        value={last}
-                        onChangeText={setLast}
-                    />
-                    <CustomTextInput
-                        containerStyle={{
-                            borderColor: redFields.includes("gymName") ? "red" : undefined,
-                        }}
-                        placeholder="Gym Name"
-                        value={gymName}
-                        onChangeText={setGymName}
-                    />
-                    <CustomTextInput
-                        containerStyle={{
-                            borderColor: redFields.includes("email") ? "red" : undefined,
-                        }}
-                        placeholder="Email"
-                        value={email}
-                        onChangeText={setEmail}
-                    />
-                    <CustomTextInput
-                        containerStyle={{
-                            borderColor: redFields.includes("password") ? "red" : undefined,
-                        }}
-                        multiline={false}
-                        secureTextEntry
-                        placeholder="Password"
-                        value={password}
-                        onChangeText={setPassword}
-                    />
-                    <CustomTextInput
-                        containerStyle={{
-                            borderColor: redFields.includes("passwordConfirm") ? "red" : undefined,
-                        }}
-                        multiline={false}
-                        secureTextEntry
-                        placeholder="Confirm Password"
-                        value={passwordConfirm}
-                        onChangeText={setPasswordConfirm}
-                    />
-                    <CustomButton
-                        style={{
-                            marginBottom: 20,
-                        }}
-                        title="Sign Up"
-                        onPress={async () => {
-                            setRedFields([])
-                            setErrorMsg("")
-                            setSuccessMsg("")
+      <CustomCapsule style={styles.container}>
+        <Text style={{
+          marginTop: 20,
+          marginBottom: 20,
+          alignSelf: "center",
+          fontSize: 25,
+          color: colors.gray,
+          ...FONTS.title,
+        }}>Partner Sign Up</Text>
 
-                            let errorMsg
-                            try {
-                                let type = "partner"
+        {errorMsg
+          ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+          : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
-                                errorMsg = invalidate()
-                                if (errorMsg) throw new Error(errorMsg)
-                                
-                                await initializeAccount(cache, { first, last, email, password, type })
-                                setSuccessMsg("You've been signed up!")
+        <View>
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("first") ? "red" : undefined,
+            }}
+            placeholder="First Name"
+            value={first}
+            onChangeText={setFirst}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("last") ? "red" : undefined,
+            }}
+            placeholder="Last Name"
+            value={last}
+            onChangeText={setLast}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("gymName") ? "red" : undefined,
+            }}
+            placeholder="Gym Name"
+            value={gymName}
+            onChangeText={setGymName}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("email") ? "red" : undefined,
+            }}
+            placeholder="Email"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("password") ? "red" : undefined,
+            }}
+            multiline={false}
+            secureTextEntry
+            placeholder="Password"
+            value={password}
+            onChangeText={setPassword}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("passwordConfirm") ? "red" : undefined,
+            }}
+            multiline={false}
+            secureTextEntry
+            placeholder="Confirm Password"
+            value={passwordConfirm}
+            onChangeText={setPasswordConfirm}
+          />
+          <CustomButton
+            style={{
+              marginBottom: 20,
+            }}
+            title="Sign Up"
+            onPress={async () => {
+              setRedFields([])
+              setErrorMsg("")
+              setSuccessMsg("")
 
-                                const pushAction = StackActions.push("Boot")
-                                props.navigation.dispatch(pushAction)
-                            } catch (err) {
-                                console.error(err)
-                                // If not native (form) error, check for auth error
-                                if (!errorMsg) {
-                                    let [errorMsg, redFields] = handleAuthError(err)
-                                    setRedFields(redFields)
-                                    setErrorMsg(errorMsg)
-                                    return
-                                }
-                                // Otherwise...
-                                // setRedFields(redFields)
-                                setErrorMsg(errorMsg)
-                            }
-                        }}
-                    />
-                </View>
+              let errorMsg
+              try {
+                let type = "partner"
 
-            </CustomCapsule>
-        </KeyboardAwareScrollView>
-    )
+                errorMsg = invalidate()
+                if (errorMsg) throw new Error(errorMsg)
+
+                await initializeAccount(cache, { first, last, email, password, type })
+                setSuccessMsg("You've been signed up!")
+
+                const pushAction = StackActions.push("Boot")
+                props.navigation.dispatch(pushAction)
+              } catch (err) {
+                // If not form error, check for auth error
+                if (!errorMsg) {
+                  let [errorMsg, redFields] = handleAuthError(err)
+                  setRedFields(redFields)
+                  setErrorMsg(errorMsg)
+                  return
+                }
+                // Otherwise...
+                // setRedFields(redFields)
+                setErrorMsg(errorMsg)
+              }
+            }}
+          />
+        </View>
+
+      </CustomCapsule>
+    </KeyboardAwareScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        minHeight: "100%",
-    },
-    container: {
-        width: "88%",
-        marginBottom: 30,
-        alignSelf: "center",
-    },
-    sidePanelButtonContainer: {
-        backgroundColor: "white",
-        marginTop: 40,
-        marginLeft: 10,
-        position: "absolute",
-        justifyContent: "center",
-        alignItems: "center",
-        borderRadius: 999,
-        zIndex: 110,
-      },
+  scrollView: {
+    minHeight: "100%",
+  },
+  container: {
+    width: "88%",
+    marginBottom: 30,
+    alignSelf: "center",
+  },
+  sidePanelButtonContainer: {
+    backgroundColor: "white",
+    marginTop: 40,
+    marginLeft: 10,
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 999,
+    zIndex: 110,
+  },
 })

@@ -5,6 +5,8 @@ import firestore from "@react-native-firebase/firestore"
 import storage from "@react-native-firebase/storage"
 import LINKS from "../contexts/Links"
 
+import CACHE from './storage/cache'
+
 
 
 /**
@@ -111,7 +113,11 @@ export async function retrieveUserData(cache) {
         if (!user.scheduled_classes) user.scheduled_classes = []
 
         cache.user = user
+
+        CACHE('user').set(user)
+        
     } catch(err) {
+        console.error(err)
         throw new Error("Something prevented the action.")
     }
 
@@ -307,6 +313,11 @@ export async function filterUserClasses(cache) {
  * Retrieve gyms by their ids
  */
 export async function retrieveGymsByIds(cache, { gymIds }) {
+    for (let idx in gymIds) {
+        console.log(gymIds[idx])
+        if (gymIds[idx] === undefined) return null
+    }
+
     if (!cache.gyms) cache.gyms = []
 
     // Construct a queue
@@ -488,11 +499,11 @@ export async function retrieveAttendees(cache, { classId, timeId }) {
  * to retrieve a file from Google Cloud Storage.
  */
 export async function publicStorage(fileName) {
-    let file = cache(`files/${fileName}`).get()
+    let file = CACHE(`files/${fileName}`).get()
     if (!file || !fileName) {
         try {
             file = await storage().ref(fileName).getDownloadURL()
-            cache(`files/${fileName}`).set(file)
+            CACHE(`files/${fileName}`).set(file)
         } catch(err) {}
     }
     return file || ""
@@ -520,33 +531,5 @@ export async function TEMPLATE(cache) {
         throw new Error("Something prevented the action.")
     } finally {
         cache.working.TEMPLATE = false
-    }
-}
-
-
-
-const Cache = {}
-export function cache(query) {
-    const fields = query.split("/")
-    let nextBase
-    let previousBase
-    fields.forEach(field => {
-        if (nextBase) {
-            previousBase = nextBase
-            if (!nextBase[ field ]) nextBase[ field ] = {}
-            nextBase = nextBase[ field ]
-            return
-        }
-        previousBase = Cache
-        if (!Cache[ field ]) Cache[ field ] = {}
-        nextBase = Cache[ field ]
-    })
-    return {
-        get: () => {
-            return nextBase.data
-        },
-        set: (value) => {
-            previousBase[ fields[fields.length - 1] ].data = value
-        },
     }
 }
