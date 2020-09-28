@@ -3,8 +3,6 @@ import { StyleSheet } from 'react-native'
 import DropDownPicker from 'react-native-dropdown-picker'
 import { colors, simpleShadow } from '../contexts/Colors'
 
-
-
 export default function CustomDropDownPicker(props) {
     return (
         <DropDownPicker

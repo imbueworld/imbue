@@ -28,7 +28,7 @@ export default function PartnerDashboard(props) {
         init()
     }, [])
 
-    if (!user) return <View />
+    if (!user) return <View /> 
 
     return (
         <ProfileLayout
@@ -37,6 +37,7 @@ export default function PartnerDashboard(props) {
             }}
             hideBackButton={true}
             data={{ name: user.name, iconUri: user.icon_uri_full }}
+            // data={{ name: user.name, iconUri: "https://firebasestorage.googleapis.com/v0/b/spring-ranger-281214.appspot.com/o/default-icon.png?alt=media&token=8d76d91d-c8f6-4df2-8e6f-07fb68c5f767" }}
             buttonOptions={{
                 logOut: {
                     show: true,

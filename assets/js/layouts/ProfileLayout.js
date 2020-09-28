@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, ScrollView, TouchableHighlight } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import CustomCapsule from "../components/CustomCapsule"
 import { simpleShadow } from '../contexts/Colors'
@@ -87,7 +88,7 @@ export default function ProfileLayout(props) {
       borderRadius: 40,
     }}/>
 
-    <ScrollView
+    <KeyboardAwareScrollView
       contentContainerStyle={styles.scrollView}
         keyboardShouldPersistTaps="handled"
         alwaysBounceVertical={false} 
@@ -190,7 +191,7 @@ export default function ProfileLayout(props) {
         </CustomCapsule>
 
       </View>
-    </ScrollView>
+    </KeyboardAwareScrollView>
     </>
   )
 }
@@ -213,7 +214,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 10,
     position: "absolute",
-    justifyContent: "center",
+    justifyContent: "center", 
     alignItems: "center",
     borderRadius: 999,
     zIndex: 110,
