@@ -17,9 +17,9 @@ const DEBUG = false
 
 export default function Boot(props) {
   //signs out user on app load
-  auth().signOut()
-  GoogleSignin.signOut()
-  LoginManager.logOut()
+  // auth().signOut()
+  // GoogleSignin.signOut()
+  // LoginManager.logOut()
 
   let cache = props.route.params.cache
   const navigation = props.navigation

@@ -8,6 +8,7 @@ export const colors = {
     bgIcon: "#F7F7F7",
     buttonFill: "#242426",
     buttonAccent: "#F9F9F9",
+    darkButtonText: "#242426",
     textInputFill: "#7676801F",
     textInputPlaceholder: "#3C3C439A",
     textInputBorder: "#242426", // same as buttonFill

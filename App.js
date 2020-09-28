@@ -30,7 +30,6 @@ import GoLive from "./assets/js/screens/GoLive"
 import Livestream from "./assets/js/screens/Livestream"
 import ClassDescription from "./assets/js/screens/ClassDescription"
 
-
 import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
 const Stack = createStackNavigator()
 
@@ -39,6 +38,7 @@ export default function App() {
     let cache = {
         working: {},
     }
+
 
     return (
         <NavigationContainer>

@@ -12,7 +12,7 @@ export default function GoLiveButton(props) {
 
     return (
         <View style={{
-            backgroundColor: "#00000060",
+            backgroundColor: "#fff",
             borderWidth: 1,
             borderColor: colors.gray,
             borderRadius: 999,
@@ -47,7 +47,7 @@ export default function GoLiveButton(props) {
                 onLongPress={props.onLongPress || undefined}
             >
                 <Text style={{
-                    color: "white",
+                    color: colors.darkButtonText,
                     paddingHorizontal: 10,
                     fontSize: 16,
                     fontFamily: fonts.default,

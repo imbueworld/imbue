@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react'
 import { StyleSheet, ScrollView, View, Image, TextInput } from 'react-native'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { simpleShadow, colors } from "../contexts/Colors"
 
@@ -22,7 +23,8 @@ export default function Chat(props) {
         const [msg, setMsg] = useState("")
 
         return (
-            <View style={{
+            
+            <View style={{ 
                 // margin: 10,
                 flexDirection: "row",
                 backgroundColor: "#00000058",
@@ -89,7 +91,6 @@ export default function Chat(props) {
                         </TouchableHighlight>
                     </View>
                 </View>
-
             </View>
         )
     }
@@ -131,6 +132,7 @@ export default function Chat(props) {
     const currentScrollValue = []
 
     return (
+    
         <CustomCapsule
             containerStyle={{
                 ...styles.container,
@@ -142,30 +144,37 @@ export default function Chat(props) {
             }}
             containerRef={inpRef}
         >
-            <LivestreamMessages
-                user={user}
-                scrollToBottom={scrollAppropriately}
-                currentScrollValue={currentScrollValue}
-                scrollViewRef={scrollViewRef}
-            />
+            <KeyboardAwareScrollView contentContainerStyle={styles.scrollView}
+            keyboardShouldPersistTaps="handled"
+            alwaysBounceVertical={false} >
+                <LivestreamMessages
+                    user={user}
+                    scrollToBottom={scrollAppropriately}
+                    currentScrollValue={currentScrollValue}
+                    scrollViewRef={scrollViewRef}
+                />
 
-            <SendMessage
-                containerStyle={styles.msgInputContainer}
-                style={styles.msgInput}
-                onSend={props.onSend}
-                onFocus={() => {
-                    setTextFocus(true)
-                    scrollAppropriately()
-                }}
-                onBlur={() => {
-                    setTextFocus(false)
-                }}
-            />
+                <SendMessage
+                    containerStyle={styles.msgInputContainer}
+                    style={styles.msgInput}
+                    onSend={props.onSend}
+                    onFocus={() => {
+                        setTextFocus(true)
+                        scrollAppropriately()
+                    }}
+                    onBlur={() => {
+                        setTextFocus(false)
+                    }}
+                    />
+            </KeyboardAwareScrollView>
         </CustomCapsule>
     )
 }
 
 const styles = StyleSheet.create({
+    scrollView: {
+        minHeight: "100%",
+    },
     container: {
         backgroundColor: colors.buttonAccent,
         borderRadius: 30,

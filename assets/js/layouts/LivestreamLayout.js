@@ -309,7 +309,7 @@ export default function LivestreamLayout(props) {
       backgroundColor: "black",
       width: "100%",
       height: "100%",
-      zIndex: -110,
+        zIndex: -110,
     }} />
     {/* <AppBackground /> */}
 
@@ -318,7 +318,7 @@ export default function LivestreamLayout(props) {
         style={{
           width: "100%",
           height: "100%",
-          zIndex: -10,
+            zIndex: -10,
         }}
         onPress={() => setDeck(
           buttonOptions.viewButtonPanel.state === "open" ? "closed" : "open"
@@ -331,7 +331,8 @@ export default function LivestreamLayout(props) {
         width: "100%",
         height: "100%",
         position: "absolute",
-        zIndex: 105,
+          zIndex: 105,
+          marginTop: 40,
       }}>
         { buttonOptions.goBack.show
         ? <View style={{
@@ -346,8 +347,8 @@ export default function LivestreamLayout(props) {
         <TouchableWithoutFeedback
           containerStyle={{
             position: "absolute",
-            top: 19,
-            right: 20,
+            top: 20,
+              right: 20,
           }}
           onPress={() => {
             layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
@@ -368,7 +369,7 @@ export default function LivestreamLayout(props) {
         <View style={{
           width: "100%",
           paddingHorizontal: 15,
-          paddingBottom: 15,
+          paddingBottom: 80,
           position: "absolute",
           bottom: 0,
           flexDirection: "row",
@@ -455,7 +456,7 @@ export default function LivestreamLayout(props) {
         containerStyle={{
           width: "94%",
           height: "70%",
-          marginTop: 70,
+          marginTop: 120,
           position: "absolute",
           alignSelf: "center",
           zIndex: 110,
@@ -481,7 +482,7 @@ export default function LivestreamLayout(props) {
         containerStyle={{
           width: "94%",
           height: 500,
-          marginTop: 70,
+          marginTop: 120,
           position: "absolute",
           alignSelf: "center",
           zIndex: 110,
