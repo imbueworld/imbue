@@ -2,31 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
-
 import CustomButton from "../components/CustomButton"
-
-import auth from "@react-native-firebase/auth"
-import { retrieveUserData, retrieveClassesByGymIds } from '../backend/CacheFunctions'
 import Icon from '../components/Icon'
+
+import User from '../backend/storage/User'
 
 
 
 export default function PartnerDashboard(props) {
-    let cache = props.route.params.cache
-
     const [user, setUser] = useState(null)
-    // const [classes, setClasses] = useState(null)
 
     useEffect(() => {
         async function init() {
-            let user = await retrieveUserData(cache)
-            setUser(user)
-            // let classes = await retrieveClassesByGymIds(
-            //     cache, { gymIds: [user.associated_gyms] })
-            // setClasses(classes)
-        }
-        init()
+            const user = new User()
+            setUser(await user.retrieveUser())
+        }; init()
     }, [])
+
+
 
     if (!user) return <View /> 
 
@@ -36,8 +29,6 @@ export default function PartnerDashboard(props) {
                 padding: 10,
             }}
             hideBackButton={true}
-            data={{ name: user.name, iconUri: user.icon_uri_full }}
-            // data={{ name: user.name, iconUri: "https://firebasestorage.googleapis.com/v0/b/spring-ranger-281214.appspot.com/o/default-icon.png?alt=media&token=8d76d91d-c8f6-4df2-8e6f-07fb68c5f767" }}
             buttonOptions={{
                 logOut: {
                     show: true,

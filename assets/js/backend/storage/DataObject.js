@@ -1,13 +1,14 @@
 import firestore from '@react-native-firebase/firestore'
-import cache from './storage/cache'
-import { getRandomId } from './HelperFunctions'
+import cache from './cache'
+import { BusyError } from '../Errors'
+import { getRandomId } from '../HelperFunctions'
 
 
 
 export default class DataObject {
   constructor(collection) {
-    this._uid = null
-    this._collection = collection
+    this.uid = null
+    this.collection = collection
     this._tempUid = getRandomId()
     this._modifiedFields = []
   }
@@ -16,15 +17,13 @@ export default class DataObject {
    * Must be called right after instantiation, if called at all
    */
   async initByUid(uid) {
-    this._uid = uid
+    if (!uid) return
+    
+    this.uid = uid
     if (Object.keys(this._getData()).length) return
 
     // If data hasn't been cached, get it from database, cache it
-    const data = (
-      await this._getDocDbRef().get()
-    ).data()
-
-    this._setData(data)
+    await this._forcePull()
   }
 
   getAll() {
@@ -36,6 +35,10 @@ export default class DataObject {
     return data[ field ]
   }
   
+  /**
+   * Alternative to mergeItems(), but
+   * currently do not know why use this method instead.
+   */
   setItem(field, val) {
     const data = this._getData()
 
@@ -52,30 +55,45 @@ export default class DataObject {
       data[ field ] = doc[ field ]
       this._modifiedFields.push(field)
     }
+
+    this._setData(data)
+  }
+
+  /**
+   * Meant for constructing a Data Object from an existing piece of data,
+   * assuming it as up-to-date and in no need of a push
+   */
+  fromEntry([ id, doc ]) {
+    this.uid = id
+    this.mergeItems(doc)
+    this._modifiedFields = []
   }
 
   async push() {
     const data = this._getData()
 
-    // If uid is not present, add new entry,
-    // importantly: when changing internal uid,
-    // pass on existing data to the new uid in cache
-    if (!this._uid) {
-      const { id } = await this._getCollectionDbRef().add(data)
-      this._modifiedFields = [] // update
-      this._uid = id
-      this._setData(data)
-      return
-    }
-
     let modifiedData = this._getModifiedData()
     if (!Object.keys(modifiedData).length) return // Do not push an empty doc
 
+    // If uid is not present, add new entry,
+    // importantly: when changing internal uid,
+    // pass on existing data to the new uid in cache
+    if (!this.uid) {
+      let firebaseDoc = await this._getCollectionDbRef().add(data)
+      this._modifiedFields = [] // update
+
+      this.uid = firebaseDoc.id
+      this._setData(data)
+      return firebaseDoc
+    }
+
     // Else just merge changed data,
     // by sending only the new data over to the server
-    await this._getDocDbRef()
+    let firebaseDoc = await this._getDocDbRef()
       .set(modifiedData, { merge: true })
     this._modifiedFields = [] // update
+
+    return firebaseDoc
   }
 
   async delete() {
@@ -84,11 +102,11 @@ export default class DataObject {
   }
 
   _getCacheObj() {
-    return cache(`${this._collection}/${this._uid || this._tempUid}`)
+    return cache(`${this.collection}/${this.uid || this._tempUid}`)
   }
 
   _getData() {
-    return this._getCacheObj().get()
+    return this._getCacheObj().get() || {}
   }
 
   _setData(data) {
@@ -96,11 +114,11 @@ export default class DataObject {
   }
 
   _getCollectionDbRef() {
-    return firestore().collection(this._collection)
+    return firestore().collection(this.collection)
   }
 
   _getDocDbRef() {
-    return firestore().collection(this._collection).doc(this._uid)
+    return firestore().collection(this.collection).doc(this.uid)
   }
 
   _getModifiedData() {
@@ -110,5 +128,36 @@ export default class DataObject {
       modifiedData[ field ] = data[ field ]
     })
     return modifiedData
+  }
+
+  async _forcePull() {
+    const data = (
+      await this._getDocDbRef().get()
+    ).data()
+
+    this._setData(data)
+  }
+
+
+  _appendedIdStructure(doc) {
+    let data = doc.data()
+    data.id = doc.id
+    return data
+  }
+
+
+  async _BusyErrorWrapper(fnIdentifier, exec) {
+    const cacheObj = cache(`working/${fnIdentifier}`)
+
+    if (cacheObj.get()) throw BusyError
+    else cacheObj.set(true)
+
+    try {
+      return await exec()
+    } catch(err) {
+      throw err
+    } finally {
+      cacheObj.set(false)
+    }
   }
 }

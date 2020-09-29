@@ -1,46 +1,38 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+
+import { StackActions, useNavigation } from '@react-navigation/native'
+import { FONTS } from '../contexts/Styles'
 
 import CustomCapsule from "../components/CustomCapsule"
 import { simpleShadow } from '../contexts/Colors'
 import BackButton from '../components/BackButton'
-import { StackActions, useNavigation } from '@react-navigation/native'
-import { fonts, FONTS } from '../contexts/Styles'
 import LogOutButton from '../components/buttons/LogOutButton'
-import auth from "@react-native-firebase/auth"
 import AppBackground from '../components/AppBackground'
 import Icon from '../components/Icon'
-import { retrieveUserData } from '../backend/CacheFunctions'
-import { pickAndUploadFile } from '../backend/BackendFunctions'
 import EditButton from '../components/buttons/EditButton'
+
+import auth from "@react-native-firebase/auth"
+import { pickAndUploadFile } from '../backend/BackendFunctions'
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
+import User from '../backend/storage/User'
 
 
 
-/**
- * props
- * .data -- has to have { name, iconUri }
- */
 export default function ProfileLayout(props) {
-  let cache = props.cache // Is not always passed, cache reworking in need
   const navigation = useNavigation()
 
-  const [errorMsg, setErrorMsg] = useState("")
-
-  const [user, setUser] = useState(props.data) // Default to provided data
-
+  const [errorMsg, setErrorMsg] = useState('')
+  const [user, setUser] = useState()
   const [buttonOptions, setButtonOptions] = useState(null)
 
   useEffect(() => {
     const init = async () => {
-      if (cache) { // cache optional
-        let user = await retrieveUserData(cache)
-        setUser(user)
-      }
-    }
-    init()
+      const user = new User()
+      setUser(await user.retrieveUser())
+    }; init()
   }, [])
 
   useEffect(() => {
@@ -109,7 +101,7 @@ export default function ProfileLayout(props) {
             ...simpleShadow,
             zIndex: 100,
           }}
-          source={{ uri: user.iconUri || user.icon_uri_full }}
+          source={{ uri: user.icon_uri_full }}
         />
         <View style={{
           width: 200,

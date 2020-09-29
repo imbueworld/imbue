@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react'
 import { View } from 'react-native'
-import Gym from '../backend/Gym'
+import Class from '../backend/storage/Class';
+import CollectionObject from '../backend/storage/CollectionObject';
+import Gym from '../backend/storage/Gym'
 import cache from '../backend/storage/cache';
 
 
@@ -8,7 +10,6 @@ import cache from '../backend/storage/cache';
 export default function _TestingGrounds(props) {
   useEffect(() => {
     const init = async () => {
-      const gym = new Gym()
       const p = console.log
       let x
     }; init()

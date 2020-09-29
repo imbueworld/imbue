@@ -1,4 +1,3 @@
-import LINKS from "../contexts/Links"
 import storage from "@react-native-firebase/storage"
 
 /**

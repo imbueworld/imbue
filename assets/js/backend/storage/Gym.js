@@ -1,5 +1,5 @@
 import DataObject from './DataObject'
-import { geocodeAddress } from './BackendFunctions'
+import { geocodeAddress } from '../BackendFunctions'
 
 
 
@@ -9,10 +9,9 @@ export default class Gym extends DataObject {
     super(collection)
   }
 
-  async getById(gymId) {
-    // ...
-    // this.gym = ..
-    // cache(`gyms/${this._gymId}`).set(..)
+  async retrieveGym(uid) {
+    await this.initByUid(uid)
+    return this.getAll()
   }
 
   /**
@@ -31,7 +30,7 @@ export default class Gym extends DataObject {
         coordinate: location,
         address: formatted_address,
       })
-      this.push()
+      this.push() // What if this was manually?  Okay. But then this fn should be returning a Promise.
 
       callback('OK')
     })

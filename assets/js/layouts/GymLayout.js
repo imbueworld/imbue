@@ -97,7 +97,7 @@ export default function GymLayout(props) {
     <ScrollView contentContainerStyle={styles.scrollView}>
       <AppBackground />
 
-      {buttonOptions.viewAttendees.state === "open"
+      {buttonOptions.viewAttendees.state === 'open'
       ? <AttendeesPopup
           cache={cache}
           classId={buttonOptions.viewAttendees.data.classId}
@@ -105,7 +105,7 @@ export default function GymLayout(props) {
           onX={() => setCustomState({
             ...customState,
             viewAttendees: {
-              state: "closed",
+              state: 'closed',
             }
           })}
         />

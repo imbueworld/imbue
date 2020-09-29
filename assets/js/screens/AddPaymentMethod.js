@@ -79,7 +79,6 @@ export default function AddPaymentMethod(props) {
         <KeyboardAwareScrollView>
         <ProfileLayout
             innerContainerStyle={styles.innerContainer}
-            data={{ name: user.name, iconUri: user.icon_uri_full }}
         >
             <Text style={{ color: "red" }}>{errorMsg}</Text>
 
