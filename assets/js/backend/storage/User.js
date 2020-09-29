@@ -17,6 +17,14 @@ import {
 
 
 
+/**
+ * All methods beginning with 'retrieve' are good to be used right after
+ * instantiation. Any further methods created with retrieve must also start
+ * with [ await this.init() ].
+ * 
+ * To use any other methods, such as .mergeItems(), instance has to be init'ed
+ * by [ await this.init() ].
+ */
 export default class User extends DataObject {
   constructor() {
     const firebaseUser = auth().currentUser
@@ -98,15 +106,6 @@ export default class User extends DataObject {
     this.accountType = account_type
 
     // Compile the document to push
-    // let userDoc = {
-    //   account_type,
-    //   id: uid,
-    //   first,
-    //   last,
-    //   email,
-    //   icon_uri: 'default-icon.png',
-    //   icon_uri_foreign,
-    // }
     this.mergeItems({
       account_type,
       id: uid,
@@ -118,14 +117,7 @@ export default class User extends DataObject {
     })
 
     // Add additional user-type-specific fields
-    // let additionalFields = {}
     if (account_type == 'partner') {
-      // additionalFields = {
-      //   associated_classes: [],
-      //   associated_gyms: [],
-      //   revenue: 0,
-      //   revenue_total: 0,
-      // }
       this.mergeItems({
         associated_classes: [],
         associated_gyms: [],
@@ -133,32 +125,16 @@ export default class User extends DataObject {
         revenue_total: 0,
       })
     } else {
-      // additionalFields = {
-      //   active_memberships: [],
-      //   active_classes: [],
-      //   scheduled_classes: [],
-      // }
       this.mergeItems({
         active_memberships: [],
         active_classes: [],
         scheduled_classes: [],
       })
     }
-
-    // Complete updating instance of this object
-    this._setData(userDoc)
-
-    // Object.assign(userDoc, additionalFields)
-
-    // let firestorePromise = firestore()
-    //   .collection(collection)
-    //   .doc(uid)
-    //   .set(userDoc)
     
     // Send out requests
     await Promise.all([
       authPromise,
-      // firestorePromise,
       this.push(),
     ])
   }
@@ -211,8 +187,8 @@ export default class User extends DataObject {
     const cacheObj = cache(`${this.collection}/${this.uid}/payment_methods`)
 
     // If already cached => return that
-    const data = cacheObj.get()
-    if (Object.keys(data).length) return data
+    const data = cacheObj.get() || []
+    if (data.length) return data
 
     // Retrieve from database
     const paymentMethods = (await this._getPaymentMethodsDbRef().get())
@@ -229,8 +205,8 @@ export default class User extends DataObject {
     const cacheObj = cache(`${this.collection}/${this.uid}/payments`)
 
     // If already cached => return that
-    const data = cacheObj.get()
-    if (Object.keys(data).length) return data
+    const data = cacheObj.get() || []
+    if (data.length) return data
 
     // Retrieve from database
     const payments = (await this._getPaymentsDbRef().get())
@@ -299,7 +275,7 @@ export default class User extends DataObject {
 
     // Update cache
     const cacheObj = cache(`${this.collection}/${this.uid}/payment_methods`)
-    const data = cacheObj.get()
+    const data = cacheObj.get() || []
     cacheObj.set([...data, paymentMethod])
   }
 

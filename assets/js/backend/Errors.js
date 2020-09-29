@@ -1,4 +1,5 @@
 const BusyError = new Error()
+BusyError.message = 'Action is in process.'
 BusyError.code = 'busy'
 
 const ClassAlreadyBoughtError = new Error('You already own this class.')

@@ -13,20 +13,20 @@ import CustomTextInput from "../components/CustomTextInput"
 
 
 import auth from "@react-native-firebase/auth"
-import { retrieveUserData, retrieveGymsByLocation, retrieveClassesByUser } from '../backend/CacheFunctions'
 import Icon from '../components/Icon'
 import { publicStorage } from '../backend/CacheFunctions'
 import { simpleShadow } from '../contexts/Colors'
 import { GoogleSignin } from '@react-native-community/google-signin'
-import { cache as CACHE } from "../backend/CacheFunctions"
 import { LoginManager } from 'react-native-fbsdk'
 import { StackActions } from '@react-navigation/native'
-import { TextInput } from 'react-native-gesture-handler'
+import User from '../backend/storage/User'
+import GymsCollection from '../backend/storage/GymsCollection'
+import cache from '../backend/storage/cache'
+
 
 
 
 export default function UserDashboard(props) {
-  let cache = props.route.params.cache
   const navigation = props.navigation
 
   const [expanded, setExpanded] = useState(null)
@@ -42,13 +42,17 @@ export default function UserDashboard(props) {
 
   useEffect(() => {
     async function init() {
-      let user = await retrieveUserData(cache)
-      setUser(user)
-      let promises = await Promise.all([
-        retrieveGymsByLocation(cache),
-        retrieveClassesByUser(cache),
-      ])
-      setGyms(promises[0])
+      const user = new User()
+      setUser(await user.retrieveUser())
+
+      const gyms = new GymsCollection()
+      let temp = (
+        await gyms.__retrieveAll()
+      ).map(it => it.getAll())
+      setGyms(temp)
+
+      // This acts as a prefetch for when user eventually navs to ScheduleViewer
+      user.retrieveClasses()
     }
     init()
   }, [])
@@ -57,26 +61,26 @@ export default function UserDashboard(props) {
    * Some logic to control Native Back Button
    */
   useEffect(() => {
-    CACHE("UserDashboard/toggleMenu").set(() => setExpanded(expanded => !expanded))
+    cache("UserDashboard/toggleMenu").set(() => setExpanded(expanded => !expanded))
 
     // Takes control or releases it upon each toggle of the side menu
-    if (expanded) CACHE("UserDashboard/toggleMenu/enabled").set(true)
-    else CACHE("UserDashboard/toggleMenu/enabled").set(false)
+    if (expanded) cache("UserDashboard/toggleMenu/enabled").set(true)
+    else cache("UserDashboard/toggleMenu/enabled").set(false)
 
     // Stops listening upon leaving screen
     navigation.addListener("blur", () => {
-      CACHE("UserDashboard/toggleMenu/enabled").set(false)
+      cache("UserDashboard/toggleMenu/enabled").set(false)
     })
 
     // Continues listening upon coming back to screen
     navigation.addListener("focus", () => {
       if (expanded === null) return // do not run on initial render
-      CACHE("UserDashboard/toggleMenu/enabled").set(true)
+      cache("UserDashboard/toggleMenu/enabled").set(true)
     })
 
     const onBack = () => {
-      const controlled = CACHE("UserDashboard/toggleMenu/enabled").get()
-      const toggleMenu = CACHE("UserDashboard/toggleMenu").get()
+      const controlled = cache("UserDashboard/toggleMenu/enabled").get()
+      const toggleMenu = cache("UserDashboard/toggleMenu").get()
 
       if (controlled) {
         toggleMenu()
@@ -93,11 +97,19 @@ export default function UserDashboard(props) {
     if (!gyms) return
 
     MarkersCreate(gyms.map((gym, idx) => {
-      if (gym.hidden_on_map) return
+      const {
+        hidden_on_map,
+        coordinate={
+          latitude: 0,
+          longitude: 0,
+        },
+      } = gym
+
+      if (hidden_on_map) return
 
       return (
         <Marker
-          coordinate={gym.coordinate}
+          coordinate={coordinate}
           key={idx}
           onPress={async () => {
             const gymIconUri = await publicStorage(gym.icon_uri)
@@ -106,18 +118,26 @@ export default function UserDashboard(props) {
               gyms
                 .filter((gym, idx2) => idx2 === idx)
                 .map(gym => {
+                  const {
+                    name,
+                    description,
+                    rating,
+                    rating_weight,
+                    id,
+                  } = gym
+
                   return (
                     <GymBadge
                       containerStyle={styles.badgeContainer}
-                      name={gym.name}
-                      desc={gym.description}
-                      rating={`${gym.rating} (${gym.rating_weight})`}
+                      name={name}
+                      desc={description}
+                      rating={`${rating} (${rating_weight})`}
                       relativeDistance={""}
-                      iconUri={gym.icon_uri}
+                      iconUri={gymIconUri}
                       key={idx}
                       onMoreInfo={() => {
                         props.navigation.navigate(
-                          "GymDescription", { gymId: gym.id })
+                          "GymDescription", { gymId: id })
                       }}
                       onX={() => GymBadgeCreate(null)}
                     />
