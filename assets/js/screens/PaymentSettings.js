@@ -56,9 +56,7 @@ export default function PaymentSettings(props) {
         contentContainerStyle={styles.container}
         scrollEnabled={false}
        >
-                <ProfileLayout
-                    cache={cache}
-                >
+                <ProfileLayout>
                     <View style={{
                         borderRadius: 20,
                         overflow: "hidden",

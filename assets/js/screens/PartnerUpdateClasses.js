@@ -4,99 +4,101 @@ import { StyleSheet, View, Text } from 'react-native'
 import ProfileLayout from '../layouts/ProfileLayout'
 import NewClassForm from '../components/NewClassForm'
 import CustomSmallButton from '../components/CustomSmallButton'
-import ClassList from '../components/ClassList'
-import { retrieveUserData, retrieveClassesByGymIds } from '../backend/CacheFunctions'
 import { colors } from '../contexts/Colors'
 import { FONTS } from '../contexts/Styles'
+import User from '../backend/storage/User'
 
 
 
 export default function PartnerUpdateClasses(props) {
-    let cache = props.route.params.cache
+  const [page, setPage] = useState("overview")
+  const [user, setUser] = useState(null)
+  const [classes, setClasses] = useState(null)
 
-    const [page, setPage] = useState("overview")
-    const [user, setUser] = useState(null)
-    const [classes, setClasses] = useState(null)
+  useEffect(() => {
+    const init = async () => {
+      const user = new User()
+      const userDoc = await user.retrieveUser()
 
-    useEffect(() => {
-        const init = async() => {
-            let user = await retrieveUserData(cache)
-            setUser(user)
-            let classes = await retrieveClassesByGymIds(cache, { gymIds: user.associated_gyms })
-            setClasses(classes)
-        }
-        init()
-    }, [])
+      const classes = (
+        await user.retrieveClasses()
+      ).map(it => it.getAll())
 
-    if (!user || !classes) return <View />
+      setUser(userDoc)
+      setClasses(classes)
+    }; init()
+  }, [])
 
-    const Classes = classes.map((classDoc, idx) => 
-        <View style={{
-            height: 72,
-            marginTop: idx !== 0 ? 10 : 0,
-            backgroundColor: colors.buttonFill,
-            borderRadius: 30,
-            overflow: "hidden",
-            justifyContent: "center",
-            alignItems: "center",
-        }}>
+
+
+  if (!user || !classes) return <View />
+
+  const Classes = classes.map((classDoc, idx) =>
+    <View key={idx} style={{
+      height: 72,
+      marginTop: idx !== 0 ? 10 : 0,
+      backgroundColor: colors.buttonFill,
+      borderRadius: 30,
+      overflow: "hidden",
+      justifyContent: "center",
+      alignItems: "center",
+    }}>
+      <Text style={{
+        color: colors.buttonAccent,
+        fontSize: 20,
+        ...FONTS.body,
+      }}>{classDoc.name}</Text>
+    </View>
+  )
+
+  let PageContent
+  switch (page) {
+    case "overview":
+      PageContent =
+        <>
+          <CustomSmallButton
+            title="Create New Class"
+            onPress={() => setPage("new_class")}
+          />
+          {/* <ClassList data={classes} /> */}
+          <View>
             <Text style={{
-                color: colors.buttonAccent,
-                fontSize: 20,
-                ...FONTS.body,
-            }}>{classDoc.name}</Text>
-        </View>
-    )
+              marginTop: 5,
+              marginBottom: 20,
+              alignSelf: "center",
+              fontSize: 20,
+              ...FONTS.subtitle,
+            }}>List of Classes</Text>
+            {Classes}
+          </View>
+        </>
+      break
+    case "new_class":
+      PageContent =
+        <>
+          <CustomSmallButton
+            title="See Class List"
+            onPress={() => setPage("overview")}
+          />
+          <NewClassForm />
+        </>
+      break
+  }
 
-    let PageContent
-    switch(page) {
-        case "overview":
-            PageContent =
-                <>
-                <CustomSmallButton
-                    title="Create New Class"
-                    onPress={() => setPage("new_class")}
-                />
-                {/* <ClassList data={classes} /> */}
-                <View>
-                    <Text style={{
-                        marginTop: 5,
-                        marginBottom: 20,
-                        alignSelf: "center",
-                        fontSize: 20,
-                        ...FONTS.subtitle,
-                    }}>List of Classes</Text>
-                    { Classes }
-                </View>
-                </>
-            break
-        case "new_class":
-            PageContent =
-                <>
-                <CustomSmallButton
-                    title="See Class List"
-                    onPress={() => setPage("overview")}
-                />
-                <NewClassForm cache={cache} />
-                </>
-            break
-    }
-
-    return (
-        <ProfileLayout
-            innerContainerStyle={{
-                paddingBottom: 10,
-            }}
-            data={{ name: user.name, iconUri: user.icon_uri_full }}
-        >
-            { PageContent }
-        </ProfileLayout>
-    )
+  return (
+    <ProfileLayout
+      innerContainerStyle={{
+        paddingBottom: 10,
+      }}
+    >
+      { PageContent}
+    </ProfileLayout>
+  )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        minHeight: "100%",
-    },
-    container: {},
+  scrollView: {
+    minHeight: "100%",
+  },
+  container: {},
 })

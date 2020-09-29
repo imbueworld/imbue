@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
-import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
-import { updateGym, updateGymAddress } from '../backend/BackendFunctions'
+import { updateGymAddress } from '../backend/BackendFunctions'
 import Icon from '../components/Icon'
+import Gym from '../backend/storage/Gym'
+import User from '../backend/storage/User'
 
 
 
 export default function PartnerGymSettings(props) {
-  let cache = props.route.params.cache
-
   const [redFields, setRedFields] = useState([])
   const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
@@ -27,24 +26,28 @@ export default function PartnerGymSettings(props) {
 
   useEffect(() => {
     const init = async () => {
-      let user = await retrieveUserData(cache)
-      setUser(user)
-      // Currently operates on the premise that each partner has only one gym
-      let gym = await retrieveGymsByIds(cache, { gymIds: [user.associated_gyms[0]] })
+      const user = new User()
+      const userDoc = await user.retrieveUser()
+      setUser(userDoc)
 
-      if (!gym) {
-        setGym({})
-        return
-      }
+      const {
+        associated_gyms=[],
+      } = userDoc
 
-      gym = gym[0]
-      setGym(gym)
+      const gym = new Gym()
+      const gymDoc = await gym.retrieveGym(associated_gyms[ 0 ]) || {}
+      setGym(gymDoc)
 
-      setName(gym.name)
-      setDescription(gym.description)
-      setAddress(gym.address)
-    }
-    init()
+      const {
+        name,
+        description,
+        address,
+      } = gymDoc
+
+      setName(name)
+      setDescription(description)
+      setAddress(address)
+    }; init()
   }, [])
 
 
@@ -70,7 +73,6 @@ export default function PartnerGymSettings(props) {
       innerContainerStyle={{
         paddingBottom: 10,
       }}
-      data={{ name: user.name, iconUri: user.icon_uri_full }}
     >
       {errorMsg
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>
@@ -104,27 +106,28 @@ export default function PartnerGymSettings(props) {
 
           let errorMsg
           try {
+            const gymObj = new Gym()
+            await gymObj.initByUid(gym.id)
+
             errorMsg = invalidate()
             if (errorMsg) throw new Error(errorMsg)
-
-            await updateGym(cache, {
-              gymId: gym.id,
-              doc: {
-                name,
-                description,
-              }
+            
+            gymObj.mergeItems({
+              name,
+              description,
             })
+            await gymObj.push()
 
-            updateGymAddress(address, res => {
+            gymObj.updateLocation(address, res => {
               if (!res) {
-                setErrorMsg('Provided address was not a street address.')
+                setErrorMsg('Provided address was not an address for a premise.')
                 return
               }
               setSuccessMsg('Information updated.')
             })
-          } catch (err) {
+          } catch(err) {
             if (!errorMsg) {
-              setErrorMsg("Something prevented the action.")
+              setErrorMsg('Something prevented the action.')
               return
             }
             setErrorMsg(errorMsg)

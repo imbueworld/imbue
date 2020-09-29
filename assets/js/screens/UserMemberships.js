@@ -112,9 +112,7 @@ export default function UserMemberships(props) {
           </View>
         </CustomPopup>}
 
-      <ProfileLayout
-        data={{ name: user.name, iconUri: user.icon_uri_full }}
-      >
+      <ProfileLayout>
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>
           : null}

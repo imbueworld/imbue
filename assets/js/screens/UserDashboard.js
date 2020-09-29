@@ -230,7 +230,6 @@ export default function UserDashboard(props) {
         innerContainerStyle={{
           paddingBottom: 10,
         }}
-        data={{ name: user.name, iconUri: user.icon_uri_full }}
         buttonOptions={{
           logOut: {
             show: true,

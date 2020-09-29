@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -12,24 +12,24 @@ import {
   addFunctionalityToClassData
 } from "../backend/HelperFunctions"
 import {
-  retrieveClassesByIds,
-  retrieveClassesByGymIds,
-  retrieveUserData,
-  retrieveClassesByUser,
   filterUserClasses,
-  retrieveGymsByIds
 } from '../backend/CacheFunctions'
 import { fonts } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
 import CustomCapsule from '../components/CustomCapsule'
 import GoBackButton from '../components/buttons/GoBackButton'
 import PlusButton from '../components/buttons/PlusButton'
+import User from '../backend/storage/User'
+import Gym from '../backend/storage/Gym'
+import ClassesCollection from '../backend/storage/ClassesCollection'
 
 
 
 export default function ScheduleViewer(props) {
-  let cache = props.route.params.cache
-  let params = props.route.params
+  const {
+    classIds,
+    gymId,
+  } = props.route.params
 
   const [calendarData, setCalendarData] = useState(null)
   const [dataIsFormatted, setDataIsFormatted] = useState(false)
@@ -43,32 +43,49 @@ export default function ScheduleViewer(props) {
 
   useEffect(() => {
     const init = async () => {
-      let user = await retrieveUserData(cache)
-      setUser(user)
+      const user = new User()
+      setUser(await user.retrieveUser())
+
+      const classes = new ClassesCollection()
 
       // Determine which classes to display:
       // based on the provided gymId or classIds
-      let classes
-      if (params.classIds) {
-        setTitle("My Classes")
-        classes = await retrieveClassesByIds(cache, { classIds: params.classIds })
-      } else if (params.gymId) {
-        let gyms = await retrieveGymsByIds(cache, { gymIds: [params.gymId] })
-        let gym = gyms[0]
-        setTitle(gym.name)
-        setSubtitle("Schedule")
+      let classData
+      if (classIds) {
+        console.log(1111)
 
-        classes = await retrieveClassesByGymIds(cache, { gymIds: [params.gymId] })
+        classData = (await classes
+          .retrieveWhere('id', 'in', classIds)
+        ).map(it => it.getAll())
+
+        setTitle('My Classes')
+      
+      } else if (gymId) {
+        console.log(2222)
+
+        const gym = new Gym()
+        const {
+          name,
+        } = await gym.retrieveGym(gymId)
+
+        classData = (await classes
+          .retrieveWhere('gym_id', 'in', [ gymId ])
+        ).map(it => it.getAll())
+
+        setTitle(name)
+        setSubtitle('Schedule')
+      
       } else {
-        setTitle("My Classes")
+        console.log(3333)
 
-        classes = await retrieveClassesByUser(cache)
-        classes = await filterUserClasses(cache)
+        setTitle('My Classes')
+
+        classData = (await user.retrieveClasses()).map(it => it.getAll())
+        if (user.accountType == 'user') classData = await filterUserClasses()
       }
 
-      setCalendarData(classes)
-    }
-    init()
+      setCalendarData(classData)
+    }; init()
   }, [])
 
   useEffect(() => {

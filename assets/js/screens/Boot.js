@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Text, Button } from 'react-native'
+import { StyleSheet, ScrollView, View, Button } from 'react-native'
 import config from '../../../App.config'
 
 import AppBackground from "../components/AppBackground"
@@ -8,11 +8,10 @@ import CompanyLogo from "../components/CompanyLogo"
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
-import { retrieveUserData } from '../backend/CacheFunctions'
 import { StackActions } from '@react-navigation/native'
 import { colors } from '../contexts/Colors'
 
-import CACHE from '../backend/storage/cache'
+import User from '../backend/storage/User'
 
 
 export default function Boot(props) {
@@ -21,13 +20,13 @@ export default function Boot(props) {
   // GoogleSignin.signOut()
   // LoginManager.logOut()
 
-  let cache = props.route.params.cache
   const navigation = props.navigation
 
   const bootWithUser = async () => {
-    const user = await retrieveUserData(cache)
+    const user = new User()
+    const { account_type } = await user.retrieveUser()
 
-    switch (user.account_type) {
+    switch (account_type) {
       case "user":
         navigation.reset({
           index: 0,
@@ -44,11 +43,13 @@ export default function Boot(props) {
   }
   
   useEffect(() => {
-    // Clear (session) "cache" no matter what, when entering this screen
-    Object.keys(cache).forEach(key => {
-      cache[key] = null
-    })
-    cache.working = {}
+    // Clear (session) cache no matter what, when entering this screen
+    // Object.keys(cache).forEach(key => {
+    //   cache[key] = null
+    // })
+    // cache.working = {}
+    // [COMMENTED, BECAUSE THIS MAY NOT BE NEEDED ANYMORE]
+
 
     // Do not redirect automatically, if DEBUG
     if (config.DEBUG) return
@@ -77,9 +78,7 @@ export default function Boot(props) {
     <ScrollView contentContainerStyle={styles.scrollView}>
       <AppBackground />
       <View style={styles.container}>
-
-        <Text>{JSON.stringify(cache.user)}</Text>
-
+        <View style={{ height: 10, borderBottomWidth: 1, }} />
         <Button
           title="Normal Boot"
           onPress={() => {
@@ -93,8 +92,6 @@ export default function Boot(props) {
             }
           }}
         />
-
-
 
         <View style={{ height: 10, borderBottomWidth: 1, }} />
         <Button

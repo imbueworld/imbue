@@ -1,6 +1,9 @@
-export function snatchNewClassForm(cache) {
-    if (!cache.temp) cache.temp = {}
-    if (!cache.temp.newClassForm) cache.temp.newClassForm = {}
+import cache from "./storage/cache"
 
-    return cache.temp.newClassForm
+
+
+export function snatchNewClassForm() {
+  const cacheObj = cache('temp/newClassForm')
+  if (!cacheObj.get()) cacheObj.set({})
+  return cacheObj.get()
 }

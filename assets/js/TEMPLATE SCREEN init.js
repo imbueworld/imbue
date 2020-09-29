@@ -18,9 +18,7 @@ export default function PartnerUpdateClasses(props) {
         init()
     }, [])
     return (
-        <ProfileLayout
-            data={}
-        >
+        <ProfileLayout>
             
         </ProfileLayout>
     )

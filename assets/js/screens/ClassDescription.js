@@ -14,12 +14,14 @@ import { colors } from "../contexts/Colors"
 import { fonts, FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
+import User from '../backend/storage/User'
+import Gym from '../backend/storage/Gym'
 
 
 
 export default function ClassDescription(props) {
   let cache = props.route.params.cache
-  let classData = props.route.params.data
+  const classData = props.route.params.data
 
   const [r, refresh] = useState(0)
   const [errorMsg, setErrorMsg] = useState("")
@@ -42,14 +44,13 @@ export default function ClassDescription(props) {
 
   useEffect(() => {
     const init = async () => {
-      let promises = await Promise.all([
-        retrieveUserData(cache),
-        retrieveGymsByIds(cache, {
-          gymIds: [classData.gym_id]
-        })
-      ])
-      setUser(promises[0])
-      setGym(promises[1][0])
+      const { gym_id: classGymId } = classData
+
+      const user = new User()
+      setUser(await user.retrieveUser())
+
+      const gym = new Gym()
+      setGym(await gym.retrieveGym(classGymId))
     }
     init()
   }, [])
@@ -62,6 +63,10 @@ export default function ClassDescription(props) {
   useEffect(() => {
     if (!gym) return
     if (!user) return
+    if (user.account_type != 'user') {
+      setHasMembership(true)
+      return
+    }
 
     const init = async () => {
       let memberships = await retrieveGymsByIds(cache, {
@@ -177,9 +182,11 @@ export default function ClassDescription(props) {
 
   // helper variable
   const classIsAddedToCalendar =
-    user.scheduled_classes
-      .map(active => active.time_id)
-      .includes(classData.time_id)
+    user.account_type == 'user'
+    ? user.scheduled_classes
+        .map(active => active.time_id)
+        .includes(classData.time_id)
+    : null
   
   function getGoToLivestreamButton() {
     let options = {
@@ -204,8 +211,8 @@ export default function ClassDescription(props) {
       buttonOptions={{
         goToLivestream: getGoToLivestreamButton(),
         addToCalendar: {
-          show: hasMembership ? true : false,
-          state: classIsAddedToCalendar ? "fulfilled" : "opportunity",
+          show: hasMembership && user.account_type == 'user',
+          state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
           onPress: async () => {
             await scheduleClasses(cache, {
               classId: classData.id,

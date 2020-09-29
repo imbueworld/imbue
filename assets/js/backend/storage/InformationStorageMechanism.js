@@ -1,4 +1,5 @@
 export default function InformationStorageMechanism(Database, query) {
+  const RESERVED_FIELDS = ['_data', '_listeners']
   const fields = query.split("/")
   let nextBase
   let previousBase
@@ -18,7 +19,7 @@ export default function InformationStorageMechanism(Database, query) {
   })
 
   const queriedField = nextBase
-  if (!queriedField._data) queriedField._data = {}
+  // if (!queriedField._data) queriedField._data = {}
   if (!queriedField._listeners) queriedField._listeners = []
 
   // Return interactable functions
@@ -51,6 +52,24 @@ export default function InformationStorageMechanism(Database, query) {
     },
     ref: path => {
       return InformationStorageMechanism(Database, `${query}/${path}`)
+    },
+    // Returns a list of objects that adhered to the instructions inputted
+    where: (field, rule, query) => {
+      const res = []
+
+      for (let itemName in queriedField) {
+        if (RESERVED_FIELDS.includes(itemName)) continue
+        
+        switch(rule) {
+          case 'in':
+            let doc = queriedField[ itemName ]._data || {} // Depends on it being an object
+            let val = doc[ field ]
+            if (query.includes(val)) res.push(doc)
+            break
+        }
+      }
+
+      return res
     },
     _getDatabase: () => Database,
   }
