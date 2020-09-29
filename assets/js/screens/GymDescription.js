@@ -1,22 +1,22 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, TouchableHighlight, SafeAreaView  } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 
-import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
-import { purchaseMemberships } from "../backend/BackendFunctions"
 import { colors } from '../contexts/Colors'
 import GymLayout from '../layouts/GymLayout'
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import Icon from '../components/Icon'
+import User from '../backend/storage/User'
+import Gym from '../backend/storage/Gym'
+
 
 
 export default function GymDescription(props) {
-  let cache = props.route.params.cache
-  let gymId = props.route.params.gymId
+  const { gymId } = props.route.params
 
   const [r, refresh] = useState(0)
   const [errorMsg, setErrorMsg] = useState(null)
@@ -32,20 +32,15 @@ export default function GymDescription(props) {
   const [popup, setPopup] = useState(false)
 
   const [hasMembership, setHasMembership] = useState(null)
-  const [selectedCard, selectCard] = useState(null)
 
   useEffect(() => {
     const init = async () => {
-      let promises = await Promise.all([
-        retrieveUserData(cache),
-        retrieveGymsByIds(cache, {
-          gymIds: [gymId]
-        })
-      ])
-      setUser(promises[0])
-      setGym(promises[1][0])
-    }
-    init()
+      const user = new User()
+      setUser(await user.retrieveUser())
+
+      const gym = new Gym()
+      setGym(await gym.retrieveGym(gymId))
+    }; init()
   }, [popup])
 
   let activeMembershipsCount = user
@@ -58,17 +53,19 @@ export default function GymDescription(props) {
     if (!user) return
 
     const init = async () => {
-      let memberships = await retrieveGymsByIds(cache, {
-        gymIds: ["imbue"]
-      })
-      let imbueMembership = memberships[0]
+      const imbue = new Gym()
+
+      const {
+        id: imbueId,
+      } = await imbue.retrieveGym('imbue')
 
       let hasMembership =
-        user.active_memberships.includes(imbueMembership.id)
-          ? "imbue"
+        user.active_memberships.includes(imbueId)
+          ? 'imbue'
           : user.active_memberships.includes(gym.id)
-            ? "gym"
+            ? 'gym'
             : false
+      
       setHasMembership(hasMembership)
     }
     init()
@@ -106,6 +103,8 @@ export default function GymDescription(props) {
     props.navigation.navigate(
       "ScheduleViewer", { gymId })
   }
+
+
 
   if (!gym) return <View />
 
@@ -155,24 +154,31 @@ export default function GymDescription(props) {
                     }}>Gym Online Membership</Text>
                   </Text>
                 }
-                cache={cache}
                 onX={() => setPopup(null)}
                 onCardSelect={async cardId => {
                   try {
-                    setErrorMsg("")
-                    setSuccessMsg("")
+                    setErrorMsg('')
+                    setSuccessMsg('')
 
-                    await purchaseMemberships(cache, {
-                      membershipIds: [gym.id],
+                    const {
+                      id,
+                      membership_price,
+                      name,
+                      partner_id,
+                    } = gym
+
+                    const user = new User()
+                    await user.purchaseMembership({
                       creditCardId: cardId,
-                      price: gym.membership_price,
-                      description: `Gym Online Membership for ${gym.name}`,
-                      partnerId: gym.partner_id,
-                      gymId: gym.id,
-                      purchaseType: "membership",
+                      price: membership_price,
+                      description: `Gym Online Membership – ${name}`,
+                      membershipId: id,
+                      gymId: id,
+                      partnerId: partner_id,
+                      purchaseType: 'membership',
                     })
 
-                    refresh(r + 1)
+                    refresh(r => r + 1)
                   } catch (err) {
                     switch (err.code) {
                       case "busy":
@@ -275,7 +281,6 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: "center",
     fontSize: 27,
-    // fontFamily: fonts.default,
     ...FONTS.title,
   },
   genreContainer: {
@@ -293,7 +298,6 @@ const styles = StyleSheet.create({
   },
   genreText: {
     fontSize: 14,
-    // fontFamily: fonts.default,
     ...FONTS.subtitle,
   },
   descContainer: {
@@ -307,7 +311,6 @@ const styles = StyleSheet.create({
   descText: {
     fontSize: 16,
     textAlign: "justify",
-    // fontFamily: fonts.default,
     ...FONTS.body,
   },
 })

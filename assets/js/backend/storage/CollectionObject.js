@@ -60,6 +60,35 @@ export default class CollectionObject {
     return dataObjects
   }
 
+  /**
+   * This should never be used, as well as this has a limitation, that if
+   * any data is already present, it assumes it has retrieved "all" already.
+   */
+  async __retrieveAll() {
+    let availableData = this._getCacheObj().getChildren()
+    console.log("availableData", availableData) // DEBUG
+
+    const dataObjects = []
+
+    if (availableData.length) {
+      console.log("111")
+      const newDataObjects = availableData.map(doc => {
+        let entry = [doc.id, doc]
+        const dataObject = new this.DataObject()
+        dataObject.fromEntry(entry)
+        return dataObject
+      })
+      dataObjects.push(...newDataObjects)
+    } else {
+      console.log("222")
+      const newDataObjects = ( await this._getDbRef().get() )
+        .docs.map(this._dataObjectStructure.bind(this))
+      dataObjects.push(...newDataObjects)
+    }
+
+    return dataObjects
+  }
+
   _getCacheObj() {
     return cache(`${this.collection}`)
   }
@@ -85,5 +114,13 @@ export default class CollectionObject {
 
   _entriesStructure(doc) {
     return [doc.id, doc.data()]
+  }
+
+  // Must .bind(this) when used
+  _dataObjectStructure(doc) {
+    let entry = [doc.id, doc.data()]
+    const dataObject = new this.DataObject()
+    dataObject.fromEntry(entry)
+    return dataObject
   }
 }

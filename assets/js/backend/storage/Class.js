@@ -66,7 +66,7 @@ export default class Class extends DataObject {
     })
 
     // Push the new class
-    const { id: classId } = pushables.push(this.push())
+    const { id: classId } = pushables.push(this.push({ forceNew: true }))
 
     // Update partner's associated classes
     partner.mergeItems({

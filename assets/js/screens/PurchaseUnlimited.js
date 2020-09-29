@@ -7,22 +7,17 @@ import CompanyLogo from "../components/CompanyLogo"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
-import {
-  retrieveUserData,
-  retrieveGymsByIds
-} from '../backend/CacheFunctions'
-import { purchaseMemberships } from '../backend/BackendFunctions'
 import { colors } from '../contexts/Colors'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import { fonts } from '../contexts/Styles'
+import User from '../backend/storage/User'
+import Gym from '../backend/storage/Gym'
 
 
 
 export default function PurchaseUnlimited(props) {
-  let cache = props.route.params.cache
-
   const [r, refresh] = useState(0)
   const [errorMsg, setErrorMsg] = useState(null)
   const [successMsg, setSuccessMsg] = useState(null)
@@ -36,19 +31,12 @@ export default function PurchaseUnlimited(props) {
 
   useEffect(() => {
     const init = async () => {
-      let promises = await Promise.all([
-        retrieveUserData(cache),
-        retrieveGymsByIds(cache, {
-          gymIds: ["imbue"]
-        }),
-      ])
-      let user = promises[0]
-      let imbueMembership = promises[1][0]
+      const user = new User()
+      setUser(await user.retrieveUser())
 
-      setUser(user)
-      setImbueMembership(imbueMembership)
-    }
-    init()
+      const gym = new Gym()
+      setImbueMembership(await gym.retrieveGym('imbue'))
+    }; init()
   }, [])
 
   let activeMembershipsCount = user
@@ -151,20 +139,25 @@ export default function PurchaseUnlimited(props) {
                       }}>{imbueMembership.name}</Text>
                     </Text>
                   }
-                  cache={cache}
                   onX={() => setPopup(null)}
                   onCardSelect={async cardId => {
                     try {
-                      setErrorMsg("")
-                      setSuccessMsg("")
+                      setErrorMsg('')
+                      setSuccessMsg('')
 
-                      await purchaseMemberships(cache, {
-                        membershipIds: [imbueMembership.id],
+                      const {
+                        id,
+                        membership_price,
+                      } = imbueMembership
+
+                      const user = new User()
+                      await user.purchaseMembership({
                         creditCardId: cardId,
-                        price: imbueMembership.membership_price,
+                        price: membership_price,
                         description: `Imbue Universal Gym Membership`,
-                        gymId: imbueMembership.id,
-                        purchaseType: "membership",
+                        membershipId: id,
+                        gymId: id,
+                        purchaseType: 'membership',
                       })
 
                       refresh(r + 1)

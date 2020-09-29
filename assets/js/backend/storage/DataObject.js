@@ -69,19 +69,29 @@ export default class DataObject {
     this._modifiedFields = []
   }
 
-  async push() {
+  async push(options={}) {
     const data = this._getData()
+
+    const { forceNew } = options
+
+    // It will not be premitted to push manually a new entry,
+    // rather the developer has to use the appropriate .create() methods
+    if (!this.uid && !forceNew) {
+      console.warn('Push was not done, manual pushing is not permitted. Use or create method: .create()')
+      this.__DEBUG()
+      return
+    }
 
     let modifiedData = this._getModifiedData()
     if (!Object.keys(modifiedData).length) return // Do not push an empty doc
 
-    // If uid is not present, add new entry,
-    // importantly: when changing internal uid,
-    // pass on existing data to the new uid in cache
+    // If uid is not present, add new entry
     if (!this.uid) {
       let firebaseDoc = await this._getCollectionDbRef().add(data)
       this._modifiedFields = [] // update
 
+      // this is important: when changing internal uid here,
+      // pass on existing data to the new uid in cache
       this.uid = firebaseDoc.id
       this._setData(data)
       return firebaseDoc
@@ -159,5 +169,10 @@ export default class DataObject {
     } finally {
       cacheObj.set(false)
     }
+  }
+
+
+  __DEBUG() {
+    console.log(this)
   }
 }

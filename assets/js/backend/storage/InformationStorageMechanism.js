@@ -62,11 +62,21 @@ export default function InformationStorageMechanism(Database, query) {
         
         switch(rule) {
           case 'in':
-            let doc = queriedField[ itemName ]._data || {} // Depends on it being an object
+            let doc = queriedField[ itemName ]._data || {} // Depends on it being an object, does not affect outcome
             let val = doc[ field ]
             if (query.includes(val)) res.push(doc)
             break
         }
+      }
+
+      return res
+    },
+    getChildren: () => {
+      const res = []
+
+      for (let itemName in queriedField) {
+        if (RESERVED_FIELDS.includes(itemName)) continue
+        res.push(queriedField[ itemName ]._data)
       }
 
       return res

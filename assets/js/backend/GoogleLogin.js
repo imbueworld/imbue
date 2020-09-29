@@ -1,12 +1,14 @@
-import auth from '@react-native-firebase/auth';
-import { GoogleSignin } from '@react-native-community/google-signin';
-import { initializeAccount } from './BackendFunctions';
+import auth from '@react-native-firebase/auth'
+import { GoogleSignin } from '@react-native-community/google-signin'
+import User from './storage/User'
+
+
 
 export async function GoogleLogin(cache, accountType, onAuthChange=(() => {}), onError=(() => {})) {
   try {
     await GoogleSignin.hasPlayServices()
   } catch(err) {
-    onError(err)
+    onError(err.message)
     return
   }
 
@@ -29,7 +31,8 @@ export async function GoogleLogin(cache, accountType, onAuthChange=(() => {}), o
         user,
         accountType,
       }
-      await initializeAccount(cache, {}, options)
+      const userObj = new User()
+      await userObj.create({}, options)
     }
 
     onAuthChange(user)

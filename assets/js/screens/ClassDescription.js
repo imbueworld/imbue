@@ -69,20 +69,21 @@ export default function ClassDescription(props) {
     }
 
     const init = async () => {
-      let memberships = await retrieveGymsByIds(cache, {
-        gymIds: ["imbue"]
-      })
-      let imbueMembership = memberships[0]
+      const imbue = new Gym()
+
+      const {
+        id: imbueId,
+      } = await imbue.retrieveGym('imbue')
 
       let activeTimeIds = user.active_classes.map(active => active.time_id)
 
       let hasMembership =
-        user.active_memberships.includes(imbueMembership.id)
-          ? "imbue"
+        user.active_memberships.includes(imbueId)
+          ? 'imbue'
           : user.active_memberships.includes(gym.id)
-              ? "gym"
+              ? 'gym'
               : activeTimeIds.includes(classData.time_id)
-                  ? "class"
+                  ? 'class'
                   : false
 
       setHasMembership(hasMembership)
@@ -214,6 +215,7 @@ export default function ClassDescription(props) {
           show: hasMembership && user.account_type == 'user',
           state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
           onPress: async () => {
+            const user = new User()
             await scheduleClasses(cache, {
               classId: classData.id,
               timeIds: [classData.time_id]

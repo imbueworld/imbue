@@ -5,7 +5,6 @@ import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
-import { updateGymAddress } from '../backend/BackendFunctions'
 import Icon from '../components/Icon'
 import Gym from '../backend/storage/Gym'
 import User from '../backend/storage/User'
