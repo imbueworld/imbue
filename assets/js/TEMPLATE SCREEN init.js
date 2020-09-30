@@ -8,7 +8,6 @@ import { retrieveUserData } from '../backend/CacheFunctions'
 
 
 export default function PartnerUpdateClasses(props) {
-    let cache = props.route.params.cache
     const [user, setUser] = useState(null)
     useEffect(() => {
         const init = async() => {

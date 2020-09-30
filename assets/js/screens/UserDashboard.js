@@ -226,7 +226,7 @@ export default function UserDashboard(props) {
           underlayColor="#000000C0"
           onPress={() => setExpanded(!expanded)}
           // [uncomment upon DEBUG start]
-          // onLongPress={() => setExpanded(!expanded)}
+          onLongPress={() => setExpanded(!expanded)}
           // [comment upon DEBUG end]
         >
           <Icon

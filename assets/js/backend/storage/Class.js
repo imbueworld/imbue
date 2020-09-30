@@ -9,6 +9,15 @@ export default class Class extends DataObject {
     super(collection)
   }
 
+  async retrieveClass(uid) {
+    await this.initByUid(uid)
+
+    return {
+      ...this.getAll(),
+      // Formatting stuff here ... ?
+    }
+  }
+
   async retrieveAttendees(timeId) {
     return await this._BusyErrorWrapper('retrieveAttendees', async () => {
       const cacheObj = this._getCacheObj().ref('attendees')

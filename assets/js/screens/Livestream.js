@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { retrieveUserData, retrievePlaybackId } from '../backend/CacheFunctions'
 import LivestreamLayout from '../layouts/LivestreamLayout'
 import Video from 'react-native-video'
+import User from '../backend/storage/User'
+import Gym from '../backend/storage/Gym'
 
 
 
@@ -85,65 +86,63 @@ import Video from 'react-native-video'
 
 
 function getPlaybackLink(playbackId) {
-    return `https://stream.mux.com/${playbackId}.m3u8`
+  return `https://stream.mux.com/${playbackId}.m3u8`
 }
 
 
 
+// (m3u8, webm, mp4) are guarantted to work with <Video />
 export default function Livestream(props) {
-    let cache = props.route.params.cache
-    // let gym = props.route.params.gym
-    const gymId = props.route.params.gymId
+  const { gymId } = props.route.params
 
-    const [user, setUser] = useState(null)
-    const [playbackLink, setPlaybackLink] = useState(null)
-    console.log("playbackLink", playbackLink)
+  const [user, setUser] = useState(null)
+  const [playbackLink, setPlaybackLink] = useState(null)
 
-    useEffect(() => {
-        const init = async () => {
-            let res = await Promise.all([
-                retrieveUserData(cache),
-                retrievePlaybackId(cache, { gymId }),
-            ])
-            setUser(res[0])
-            setPlaybackLink(getPlaybackLink(res[1]))
-        }
-        init()
-    }, [])
+  console.log("playbackLink", playbackLink) // DEBUG
 
-    // (m3u8, webm, mp4) are guarantted to work with <Video />
-    // const leagueOne = "https://lolstatic-a.akamaihd.net/frontpage/apps/prod/harbinger-l10-website/en-gb/production/en-gb/static/hero-0632cbf2872c5cc0dffa93d2ae8a29e8.webm"
-    // const leagueTwo = "https://lolstatic-a.akamaihd.net/frontpage/apps/prod/harbinger-l10-website/en-gb/production/en-gb/static/hero-de0ba45b1d0959277d12545fbb645722.mp4"
+  useEffect(() => {
+    const init = async () => {
+      const user = new User()
 
-    if (!user) return <View />
+      const gym = new Gym()
+      const { playback_id } = await gym.retrieveGym(gymId)
 
-    return (
-        <>
-        <LivestreamLayout
-            gymId={gymId}
-            user={user}
+      setUser(await user.retrieveUser())
+      setPlaybackLink(getPlaybackLink(playback_id))
+    }; init()
+  }, [])
+
+
+
+  if (!user) return <View />
+
+  return (
+    <>
+      <LivestreamLayout
+        gymId={gymId}
+        user={user}
+      />
+
+      {   playbackLink
+        ? <Video
+          style={styles.video}
+          source={{ uri: playbackLink }}
+          onBuffer={() => { console.log("Buffering video...") }}
+          onError={() => { console.log("Error on video!") }}
+          paused={false}
+          resizeMode={"contain"}
+        // repeat={true}
         />
-        
-        {   playbackLink
-        ?   <Video
-                style={styles.video}
-                source={{ uri: playbackLink }}
-                onBuffer={() => { console.log("Buffering video...") }}
-                onError={() => { console.log("Error on video!") }}
-                paused={false}
-                resizeMode={"contain"}
-                // repeat={true}
-            />
-        :   null }
-        </>
-    )
+        : null}
+    </>
+  )
 }
 
 const styles = StyleSheet.create({
-    video: {
-        width: "100%",
-        height: "100%",
-        position: "absolute",
-        zIndex: -100,
-    },
+  video: {
+    width: "100%",
+    height: "100%",
+    position: "absolute",
+    zIndex: -100,
+  },
 })

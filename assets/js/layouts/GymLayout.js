@@ -23,7 +23,6 @@ import CustomButton from '../components/CustomButton'
  * .children
  */
 export default function GymLayout(props) {
-  let cache = props.cache
   let gym = props.data
   let navigation = useNavigation()
 
@@ -99,7 +98,6 @@ export default function GymLayout(props) {
 
       {buttonOptions.viewAttendees.state === 'open'
       ? <AttendeesPopup
-          cache={cache}
           classId={buttonOptions.viewAttendees.data.classId}
           timeId={buttonOptions.viewAttendees.data.timeId}
           onX={() => setCustomState({

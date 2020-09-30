@@ -53,6 +53,9 @@ const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 // })
 
 exports.createLivestream = functions.https.onCall(async (data, context) => {
+  const { uid } = context.auth
+  const { gymId } = data
+
   // console.log("[START]")
   let xhr = new XMLHttpRequest()
   xhr.onload = async () => {
@@ -60,21 +63,33 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
     let data = JSON.parse(xhr.responseText).data
     let { stream_key, playback_ids } = data
     let playback_id = playback_ids[0].id
+
+    // Saving of the stream_key,
+    // and playback_id, just in case it is ever needed for partner
     await admin
       .firestore()
       .collection("partners")
-      .doc(context.auth.uid)
+      .doc(uid)
       .set({
-        playback_id,
         stream_key,
+        playback_id,
       }, { merge: true })
+
     // Public portion
+    // await admin
+    //   .firestore()
+    //   .collection("partners")
+    //   .doc(uid)
+    //   .collection("public")
+    //   .doc("livestream")
+    //   .set({
+    //     playback_id,
+    //   }, { merge: true })
+    
+    // Making playback_id accessible to users
     await admin
-      .firestore()
-      .collection("partners")
-      .doc(context.auth.uid)
-      .collection("public")
-      .doc("livestream")
+      .collection('gyms')
+      .doc(gymId)
       .set({
         playback_id,
       }, { merge: true })

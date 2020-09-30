@@ -1,25 +1,21 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, ScrollView, Button } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomButton from "../components/CustomButton"
 import CustomPopup from "../components/CustomPopup"
-import CustomBar from "../components/CustomBar"
 import ActiveMembershipBadge from "../components/ActiveMembershipsBadge"
-import { cancelMemberships, deleteSubscription } from '../backend/BackendFunctions'
-import { retrievePastTransactions, retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
 import TransactionView from '../components/TransactionView'
-import CloseButton from '../components/CloseButton'
 import TouchableMenu from '../components/TouchableMenu'
-import { highShadow, colors } from '../contexts/Colors'
+import { colors } from '../contexts/Colors'
 import { FONTS } from '../contexts/Styles'
+import User from '../backend/storage/User'
+import GymsCollection from '../backend/storage/GymsCollection'
 
 
 
 export default function UserMemberships(props) {
-  let cache = props.route.params.cache
-
   const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
   const [popup, setPopup] = useState(null)
@@ -32,14 +28,20 @@ export default function UserMemberships(props) {
 
   useEffect(() => {
     const init = async () => {
-      let user = await retrieveUserData(cache)
-      setUser(user)
-      let memberships = await retrieveGymsByIds(cache, {
-        gymIds: user.active_memberships
-      })
-      setMemberships(memberships)
-    }
-    init()
+      const user = new User()
+      const userDoc = await user.retrieveUser()
+
+      const { active_memberships=[] } = userDoc
+
+      const gyms = new GymsCollection()
+      const gymDocs = ( await gyms.retrieveWhere('gym_id', 'in', active_memberships) )
+        .map(it => it.getAll())
+      
+      console.log("gymDocs", gymDocs) // DEBUG
+
+      setUser(userDoc)
+      setMemberships(gymDocs)
+    }; init()
   }, [successMsg])
 
   useEffect(() => {
@@ -61,8 +63,14 @@ export default function UserMemberships(props) {
           setSuccessMsg("")
 
           try {
-            await deleteSubscription(cache, { gymIds: [membership.id] })
-            setSuccessMsg("Subscription canceled!")
+            const {
+              id: gymId,
+            } = membership
+
+            const user = new User()
+            await user.deleteSubscription({ gymId })
+
+            setSuccessMsg('Subscription canceled!')
           } catch (err) {
             switch (err.code) {
               case "busy":
@@ -70,7 +78,7 @@ export default function UserMemberships(props) {
                 break
               default:
                 setErrorMsg("Something prevented the action.")
-                // setErrorMsg(err.message) //
+                // setErrorMsg(err.message) // DEBUG
                 break
             }
           }
@@ -127,8 +135,10 @@ export default function UserMemberships(props) {
           textStyle={styles.buttonText}
           title="View Past Transactions"
           onPress={async () => {
-            setPopup("transactions")
-            let pastTransactions = await retrievePastTransactions(cache)
+            setPopup('transactions')
+            const user = new User()
+            const pastTransactions = await user.retrievePastTransactions()
+
             PastTransactionsCreate(
               pastTransactions.map((transaction, idx) =>
                 <TransactionView

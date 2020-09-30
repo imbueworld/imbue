@@ -10,6 +10,7 @@ import CustomButton from "../components/CustomButton"
 
 import { retrieveUserData } from '../backend/CacheFunctions'
 import { addPaymentMethod } from '../backend/BackendFunctions'
+import User from '../backend/storage/User'
 
 
 
@@ -28,96 +29,98 @@ import { addPaymentMethod } from '../backend/BackendFunctions'
 
 
 export default function AddPaymentMethod(props) {
-    let cache = props.route.params.cache
-    let params = props.route.params
+  const { referrer } = props.route.params
 
-    const [holderNameText, setHolderNameText] = useState("")
-    const [creditCardText, setCreditCardText] = useState("")
-    const [expireDateText, setExpireDateText] = useState("")
-    const [CCVText, setCCVText] = useState("")
-    const [zipCodeText, setZipCodeText] = useState("")
+  const [holderNameText, setHolderNameText] = useState("")
+  const [creditCardText, setCreditCardText] = useState("")
+  const [expireDateText, setExpireDateText] = useState("")
+  const [CCVText, setCCVText] = useState("")
+  const [zipCodeText, setZipCodeText] = useState("")
 
-    const [errorMsg, setErrorMsg] = useState("")
+  const [errorMsg, setErrorMsg] = useState("")
 
-    const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null)
 
-    useEffect(() => {
-        const init = async() => {
-            let user = await retrieveUserData(cache)
-            setUser(user)
-        }
-        init()
-    }, [])
+  useEffect(() => {
+    const init = async () => {
+      const user = new User()
+      setUser(await user.retrieveUser())
+    }; init()
+  }, [])
 
-    async function validateAndProceed() {
-        let [expMonth, expYear] = expireDateText.split("/")
+  async function validateAndProceed() {
+    let [expMonth, expYear] = expireDateText.split("/")
 
-        let form = {
-            cardNumber: creditCardText,
-            expMonth,
-            expYear,
-            cvc: CCVText,
-            name: holderNameText,
-            address_zip: zipCodeText,
-        }
-
-        try {
-            await addPaymentMethod(cache, form)
-            if (!params.referrer) {
-                props.navigation.goBack()
-                return
-            }
-            props.navigation.navigate(props.route.params.referrer, { referrer: "AddPaymentSettings" })
-        } catch(err) {
-            setErrorMsg(err.message)
-        }
+    let form = {
+      cardNumber: creditCardText,
+      expMonth,
+      expYear,
+      cvc: CCVText,
+      name: holderNameText,
+      address_zip: zipCodeText,
     }
 
-    if (!user) return <View />
+    try {
+      const userObj = new User()
+      await userObj.addPaymentMethod(form)
 
-    return (
-        <KeyboardAwareScrollView>
-        <ProfileLayout
-            innerContainerStyle={styles.innerContainer}
-        >
-            <Text style={{ color: "red" }}>{errorMsg}</Text>
+      if (!referrer) {
+        props.navigation.goBack()
+        return
+      }
+      props.navigation.navigate(referrer, { referrer: "AddPaymentSettings" })
+    } catch (err) {
+      setErrorMsg('Something prevented the action.')
+    }
+  }
 
-            <CustomTextInput
-                placeholder="Name of Holder"
-                value={holderNameText}
-                onChangeText={(text) => setHolderNameText(text)}
-            />
-            <CustomTextInput
-                placeholder="Credit Card Number"
-                value={creditCardText}
-                onChangeText={(text) => setCreditCardText(text)}
-            />
-            <CustomTextInput
-                placeholder="MM/YY"
-                value={expireDateText}
-                onChangeText={(text) => setExpireDateText(text)}
-            />
-            <CustomTextInput
-                placeholder="CCV"
-                value={CCVText}
-                onChangeText={(text) => setCCVText(text)}
-            />
-            <CustomTextInput
-                placeholder="ZIP"
-                value={zipCodeText}
-                onChangeText={(text) => setZipCodeText(text)}
-            />
-            <CustomButton
-                title="Save"
-                onPress={validateAndProceed}
-            />
-            </ProfileLayout>
-        </KeyboardAwareScrollView>
-    )
+
+
+  if (!user) return <View />
+
+  return (
+    <KeyboardAwareScrollView>
+      <ProfileLayout
+        innerContainerStyle={styles.innerContainer}
+      >
+        <Text style={{ color: "red" }}>{errorMsg}</Text>
+
+        <CustomTextInput
+          placeholder="Name of Holder"
+          value={holderNameText}
+          onChangeText={(text) => setHolderNameText(text)}
+        />
+        <CustomTextInput
+          placeholder="Credit Card Number"
+          value={creditCardText}
+          onChangeText={(text) => setCreditCardText(text)}
+        />
+        <CustomTextInput
+          placeholder="MM/YY"
+          value={expireDateText}
+          onChangeText={(text) => setExpireDateText(text)}
+        />
+        <CustomTextInput
+          placeholder="CCV"
+          value={CCVText}
+          onChangeText={(text) => setCCVText(text)}
+        />
+        <CustomTextInput
+          placeholder="ZIP"
+          value={zipCodeText}
+          onChangeText={(text) => setZipCodeText(text)}
+        />
+        <CustomButton
+          title="Save"
+          onPress={validateAndProceed}
+        />
+      </ProfileLayout>
+    </KeyboardAwareScrollView>
+  )
 }
 
 const styles = StyleSheet.create({
-    innerContainer: {
-        paddingBottom: 10,
-    },
+  innerContainer: {
+    paddingBottom: 10,
+  },
 })
