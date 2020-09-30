@@ -141,10 +141,7 @@ export default class DataObject {
   }
 
   async _forcePull() {
-    const data = (
-      await this._getDocDbRef().get()
-    ).data()
-
+    const data = ( await this._getDocDbRef().get() ).data()
     this._setData(data)
   }
 

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 import Icon from '../Icon'
 import { fonts } from '../../contexts/Styles'
-import { cache } from '../../backend/CacheFunctions'
+import cache from '../../backend/storage/cache'
 import { colors } from '../../contexts/Colors'
 
 

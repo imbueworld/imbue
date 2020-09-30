@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { View, TouchableWithoutFeedback, BackHandler } from 'react-native'
 
 import CustomCapsule from "../components/CustomCapsule"
-import { cache } from '../backend/CacheFunctions'
+import cache from '../backend/storage/cache'
 import CloseButton from './CloseButton'
 
 

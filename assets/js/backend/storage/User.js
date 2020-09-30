@@ -504,6 +504,35 @@ export default class User extends DataObject {
     })
   }
 
+  /**
+   * Creates livestream for user, assigns it to them,
+   * if it hasn't already been created & assigned.
+   */
+  async createLivestream() {
+    return await this._BusyErrorWrapper('createLivestream', async () => {
+      // console.log("ASCERTAINING THAT this IS WHAT IT SHOULD BE", this) // DEBUG
+
+      await this.init()
+      const { stream_key } = this.getAll()
+
+      if (stream_key) return stream_key
+
+      // Call Google Cloud Function, which creates LS & assigns it to user
+      const createLivestream = functions().httpsCallable('createLivestream')
+      await createLivestream()
+
+      // Attempt many times to get it from the field, because it may not be
+      // there instantly, or in the worst case – at all
+      for (let i = 0; i < 15; i++) {
+        await this._forcePull()
+        let { stream_key: streamKey } = this.getAll()
+
+        if (streamKey) return streamKey
+        await new Promise(r => setTimeout(r, 3500)) // sleep
+      }
+    })
+  }
+
   _getPaymentMethodsDbRef() {
     return firestore()
       .collection('stripe_customers')

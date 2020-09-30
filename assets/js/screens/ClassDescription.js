@@ -7,8 +7,6 @@ import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import ClassApprovalBadge from '../components/ClassApprovalBadge'
 
-import { retrieveUserData, retrieveGymsByIds } from '../backend/CacheFunctions'
-import { purchaseClasses, scheduleClasses } from "../backend/BackendFunctions"
 import GymLayout from '../layouts/GymLayout'
 import { colors } from "../contexts/Colors"
 import { fonts, FONTS } from '../contexts/Styles'
@@ -20,7 +18,6 @@ import Gym from '../backend/storage/Gym'
 
 
 export default function ClassDescription(props) {
-  let cache = props.route.params.cache
   const classData = props.route.params.data
 
   const [r, refresh] = useState(0)
@@ -215,11 +212,17 @@ export default function ClassDescription(props) {
           show: hasMembership && user.account_type == 'user',
           state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
           onPress: async () => {
+            const {
+              id: classId,
+              time_id: timeId,
+            } = classData
+
             const user = new User()
-            await scheduleClasses(cache, {
-              classId: classData.id,
-              timeIds: [classData.time_id]
+            await user.scheduleClass({
+              classId,
+              timeId,
             })
+
             refresh(r + 1)
           }
         },
@@ -232,7 +235,6 @@ export default function ClassDescription(props) {
         },
         goToCalendar: { show: true },
       }}
-      cache={cache}
     >
       { Content }
 
@@ -260,25 +262,39 @@ export default function ClassDescription(props) {
                     }}>One Time Online Class</Text>
                   </Text>
                 }
-                cache={cache}
                 onX={() => setPopup(null)}
-                onCardSelect={async cardId => {
+                onCardSelect={async creditCardId => {
                   try {
-                    setErrorMsg("")
-                    setSuccessMsg("")
+                    setErrorMsg('')
+                    setSuccessMsg('')
 
-                    await purchaseClasses(cache, {
-                      classId: classData.id,
-                      timeIds: [classData.time_id],
-                      creditCardId: cardId,
-                      price: classData.price,
-                      description: `One Time Class purchase for ${gym.name}, ${classData.name}`,
-                      partnerId: gym.partner_id,
-                      gymId: gym.id,
-                      purchaseType: "class",
+                    const {
+                      id: classId,
+                      time_id: timeId,
+                      price,
+                      partner_id: partnerId,
+                      name: className,
+                    } = classData
+
+                    const {
+                      id: gymId,
+                      name: gymName,
+                    } = gym
+
+                    const user = new User()
+                    await user.purchaseClass({
+                      classId,
+                      timeId,
+                      creditCardId,
+                      price,
+                      description: `One Time Class purchase – ${gymName}, ${className}`,
+                      partnerId,
+                      gymId,
+                      purchaseType: 'class',
                     })
 
                     refresh(r + 1)
+
                   } catch(err) {
                     switch (err.code) {
                       case "busy":

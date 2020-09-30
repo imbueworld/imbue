@@ -78,10 +78,10 @@ export default function ScheduleViewer(props) {
       } else {
         console.log(3333)
 
-        setTitle('My Classes')
-
         classData = (await user.retrieveClasses()).map(it => it.getAll())
         // if (user.accountType == 'user') classData = await filterUserClasses()
+
+        setTitle('My Classes')
       }
 
       setCalendarData(classData)

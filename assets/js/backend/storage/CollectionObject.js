@@ -66,12 +66,9 @@ export default class CollectionObject {
    */
   async __retrieveAll() {
     let availableData = this._getCacheObj().getChildren()
-    console.log("availableData", availableData) // DEBUG
-
     const dataObjects = []
 
     if (availableData.length) {
-      console.log("111")
       const newDataObjects = availableData.map(doc => {
         let entry = [doc.id, doc]
         const dataObject = new this.DataObject()
@@ -80,7 +77,6 @@ export default class CollectionObject {
       })
       dataObjects.push(...newDataObjects)
     } else {
-      console.log("222")
       const newDataObjects = ( await this._getDbRef().get() )
         .docs.map(this._dataObjectStructure.bind(this))
       dataObjects.push(...newDataObjects)
