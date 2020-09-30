@@ -8,8 +8,6 @@ import ProfileLayout from "../layouts/ProfileLayout"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 
-import { retrieveUserData } from '../backend/CacheFunctions'
-import { addPaymentMethod } from '../backend/BackendFunctions'
 import User from '../backend/storage/User'
 
 
@@ -34,7 +32,7 @@ export default function AddPaymentMethod(props) {
   const [holderNameText, setHolderNameText] = useState("")
   const [creditCardText, setCreditCardText] = useState("")
   const [expireDateText, setExpireDateText] = useState("")
-  const [CCVText, setCCVText] = useState("")
+  const [CVCText, setCVCText] = useState("")
   const [zipCodeText, setZipCodeText] = useState("")
 
   const [errorMsg, setErrorMsg] = useState("")
@@ -49,13 +47,13 @@ export default function AddPaymentMethod(props) {
   }, [])
 
   async function validateAndProceed() {
-    let [expMonth, expYear] = expireDateText.split("/")
+    let [expMonth, expYear] = expireDateText.split('/')
 
     let form = {
       cardNumber: creditCardText,
       expMonth,
       expYear,
-      cvc: CCVText,
+      cvc: CVCText,
       name: holderNameText,
       address_zip: zipCodeText,
     }
@@ -92,6 +90,7 @@ export default function AddPaymentMethod(props) {
         />
         <CustomTextInput
           placeholder="Credit Card Number"
+          keyboardType='number-pad'
           value={creditCardText}
           onChangeText={(text) => setCreditCardText(text)}
         />
@@ -102,8 +101,8 @@ export default function AddPaymentMethod(props) {
         />
         <CustomTextInput
           placeholder="CCV"
-          value={CCVText}
-          onChangeText={(text) => setCCVText(text)}
+          value={CVCText}
+          onChangeText={(text) => setCVCText(text)}
         />
         <CustomTextInput
           placeholder="ZIP"

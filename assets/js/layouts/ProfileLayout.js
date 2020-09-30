@@ -50,7 +50,7 @@ export default function ProfileLayout(props) {
           navigation.dispatch(pushAction)
         },
       },
-      editPfp: { // Requires props.cache currently to function
+      editPfp: {
         show: false,
       },
     }
@@ -118,9 +118,9 @@ export default function ProfileLayout(props) {
                 top: 145,
                 left: 65,
               }}
-              onPress={() => pickAndUploadFile(cache, setErrorMsg)}
+              onPress={() => pickAndUploadFile(setErrorMsg)}
               // [uncomment upon DEBUG start]
-              // onLongPress={() => pickAndUploadFile(cache, setErrorMsg)}
+              // onLongPress={() => pickAndUploadFile(setErrorMsg)}
               // [comment upon DEBUG end]
             />
           : null}

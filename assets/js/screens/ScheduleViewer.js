@@ -7,13 +7,11 @@ import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
 
 import {
-  datestringFromTimestamp,
-  addFormattingToClassData,
-  addFunctionalityToClassData
+  dateStringFromTimestamp,
 } from "../backend/HelperFunctions"
 import {
   filterUserClasses,
-} from '../backend/CacheFunctions'
+} from '../backend/HelperFunctions'
 import { fonts } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
 import CustomCapsule from '../components/CustomCapsule'
@@ -34,7 +32,7 @@ export default function ScheduleViewer(props) {
   const [calendarData, setCalendarData] = useState(null)
   const [dataIsFormatted, setDataIsFormatted] = useState(false)
 
-  const [slctdDate, setSlctdDate] = useState(datestringFromTimestamp(Date.now()))
+  const [slctdDate, setSlctdDate] = useState(dateStringFromTimestamp(Date.now()))
 
   const [user, setUser] = useState(null)
 
@@ -56,7 +54,7 @@ export default function ScheduleViewer(props) {
 
         classData = (await classes
           .retrieveWhere('id', 'in', classIds)
-        ).map(it => it.getAll())
+        ).map(it => it.getFormatted())
 
         setTitle('My Classes')
       
@@ -70,7 +68,7 @@ export default function ScheduleViewer(props) {
 
         classData = (await classes
           .retrieveWhere('gym_id', 'in', [ gymId ])
-        ).map(it => it.getAll())
+        ).map(it => it.getFormatted())
 
         setTitle(name)
         setSubtitle('Schedule')
@@ -91,11 +89,11 @@ export default function ScheduleViewer(props) {
   useEffect(() => {
     if (!calendarData) return
 
-    calendarData.forEach(({ active_times }) => {
-      addFormattingToClassData(active_times)
-    })
+    // calendarData.forEach(({ active_times }) => {
+    //   addFormattingToClassData(active_times)
+    // })
 
-    addFunctionalityToClassData(calendarData, props.navigation)
+    // addFunctionalityToClassData(calendarData, props.navigation)
 
     setCalendarData(calendarData)
     setDataIsFormatted(true)

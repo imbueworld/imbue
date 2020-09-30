@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { ScrollView, TouchableHighlight } from 'react-native-gesture-handler'
-import { simpleShadow, colors } from '../contexts/Colors'
+import { TouchableHighlight } from 'react-native-gesture-handler'
 import ClockInputPopup from './ClockInputPopup'
 import ClockInputPopupField from './ClockInputPopupField'
 

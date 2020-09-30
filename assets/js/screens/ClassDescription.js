@@ -14,11 +14,12 @@ import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
+import Class from '../backend/storage/Class'
 
 
 
 export default function ClassDescription(props) {
-  const classData = props.route.params.data
+  const { classId, timeId } = props.route.params
 
   const [r, refresh] = useState(0)
   const [errorMsg, setErrorMsg] = useState("")
@@ -38,10 +39,19 @@ export default function ClassDescription(props) {
 
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
+  const [classDoc, setClassDoc] = useState(null)
 
   useEffect(() => {
     const init = async () => {
-      const { gym_id: classGymId } = classData
+      const classObj = new Class()
+      const classDoc = await classObj.retrieveClass(classId)
+      const timeDoc = classDoc.active_times.filter(({ time_id }) => time_id == timeId)[ 0 ]
+      setClassDoc({
+        ...classDoc,
+        ...timeDoc,
+      })
+
+      const { gym_id: classGymId } = classDoc
 
       const user = new User()
       setUser(await user.retrieveUser())
@@ -60,6 +70,7 @@ export default function ClassDescription(props) {
   useEffect(() => {
     if (!gym) return
     if (!user) return
+    if (!classDoc) return
     if (user.account_type != 'user') {
       setHasMembership(true)
       return
@@ -79,16 +90,17 @@ export default function ClassDescription(props) {
           ? 'imbue'
           : user.active_memberships.includes(gym.id)
               ? 'gym'
-              : activeTimeIds.includes(classData.time_id)
+              : activeTimeIds.includes(timeId)
                   ? 'class'
                   : false
 
       setHasMembership(hasMembership)
     }
     init()
-  }, [activeClassesCount, gym, popup])
+  }, [activeClassesCount, gym, classDoc, popup])
 
   useEffect(() => {
+    if (!classDoc) return
     if (hasMembership === null) return
 
     const Bar = <View style={{
@@ -103,27 +115,27 @@ export default function ClassDescription(props) {
       <View style={styles.contentContainer}>
 
         <Text style={styles.nameText}>
-          {classData.name}
+          {classDoc.name}
         </Text>
         <Text style={styles.instructorText}>
-          {classData.instructor}
+          {classDoc.instructor}
         </Text>
 
         { Bar }
 
         <Text style={styles.timeText}>
-          {classData.formattedDate}
+          {classDoc.formattedDate}
           {"\n"}
-          {classData.formattedTime}
+          {classDoc.formattedTime}
           {"\n"}
-          {classType(classData.type)}
+          {classType(classDoc.type)}
         </Text>
 
         { Bar }
 
         <View style={styles.descContainer}>
           <Text style={styles.descText}>
-            {classData.description}
+            {classDoc.description}
           </Text>
 
           {hasMembership
@@ -132,7 +144,7 @@ export default function ClassDescription(props) {
               ...styles.descText,
               alignSelf: "flex-end",
             }}>
-              {`$${currencyFromZeroDecimal(classData.price)}`}
+              {`$${currencyFromZeroDecimal(classDoc.price)}`}
             </Text>}
         </View>
 
@@ -172,18 +184,18 @@ export default function ClassDescription(props) {
         </View>
       </CustomPopup>
     )
-  }, [hasMembership])
+  }, [classDoc, hasMembership])
 
 
 
-  if (!gym || !user) return <View />
+  if (!gym || !user || !classDoc) return <View />
 
   // helper variable
   const classIsAddedToCalendar =
     user.account_type == 'user'
     ? user.scheduled_classes
         .map(active => active.time_id)
-        .includes(classData.time_id)
+        .includes(timeId)
     : null
   
   function getGoToLivestreamButton() {
@@ -191,10 +203,10 @@ export default function ClassDescription(props) {
       show: false,
       state: "normal",
     }
-    if (classData.livestreamState === "live") {
+    if (classDoc.livestreamState === "live") {
       options.show = true
     }
-    if (classData.livestreamState === "soon") {
+    if (classDoc.livestreamState === "soon") {
       options.show = true
       options.state = "inactive"
     }
@@ -215,7 +227,7 @@ export default function ClassDescription(props) {
             const {
               id: classId,
               time_id: timeId,
-            } = classData
+            } = classDoc
 
             const user = new User()
             await user.scheduleClass({
@@ -229,8 +241,8 @@ export default function ClassDescription(props) {
         viewAttendees: {
           show: user.account_type === "partner" ? true : false,
           data: {
-            classId: classData.id,
-            timeId: classData.time_id,
+            classId: classId,
+            timeId: timeId,
           },
         },
         goToCalendar: { show: true },
@@ -256,7 +268,7 @@ export default function ClassDescription(props) {
                 containerStyle={styles.cardSelectionContainer}
                 title={
                   <Text>
-                    {`Confirm payment for ${gym.name}, ${classData.name} — `}
+                    {`Confirm payment for ${gym.name}, ${classDoc.name} — `}
                     <Text style={{
                       textDecorationLine: "underline",
                     }}>One Time Online Class</Text>
@@ -274,7 +286,7 @@ export default function ClassDescription(props) {
                       price,
                       partner_id: partnerId,
                       name: className,
-                    } = classData
+                    } = classDoc
 
                     const {
                       id: gymId,

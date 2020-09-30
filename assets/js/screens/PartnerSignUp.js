@@ -16,11 +16,11 @@ import { FONTS } from '../contexts/Styles'
 import { StackActions, useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
+import User from '../backend/storage/User'
 
 
 
 export default function PartnerSignUp(props) {
-  let cache = props.route.params.cache
   const navigation = useNavigation()
 
   const [redFields, setRedFields] = useState([])
@@ -166,11 +166,19 @@ export default function PartnerSignUp(props) {
                 errorMsg = invalidate()
                 if (errorMsg) throw new Error(errorMsg)
 
-                await initializeAccount(cache, { first, last, email, password, type })
+                const userObj = new User()
+                await userObj.create({
+                  first,
+                  last,
+                  email,
+                  password,
+                  type,
+                })
+
                 setSuccessMsg("You've been signed up!")
 
                 const pushAction = StackActions.push("Boot")
-                props.navigation.dispatch(pushAction)
+                navigation.dispatch(pushAction)
               } catch (err) {
                 // If not form error, check for auth error
                 if (!errorMsg) {

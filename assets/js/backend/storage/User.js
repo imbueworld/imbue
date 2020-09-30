@@ -6,14 +6,17 @@ import cache from './cache'
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
 import functions from '@react-native-firebase/functions'
+import storage from '@react-native-firebase/storage'
 import {
   publicStorage,
-} from '../CacheFunctions'
+} from '../BackendFunctions'
 import {
   ClassAlreadyBoughtError,
   ClassAlreadyScheduledError,
   MembershipAlreadyBoughtError,
 } from '../Errors'
+import { requestPermissions } from '../HelperFunctions'
+import ImagePicker from 'react-native-image-picker'
 
 
 
@@ -241,6 +244,15 @@ export default class User extends DataObject {
     return classes
   }
 
+  async retrieveScheduledClasses() {
+    await this.init()
+    const collection = new ClassesCollection()
+    const { scheduled_classes=[] } = this.getAll()
+
+    const classes = await collection.retrieveWhere('id', 'in', scheduled_classes)
+    return classes
+  }
+
   /**
    * Retrieves all associated_gyms of partner in the form of Gym objects list.
    */
@@ -303,6 +315,8 @@ export default class User extends DataObject {
         gymId,
         purchaseType,
       } = details
+
+      await this.init()
 
       // Make sure data is up-to-date
       await this._forcePull()
@@ -368,6 +382,8 @@ export default class User extends DataObject {
       timeId
     } = details
 
+    await this.init()
+
     // Make sure data is up-to-date
     await this._forcePull()
 
@@ -432,6 +448,8 @@ export default class User extends DataObject {
         gymId,
       } = details
 
+      await this.init()
+
       // Make sure data is up-to-date
       await this._forcePull()
 
@@ -482,6 +500,8 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper('deleteSubscription', async () => {
       let { gymId } = details
 
+      await this.init()
+
       // Make sure data is up-to-date
       await this._forcePull()
 
@@ -510,8 +530,6 @@ export default class User extends DataObject {
    */
   async createLivestream() {
     return await this._BusyErrorWrapper('createLivestream', async () => {
-      // console.log("ASCERTAINING THAT this IS WHAT IT SHOULD BE", this) // DEBUG
-
       await this.init()
       const { stream_key } = this.getAll()
 
@@ -530,6 +548,64 @@ export default class User extends DataObject {
         if (streamKey) return streamKey
         await new Promise(r => setTimeout(r, 3500)) // sleep
       }
+    })
+  }
+
+  changeIcon() {
+    return new Promise(async (resolve, reject) => {
+      await this.init()
+
+      // Ascertain that all permissions have been granted
+      const unfulfilledPerms = requestPermissions([
+        'CAMERA',
+        'READ_EXTERNAL_STORAGE',
+      ])
+      if (unfulfilledPerms) reject(
+        'Missing permissions: '
+        + unfulfilledPerms.join(', ')
+      )
+
+      // Do the image stuff
+      ImagePicker.showImagePicker({}, async res => {
+        if (res.didCancel) {
+          // ...
+        }
+
+        if (res.error) {
+          reject('Something prevented the action.')
+        }
+
+        // Main portion
+
+        const {
+          filePath,
+          fileSize,
+        } = res
+
+        const {
+          id: userId,
+        } = this.getAll()
+
+        // 8MB of file size limit
+        if (fileSize > 8 * 1024 * 1024) {
+          reject('Image file size must not exceed 8MB.')
+        }
+
+        try {
+          const fileRef = storage().ref(userId)
+          await fileRef.putFile(filePath)
+
+          this.mergeItems({
+            icon_uri: userId,
+          })
+
+          await this.push()
+          resolve('Success.')
+
+        } catch(err) {
+          reject('Something prevented upload.')
+        }
+      })
     })
   }
 

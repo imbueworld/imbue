@@ -3,7 +3,8 @@ import { ScrollView, View, Text } from 'react-native'
 
 import CustomCapsule from "./CustomCapsule"
 import AttendeeCard from './AttendeeCard'
-import { cache, publicStorage } from '../backend/CacheFunctions'
+import { publicStorage } from '../backend/BackendFunctions'
+import cache from '../backend/storage/cache'
 import { fonts } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
 

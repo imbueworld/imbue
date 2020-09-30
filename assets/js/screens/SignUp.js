@@ -16,11 +16,11 @@ import SocialLogin from '../components/SocialLogin'
 import { StackActions, useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
+import User from '../backend/storage/User'
 
 
 
 export default function SignUp(props) {
-  let cache = props.route.params.cache
   const navigation = useNavigation()
 
   const [redFields, setRedFields] = useState([])
@@ -97,7 +97,6 @@ export default function SignUp(props) {
       <CustomCapsule style={styles.container}>
 
         <SocialLogin
-          cache={cache}
           containerStyle={{
             marginTop: 20,
             marginBottom: 10,
@@ -105,7 +104,7 @@ export default function SignUp(props) {
           }}
           onAuthChange={() => {
             const pushAction = StackActions.push("Boot")
-            props.navigation.dispatch(pushAction)
+            navigation.dispatch(pushAction)
           }}
         />
 
@@ -172,12 +171,20 @@ export default function SignUp(props) {
               errorMsg = invalidate()
               if (errorMsg) throw new Error(errorMsg)
 
-              await initializeAccount(cache, { first, last, email, password, type })
+              const user = new User()
+              await user.create({
+                first,
+                last,
+                email,
+                password,
+                type,
+              })
+
               setSuccessMsg("You've been signed up!")
 
               // Navigate
               const pushAction = StackActions.push("Boot")
-              props.navigation.dispatch(pushAction)
+              navigation.dispatch(pushAction)
             } catch (err) {
               // If not native (form) error, check for auth error
               if (!errorMsg) {

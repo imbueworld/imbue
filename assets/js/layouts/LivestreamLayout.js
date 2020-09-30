@@ -13,7 +13,7 @@ import ParticipantList from '../components/ParticipantList'
 import Chat from '../components/Chat'
 import AppBackground from '../components/AppBackground'
 import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge'
-import { cache } from '../backend/CacheFunctions'
+import cache from '../backend/storage/cache'
 import GoLiveButton from '../components/buttons/GoLiveButton'
 import GoBackButton from '../components/buttons/GoBackButton'
 

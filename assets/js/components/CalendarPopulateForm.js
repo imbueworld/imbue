@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
-import { retrieveClassesByUser } from '../backend/CacheFunctions'
 import DateSelector from './DateSelector'
 import ClockInput from './ClockInput'
 import ClockInputDismissOverlay from './ClockInputDismissOverlay'
 import CustomButton from './CustomButton'
-import { populateClass } from '../backend/BackendFunctions'
 import CustomDropDownPicker from './CustomDropDownPicker'
 import { colors } from '../contexts/Colors'
 import { id } from '../backend/HelperFunctions'
+import User from '../backend/storage/User'
+import Class from '../backend/storage/Class'
 
 
 
 export default function CalendarPopulateForm(props) {
-  let cache = props.cache 
-
   const [initialized, setInitialized] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
@@ -34,15 +32,16 @@ export default function CalendarPopulateForm(props) {
 
   useEffect(() => {
     const init = async () => {
-      let classes = await retrieveClassesByUser(cache)
+      const user = new User()
+      const classes = await user.retrieveClasses()
+
       let dropDownClasses = classes.map(entity => (
         { label: entity.name, value: entity.id }
       ))
       setDropDownClasses(dropDownClasses)
 
       setInitialized(true)
-    }
-    init()
+    }; init()
   }, [])
 
   function validate() {
@@ -163,7 +162,6 @@ export default function CalendarPopulateForm(props) {
 
       <View style={styles.layoutMargin}>
         <ClockInput
-          cache={cache}
           containerStyle={{
             ...styles.clockInput,
             borderColor: redFields.includes("beginClock") ? "red" : undefined
@@ -177,7 +175,6 @@ export default function CalendarPopulateForm(props) {
         />
 
         <ClockInput
-          cache={cache}
           containerStyle={{
             ...styles.clockInput,
             borderColor: redFields.includes("endClock") ? "red" : undefined
@@ -201,8 +198,13 @@ export default function CalendarPopulateForm(props) {
             try {
               validate()
               let active_times = format()
-              await populateClass(cache,
-                  { class_id, active_times })
+
+              const classObj = new Class()
+              await classObj.initByUid(class_id)
+              await classObj.populate({
+                activeTimes: active_times,
+              })
+
               setSuccessMsg("Successfully added class dates to the gym's official calendar.")
             } catch(err) {
               switch(err.code) {
