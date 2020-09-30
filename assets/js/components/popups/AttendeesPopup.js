@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import CustomPopup from '../CustomPopup'
-import { publicStorage } from '../../backend/CacheFunctions'
+import { publicStorage } from '../../backend/BackendFunctions'
 import { fonts } from '../../contexts/Styles'
 import { ScrollView } from 'react-native-gesture-handler'
 import AttendeeCard from '../AttendeeCard'

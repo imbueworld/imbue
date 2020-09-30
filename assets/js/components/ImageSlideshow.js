@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { View, Image } from 'react-native'
-import { publicStorage } from '../backend/CacheFunctions'
+import { publicStorage } from '../backend/BackendFunctions'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { colors } from '../contexts/Colors'
 

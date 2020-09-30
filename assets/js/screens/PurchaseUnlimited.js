@@ -61,154 +61,131 @@ export default function PurchaseUnlimited(props) {
   const membershipPrice = `$${currencyFromZeroDecimal(imbueMembership.membership_price)}`
 
   return (
-    <>
-      {/* {popup === "buy" && imbueMembership ?
-        <PopupPurchase
-          cache={cache}
-          popupText={``}
-          selectedCard={selectedCard}
-          selectCard={selectCard}
-          onProceed={async () => {
-            if (selectedCard) {
-              console.log("tap", imbueMembership.id)
-              await purchaseMemberships(cache, {
-                membershipIds: [imbueMembership.id],
-                creditCardId: selectedCard,
-                price: imbueMembership.price,
-                description: `Imbue Universal Gym Membership`,
-              })
-              setPopup(false)
-            }
+    <ScrollView contentContainerStyle={styles.scrollView}>
+      <AppBackground />
+
+      <CustomCapsule
+        containerStyle={styles.container}
+        innerContainerStyle={{
+          paddingBottom: 10,
+        }}
+      >
+
+        <CompanyLogo
+          style={{
+            width: 300,
+            height: 200,
           }}
-          onX={() => setPopup(false)}
-        /> : null} */}
+        />
 
-      <ScrollView contentContainerStyle={styles.scrollView}>
-        <AppBackground />
+        <View style={styles.textContainer}>
+          <Text style={{
+            textAlign: "justify",
+            fontSize: 18,
+            fontFamily: fonts.default,
+          }}>
+            {imbueMembership.description}
+          </Text>
+          <Text style={{
+            alignSelf: "flex-end",
+            fontSize: 18,
+            fontFamily: fonts.default,
+          }}>
+            {membershipPrice}
+          </Text>
+        </View>
 
-        <CustomCapsule
-          containerStyle={styles.container}
-          innerContainerStyle={{
-            paddingBottom: 10,
-          }}
-        >
+        {errorMsg
+        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+        : null}
+        {successMsg
+        ? <Text style={{ color: "green" }}>{successMsg}</Text>
+        : null}
 
-          <CompanyLogo
-            style={{
-              width: 300,
-              height: 200,
-            }}
-          />
-
-          <View style={styles.textContainer}>
-            <Text style={{
-              textAlign: "justify",
-              fontSize: 18,
-              fontFamily: fonts.default,
-            }}>
-              {imbueMembership.description}
-            </Text>
-            <Text style={{
-              alignSelf: "flex-end",
-              fontSize: 18,
-              fontFamily: fonts.default,
-            }}>
-              {membershipPrice}
-            </Text>
-          </View>
-
-          {errorMsg
-          ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-          : null}
-          {successMsg
-          ? <Text style={{ color: "green" }}>{successMsg}</Text>
-          : null}
-
-          {/* if null, it means it hasn't been initialized yet. */}
-          {hasImbueMembership === null ? <View /> :
-            hasImbueMembership ? null :
-              <>
-              {popup === "buy"
-              ? <CreditCardSelectionV2
-                  containerStyle={styles.cardSelectionContainer}
-                  title={
-                    <Text>
-                      {`Confirm payment for Imbue — `}
-                      <Text style={{
-                        textDecorationLine: "underline",
-                      }}>{imbueMembership.name}</Text>
-                    </Text>
-                  }
-                  onX={() => setPopup(null)}
-                  onCardSelect={async cardId => {
-                    try {
-                      setErrorMsg('')
-                      setSuccessMsg('')
-
-                      const {
-                        id,
-                        membership_price,
-                      } = imbueMembership
-
-                      const user = new User()
-                      await user.purchaseMembership({
-                        creditCardId: cardId,
-                        price: membership_price,
-                        description: `Imbue Universal Gym Membership`,
-                        membershipId: id,
-                        gymId: id,
-                        purchaseType: 'membership',
-                      })
-
-                      refresh(r + 1)
-                    } catch(err) {
-                      switch (err.code) {
-                        case "busy":
-                          setErrorMsg(err.message)
-                          break
-                        case "membership-already-bought":
-                          setSuccessMsg(err.message)
-                          break
-                        default:
-                          setErrorMsg("Something prevented the action.")
-                          break
-                      }
-                    }
-                  }}
-                />
-              : <CustomButton
-                  style={{
-                    marginBottom: 0,
-                  }}
-                  title="Purchase"
-                  onPress={() => {
-                    setPopup("buy")
-                  }}
-                />}
-              </>}
-
-          {hasImbueMembership ?
-          <MembershipApprovalBadgeImbue
-            containerStyle={{
-              marginTop: 10,
-            }}
-          /> : null}
-
-          {/* <CreditCardInput /> */}
-
-          {/* <TouchableOpacity style={[{
-                    marginBottom: 10,
-                    alignSelf: "center",
-                }, styles.buttonSmall]}>
+        {/* if null, it means it hasn't been initialized yet. */}
+        {hasImbueMembership === null ? <View /> :
+          hasImbueMembership ? null :
+            <>
+            {popup === "buy"
+            ? <CreditCardSelectionV2
+                containerStyle={styles.cardSelectionContainer}
+                title={
+                  <Text>
+                    {`Confirm payment for Imbue — `}
                     <Text style={{
-                        textDecorationLine: "underline"
-                    }}>Make a one time purchase</Text>
-                </TouchableOpacity> */}
+                      textDecorationLine: "underline",
+                    }}>{imbueMembership.name}</Text>
+                  </Text>
+                }
+                onX={() => setPopup(null)}
+                onCardSelect={async cardId => {
+                  try {
+                    setErrorMsg('')
+                    setSuccessMsg('')
 
-        </CustomCapsule>
+                    const {
+                      id,
+                      membership_price,
+                    } = imbueMembership
 
-      </ScrollView>
-    </>
+                    const user = new User()
+                    await user.purchaseMembership({
+                      creditCardId: cardId,
+                      price: membership_price,
+                      description: `Imbue Universal Gym Membership`,
+                      membershipId: id,
+                      gymId: id,
+                      purchaseType: 'membership',
+                    })
+
+                    refresh(r + 1)
+                  } catch(err) {
+                    switch (err.code) {
+                      case "busy":
+                        setErrorMsg(err.message)
+                        break
+                      case "membership-already-bought":
+                        setSuccessMsg(err.message)
+                        break
+                      default:
+                        setErrorMsg("Something prevented the action.")
+                        break
+                    }
+                  }
+                }}
+              />
+            : <CustomButton
+                style={{
+                  marginBottom: 0,
+                }}
+                title="Purchase"
+                onPress={() => {
+                  setPopup("buy")
+                }}
+              />}
+            </>}
+
+        {hasImbueMembership ?
+        <MembershipApprovalBadgeImbue
+          containerStyle={{
+            marginTop: 10,
+          }}
+        /> : null}
+
+        {/* <CreditCardInput /> */}
+
+        {/* <TouchableOpacity style={[{
+                  marginBottom: 10,
+                  alignSelf: "center",
+              }, styles.buttonSmall]}>
+                  <Text style={{
+                      textDecorationLine: "underline"
+                  }}>Make a one time purchase</Text>
+              </TouchableOpacity> */}
+
+      </CustomCapsule>
+
+    </ScrollView>
   )
 }
 

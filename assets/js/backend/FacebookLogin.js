@@ -1,12 +1,9 @@
 import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
-import { initializeAccount } from './BackendFunctions';
 
-export async function FacebookLogin(cache, accountType, onAuthChange) {
-  auth().onAuthStateChanged(async user => {
-  })
-  
 
+
+export async function FacebookLogin(accountType, onAuthChange) {
   // Attempt login with permissions
   const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
 
@@ -37,7 +34,8 @@ export async function FacebookLogin(cache, accountType, onAuthChange) {
         user,
         accountType,
       }
-      await initializeAccount(cache, {}, options)
+      const userObj = new User()
+      await userObj.create({}, options)
     }
     onAuthChange(user)
   }

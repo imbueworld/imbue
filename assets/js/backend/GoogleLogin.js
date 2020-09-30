@@ -4,7 +4,7 @@ import User from './storage/User'
 
 
 
-export async function GoogleLogin(cache, accountType, onAuthChange=(() => {}), onError=(() => {})) {
+export async function GoogleLogin(accountType, onAuthChange=(() => {}), onError=(() => {})) {
   try {
     await GoogleSignin.hasPlayServices()
   } catch(err) {

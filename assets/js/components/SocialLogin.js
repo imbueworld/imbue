@@ -6,9 +6,10 @@ import FacebookLoginButton from './buttons/FacebookLoginButton'
 
 
 export default function SocialLogin(props) {
-  let cache = props.cache
-  const onAuthChange = props.onAuthChange
-  const onError = props.onError
+  const {
+    onAuthChange=() => {},
+    onError=() => {},
+  } = props
 
   if (props.options) {
     for (let option in props.options) {
@@ -23,14 +24,12 @@ export default function SocialLogin(props) {
       ...props.containerStyle,
     }}>
       <GoogleLoginButton
-        cache={cache}
         accountType={options.accountType}
         imageStyle={styles.socialIcon}
         onAuthChange={onAuthChange}
         onError={onError}
       />
       <FacebookLoginButton
-        cache={cache}
         accountType={options.accountType}
         imageStyle={styles.socialIcon}
         onAuthChange={onAuthChange}

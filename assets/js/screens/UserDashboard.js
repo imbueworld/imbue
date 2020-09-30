@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, View, Animated, TouchableHighlight, BackHandler, SafeAreaView } from 'react-native'
+import { StyleSheet, View, Animated, TouchableHighlight, BackHandler } from 'react-native'
 
 import { useDimensions } from '@react-native-community/hooks'
 import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
@@ -11,10 +11,9 @@ import CustomButton from "../components/CustomButton"
 import GymBadge from "../components/GymBadge"
 import CustomTextInput from "../components/CustomTextInput"
 
-
 import auth from "@react-native-firebase/auth"
 import Icon from '../components/Icon'
-import { publicStorage } from '../backend/CacheFunctions'
+import { publicStorage } from '../backend/BackendFunctions'
 import { simpleShadow } from '../contexts/Colors'
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
@@ -25,9 +24,8 @@ import cache from '../backend/storage/cache'
 
 
 
-
 export default function UserDashboard(props) {
-  const navigation = props.navigation
+  const { navigation } = props
 
   const [expanded, setExpanded] = useState(null)
 

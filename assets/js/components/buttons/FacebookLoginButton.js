@@ -6,22 +6,24 @@ import Icon from '../Icon'
 
 
 export default function FacebookLoginButton(props) {
-    const accountType = props.accountType
-    const onAuthChange = props.onAuthChange
-    
-    return (
-        <TouchableHighlight
-            style={{
-                borderRadius: 999,
-                ...props.containerStyle,
-            }}
-            underlayColor="#00000020"
-            onPress={() => FacebookLogin(accountType, onAuthChange)}
-        >
-            <Icon
-                containerStyle={props.imageStyle}
-                source={require("../img/facebook.png")}
-            />
-        </TouchableHighlight>
-    )
+  const {
+    accountType,
+    onAuthChange,
+  } = props
+
+  return (
+    <TouchableHighlight
+      style={{
+        borderRadius: 999,
+        ...props.containerStyle,
+      }}
+      underlayColor="#00000020"
+      onPress={() => FacebookLogin(accountType, onAuthChange)}
+    >
+      <Icon
+        containerStyle={props.imageStyle}
+        source={require("../img/facebook.png")}
+      />
+    </TouchableHighlight>
+  )
 }

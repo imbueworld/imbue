@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
-import { publicStorage } from '../backend/CacheFunctions'
+import { publicStorage } from '../backend/BackendFunctions'
 import Icon from './Icon'
 import { fonts, FONTS } from '../contexts/Styles'
 

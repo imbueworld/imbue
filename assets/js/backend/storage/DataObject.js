@@ -171,5 +171,6 @@ export default class DataObject {
 
   __DEBUG() {
     console.log(this)
+    console.log(this.getAll())
   }
 }

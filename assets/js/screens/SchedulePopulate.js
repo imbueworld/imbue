@@ -1,47 +1,43 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, ScrollView, View, Text } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
-import { retrieveUserData } from '../backend/CacheFunctions'
 import ProfileLayout from '../layouts/ProfileLayout'
 import CalendarPopulateForm from '../components/CalendarPopulateForm'
+import User from '../backend/storage/User'
 
 
 
 export default function SchedulePopulate(props) {
-    let cache = props.route.params.cache
+  const [user, setUser] = useState(null)
 
-    const [user, setUser] = useState(null)
+  useEffect(() => {
+    const init = async () => {
+      const user = new User()
+      setUser(await user.retrieveUser())
+    }; init()
+  }, [])
 
-    useEffect(() => {
-        const init = async () => {
-            let user = await retrieveUserData(cache)
-            setUser(user)
-        }
-        init()
-    }, [])
+  if (!user) return <View />
 
-    if (!user) return <View />
-
-    return (
-        <ProfileLayout
-            innerContainerStyle={{
-                paddingHorizontal: 0,
-                paddingBottom: 10,
-            }}
-        >
-            <CalendarPopulateForm
-                containerStyle={{
-                    // backgroundColor: "red",
-                }}
-                cache={cache}
-            />
-        </ProfileLayout>
-    )
+  return (
+    <ProfileLayout
+      innerContainerStyle={{
+        paddingHorizontal: 0,
+        paddingBottom: 10,
+      }}
+    >
+      <CalendarPopulateForm
+        containerStyle={{
+          // backgroundColor: "red",
+        }}
+      />
+    </ProfileLayout>
+  )
 }
 
 const styles = StyleSheet.create({
-    scrollView: {
-        minHeight: "100%",
-    },
-    container: {},
+  scrollView: {
+    minHeight: "100%",
+  },
+  container: {},
 })

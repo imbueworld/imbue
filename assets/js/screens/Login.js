@@ -9,16 +9,15 @@ import CompanyLogo from "../components/CompanyLogo"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
-import { signIn } from '../backend/BackendFunctions'
 import { handleAuthErrorAnonymous } from '../backend/HelperFunctions'
 import SocialLogin from '../components/SocialLogin'
 import { StackActions, useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
+import auth from '@react-native-firebase/auth'
 
 
 export default function Login(props) {
-  let cache = props.route.params.cache
   const navigation = useNavigation()
 
   const [redFields, setRedFields] = useState([])
@@ -78,7 +77,6 @@ export default function Login(props) {
       <CustomCapsule containerStyle={styles.container}>
 
         <SocialLogin
-          cache={cache}
           containerStyle={{
             marginTop: 20,
             marginBottom: 10,
@@ -133,7 +131,7 @@ export default function Login(props) {
               if (errorMsg) throw new Error(errorMsg)
               
               // Log in
-              await signIn(cache, { email, password })
+              await auth().signInWithEmailAndPassword(email, password)
               setSuccessMsg("You've signed in!")
 
               // Navigate
