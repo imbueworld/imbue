@@ -180,6 +180,8 @@ export default class User extends DataObject {
         associated_gyms: [],
         revenue: 0,
         revenue_total: 0,
+        stream_key: null,
+        playback_id: null,
       })
     } else {
       this.mergeItems({
@@ -574,16 +576,17 @@ export default class User extends DataObject {
    * Creates livestream for user, assigns it to them,
    * if it hasn't already been created & assigned.
    */
-  async createLivestream() {
+  async createLivestream(details) {
     return await this._BusyErrorWrapper('createLivestream', async () => {
       await this.init()
+      let { gymId } = details
       const { stream_key } = this.getAll()
 
       if (stream_key) return stream_key
 
       // Call Google Cloud Function, which creates LS & assigns it to user
       const createLivestream = functions().httpsCallable('createLivestream')
-      await createLivestream()
+      await createLivestream({ gymId })
 
       // Attempt many times to get it from the field, because it may not be
       // there instantly, or in the worst case – at all
