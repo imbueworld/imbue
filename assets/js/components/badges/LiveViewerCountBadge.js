@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { View, Text } from 'react-native'
 import Icon from '../Icon'
-import { fonts } from '../../contexts/Styles'
+import { FONTS } from '../../contexts/Styles'
 import cache from '../../backend/storage/cache'
 import { colors } from '../../contexts/Colors'
 
@@ -50,7 +50,7 @@ export default function LiveViewerCountBadge(props) {
                 textAlignVertical: "center",
                 color: "#ff5259",
                 fontSize: 18,
-                fontFamily: fonts.default,
+                ...FONTS.body,
                 fontWeight: "bold",
                 ...props.textStyle,
             }}>{ Count }</Text>

@@ -5,7 +5,7 @@ import CustomCapsule from "./CustomCapsule"
 import AttendeeCard from './AttendeeCard'
 import { publicStorage } from '../backend/BackendFunctions'
 import cache from '../backend/storage/cache'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
 
 
@@ -75,7 +75,7 @@ export default function ParticipantList(props) {
                 marginBottom: 10,
                 alignSelf: "center",
                 fontSize: 20,
-                fontFamily: fonts.default,
+                ...FONTS.body,
             }}>People Participating</Text>
             <ScrollView>
                 <View style={{

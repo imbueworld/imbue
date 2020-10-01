@@ -11,7 +11,7 @@ import { colors } from '../contexts/Colors'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 
@@ -26,7 +26,6 @@ export default function PurchaseUnlimited(props) {
   const [imbueMembership, setImbueMembership] = useState(null)
 
   const [hasImbueMembership, setHasImbueMembership] = useState(null)
-  const [selectedCard, selectCard] = useState(null)
   const [popup, setPopup] = useState(null)
 
   useEffect(() => {
@@ -82,14 +81,14 @@ export default function PurchaseUnlimited(props) {
           <Text style={{
             textAlign: "justify",
             fontSize: 18,
-            fontFamily: fonts.default,
+            ...FONTS.body,
           }}>
             {imbueMembership.description}
           </Text>
           <Text style={{
             alignSelf: "flex-end",
             fontSize: 18,
-            fontFamily: fonts.default,
+            ...FONTS.body,
           }}>
             {membershipPrice}
           </Text>

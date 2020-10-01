@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { colors, simpleShadow } from '../contexts/Colors'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -140,6 +140,6 @@ const styles = StyleSheet.create({
         borderRadius: 999,
     },
     font: {
-        fontFamily: fonts.default,
+        ...FONTS.body,
     },
 })

@@ -33,7 +33,7 @@ export default function MembershipApprovalBadgeImbue(props) {
                 containerStyle={{
                     marginLeft: 15,
                 }}
-                source={require("./img/png/checkmark-3.png")}
+                source={require('./img/png/checkmark-3.png')}
             />
             <Text style={{
                 flex: 1,
