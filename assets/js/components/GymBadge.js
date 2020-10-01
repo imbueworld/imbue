@@ -4,7 +4,7 @@ import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { colors, simpleShadow } from '../contexts/Colors'
 import Icon from './Icon'
 import CloseButton from './CloseButton'
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 

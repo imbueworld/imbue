@@ -3,7 +3,7 @@ import { View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
 import { publicStorage } from '../backend/BackendFunctions'
 import Icon from './Icon'
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 

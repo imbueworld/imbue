@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 import { colors } from '../contexts/Colors'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -105,7 +105,7 @@ const styles = StyleSheet.create({
         color: "#1b1b19", // edited
         textAlign: "center",
         fontSize: 20,
-        fontFamily: fonts.default,
+        ...FONTS.body,
     },
     unselectedColor: {
         color: "#696461",

@@ -4,7 +4,7 @@ import { imageSourceFromCCBrand } from '../backend/HelperFunctions'
 import Icon from './Icon'
 import { colors } from '../contexts/Colors'
 import { TouchableHighlight } from 'react-native-gesture-handler'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -43,8 +43,7 @@ export default function CreditCardBadgeV2(props) {
 const styles = StyleSheet.create({
     creditCardContainer: {
         borderWidth: 1,
-        // borderColor: colors.gray,
-        borderColor: colors.buttonFill,
+        borderColor: colors.accent,
         borderRadius: 30,
         marginTop: 9, // 19
         marginBottom: 1,
@@ -53,9 +52,7 @@ const styles = StyleSheet.create({
     creditCardText: {
         marginLeft: 10,
         alignSelf: "center",
-        // color: colors.gray,
-        color: colors.buttonFill,
+        ...FONTS.luloClean,
         fontSize: 20,
-        fontFamily: fonts.default,
     },
 })

@@ -22,6 +22,7 @@
         "@react-native-firebase/storage": "^7.3.1",
         "@react-navigation/native": "^5.7.1",
         "@react-navigation/stack": "^5.7.1",
+        "algoliasearch": "^4.5.1",
         "react": "16.13.1",
         "react-native": "0.63.2",
         "react-native-calendars": "^1.300.0",

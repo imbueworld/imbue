@@ -9,7 +9,7 @@ import ClassApprovalBadge from '../components/ClassApprovalBadge'
 
 import GymLayout from '../layouts/GymLayout'
 import { colors } from "../contexts/Colors"
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
@@ -32,10 +32,8 @@ export default function ClassDescription(props) {
 
   const [popup, setPopup] = useState(false)
   const [PopupCCNotFound, PopupCCNotFoundCreate] = useState(null)
-  const [PopupBuy, PopupBuyCreate] = useState(null)
 
   const [hasMembership, setHasMembership] = useState(null)
-  const [selectedCard, selectCard] = useState(null)
 
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
@@ -388,16 +386,12 @@ const styles = StyleSheet.create({
   nameText: {
     textAlign: "center",
     fontSize: 27,
-    fontFamily: fonts.default,
-    // ...FONTS.title,
-    // ...FONTS.luloClean,
+    ...FONTS.title,
   },
   instructorText: {
     textAlign: "center",
     fontSize: 22,
-    fontFamily: fonts.default,
-    // ...FONTS.subtitle,
-    // ...FONTS.luloClean,
+    ...FONTS.subtitle,
   },
   // timeContainer: {
   //   marginTop: 20,
@@ -411,9 +405,7 @@ const styles = StyleSheet.create({
   timeText: {
     fontSize: 18,
     textAlign: "center",
-    fontFamily: fonts.default,
-    // ...FONTS.subtitle,
-    // ...FONTS.luloClean,
+    ...FONTS.subtitle,
   },
   descContainer: {
     // marginTop: 10,
@@ -428,8 +420,6 @@ const styles = StyleSheet.create({
   descText: {
     fontSize: 16,
     textAlign: "justify",
-    fontFamily: fonts.default,
-    // ...FONTS.body,
-    // ...FONTS.luloClean,
+    ...FONTS.body,
   },
 })

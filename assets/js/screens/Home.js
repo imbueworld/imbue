@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, ScrollView, View, Text, Button, TouchableOpacity, Image } from 'react-native'
+import { StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native'
 
 import { colors } from "../contexts/Colors"
 
@@ -8,7 +8,7 @@ import AppBackground from "../components/AppBackground"
 import CompanyLogo from "../components/CompanyLogo"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from '../components/CustomCapsule'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -24,14 +24,6 @@ export default function Home(props) {
     return (
         <ScrollView alwaysBounceVertical={false}  contentContainerStyle={styles.scrollView}>
             <AppBackground />
-            {/* <Image
-                style={{
-                    width: "100%",
-                    height: "100%",
-                    position: "absolute",
-                }}
-                source={require("../components/img/workout-20.jpg")}
-            /> */}
             <CompanyLogo
                 containerStyle={{
                     top: 0,
@@ -74,7 +66,7 @@ export default function Home(props) {
                         textAlign: "center",
                         fontSize: 16,
                         textDecorationLine: "underline",
-                        fontFamily: fonts.default,
+                        ...FONTS.body,
                     }}>Gym / Influencer Sign Up</Text>
                 </TouchableOpacity>
             </CustomCapsule>

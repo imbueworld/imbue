@@ -10,7 +10,7 @@ AppRegistry.registerComponent(appName, () => App)
 
 
 
-import { GoogleSignin } from "@react-native-community/google-signin"
+import { GoogleSignin } from '@react-native-community/google-signin'
 
 GoogleSignin.configure({
     webClientId: '736868821-ercn72gvhlopsal4m23b58da4lqu0v7l.apps.googleusercontent.com',

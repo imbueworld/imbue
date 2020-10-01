@@ -1,6 +1,6 @@
 import 'react-native-gesture-handler'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -11,12 +11,9 @@ import Home from "./assets/js/screens/Home"
 import SignUp from "./assets/js/screens/SignUp"
 import Login from "./assets/js/screens/Login"
 import UserDashboard from "./assets/js/screens/UserDashboard"
-import UserMemberships from "./assets/js/screens/UserMemberships"
 import ProfileSettings from "./assets/js/screens/ProfileSettings"
 import PaymentSettings from "./assets/js/screens/PaymentSettings"
 import AddPaymentMethod from "./assets/js/screens/AddPaymentMethod"
-import PurchaseUnlimited from "./assets/js/screens/PurchaseUnlimited"
-import GymDescription from "./assets/js/screens/GymDescription"
 import PartnerSignUp from "./assets/js/screens/PartnerSignUp"
 import PartnerDashboard from "./assets/js/screens/PartnerDashboard"
 import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
@@ -26,14 +23,27 @@ import SchedulePopulate from "./assets/js/screens/SchedulePopulate"
 import PartnerRevenueInfo from "./assets/js/screens/PartnerRevenueInfo"
 import GoLive from "./assets/js/screens/GoLive"
 import Livestream from "./assets/js/screens/Livestream"
+import PurchaseUnlimited from "./assets/js/screens/PurchaseUnlimited"
+import GymDescription from "./assets/js/screens/GymDescription"
+import UserMemberships from "./assets/js/screens/UserMemberships"
 import ClassDescription from "./assets/js/screens/ClassDescription"
 import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
+
+import { StatusBar } from 'react-native'
+import { colors } from './assets/js/contexts/Colors'
 
 const Stack = createStackNavigator()
 
 
 
 export default function App() {
+  useEffect(() => {
+    StatusBar.setBackgroundColor(colors.bg)
+    StatusBar.setBarStyle('dark-content')
+  }, [])
+
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator

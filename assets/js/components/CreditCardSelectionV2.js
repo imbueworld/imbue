@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import CreditCardBadgeV2 from './CreditCardBadgeV2'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 
 
@@ -61,7 +61,7 @@ export default function CreditCardSelectionV2(props) {
     >
       <Text style={{
         textDecorationLine: "underline",
-        fontFamily: fonts.default,
+        ...FONTS.luloClean,
       }}>Add a new card</Text>
     </TouchableWithoutFeedback>
 
@@ -75,7 +75,7 @@ export default function CreditCardSelectionV2(props) {
     >
       <Text style={{
         textDecorationLine: "underline",
-        fontFamily: fonts.default,
+        ...FONTS.luloClean,
       }}>Cancel</Text>
     </TouchableWithoutFeedback>
 
@@ -92,7 +92,7 @@ export default function CreditCardSelectionV2(props) {
           <Text style={{
             textAlign: "center",
             fontSize: 20,
-            fontFamily: fonts.default,
+            ...FONTS.luloClean,
           }}>{title}</Text>
         </View>
         : null}
@@ -106,7 +106,7 @@ export default function CreditCardSelectionV2(props) {
         <Text style={{
           textAlign: "justify",
           fontSize: 12,
-          fontFamily: fonts.default,
+          ...FONTS.luloClean,
         }}>
           To confirm, press and hold the card
           that you wish to make the payment with,

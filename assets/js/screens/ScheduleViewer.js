@@ -12,7 +12,7 @@ import {
 import {
   filterUserClasses,
 } from '../backend/HelperFunctions'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
 import CustomCapsule from '../components/CustomCapsule'
 import GoBackButton from '../components/buttons/GoBackButton'
@@ -146,14 +146,14 @@ export default function ScheduleViewer(props) {
             width: "100%",
             textAlign: "center",
             fontSize: 30,
-            fontFamily: fonts.default,
+            ...FONTS.body,
           }}>{title}</Text>
           {subtitle ?
           <Text style={{
             width: "100%",
             textAlign: "center",
             fontSize: 18,
-            fontFamily: fonts.default,
+            ...FONTS.body,
           }}>{subtitle}</Text> : null}
           </View>
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { View, Text } from 'react-native'
 import { colors } from '../../contexts/Colors'
-import { fonts } from '../../contexts/Styles'
+import { FONTS } from '../../contexts/Styles'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
@@ -30,7 +30,7 @@ export default function GoLiveButton(props) {
                     <Text style={{
                         color: "white",
                         fontSize: 14,
-                        fontFamily: fonts.default,
+                        ...FONTS.body,
                     }}>Hold</Text>
                 </View>
             :   null }
@@ -50,7 +50,7 @@ export default function GoLiveButton(props) {
                     color: colors.darkButtonText,
                     paddingHorizontal: 10,
                     fontSize: 16,
-                    fontFamily: fonts.default,
+                    ...FONTS.body,
                     ...props.textStyle,
                 }}>{ holdToExit ? "  ".repeat(title.length) : title }</Text>
             </TouchableHighlight>

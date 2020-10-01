@@ -1,8 +1,8 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { View, Text } from 'react-native'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import { colors } from '../contexts/Colors'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -26,7 +26,7 @@ export default function TransactionView(props) {
                 // textAlign: "justify",
                 textAlignVertical: "center",
                 fontSize: 16,
-                fontFamily: fonts.default,
+                ...FONTS.body,
             }}>{description}</Text>
             <Text style={{
                 flex: 1,
@@ -34,10 +34,8 @@ export default function TransactionView(props) {
                 textAlign: "center",
                 textAlignVertical: "center",
                 fontSize: 16,
-                fontFamily: fonts.default,
+                ...FONTS.body,
             }}>{`$${currencyFromZeroDecimal(amount)}`}</Text>
         </View>
     )
 }
-
-// const styles = StyleSheet.create({})
