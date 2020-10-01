@@ -60,9 +60,13 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
     //   .set({
     //     playback_id,
     //   }, { merge: true })
+
+    console.log("gymId", gymId)
+    console.log("playback_id", playback_id)
     
     // Making playback_id accessible to users
     await admin
+      .firestore()
       .collection('gyms')
       .doc(gymId)
       .set({
