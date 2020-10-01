@@ -43,11 +43,6 @@ export default function GymDescription(props) {
     }; init()
   }, [popup])
 
-  let activeMembershipsCount = user
-    ? user.active_memberships
-        ? user.active_memberships.length
-        : null
-    : null
   useEffect(() => {
     if (!gym) return
     if (!user) return
@@ -67,9 +62,8 @@ export default function GymDescription(props) {
             : false
       
       setHasMembership(hasMembership)
-    }
-    init()
-  }, [activeMembershipsCount, gym, popup])
+    }; init()
+  }, [gym, popup])
 
   useEffect(() => {
     if (!gym) return
@@ -178,8 +172,10 @@ export default function GymDescription(props) {
                       purchaseType: 'membership',
                     })
 
-                    refresh(r => r + 1)
+                    setHasMembership('gym')
                   } catch (err) {
+                    // console.error(err.message) // DEBUG
+
                     switch (err.code) {
                       case "busy":
                         setErrorMsg(err.message)
@@ -279,9 +275,9 @@ const styles = StyleSheet.create({
   nameContainer: {},
   nameText: {
     marginTop: 20,
+    ...FONTS.title,
     textAlign: "center",
     fontSize: 27,
-    ...FONTS.title,
   },
   genreContainer: {
     marginTop: 20,
@@ -297,8 +293,8 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
   },
   genreText: {
-    fontSize: 14,
     ...FONTS.subtitle,
+    fontSize: 14,
   },
   descContainer: {
     marginTop: 10,
@@ -309,8 +305,8 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
   },
   descText: {
+    ...FONTS.body,
     fontSize: 16,
     textAlign: "justify",
-    ...FONTS.body,
   },
 })

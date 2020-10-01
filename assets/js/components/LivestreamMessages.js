@@ -77,11 +77,11 @@ export default function LivestreamMessages(props) {
       <Text style={{
         marginRight: stickToRight ? 6 : 0,
         marginLeft: stickToRight ? 0 : 6,
+        paddingTop: 3,
+        ...FONTS.body,
         color: colors.grayInactive,
         textAlignVertical: "top",
-        paddingTop: 3,
         fontSize: 12,
-        ...FONTS.body,
       }}>{clockFromTimestamp(props.timestamp)}</Text>
     const UserIcon =
       <Icon

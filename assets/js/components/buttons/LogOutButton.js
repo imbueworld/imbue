@@ -3,18 +3,26 @@ import { View } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Icon from '../Icon'
 import { simpleShadow } from '../../contexts/Colors'
-import auth from "@react-native-firebase/auth"
 
 
 
 export default function LogOutButton(props) {
+  const {
+    containerStyle={},
+    //
+    onPress=() => {},
+    onLongPress=() => {},
+  } = props
+
+
+
   return (
     <View style={{
       backgroundColor: "white",
       borderRadius: 999,
       zIndex: 110,
       ...simpleShadow,
-      ...props.containerStyle,
+      ...containerStyle,
     }}>
       <TouchableHighlight
         style={{
@@ -25,8 +33,8 @@ export default function LogOutButton(props) {
           borderRadius: 999,
         }}
         underlayColor="#00000020"
-        onPress={props.onPress || (() => auth().signOut())}
-        onLongPress={props.onLongPress || undefined}
+        onPress={onPress}
+        onLongPress={onLongPress}
       >
         <>
         <Icon

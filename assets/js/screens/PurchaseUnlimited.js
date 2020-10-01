@@ -79,16 +79,16 @@ export default function PurchaseUnlimited(props) {
 
         <View style={styles.textContainer}>
           <Text style={{
+            ...FONTS.body,
             textAlign: "justify",
             fontSize: 18,
-            ...FONTS.body,
           }}>
             {imbueMembership.description}
           </Text>
           <Text style={{
+            ...FONTS.body,
             alignSelf: "flex-end",
             fontSize: 18,
-            ...FONTS.body,
           }}>
             {membershipPrice}
           </Text>

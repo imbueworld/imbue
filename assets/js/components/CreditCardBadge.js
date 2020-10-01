@@ -44,10 +44,9 @@ const styles = StyleSheet.create({
     creditCardText: {
         marginLeft: 10,
         alignSelf: "center",
-        // color: colors.gray,
+        ...FONTS.subtitle,
         color: colors.buttonFill,
         fontSize: 20,
-        ...FONTS.subtitle,
         paddingBottom: 7,
     },
 })

@@ -69,11 +69,10 @@ export default function PartnerUpdateMemberships(props) {
     >
 
       <Text style={{
-        alignSelf: "center",
         paddingBottom: 10,
-        fontSize: 20,
-        // fontFamily: fonts.default,
+        alignSelf: "center",
         ...FONTS.subtitle,
+        fontSize: 20,
       }}>{"Memberships & Pricing"}</Text>
 
       {errorMsg
@@ -156,7 +155,6 @@ const styles = StyleSheet.create({
     paddingVertical: 20,
     paddingLeft: 20,
     alignSelf: "center",
-    // fontFamily: fonts.default,
     ...FONTS.body,
   },
   priceContainer: {

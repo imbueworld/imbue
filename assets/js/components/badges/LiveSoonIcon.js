@@ -27,12 +27,12 @@ export default function LiveSoonIcon(props) {
       <Text style={{
         paddingHorizontal: 5,
         position: "absolute",
-        color: "white",
+        bottom: 0,
         backgroundColor: "#00000030",
+        ...FONTS.body,
+        color: "white",
         textAlign: "center",
         textDecorationLine: "underline",
-        bottom: 0,
-        ...FONTS.body,
       }}>in {props.value}min</Text>
     </View>
   )

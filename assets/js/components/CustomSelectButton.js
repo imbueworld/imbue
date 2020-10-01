@@ -102,10 +102,10 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     optionText: {
+        ...FONTS.body,
         color: "#1b1b19", // edited
         textAlign: "center",
         fontSize: 20,
-        ...FONTS.body,
     },
     unselectedColor: {
         color: "#696461",

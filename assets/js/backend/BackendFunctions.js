@@ -80,8 +80,6 @@ export function geocodeAddress(address, callback=(() => {}), options=defaultFnOp
  * to retrieve a file from Google Cloud Storage.
  */
 export async function publicStorage(fileName) {
-  console.log("fileName", fileName) // DEBUG
-
   if (!fileName) return ''
 
   let file = cache(`files/${fileName}`).get()

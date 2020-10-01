@@ -22,19 +22,19 @@ export default function TransactionView(props) {
         >
             <Text style={{
                 flex: 2,
+                ...FONTS.body,
                 color: colors.buttonAccent,
                 // textAlign: "justify",
                 textAlignVertical: "center",
                 fontSize: 16,
-                ...FONTS.body,
             }}>{description}</Text>
             <Text style={{
                 flex: 1,
+                ...FONTS.body,
                 color: colors.buttonAccent,
                 textAlign: "center",
                 textAlignVertical: "center",
                 fontSize: 16,
-                ...FONTS.body,
             }}>{`$${currencyFromZeroDecimal(amount)}`}</Text>
         </View>
     )

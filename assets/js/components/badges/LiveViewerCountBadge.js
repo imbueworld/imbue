@@ -47,10 +47,10 @@ export default function LiveViewerCountBadge(props) {
             />
             <Text style={{
                 marginLeft: 5,
-                textAlignVertical: "center",
-                color: "#ff5259",
-                fontSize: 18,
                 ...FONTS.body,
+                color: "#ff5259",
+                textAlignVertical: "center",
+                fontSize: 18,
                 fontWeight: "bold",
                 ...props.textStyle,
             }}>{ Count }</Text>

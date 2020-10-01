@@ -29,9 +29,9 @@ export default function CancelButton(props) {
                     borderRadius: 999,
                 }}>
                     <Text style={{
+                        ...FONTS.body,
                         color: "white",
                         fontSize: 14,
-                        ...FONTS.body,
                     }}>Hold to Exit</Text>
                 </View>
             :   null}
@@ -50,8 +50,8 @@ export default function CancelButton(props) {
                 <Text style={{
                     color: "white",
                     paddingHorizontal: 10,
-                    fontSize: 16,
                     ...FONTS.body,
+                    fontSize: 16,
                     ...props.textStyle,
                 }}>{ holdToExit ? "  ".repeat(title.length) : title }</Text>
             </TouchableHighlight>

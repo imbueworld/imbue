@@ -14,59 +14,72 @@ export default class Class extends DataObject {
     super(collection)
   }
 
+  async initByUid(uid) {
+    await super.initByUid(uid)
+
+    const cacheObjPopulatedState = this._getCacheObj().ref('fieldsArePopulated')
+    if (cacheObjPopulatedState.get()) return
+
+
+    /**
+     * [COMMENT SECTION 1]
+     * This is not going to a valid solution for now,
+     * move active_times to MAIN_DOC.collection('active_times'),
+     * go from there with this commented section.
+     * 
+     * Until then, use .getFormatted(), internally (in this file),
+     * outside of it nothing changes: keep using .retrieveClass()
+     */
+
+    // // Populate cache object with useful data
+    // const { active_times } = this.getAll()
+    // const currentTs = Date.now()
+
+    // active_times.forEach(timeDoc => {
+    //   const { begin_time, end_time } = timeDoc
+    //   let additionalFields
+
+    //   // Add formatting to class,
+    //   // which is later used by <ScheduleViewer />, and potentially others.
+    //   additionalFields = {
+    //     dateString: dateStringFromTimestamp(begin_time),
+    //     formattedDate: shortDateFromTimestamp(begin_time),
+    //     formattedTime:
+    //       `${clockFromTimestamp(begin_time)} – `
+    //       + `${clockFromTimestamp(end_time)}`,
+    //   }; Object.assign(timeDoc, additionalFields)
+
+    //   // Add functionality, same reasons
+    //   // ... not here, most likely!
+
+    //   // Add state identifiers~
+    //   timeDoc.livestreamState = 'offline' // default
+    //   let timePassed = currentTs - begin_time // Positive if class has started or already ended
+
+    //   // If time for class has come, but class has not ended yet
+    //   if (timePassed > 0 && currentTs < end_time) {
+    //     timeDoc.livestreamState = 'live'
+    //   }
+
+    //   // If livestream is starting soon (30min before)
+    //   if (timePassed > -30 * 60 * 1000 && currentTs < begin_time) {
+    //     timeDoc.livestreamState = 'soon'
+    //   }
+    // })
+
+
+    // Register this cache object to be populated
+    cacheObjPopulatedState.set(true)
+  }
+
   async retrieveClass(uid) {
     await this.initByUid(uid)
+    // return this.getAll() // See [COMMENT SECTION 1]
     return this.getFormatted()
   }
 
   getFormatted() {
-    // const processedClasses = this.getAll().map(classDoc => {
-    //   classDoc = { ...classDoc } // do not affect cache
-    //   // classDoc.active_times = { ...classDoc.active_times } // do not affect cache
-    //   classDoc.active_times = classDoc.active_times.map(timeDoc => ({ ...timeDoc })) // do not affect cache
-    //   const { active_times } = classDoc
-    //   const currentTs = Date.now()
-    //   let additionalFields
-
-    //   active_times.forEach(timeDoc => {
-    //     const { begin_time, end_time } = timeDoc
-
-    //     // Add formatting to class,
-    //     // which is later used by <ScheduleViewer />, and potentially others.
-    //     additionalFields = {
-    //       dateString: dateStringFromTimestamp(begin_time),
-    //       formattedDate: shortDateFromTimestamp(begin_time),
-    //       formattedTime:
-    //         `${clockFromTimestamp(begin_time)} – `
-    //         + `${clockFromTimestamp(end_time)}`,
-    //     }; Object.assign(timeDoc, additionalFields)
-  
-    //     // Add functionality, same reasons
-    //     // ... not here, most likely!
-
-    //     // Add state identifiers~
-    //     timeDoc.livestreamState = 'offline' // default
-    //     let timePassed = currentTs - begin_time // Positive if class has started or already ended
-
-    //     // If time for class has come, but class has not ended yet
-    //     if (timePassed > 0 && currentTs < end_time) {
-    //       timeDoc.livestreamState = 'live'
-    //     }
-
-    //     // If livestream is starting soon (30min before)
-    //     if (timePassed > -30 * 60 * 1000 && currentTs < begin_time) {
-    //       timeDoc.livestreamState = 'soon'
-    //     }
-    //   })
-
-    //   return classDoc
-    // })
-
-    // return processedClasses
-
-
     const processedClass = { ...this.getAll() } // do not affect cache
-    // processedClass.active_times = { ...processedClass.active_times } // do not affect cache
     processedClass.active_times = processedClass.active_times
       .map(timeDoc => ({ ...timeDoc })) // do not affect cache
     const { active_times } = processedClass

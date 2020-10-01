@@ -8,7 +8,7 @@ import CompanyLogo from "../components/CompanyLogo"
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
-import { StackActions } from '@react-navigation/native'
+import { StackActions, useNavigation } from '@react-navigation/native'
 import { colors } from '../contexts/Colors'
 
 import User from '../backend/storage/User'
@@ -20,7 +20,7 @@ export default function Boot(props) {
   // GoogleSignin.signOut()
   // LoginManager.logOut()
 
-  const navigation = props.navigation
+  const navigation = useNavigation()
 
   const bootWithUser = async () => {
     const user = new User()
@@ -30,13 +30,13 @@ export default function Boot(props) {
       case "user":
         navigation.reset({
           index: 0,
-          routes: [{ name: "UserDashboard" }]
+          routes: [{ name: "UserDashboard" }],
         })
         break
       case "partner":
         navigation.reset({
           index: 0,
-          routes: [{ name: "PartnerDashboard" }]
+          routes: [{ name: "PartnerDashboard" }],
         })
         break
     }
@@ -59,7 +59,7 @@ export default function Boot(props) {
     } else {
       navigation.reset({
         index: 0,
-        routes: [{ name: "Home" }]
+        routes: [{ name: "Home" }],
       })
     }
   }, [])

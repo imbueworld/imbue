@@ -28,9 +28,9 @@ export default function GoLiveButton(props) {
                     borderRadius: 999,
                 }}>
                     <Text style={{
+                        ...FONTS.body,
                         color: "white",
                         fontSize: 14,
-                        ...FONTS.body,
                     }}>Hold</Text>
                 </View>
             :   null }
@@ -47,10 +47,10 @@ export default function GoLiveButton(props) {
                 onLongPress={props.onLongPress || undefined}
             >
                 <Text style={{
+                    ...FONTS.body,
                     color: colors.darkButtonText,
                     paddingHorizontal: 10,
                     fontSize: 16,
-                    ...FONTS.body,
                     ...props.textStyle,
                 }}>{ holdToExit ? "  ".repeat(title.length) : title }</Text>
             </TouchableHighlight>

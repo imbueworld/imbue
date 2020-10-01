@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: "white",
         borderRadius: 999,
-        textAlign: "center",
         ...FONTS.body,
+        textAlign: "center",
     },
 })

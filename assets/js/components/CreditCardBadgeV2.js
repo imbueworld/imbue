@@ -50,9 +50,9 @@ const styles = StyleSheet.create({
         overflow: "hidden",
     },
     creditCardText: {
+        ...FONTS.luloClean,
         marginLeft: 10,
         alignSelf: "center",
-        ...FONTS.luloClean,
         fontSize: 20,
     },
 })
