@@ -64,10 +64,10 @@ const styles = StyleSheet.create({
         // ...simpleShadow,
     },
     text: {
+        ...FONTS.luloClean,
         // color: colors.gray,
         alignSelf: "center",
         fontSize: 18,
         // fontFamily: fonts.default,
-        ...FONTS.luloClean,
     },
 })

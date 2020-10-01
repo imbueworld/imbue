@@ -56,9 +56,8 @@ export default function ClassDescription(props) {
 
       const gym = new Gym()
       setGym(await gym.retrieveGym(classGymId))
-    }
-    init()
-  }, [])
+    }; init()
+  }, [r])
   
   let activeClassesCount = user
     ? user.active_classes
@@ -188,11 +187,13 @@ export default function ClassDescription(props) {
 
   if (!gym || !user || !classDoc) return <View />
 
+  console.log("ClassDescription user", user) // DEBUG
+
   // helper variable
   const classIsAddedToCalendar =
     user.account_type == 'user'
     ? user.scheduled_classes
-        .map(active => active.time_id)
+        .map(it => it.time_id)
         .includes(timeId)
     : null
   
@@ -306,6 +307,7 @@ export default function ClassDescription(props) {
                     refresh(r + 1)
 
                   } catch(err) {
+                    console.error(err.message) // DEBUG
                     switch (err.code) {
                       case "busy":
                         setErrorMsg(err.message)
@@ -384,14 +386,14 @@ const styles = StyleSheet.create({
   //   borderColor: colors.gray,
   // },
   nameText: {
+    ...FONTS.title,
     textAlign: "center",
     fontSize: 27,
-    ...FONTS.title,
   },
   instructorText: {
+    ...FONTS.subtitle,
     textAlign: "center",
     fontSize: 22,
-    ...FONTS.subtitle,
   },
   // timeContainer: {
   //   marginTop: 20,
@@ -403,9 +405,9 @@ const styles = StyleSheet.create({
   //   borderColor: colors.gray,
   // },
   timeText: {
+    ...FONTS.subtitle,
     fontSize: 18,
     textAlign: "center",
-    ...FONTS.subtitle,
   },
   descContainer: {
     // marginTop: 10,
@@ -418,8 +420,8 @@ const styles = StyleSheet.create({
     // borderColor: colors.gray,
   },
   descText: {
+    ...FONTS.body,
     fontSize: 16,
     textAlign: "justify",
-    ...FONTS.body,
   },
 })

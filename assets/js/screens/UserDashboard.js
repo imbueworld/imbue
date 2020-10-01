@@ -17,7 +17,7 @@ import { publicStorage } from '../backend/BackendFunctions'
 import { simpleShadow } from '../contexts/Colors'
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
-import { StackActions } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import User from '../backend/storage/User'
 import GymsCollection from '../backend/storage/GymsCollection'
 import cache from '../backend/storage/cache'
@@ -26,7 +26,7 @@ import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOve
 
 
 export default function UserDashboard(props) {
-  const { navigation } = props
+  const navigation = useNavigation()
 
   const [expanded, setExpanded] = useState(null)
 
@@ -253,12 +253,14 @@ export default function UserDashboard(props) {
         buttonOptions={{
           logOut: {
             show: true,
-            onLongPress: () => {
+            onPress: () => {
               auth().signOut()
               GoogleSignin.signOut()
               LoginManager.logOut()
-              const pushAction = StackActions.push("Boot")
-              navigation.dispatch(pushAction)
+              navigation.reset({
+                index: 0,
+                routes: [{ name: 'Boot' }],
+              })
               if (expanded) setExpanded(false)
             }
           },

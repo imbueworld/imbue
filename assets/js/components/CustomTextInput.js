@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   input: {
+    ...FONTS.subtitle,
     height: "100%",
     // paddingVertical: 20,
     paddingTop: 0,
@@ -80,7 +81,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     zIndex: 100,
     // fontFamily: fonts.default,
-    ...FONTS.subtitle,
   },
   // placeholderContainer: {
   //     width: "100%",

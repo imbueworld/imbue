@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { StackActions, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { FONTS } from '../contexts/Styles'
 
 import CustomCapsule from "../components/CustomCapsule"
@@ -42,12 +42,14 @@ export default function ProfileLayout(props) {
       },
       logOut: {
         show: false,
-        onLongPress: () => {
+        onPress: () => {
           auth().signOut()
           GoogleSignin.signOut()
           LoginManager.logOut()
-          const pushAction = StackActions.push("Boot")
-          navigation.dispatch(pushAction)
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Boot' }],
+          })
         },
       },
       editPfp: {
@@ -196,9 +198,8 @@ const styles = StyleSheet.create({
     // marginTop: 15,
     marginBottom: 10,
     alignSelf: "center",
-    fontSize: 22,
-    // fontFamily: fonts.default,
     ...FONTS.title,
+    fontSize: 22,
   },
   sidePanelButtonContainer: {
     ...simpleShadow,

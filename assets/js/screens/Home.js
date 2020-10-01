@@ -62,11 +62,11 @@ export default function Home(props) {
                     <Text style={{
                         marginTop: 20,
                         marginBottom: 20,
+                        ...FONTS.body,
                         color: colors.gray,
                         textAlign: "center",
                         fontSize: 16,
                         textDecorationLine: "underline",
-                        ...FONTS.body,
                     }}>Gym / Influencer Sign Up</Text>
                 </TouchableOpacity>
             </CustomCapsule>

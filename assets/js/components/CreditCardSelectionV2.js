@@ -60,8 +60,8 @@ export default function CreditCardSelectionV2(props) {
       onPress={() => navigation.navigate("AddPaymentMethod")}
     >
       <Text style={{
-        textDecorationLine: "underline",
         ...FONTS.luloClean,
+        textDecorationLine: "underline",
       }}>Add a new card</Text>
     </TouchableWithoutFeedback>
 
@@ -74,8 +74,8 @@ export default function CreditCardSelectionV2(props) {
       onPress={props.onX || undefined}
     >
       <Text style={{
-        textDecorationLine: "underline",
         ...FONTS.luloClean,
+        textDecorationLine: "underline",
       }}>Cancel</Text>
     </TouchableWithoutFeedback>
 
@@ -90,9 +90,9 @@ export default function CreditCardSelectionV2(props) {
           alignSelf: "center",
         }}>
           <Text style={{
+            ...FONTS.luloClean,
             textAlign: "center",
             fontSize: 20,
-            ...FONTS.luloClean,
           }}>{title}</Text>
         </View>
         : null}
@@ -104,9 +104,9 @@ export default function CreditCardSelectionV2(props) {
         marginBottom: 4,
       }}>
         <Text style={{
+          ...FONTS.luloClean,
           textAlign: "justify",
           fontSize: 12,
-          ...FONTS.luloClean,
         }}>
           To confirm, press and hold the card
           that you wish to make the payment with,

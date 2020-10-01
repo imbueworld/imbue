@@ -34,10 +34,10 @@ export default function UserMemberships(props) {
       const { active_memberships=[] } = userDoc
 
       const gyms = new GymsCollection()
-      const gymDocs = ( await gyms.retrieveWhere('gym_id', 'in', active_memberships) )
+      const gymDocs = ( await gyms.retrieveWhere('id', 'in', active_memberships) )
         .map(it => it.getAll())
       
-      console.log("gymDocs", gymDocs) // DEBUG
+      // console.log("gymDocs", gymDocs) // DEBUG
 
       setUser(userDoc)
       setMemberships(gymDocs)
@@ -46,6 +46,8 @@ export default function UserMemberships(props) {
 
   useEffect(() => {
     if (!memberships) return
+
+    // console.log("memberships", memberships) // DEBUG
 
     MembershipsCreate(memberships.map(membership =>
       <TouchableMenu
@@ -139,6 +141,8 @@ export default function UserMemberships(props) {
             const user = new User()
             const pastTransactions = await user.retrievePastTransactions()
 
+            // console.log("pastTransactions", pastTransactions) // DEBUG
+
             PastTransactionsCreate(
               pastTransactions.map((transaction, idx) =>
                 <TransactionView
@@ -153,8 +157,8 @@ export default function UserMemberships(props) {
         <Text style={{
           width: "88%",
           alignSelf: "center",
-          textAlign: "justify",
           ...FONTS.body,
+          textAlign: "justify",
         }}>In order to cancel a membership, tap and hold it's respective card and tap remove.</Text>
 
       </ProfileLayout>

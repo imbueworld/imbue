@@ -45,10 +45,10 @@ export default function AttendeeCard({ icon_uri, first, last }) {
                 position: "absolute",
                 width: "100%",
                 flexShrink: 1,
+                ...FONTS.body,
                 color: colors.buttonAccent,
                 textAlign: "center",
                 fontSize: 18,
-                ...FONTS.body,
             }}>{`${first || ""}${last ? " " : ""}${last || ""}`}</Text>
         </View>
     )

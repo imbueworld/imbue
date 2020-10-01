@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   text: {
-    color: colors.buttonAccent,
     ...FONTS.body,
+    color: colors.buttonAccent,
   },
 })

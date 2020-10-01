@@ -92,14 +92,12 @@ const styles = StyleSheet.create({
         textAlign: "justify", // Android reqs: Android Oreo (8.0) or above (API level >= 26)
     },
     name: {
-        fontSize: 20,
-        // fontFamily: fonts.default,
         ...FONTS.title,
+        fontSize: 20,
     },
     slogan: {
-        fontSize: 15,
-        // fontFamily: fonts.default,
         ...FONTS.body,
+        fontSize: 15,
     },
     // subInfoContainer: {},
     moreInfoContainer: {
@@ -118,7 +116,6 @@ const styles = StyleSheet.create({
         color: "#fff",
     },
     font: {
-        // fontFamily: fonts.default,
         ...FONTS.body,
     },
     X: {

@@ -45,8 +45,8 @@ export default function Chat(props) {
                     <TextInput
                         style={{
                             paddingHorizontal: 10,
-                            color: "white",
                             ...FONTS.body,
+                            color: "white",
                             ...props.style,
                         }}
                         multiline
