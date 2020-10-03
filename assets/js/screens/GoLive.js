@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { View, PermissionsAndroid, Platform } from 'react-native'
 
+import {PERMISSIONS} from 'react-native-permissions';
 import { NodeCameraView } from "react-native-nodemediaclient"
 import LivestreamLayout from '../layouts/LivestreamLayout'
 
@@ -29,13 +30,50 @@ async function checkPermissions() {
   }
 }
 
+async function checkPermissionsiOS() {
+  let hasAllPermissionsiOS = false
+  check(PERMISSIONS.IOS.CAMERA)
+    .then((result) => {
+      switch (result) {
+        case RESULTS.UNAVAILABLE:
+          console.log(
+            'This feature is not available (on this device / in this context)',
+          );
+          return hasAllPermissionsiOS;
+          break;
+        case RESULTS.DENIED:
+          console.log(
+            'The permission has not been requested / is denied but requestable',
+          );
+          return hasAllPermissionsiOS;
+          break;
+        case RESULTS.GRANTED:
+          console.log('The permission is granted');
+          hasAllPermissionsiOS = true
+          return hasAllPermissionsiOS;
+          break;
+        case RESULTS.BLOCKED:
+          console.log('The permission is denied and not requestable anymore');
+          return hasAllPermissionsiOS;
+          break;
+      }
+    })
+    .catch((error) => {
+      console.error(err)
+      return false
+    });
+}
+
 
 
 export default function GoLive(props) {
   const [user, setUser] = useState(null)
   const [gymId, setGymId] = useState(null)
 
-  const [hasAllPermissions, setHasAllPermisions] = useState(false)
+  // android permissions
+  const [hasAllPermissions, setHasAllPermisions] = useState(false) 
+  // ios permissions
+  const [hasAllPermissionsiOS, setHasAllPermisionsiOS] = useState(false)
   const [streamKey, setStreamKey] = useState(null)
 
   useEffect(() => {
@@ -56,6 +94,9 @@ export default function GoLive(props) {
       if (Platform.OS === "android") {
         let has = await checkPermissions()
         setHasAllPermisions(has)
+      } else if (Platform.OS === "ios") {
+        let has = await checkPermissionsiOS()
+        setHasAllPermisionsiOS(has)
       }
     }; init()
   }, [])
@@ -63,12 +104,12 @@ export default function GoLive(props) {
 
 
   if (!user || !gymId) return <View />
-  if (Platform.OS === "android" && !hasAllPermissions) return <View style={{
-    backgroundColor: "black",
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-  }} />
+  // if (Platform.OS === "android" && !hasAllPermissions) return <View style={{
+  //   backgroundColor: "black",
+  //   width: "100%",
+  //   height: "100%",
+  //   position: "absolute",
+  // }} />
 
   const settings = {
     camera: { cameraId: 1, cameraFrontMirror: true },
@@ -133,7 +174,9 @@ export default function GoLive(props) {
         zIndex: -100,
         ...props.containerStyle,
       }}>
-        {hasAllPermissions
+
+        {(Platform.OS === "android") ? 
+          {/* {hasAllPermissions 
           ? <NodeCameraView
             style={{
               width: "100%",
@@ -151,7 +194,26 @@ export default function GoLive(props) {
             video={settings.video}
             autopreview
           />
-          : null}
+          : null} */}
+          :
+            <NodeCameraView
+            style={{
+              width: "100%",
+              height: "100%",
+              zIndex: -100,
+              // position: "absolute",
+            }}
+            ref={vb => {
+              // stream = vb
+              cache("streamRef").set(vb)
+            }}
+            outputUrl={`${base}${streamKey}`}
+            camera={settings.camera}
+            audio={settings.audio}
+            video={settings.video}
+            autopreview
+          />
+        }
       </View>
     </>
   )
