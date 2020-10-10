@@ -8,8 +8,10 @@ import { useNavigation } from '@react-navigation/native'
 
 
 export default function GoBackButton(props) {
-  let navigation = useNavigation()
+  const navigation = useNavigation()
 
+
+  
   return (
     <View style={{
       backgroundColor: "white",

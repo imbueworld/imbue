@@ -52,8 +52,7 @@ export default function UserDashboard(props) {
 
       // This acts as a prefetch for when user eventually navs to ScheduleViewer
       user.retrieveClasses()
-    }
-    init()
+    }; init()
   }, [])
 
   /**
@@ -98,17 +97,21 @@ export default function UserDashboard(props) {
     MarkersCreate(gyms.map((gym, idx) => {
       const {
         hidden_on_map,
-        coordinate={
-          latitude: 0,
-          longitude: 0,
-        },
+        coordinate,
       } = gym
 
       if (hidden_on_map) return
+      if (!coordinate) return
+
+      // Make sure coordinates are of type number
+      const parsedCoordinates = {}
+      for (let coord in coordinate) {
+        parsedCoordinates[ coord ] = parseFloat(coordinate[ coord ])
+      }
 
       return (
         <Marker
-          coordinate={coordinate}
+          coordinate={parsedCoordinates}
           key={idx}
           onPress={async () => {
             const gymIconUri = await publicStorage(gym.icon_uri)

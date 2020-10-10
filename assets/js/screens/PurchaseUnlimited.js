@@ -117,27 +117,16 @@ export default function PurchaseUnlimited(props) {
                   </Text>
                 }
                 onX={() => setPopup(null)}
-                onCardSelect={async cardId => {
+                onCardSelect={async paymentMethodId => {
                   try {
                     setErrorMsg('')
                     setSuccessMsg('')
 
-                    const {
-                      id,
-                      membership_price,
-                    } = imbueMembership
-
                     const user = new User()
-                    await user.purchaseMembership({
-                      creditCardId: cardId,
-                      price: membership_price,
-                      description: `Imbue Universal Gym Membership`,
-                      membershipId: id,
-                      gymId: id,
-                      purchaseType: 'membership',
-                    })
-
-                    refresh(r + 1)
+                    await user.purchaseImbueMembership({ paymentMethodId })
+                    
+                    // After success with purchase
+                    setHasImbueMembership(true)
                   } catch(err) {
                     switch (err.code) {
                       case "busy":

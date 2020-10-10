@@ -1,6 +1,6 @@
 export default function InformationStorageMechanism(Database, query) {
   const RESERVED_FIELDS = ['_data', '_listeners']
-  const fields = query.split("/")
+  const fields = query.split('/')
   let nextBase
   let previousBase
 
@@ -19,7 +19,6 @@ export default function InformationStorageMechanism(Database, query) {
   })
 
   const queriedField = nextBase
-  // if (!queriedField._data) queriedField._data = {}
   if (!queriedField._listeners) queriedField._listeners = []
 
   // Return interactable functions

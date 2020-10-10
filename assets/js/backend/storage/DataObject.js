@@ -3,6 +3,7 @@ import cache from './cache'
 import { BusyError } from '../Errors'
 import { getRandomId } from '../HelperFunctions'
 import STRUCTURE from './STRUCTURE'
+import config from '../../../../App.config'
 
 
 
@@ -76,8 +77,10 @@ export default class DataObject {
     // It will not be premitted to push manually a new entry,
     // rather the developer has to use the appropriate .create() methods
     if (!this.uid && !forceNew) {
-      console.warn('Push was not done, manual pushing is not permitted. Use or create method: .create() for the respective Class (Gym, Class etc.)')
-      this.__DEBUG()
+      if (config.DEBUG) {
+        console.warn('Push was not done, manual pushing is not permitted. Use or create method: .create() for the respective Class (Gym, Class etc.)')
+        this.__DEBUG()
+      }
       return
     }
 
@@ -93,7 +96,7 @@ export default class DataObject {
       if (!Object.keys(structure).includes(item)) continue
       // Ascertain that the type checks out
       if (structure[ item ] !== new Object(modifiedData[ item ]).constructor) {
-        console.warn(`Item '${item}' (${new Object(modifiedData[ item ]).constructor.name}: ${modifiedData[ item ]}) was not pushed to database, because it was not of required type: ${structure[ item ].name}`)
+        if (config.DEBUG) console.warn(`Item '${item}' (${new Object(modifiedData[ item ]).constructor.name}: ${modifiedData[ item ]}) was not pushed to database, because it was not of required type: ${structure[ item ].name}`)
         continue
       }
       dataToBePushed[ item ] = modifiedData[ item ]

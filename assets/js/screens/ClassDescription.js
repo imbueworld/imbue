@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, Alert } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 import CustomPopup from "../components/CustomPopup"
@@ -15,6 +15,7 @@ import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 import Class from '../backend/storage/Class'
+import config from '../../../App.config'
 
 
 
@@ -187,8 +188,6 @@ export default function ClassDescription(props) {
 
   if (!gym || !user || !classDoc) return <View />
 
-  console.log("ClassDescription user", user) // DEBUG
-
   // helper variable
   const classIsAddedToCalendar =
     user.account_type == 'user'
@@ -229,10 +228,7 @@ export default function ClassDescription(props) {
             } = classDoc
 
             const user = new User()
-            await user.scheduleClass({
-              classId,
-              timeId,
-            })
+            await user.scheduleClass({ classId, timeId })
 
             refresh(r + 1)
           }
@@ -274,7 +270,7 @@ export default function ClassDescription(props) {
                   </Text>
                 }
                 onX={() => setPopup(null)}
-                onCardSelect={async creditCardId => {
+                onCardSelect={async paymentMethodId => {
                   try {
                     setErrorMsg('')
                     setSuccessMsg('')
@@ -282,32 +278,19 @@ export default function ClassDescription(props) {
                     const {
                       id: classId,
                       time_id: timeId,
-                      price,
-                      partner_id: partnerId,
-                      name: className,
                     } = classDoc
-
-                    const {
-                      id: gymId,
-                      name: gymName,
-                    } = gym
 
                     const user = new User()
                     await user.purchaseClass({
+                      paymentMethodId,
                       classId,
                       timeId,
-                      creditCardId,
-                      price,
-                      description: `One Time Class purchase – ${gymName}, ${className}`,
-                      partnerId,
-                      gymId,
-                      purchaseType: 'class',
                     })
 
                     refresh(r + 1)
 
                   } catch(err) {
-                    console.error(err.message) // DEBUG
+                    if (config.DEBUG) console.error(err.message) // DEBUG
                     switch (err.code) {
                       case "busy":
                         setErrorMsg(err.message)
@@ -337,7 +320,6 @@ export default function ClassDescription(props) {
         <MembershipApprovalBadgeImbue
           containerStyle={{
             marginTop: 10,
-            // marginBottom: 10,
           }}
           data={gym}
         />}
@@ -345,7 +327,6 @@ export default function ClassDescription(props) {
         <MembershipApprovalBadge
           containerStyle={{
             marginTop: 10,
-            // marginBottom: 10,
           }}
           data={gym}
         />}
@@ -353,7 +334,6 @@ export default function ClassDescription(props) {
         <ClassApprovalBadge
           containerStyle={{
             marginTop: 10,
-            // marginBottom: 10,
           }}
         />}
       </View>}
