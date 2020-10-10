@@ -31,8 +31,43 @@ const algoliaClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
 
 const users = admin.firestore().collection('users')
 const partners = admin.firestore().collection('partners')
-const stripe_customers = admin.firestore().collection('stripe_customers')
+const classes = admin.firestore().collection('classes')
+const gyms = admin.firestore().collection('gyms')
+//
 const membership_instances = admin.firestore().collection('membership_instances')
+const stripe_customers = admin.firestore().collection('stripe_customers')
+const stripe_products = admin.firestore().collection('stripe_products')
+const stripe_prices = admin.firestore().collection('stripe_prices')
+
+
+
+function _extractOnlyData(snapshots) {
+  snapshots.forEach((item, idx, arr) => {
+    arr[ idx ] = item.data() || {}
+  })
+  return snapshots
+}
+
+/**
+ * @returns {String} `mm-dd-yyy`
+ */
+function getEndStringDateOfLastMonth(offset=0) {
+  const currentUTCDate = new Date()
+  // Last day of last month format, turning it into
+  const formattedUTCDate = new Date(Date.UTC(
+    currentUTCDate.getUTCFullYear(),
+    currentUTCDate.getUTCMonth() + offset,
+    0
+  ))
+
+  let mm = (formattedUTCDate.getUTCMonth() + 1).toString()
+  if (mm.length < 2) mm = `0${mm}` // ascertain two digits
+  let dd = formattedUTCDate.getUTCDate().toString()
+  if (dd.length < 2) dd = `0${dd}` // ascertain two digits
+  let yyyy = formattedUTCDate.getUTCFullYear()
+
+  return `${mm}_${dd}_${yyyy}`
+}
 
 
 
@@ -135,46 +170,43 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   return;
 });
 
-exports.createStripeSeller = functions.firestore
-.document('partners/{partnerId}')
-.onCreate(async (snap, context) => {
+exports.createStripeSeller = functions.https.onCall(async (data, context) => {
   const p = console.log
   const e = console.error
 
+  const { auth: { uid } } = context
   const {
-    country,
-    address,
-    email,
-    phone,
+    // Company details
+    company_address,
+    company_name,
+    product_description,
+    tax_id,
+
+    // Person details
     first: first_name,
     last: last_name,
+    email,
+    phone,
     dob,
+    address,
     ssn_last_4,
-    ip,
-  } = snap.data()
-  const { params: { partnerId } } = context
-  const CURRENT_TS = Math.floor(Date.now() / 1000)
 
-  if (!country) {
-    p("country", country)
-    e("No country found.")
-    return
-  }
+    // TOS agreement
+    ip,
+  } = data
+  const CURRENT_TS = Math.floor(Date.now() / 1000)
 
   // Create Custom Stripe account
   const newStripeAccount = await stripe.accounts.create({
     type: 'custom',
-    country,
+    country: company_address.country,
     email,
-    business_type: 'individual',
-    individual: {
-      address,
-      email,
+    business_type: 'company',
+    company: {
+      name: company_name,
+      address: company_address,
       phone,
-      first_name,
-      last_name,
-      dob,
-      ssn_last_4,
+      tax_id,
     },
     requested_capabilities: [
       'card_payments',
@@ -182,19 +214,55 @@ exports.createStripeSeller = functions.firestore
     ],
     business_profile: {
       mcc: '7941', // stands for "Sports Clubs/Fields"
-      url: 'https://imbuefitness.com', // default url, changeable in the future
+      product_description,
     },
     tos_acceptance: {
       date: CURRENT_TS,
       ip,
     },
   })
+  
+  // p("newStripeAccount success")
+  const { id: stripe_account_id } = newStripeAccount
+
+  // Create a Stripe Person, linking it to the Custom Account
+  const newStripePerson = await stripe.accounts.createPerson(
+    stripe_account_id,
+    {
+      address,
+      first_name,
+      last_name,
+      email,
+      phone,
+      dob,
+      ssn_last_4,
+      relationship: {
+        title: 'Owner',
+        owner: true,
+        representative: true,
+        executive: true,
+      },
+    }
+  )
+
+  // p("newStripePerson success")
+  const { id: stripe_person_id } = newStripePerson
+  
+  // Update the Custom Account, telling that person has been successfully created
+  await stripe.accounts.update(
+    stripe_account_id,
+    {
+      company: {
+        owners_provided: true,
+        executives_provided: true,
+      },
+    }
+  )
 
   // Save seller stripe account id to their doc
-  const { id: stripe_account_id } = newStripeAccount
-  await partners.doc(partnerId).set({
+  await partners.doc(uid).set({
     stripe_account_id,
-    ip: admin.firestore.FieldValue.delete(),
+    stripe_person_id,
   }, { merge: true })
 })
 
@@ -328,6 +396,56 @@ exports.cleanUpAfterPartner = functions.firestore
   })
 
 /**
+ * Must ONLY be called when membership_price has been set in gym doc.
+ */
+exports.createGymProduct = functions.https.onCall(async (data, context) => {
+  const p = console.log
+
+  const { gymId } = data
+
+  const {
+    name: gymName,
+    membership_price: unit_amount,
+  } = (
+    await gyms
+      .doc(gymId)
+      .get()
+  ).data()
+
+  p('gymName', gymName)
+  p('membership_price', unit_amount)
+  if (!unit_amount) {
+    console.error('membership_price not in gym doc.')
+    return
+  }
+
+  const product = await stripe.products.create({
+    id: gymId,
+    name: `Imbue, Gym Online Membership — ${gymName}`,
+    description: `Grants access to all online content that ${gymName} provide.`,
+  })
+
+  const recurringPrice = await stripe.prices.create({
+    product: gymId,
+    currency: 'usd',
+    unit_amount,
+    recurring: {
+      interval: 'month',
+    },
+    nickname: `Monthly price — ${gymName}`, // Dev-side info
+  })
+
+  await Promise.all([
+    stripe_products
+      .doc(gymId)
+      .set(product),
+    stripe_prices
+      .doc(gymId)
+      .set(recurringPrice),
+  ])
+})
+
+/**
  * Adds a payment method for the user.
  */
 exports.addPaymentMethod = functions.https.onCall(async (data, context) => {
@@ -376,288 +494,389 @@ exports.addPaymentMethod = functions.https.onCall(async (data, context) => {
 })
 
 /**
- * Charges the user.
- * 
- * params
- *  data: { cardId, amount, description }
+ * One Time Class Purchase
+ * Used to charge a known (added) user's credit card.
  */
-exports.chargeCustomer = functions.https.onCall(async ({ amount, cardId, description }, context) => {
-  const uid = context.auth.uid
+exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, context) => {
+  const p = console.log
 
-  const customerData = (await admin
-    .firestore()
-    .collection("stripe_customers")
-    .doc(uid)
-    .get()
+  const { auth: { uid } } = context
+  const {
+    paymentMethodId,
+    classId,
+    timeId,
+  } = data
+  const IMBUE_PERCENTAGE_CUT = 0.05
+
+  // Do not continue if insufficient parameters
+  if (!paymentMethodId || !classId || !timeId)
+    throw 'Insufficient params.'
+
+  const { active_classes=[] } = (
+    await users
+      .doc(uid)
+      .get()
   ).data()
 
-  const payment = await stripe.charges.create({
-    amount: amount,
-    currency: "usd",
-    customer: customerData.customer_id,
-    source: cardId,
-    description: description,
+  // Do not continue if class, for whatever reason, is already registered.
+  active_classes.forEach(({ class_id, time_id }) => {
+    if (class_id == classId && time_id == timeId)
+      throw 'Class already owned.'
   })
 
-  await admin
-    .firestore()
-    .collection('stripe_customers')
+  const { id: source, customer } = (
+    await stripe_customers
+      .doc(uid)
+      .collection('payment_methods')
+      .doc(paymentMethodId)
+      .get()
+  ).data()
+
+  p('source', source)
+  p('customer', customer)
+
+  const {
+    price: amount,
+    name: className,
+    partner_id: partnerId,
+  } = (
+    await classes
+      .doc(classId)
+      .get()
+  ).data()
+
+  p('price', amount)
+  p('className', className)
+  p('partner_id', partnerId)
+
+  const { stripe_account_id: destination } = (
+    await partners
+      .doc(partnerId)
+      .get()
+  ).data()
+
+  p('stripe_account_id', destination)
+  
+  // variable is INCOMPLETE
+  const application_fee_amount = Math.floor(IMBUE_PERCENTAGE_CUT * amount)
+  p('application_fee_amount', application_fee_amount)
+
+  if (
+    !amount || !customer || !source
+    || !destination || !application_fee_amount
+  ) throw 'Values can\'t be empty.'
+
+  const payment = await stripe.charges.create({
+    currency: 'usd',
+    amount,
+    customer,
+    source,
+    description: `Imbue, One Time Class Purchase — ${className}`,
+    transfer_data: {
+      destination,
+    },
+    application_fee_amount,
+  })
+
+  stripe_customers
     .doc(uid)
     .collection('payments')
-    .add(payment)
-
-  return "200 OK"
+    .doc(payment.id)
+    .set(payment)
 })
 
-exports.subscribeCustomer = functions.https.onCall(async ({ gymId, amount, cardId, description }, context) => {
-  const uid = context.auth.uid
+exports.purchaseMembership = functions.https.onCall(async (data, context) => {
+  const p = console.log
+  const e = console.error
 
-  let customerGet = admin
-    .firestore()
-    .collection("stripe_customers")
-    .doc(uid)
-    .get()
+  const { auth: { uid } } = context
+  const {
+    paymentMethodId,
+    gymId,
+  } = data
 
-  let gymGet = admin
-    .firestore()
-    .collection("gyms")
-    .doc(gymId)
-    .get()
+  p('gymId', gymId)
 
-  let res = await Promise.all([
-    customerGet,
-    gymGet,
-  ])
+  // Do not continue if insufficient parameters have been provided.
+  if (!paymentMethodId || !gymId) throw 'Insufficient params.'
 
-  const customer = res[0].data()
-  const gymDoc = res[1].data()
-  
-  let productId = gymDoc.product_id || null
-  if (!productId) {
-    const product = await stripe.products.create({
-      name: `${gymDoc.name} Gym Online Membership`,
-      description: `Grants access to all online content that the gym provides.`,
-    })
+  const { active_memberships=[] } = (
+    await users
+      .doc(uid)
+      .get()
+  ).data()
 
-    admin.firestore().collection("gyms").doc(gymId).set({
-      product_id: product.id
-    }, { merge: true })
-
-    productId = product.id
-    console.log(`[${gymDoc.id}] Creating new Product Object`)
-  } else console.log(`[${gymDoc.id}] Using existing Product Object`)
-
-  const sub = await stripe.subscriptions.create({
-    customer: customer.customer_id,
-    items: [
-      {
-        price_data: {
-          currency: "usd",
-          product: productId,
-          recurring: {
-            interval: "month",
-          },
-          unit_amount: amount,
-        },
-      }
-    ],
-    default_source: cardId,
-    metadata: {
-      description,
-      gym_id: gymId,
-    },
+  // Do not continue if, for whatever reason, membership is already owned.
+  active_memberships.forEach(gym_id => {
+    if (gym_id == gymId) throw 'Membership already owned.'
   })
 
-  await admin
-    .firestore()
-    .collection('stripe_customers')
+  const [
+    { customer, id: default_source },
+    { id: price },
+    { partner_id: partnerId },
+  ] = _extractOnlyData(
+    await Promise.all([
+      stripe_customers
+        .doc(uid)
+        .collection('payment_methods')
+        .doc(paymentMethodId)
+        .get(),
+      stripe_prices
+        .doc(gymId)
+        .get(),
+      gyms
+        .doc(gymId)
+        .get(),
+    ])
+  )
+
+  p('partnerId', partnerId)
+
+  const { stripe_account_id: destination } = (
+    await partners
+      .doc(partnerId)
+      .get()
+  ).data()
+
+  p('customer_id', customer)
+  p('default_source_id', default_source)
+  p('price_id', price)
+  p('destination', destination)
+  if (!customer) e('customer_id not found.')
+  if (!default_source) e('default_source_id not found.')
+  if (!price) e('price_id not found.')
+  if (!destination) e('destination not found.')
+  if (!customer || !default_source
+    || !price || !destination) throw 'Values listed above cannot be empty.'
+  
+  const subscription = await stripe.subscriptions.create({
+    customer,
+    default_source,
+    items: [{ price }],
+    transfer_data: {
+      destination,
+    },
+    application_fee_percent: 5,
+  })
+
+  await Promise.all([
+    stripe_customers
+      .doc(uid)
+      .collection('subscriptions')
+      .doc(gymId)
+      .set(subscription)
+  ])
+})
+
+exports.cancelMembership = functions.https.onCall(async (data, context) => {
+  const { auth: { uid } } = context
+  const { gymId } = data
+
+  const { id: subId } = (
+    await stripe_customers
+      .doc(uid)
+      .collection('subscriptions')
+      .doc(gymId)
+      .get()
+  ).data()
+
+  const subscription = await stripe.subscriptions.del(subId)
+
+  // Update subscription object
+  await stripe_customers
     .doc(uid)
     .collection('subscriptions')
-    .add({
-      ...sub,
-      gym_id: gymId,
-    })
-
-  return "200 OK"
-})
-
-exports.deleteSubscription = functions.https.onCall(async ({ gymIds }, context) => {
-  const uid = context.auth.uid
-  const collRef = admin
-    .firestore()
-    .collection("stripe_customers")
-    .doc(uid)
-    .collection("subscriptions")
-
-  let updateables = []
-  const subIds = (await collRef
-    .where("gym_id", "in", gymIds)
-    .get()
-  ).docs
-    .filter(doc => doc.data().status === "active")
-    .map(doc => {
-      updateables.push(doc.id)
-      return doc.data().id
-    })
-
-  let promises
-  promises = []
-  subIds.forEach(id => {
-    promises.push(
-      stripe.subscriptions.del(id)
-    )
-  })
-  let res = await Promise.all(promises)
-
-  promises = []
-  updateables.forEach((id, idx) => {
-    promises.push(
-      collRef.doc(id).update(res[idx])
-    )
-  })
-  await Promise.all(promises)
-})
-
-exports.documentClassPurchase = functions.https.onCall(async ({ classId, timeId, partnerId, amount, user }, context) => {
-  const uid = context.auth.uid
-  const currentTimestamp = Date.now()
-  
-  const activeTimesCollectionRef = admin
-    .firestore()
-    .collection("classes")
-    .doc(classId)
-    .collection("active_times")
-  const clientDocRef = admin
-    .firestore()
-    .collection("classes")
-    .doc(classId)
-    .collection("active_times")
-    .doc(timeId)
-    .collection("clients")
-    .doc(uid)
-  
-  const partnerDocRef = admin
-    .firestore()
-    .collection("partners")
-    .doc(partnerId)
-
-  // Increase pratner's revenue appropriately
-  const partnerDoc = ( await partnerDocRef.get() ).data()
-  let revenue_total = partnerDoc.revenue_total || 0
-  let revenue = partnerDoc.revenue || 0
-  await partnerDocRef
-    .set({
-      revenue_total: revenue_total + amount,
-      revenue: Math.round(revenue + (amount * 0.8))
-    }, { merge: true })
-
-  // Document the user buying the class inside of active_times in the class doc
-  // const user = ( await admin.firestore().collection("users").doc(uid).get() ).data()
-  let { first, last, icon_uri } = user
-  await clientDocRef
-    .set({
-      purchase_timestamp: currentTimestamp,
-      purchase_method: "class",
-      scheduled: true,
-      first,
-      last,
-      icon_uri,
-    }, { merge: true })
-
-  // Get current clients
-  // const timeDoc = (await activeTimesCollectionRef
-  //   .doc(timeId)
-  //   .get()
-  // )
-  // let clients = []
-  // if (timeDoc.exists) clients = timeDoc.data().clients
-
-  // Do not add a duplicate, return if caught
-  // let duplicate = false
-  // clients.forEach(doc => {
-  //   if (doc.user_id === uid) duplicate = true
-  // })
-  // if (duplicate) return
-
-  // Update databases
-  // activeTimesCollectionRef
-  //   .doc(timeId)
-  //   .set({
-  //     clients: [
-  //       ...clients,
-  //       {
-  //         user_id: uid,
-  //         timestamp: currentTimestamp,
-  //         // purchase_method: "class",
-  //       },
-  //     ],
-  //   }, { merge: true })
-})
-
-exports.documentMembershipPurchase = functions.https.onCall(async ({ partnerId, gymId, amount }, context) => {
-  const uid = context.auth.uid
-  // const currentTimestamp = Date.now()
-
-  // partnerId should only be absent on Imbue Universal Gym Membership purchase
-  if (partnerId) {
-    const partnerDocRef = admin
-      .firestore()
-      .collection("partners")
-      .doc(partnerId)
-
-    const partnerDoc = ( await partnerDocRef.get() ).data()
-    let revenue_total = partnerDoc.revenue_total || 0
-    let revenue = partnerDoc.revenue || 0
-    await partnerDocRef
-      .set({
-        revenue_total: revenue_total + amount,
-        revenue: Math.round(revenue + (amount * 0.8))
-      }, { merge: true })
-  }
-
-  const gymDocRef = admin
-    .firestore()
-    .collection("gyms")
     .doc(gymId)
-  
-  // Get current data
-  const gymDoc = ( await gymDocRef.get() ).data()
-  const activeClientsMemberships = gymDoc.active_clients_memberships || []
-
-  // Do not add duplicate, return if caught
-  if (activeClientsMemberships.includes(uid)) return
-
-  // Update database
-  await gymDocRef.set({
-    active_clients_memberships: [
-      ...activeClientsMemberships,
-      uid
-    ]
-  }, { merge: true })
+    .set(subscription)
 })
 
-exports.documentScheduledClass = functions.https.onCall(async ({ classId, timeId, user }, context) => {
-  const uid = context.auth.uid
-  const clientDocRef = admin
-    .firestore()
-    .collection("classes")
-    .doc(classId)
-    .collection("active_times")
-    .doc(timeId)
-    .collection("clients")
-    .doc(uid)
-  
-  // const user = ( await admin.firestore().collection("users").doc(uid).get() ).data()
-  let { first, last, icon_uri } = user
-  
-  await clientDocRef.set({
-    purchase_method: "membership",
-    scheduled: true,
-    first,
-    last,
-    icon_uri,
-  }, { merge: true })
-})
+/**
+ * Assumes that if 'imbue' is in USER_DOC.active_memberships,
+ * the user is scheduling on the grounds of having Imbue UGM,
+ * otherwise -- Gym Online Membership.
+ * Read more about determining purchase_type inside of fn code.
+ * 
+ * Currently scheduling a class is handled by storing it in
+ * USER_DOC.scheduled_classes (Array).
+ * 
+ * *Perhaps* this should be done by creating Schedule objects inside of a new
+ * collection 'scheduled_classes'.
+ * 
+ * Right now, listening to USER_DOC updates.
+ * 
+ * ____
+ * scheduled_classes Array == [{ class_id, time_id }, ..]
+ */
+exports.completeClassSignUp = functions.firestore
+  .document('users/{userId}')
+  .onUpdate(async (snap, context) => {
+    const p = console.log
+    
+    const { params: { userId } } = context
+    const {
+      scheduled_classes: prevScheduledClasses,
+      active_classes: prevActiveClasses,
+    } = snap.before.data()
+    const {
+      scheduled_classes: currScheduledClasses,
+      active_classes: currActiveClasses,
+      active_memberships,
+    } = snap.after.data()
+    const timestamp = Date.now()
+    const CURR_END_DATE_STRING = getEndStringDateOfLastMonth(1)
+
+    // Determine new active_classes (related to One Time Class Purchase)
+    const newlyActivatedClasses = currActiveClasses.filter(({
+      class_id,
+      time_id,
+    }) => {
+      let isNew = true
+      prevActiveClasses.forEach(({
+        class_id: class_id_existing,
+        time_id: time_id_existing,
+      }) => {
+        if (
+          class_id == class_id_existing
+          && time_id == time_id_existing
+        ) isNew = false
+      })
+      if (isNew) return true
+    })
+
+    p('newlyActivatedClasses', newlyActivatedClasses)
+
+    /**
+     * purchase_method is determined as follows:
+     * 1. if there is a new item in active_classes,
+     *    assume -- 'class'
+     * 2. otherwise, if 'imbue' in active_memberships,
+     *    assume -- 'imbue_membership'
+     * 3. else,
+     *    assume -- 'gym_membership'
+     */
+    const purchase_method =
+      newlyActivatedClasses.length
+        ? 'class'
+        : active_memberships.includes('imbue')
+            ? 'imbue_membership'
+            : 'gym_membership'
+
+    p('purchase_method', purchase_method)
+
+    // Determine newly scheduled classes (core way of determining new classes)
+    const newlyScheduledClasses = currScheduledClasses.filter(({
+      class_id,
+      time_id,
+    }) => {
+      let isNew = true
+      prevScheduledClasses.forEach(({
+        class_id: class_id_existing,
+        time_id: time_id_existing,
+      }) => {
+        if (
+          class_id == class_id_existing
+          && time_id == time_id_existing
+        ) isNew = false
+      })
+      if (isNew) return true
+    })
+
+    p('newlyScheduledClasses', newlyScheduledClasses)
+    // If there are no new classes, return
+    if (!newlyScheduledClasses.length) return
+
+    const { first, last, icon_uri } = (
+      await users
+        .doc(userId)
+        .get()
+    ).data()
+
+    const batch = admin.firestore().batch()
+
+    for (let { class_id, time_id } of newlyScheduledClasses) {
+      batch.set(
+        classes
+          .doc(class_id)
+          .collection('active_times')
+          .doc(time_id)
+          .collection('clients')
+          .doc(userId),
+        {
+          purchase_method,
+          timestamp,
+          first,
+          last,
+          icon_uri,
+        }
+      )
+
+      // Increment times_visited in membership_instances to track membership usage by the user
+      const { gym_id: gymId } = ( await classes.doc(class_id).get() ).data()
+      const { membership_price: membership_price_paid } = ( await gyms.doc(gymId).get() ).data()
+
+      p('gymId', gymId)
+      p('membership_price_paid', membership_price_paid)
+      p('CURR_END_DATE_STRING', CURR_END_DATE_STRING)
+
+      batch.set(
+        membership_instances
+          .doc(userId)
+          .collection('visits')
+          .doc(CURR_END_DATE_STRING)
+          .collection('gyms')
+          .doc(gymId),
+        {
+          membership_price_paid,
+          times_visited: admin.firestore.FieldValue.increment(1),
+        },
+        { merge: true }
+      )
+    }
+
+    await batch.commit()
+
+    // await Promise.all([
+    //   ...newlyScheduledClasses.map(({ class_id, time_id }) => (
+    //     classes
+    //       .doc(class_id)
+    //       .collection('active_times')
+    //       .doc(time_id)
+    //       .collection('clients')
+    //       .doc(userId)
+    //       .set({
+    //         purchase_method,
+    //         timestamp,
+    //         first,
+    //         last,
+    //         icon_uri,
+    //       })
+    //   )),
+    //   // Increment times_visited in membership_instances to track membership usage by the user
+    //   ...newlyScheduledClasses.map(({ class_id, time_id }) => {
+    //     const { gym_id: gymId } = ( await classes.doc(class_id).get() ).data()
+    //     const { membership_price: membership_price_paid } = ( await gyms.doc(gymId).get() ).data()
+
+    //     p('gymId', gymId)
+    //     p('membership_price_paid', membership_price_paid)
+    //     p('CURR_END_DATE_STRING', CURR_END_DATE_STRING)
+
+    //     return membership_instances
+    //       .doc(userId)
+    //       .collection('visits')
+    //       .doc(CURR_END_DATE_STRING)
+    //       .collection('gyms')
+    //       .doc(gymId)
+    //       .set({
+    //         membership_price_paid,
+    //         times_visited: firebase.firestore.FieldValue.increment(1),
+    //       }, { merge: true })
+    //   })
+    // ])
+  })
+
+
+
 
 
 
