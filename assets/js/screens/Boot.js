@@ -39,6 +39,12 @@ export default function Boot(props) {
           routes: [{ name: "PartnerDashboard" }],
         })
         break
+      default:
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Home' }],
+        })
+        break
     }
   }
   

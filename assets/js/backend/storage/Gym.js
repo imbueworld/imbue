@@ -9,6 +9,11 @@ export default class Gym extends DataObject {
     super(collection)
   }
 
+  async create(details) {
+    this.mergeItems(details)
+    await this.push({ forceNew: true })
+  }
+
   async retrieveGym(uid) {
     await this.initByUid(uid)
     return this.getAll()

@@ -12,6 +12,7 @@ import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import Icon from '../components/Icon'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
+import config from '../../../App.config'
 
 
 
@@ -75,7 +76,7 @@ export default function GymDescription(props) {
     )
     GenresCreate(
       <View style={styles.genreContainer}>
-        {gym.genres.map((txt, idx) =>
+        {gym.genres && gym.genres.map((txt, idx) =>
           <View
             style={styles.genre}
             key={idx}
@@ -149,33 +150,29 @@ export default function GymDescription(props) {
                   </Text>
                 }
                 onX={() => setPopup(null)}
-                onCardSelect={async cardId => {
+                onCardSelect={async paymentMethodId => {
                   try {
                     setErrorMsg('')
                     setSuccessMsg('')
 
-                    const {
-                      id,
-                      membership_price,
-                      name,
-                      partner_id,
-                    } = gym
+                    const { id: gymId } = gym
+
+                    // DEBUG
+                    if (config.DEBUG) {
+                      console.log('paymentMethodId', paymentMethodId)
+                      console.log('gymId', gymId)
+                    }
 
                     const user = new User()
-                    await user.purchaseMembership({
-                      creditCardId: cardId,
-                      price: membership_price,
-                      description: `Gym Online Membership – ${name}`,
-                      membershipId: id,
-                      gymId: id,
-                      partnerId: partner_id,
-                      purchaseType: 'membership',
+                    await user.purchaseGymMembership({
+                      paymentMethodId,
+                      gymId,
                     })
 
+                    // After success with purchase
                     setHasMembership('gym')
                   } catch (err) {
-                    // console.error(err.message) // DEBUG
-
+                    if (config.DEBUG) console.error(err.message) // DEBUG
                     switch (err.code) {
                       case "busy":
                         setErrorMsg(err.message)

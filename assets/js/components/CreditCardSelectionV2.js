@@ -42,11 +42,9 @@ export default function CreditCardSelectionV2(props) {
       containerStyle={{
         backgroundColor: "#00000008"
       }}
-      // data={{ id, brand, last4, exp_month, exp_year }}
       data={card}
-      onLongPress={id => {
-        // proceccing payment chowc up
-        props.onCardSelect(id)
+      onLongPress={() => {
+        props.onCardSelect(card.paymentMethodId)
       }}
     />
   )
@@ -81,7 +79,6 @@ export default function CreditCardSelectionV2(props) {
 
   return (
     <View style={[
-      styles.container,
       props.containerStyle,
     ]}>
       {title
@@ -111,7 +108,7 @@ export default function CreditCardSelectionV2(props) {
           To confirm, press and hold the card
           that you wish to make the payment with,
           you will be charged insantly after a successful action.
-                </Text>
+        </Text>
       </View>
 
       <View style={{
@@ -138,12 +135,3 @@ export default function CreditCardSelectionV2(props) {
     </View>
   )
 }
-
-const styles = StyleSheet.create({
-  container: {},
-  // buttonSmall: {
-  //     paddingVertical: 10,
-  //     paddingHorizontal: 10,
-  //     borderRadius: 999,
-  // }
-})

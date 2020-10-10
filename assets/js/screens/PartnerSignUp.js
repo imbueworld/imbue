@@ -1,5 +1,6 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import { NetworkInfo } from 'react-native-network-info'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { colors } from "../contexts/Colors"
@@ -10,10 +11,10 @@ import CompanyLogo from "../components/CompanyLogo"
 import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
-import { initializeAccount } from '../backend/BackendFunctions'
+import { geocodeAddress } from '../backend/BackendFunctions'
 import { handleAuthError } from '../backend/HelperFunctions'
 import { FONTS } from '../contexts/Styles'
-import { StackActions, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
 import User from '../backend/storage/User'
@@ -33,6 +34,20 @@ export default function PartnerSignUp(props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")
+  //
+  const [phone, setPhone] = useState('')
+  const [address, setAddress] = useState('')
+  const [dob, setDob] = useState('') // in the format of `mm-dd-yyyy`
+  const [ip, setIp] = useState()
+
+  // Init
+  useEffect(() => {
+    const init = async () => {
+      setIp(await NetworkInfo.getIPAddress())
+    }; init()
+  }, [])
+
+
 
   function invalidate() {
     let redFields = []
@@ -42,6 +57,10 @@ export default function PartnerSignUp(props) {
     if (!gymName) redFields.push("gymName")
     if (!password) redFields.push("password")
     if (!passwordConfirm) redFields.push("passwordConfirm")
+    //
+    if (!phone) redFields.push('phone')
+    if (!address) redFields.push('address')
+    if (dob.split('-').length != 3) redFields.push('dob')
 
     if (redFields.length) {
       setRedFields(redFields)
@@ -62,6 +81,8 @@ export default function PartnerSignUp(props) {
         "and at least 1 lowercase and uppercase letter."
     }
   }
+
+
 
   return (
     <KeyboardAwareScrollView contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
@@ -122,6 +143,14 @@ export default function PartnerSignUp(props) {
             onChangeText={setGymName}
           />
           <CustomTextInput
+            containerStyle={redFields.includes('address') ? {
+              borderColor: 'red',
+            } : {}}
+            placeholder='Gym address'
+            value={address}
+            onChangeText={setAddress}
+          />
+          <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("email") ? "red" : undefined,
             }}
@@ -129,6 +158,33 @@ export default function PartnerSignUp(props) {
             value={email}
             onChangeText={setEmail}
           />
+          <CustomTextInput
+            containerStyle={redFields.includes('phone') ? {
+              borderColor: 'red',
+            } : {}}
+            placeholder='Phone'
+            value={phone}
+            onChangeText={setPhone}
+          />
+          <CustomTextInput
+            containerStyle={redFields.includes('dob') ? {
+              borderColor: 'red',
+            } : {}}
+            placeholder='Date of birth (MM-DD-YYYY)'
+            value={dob}
+            onChangeText={setDob}
+          />
+
+          {/* Company info */}
+          <CustomTextInput
+            containerStyle={redFields.includes('') ? {
+              borderColor: 'red',
+            } : {}}
+            placeholder=''
+            value={addressasd}
+            onChangeText={asdasd}
+          />
+
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("password") ? "red" : undefined,
@@ -149,6 +205,7 @@ export default function PartnerSignUp(props) {
             value={passwordConfirm}
             onChangeText={setPasswordConfirm}
           />
+
           <CustomButton
             style={{
               marginBottom: 20,
@@ -156,29 +213,48 @@ export default function PartnerSignUp(props) {
             title="Sign Up"
             onPress={async () => {
               setRedFields([])
-              setErrorMsg("")
-              setSuccessMsg("")
+              setErrorMsg('')
+              setSuccessMsg('')
 
               let errorMsg
               try {
-                let type = "partner"
-
                 errorMsg = invalidate()
                 if (errorMsg) throw new Error(errorMsg)
 
-                const userObj = new User()
-                await userObj.create({
-                  first,
-                  last,
-                  email,
-                  password,
-                  type,
+                const [mm, dd, yyyy] = dob.split('-')
+
+                geocodeAddress(address, async asdf => {
+                  return // DEBUG
+
+                  let promises = []
+
+                  const userObj = new User()
+                  promises.push(
+                    userObj.create({
+                      type: 'partner',
+                      first,
+                      last,
+                      email,
+                      password,
+                      address,
+                      country,
+                      dob: {
+                        day: dd,
+                        month: mm,
+                        year: yyyy,
+                      },
+                      phone,
+                      ip,
+                    })
+                  )
+
+                  setSuccessMsg("You've been signed up!")
+
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'Boot' }],
+                  })
                 })
-
-                setSuccessMsg("You've been signed up!")
-
-                const pushAction = StackActions.push("Boot")
-                navigation.dispatch(pushAction)
               } catch (err) {
                 // If not form error, check for auth error
                 if (!errorMsg) {
