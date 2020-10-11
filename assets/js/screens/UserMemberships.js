@@ -70,7 +70,7 @@ export default function UserMemberships(props) {
             } = membership
 
             const user = new User()
-            await user.deleteSubscription({ gymId })
+            await user.cancelMembership({ gymId })
 
             setSuccessMsg('Subscription canceled!')
           } catch (err) {

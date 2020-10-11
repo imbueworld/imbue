@@ -292,7 +292,6 @@ export async function requestPermissions(perms) {
 
 
 
-
 // import User from './storage/User'
 
 // /**

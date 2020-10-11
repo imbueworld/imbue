@@ -50,8 +50,7 @@ export default function PartnerRevenueInfo(props) {
         containerStyle={styles.textContainer}
         label="Member Count"
       >
-        {gym.active_clients_memberships &&
-          gym.active_clients_memberships.length}
+        ?
       </CustomText>
 
       <Text style={{
