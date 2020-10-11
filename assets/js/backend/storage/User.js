@@ -17,6 +17,7 @@ import {
 } from '../Errors'
 import { requestPermissions } from '../HelperFunctions'
 import ImagePicker from 'react-native-image-picker'
+import Class from './Class'
 
 
 
@@ -49,11 +50,64 @@ export default class User extends DataObject {
   }
 
   /**
-   * Just makes sure that data is present:
+   * Makes sure that data is present:
    * either gets it from cache or server, then caching it.
+   * 
+   * Populates data with extra fields,
+   * as well as corrects it, if it is missing.
+   * Does correcting calculations only once per session
+   * (avoiding wasteful computation).
    */
   async init() {
-    await this.initByUid(this.firebaseUser.uid)
+    const uid = this.firebaseUser.uid
+    await this.initByUid(uid)
+
+    const cacheObjPopulatedState = this._getCacheObj().ref('fieldsArePopulated')
+    if (cacheObjPopulatedState.get()) return
+
+    const {
+      first='',
+      last='',
+      icon_uri='default-icon.png',
+      icon_uri_foreign='',
+      // For user:  These three should always be present as Arrays
+      active_classes=[],
+      active_memberships=[],
+      scheduled_classes=[],
+      // For partner:  These two should always be present as Arrays
+      associated_classes=[],
+      associated_gyms=[],
+    } = this.getAll()
+
+    // These should always be present
+    if (this.accountType == 'partner') {
+      this.mergeItems({
+        associated_classes,
+        associated_gyms,
+      })
+    } else {
+      this.mergeItems({
+        active_classes,
+        active_memberships,
+        scheduled_classes,
+      })
+    }
+
+    // Merge common items
+    this.mergeItems({
+      first,
+      last,
+      name: `${first} ${last}`,
+      icon_uri,
+      icon_uri_foreign,
+      icon_uri_full:
+        await publicStorage(uid)
+        || icon_uri_foreign
+        || await publicStorage(icon_uri),
+    })
+
+    // Register this user in cache to have their fields been populated
+    cacheObjPopulatedState.set(true)
   }
   
   /**
@@ -126,6 +180,8 @@ export default class User extends DataObject {
         associated_gyms: [],
         revenue: 0,
         revenue_total: 0,
+        stream_key: null,
+        playback_id: null,
       })
     } else {
       this.mergeItems({
@@ -142,47 +198,12 @@ export default class User extends DataObject {
     ])
   }
 
+  /**
+   * Main user data retrieval function
+   */
   async retrieveUser() {
     await this.init()
-    const uid = this.uid
-
-    const {
-      first,
-      last,
-      icon_uri='default-icon.png',
-      icon_uri_foreign,
-      // For user:  These three should always be present as Arrays
-      active_classes=[],
-      active_memberships=[],
-      scheduled_classes=[],
-      // For partner:  These two should always be present as Arrays
-      associated_classes=[],
-      associated_gyms=[],
-    } = this.getAll()
-
-    // These should always be present, therefore merging with the main doc is fine here,
-    // otherwise foreign objects should not be merged (such as name, icon_uri_full).
-    if (this.accountType == 'partner') {
-      this.mergeItems({
-        associated_classes,
-        associated_gyms,
-      })
-    } else {
-      this.mergeItems({
-        active_classes,
-        active_memberships,
-        scheduled_classes,
-      })
-    }
-
-    return {
-      ...this.getAll(),
-      name: `${first} ${last}`,
-      icon_uri_full:
-        await publicStorage(uid)
-        || icon_uri_foreign
-        || await publicStorage(icon_uri),
-    }
+    return this.getAll()
   }
 
   async retrievePaymentMethods() {
@@ -205,22 +226,39 @@ export default class User extends DataObject {
 
   async retrievePastTransactions() {
     await this.init()
-    const cacheObj = cache(`${this.collection}/${this.uid}/payments`)
+    const cacheObjPayments = cache(`${this.collection}/${this.uid}/payments`)
+    const cacheObjSubs = cache(`${this.collection}/${this.uid}/subscriptions`)
 
     // If already cached => return that
-    const data = cacheObj.get() || []
-    if (data.length) return data
+    const paymentsAreCached = cacheObjPayments.get() // undefined, if 404
+    const subsAreCached = cacheObjSubs.get() // undefined, if 404
 
-    // Retrieve from database
-    const payments = (await this._getPaymentsDbRef().get())
-      .docs.map(doc => doc.data())
+    // Retrieve from database, where applicable
+    if (!paymentsAreCached) {
+      let payments = ( await this._getPaymentsDbRef().get() )
+        .docs.map(doc => doc.data())
+      
+      // Cache it
+      cacheObjPayments.set(payments)
+    }
+    if (!subsAreCached) {
+      let subs = ( await this._getSubsDbRef().get() )
+        .docs.map(doc => doc.data())
 
-    // Cache it
-    cacheObj.set(payments)
+      // Cache it
+      cacheObjSubs.set(subs)
+    }
 
-    return payments
+    // Return both types of transactions
+    return [
+      ...(cacheObjPayments.get() || []),
+      ...(cacheObjSubs.get() || []),
+    ]
   }
 
+  /**
+   * @returns {Array<Class>} An `Array` of backend `Class` objects
+   */
   async retrieveClasses() {
     await this.init()
     const collection = new ClassesCollection()
@@ -236,20 +274,30 @@ export default class User extends DataObject {
     if (this.accountType == 'partner') {
       relevantClasses = associated_classes
     } else {
+      // Extract the class_id from an Array of Objects containing class_id and time_id
+      let classIdsActive = active_classes.map(it => it.class_id)
+      let classIdsScheduled = scheduled_classes.map(it => it.class_id)
       // Combine and remove duplicates
-      relevantClasses = [...new Set([...active_classes, ...scheduled_classes])]
+      relevantClasses = [...new Set([...classIdsActive, ...classIdsScheduled])]
     }
+
+    // console.log("relevantClasses", relevantClasses) // DEBUG
 
     const classes = await collection.retrieveWhere('id', 'in', relevantClasses)
     return classes
   }
 
+  /**
+   * @returns {Array<Class>} An `Array` of backend `Class` objects
+   */
   async retrieveScheduledClasses() {
     await this.init()
     const collection = new ClassesCollection()
     const { scheduled_classes=[] } = this.getAll()
 
-    const classes = await collection.retrieveWhere('id', 'in', scheduled_classes)
+      // Extract the class_id from an Array of Objects containing class_id and time_id
+    let classIds = scheduled_classes.map(it => it.class_id)
+    const classes = await collection.retrieveWhere('id', 'in', classIds)
     return classes
   }
 
@@ -364,8 +412,8 @@ export default class User extends DataObject {
         time_id: timeId,
       }
       this.mergeItems({
-        active_classes: [active_classes, newEntry],
-        scheduled_classes: [scheduled_classes, newEntry],
+        active_classes: [...active_classes, newEntry],
+        scheduled_classes: [...scheduled_classes, newEntry],
       })
       await this.push()
     })
@@ -480,7 +528,7 @@ export default class User extends DataObject {
 
       // Register membership
       this.mergeItems({
-        active_memberships: [active_memberships, membershipId],
+        active_memberships: [...active_memberships, membershipId],
       })
       await this.push()
     })
@@ -528,16 +576,17 @@ export default class User extends DataObject {
    * Creates livestream for user, assigns it to them,
    * if it hasn't already been created & assigned.
    */
-  async createLivestream() {
+  async createLivestream(details) {
     return await this._BusyErrorWrapper('createLivestream', async () => {
       await this.init()
+      let { gymId } = details
       const { stream_key } = this.getAll()
 
       if (stream_key) return stream_key
 
       // Call Google Cloud Function, which creates LS & assigns it to user
       const createLivestream = functions().httpsCallable('createLivestream')
-      await createLivestream()
+      await createLivestream({ gymId })
 
       // Attempt many times to get it from the field, because it may not be
       // there instantly, or in the worst case – at all
@@ -621,6 +670,13 @@ export default class User extends DataObject {
       .collection('stripe_customers')
       .doc(this.uid)
       .collection('payments')
+  }
+
+  _getSubsDbRef() {
+    return firestore()
+      .collection('stripe_customers')
+      .doc(this.uid)
+      .collection('subscriptions')
   }
 }
 

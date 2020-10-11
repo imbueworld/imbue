@@ -29,6 +29,7 @@ export default function MenuPanel(props) {
             }}>
 
                 <ScrollView
+                    showsVerticalScrollIndicator={false}
                     contentContainerStyle={styles.scrollViewContainer}
                     style={[
                         styles.panelContainer,

@@ -38,6 +38,7 @@ export default function PaymentSettings(props) {
 
   return (
     <KeyboardAwareScrollView
+      showsVerticalScrollIndicator={false}
       style={{ backgroundColor: '#f9f9f9' }}
       resetScrollToCoords={{ x: 0, y: 0 }}
 

@@ -3,7 +3,7 @@ import { View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
 import { publicStorage } from '../backend/BackendFunctions'
 import Icon from './Icon'
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -45,10 +45,10 @@ export default function AttendeeCard({ icon_uri, first, last }) {
                 position: "absolute",
                 width: "100%",
                 flexShrink: 1,
+                ...FONTS.body,
                 color: colors.buttonAccent,
                 textAlign: "center",
                 fontSize: 18,
-                ...FONTS.body,
             }}>{`${first || ""}${last ? " " : ""}${last || ""}`}</Text>
         </View>
     )

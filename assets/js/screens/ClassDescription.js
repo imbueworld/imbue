@@ -9,7 +9,7 @@ import ClassApprovalBadge from '../components/ClassApprovalBadge'
 
 import GymLayout from '../layouts/GymLayout'
 import { colors } from "../contexts/Colors"
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
@@ -32,10 +32,8 @@ export default function ClassDescription(props) {
 
   const [popup, setPopup] = useState(false)
   const [PopupCCNotFound, PopupCCNotFoundCreate] = useState(null)
-  const [PopupBuy, PopupBuyCreate] = useState(null)
 
   const [hasMembership, setHasMembership] = useState(null)
-  const [selectedCard, selectCard] = useState(null)
 
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
@@ -58,9 +56,8 @@ export default function ClassDescription(props) {
 
       const gym = new Gym()
       setGym(await gym.retrieveGym(classGymId))
-    }
-    init()
-  }, [])
+    }; init()
+  }, [r])
   
   let activeClassesCount = user
     ? user.active_classes
@@ -190,11 +187,13 @@ export default function ClassDescription(props) {
 
   if (!gym || !user || !classDoc) return <View />
 
+  console.log("ClassDescription user", user) // DEBUG
+
   // helper variable
   const classIsAddedToCalendar =
     user.account_type == 'user'
     ? user.scheduled_classes
-        .map(active => active.time_id)
+        .map(it => it.time_id)
         .includes(timeId)
     : null
   
@@ -308,6 +307,7 @@ export default function ClassDescription(props) {
                     refresh(r + 1)
 
                   } catch(err) {
+                    console.error(err.message) // DEBUG
                     switch (err.code) {
                       case "busy":
                         setErrorMsg(err.message)
@@ -386,18 +386,14 @@ const styles = StyleSheet.create({
   //   borderColor: colors.gray,
   // },
   nameText: {
+    ...FONTS.title,
     textAlign: "center",
     fontSize: 27,
-    fontFamily: fonts.default,
-    // ...FONTS.title,
-    // ...FONTS.luloClean,
   },
   instructorText: {
+    ...FONTS.subtitle,
     textAlign: "center",
     fontSize: 22,
-    fontFamily: fonts.default,
-    // ...FONTS.subtitle,
-    // ...FONTS.luloClean,
   },
   // timeContainer: {
   //   marginTop: 20,
@@ -409,11 +405,9 @@ const styles = StyleSheet.create({
   //   borderColor: colors.gray,
   // },
   timeText: {
+    ...FONTS.subtitle,
     fontSize: 18,
     textAlign: "center",
-    fontFamily: fonts.default,
-    // ...FONTS.subtitle,
-    // ...FONTS.luloClean,
   },
   descContainer: {
     // marginTop: 10,
@@ -426,10 +420,8 @@ const styles = StyleSheet.create({
     // borderColor: colors.gray,
   },
   descText: {
+    ...FONTS.body,
     fontSize: 16,
     textAlign: "justify",
-    fontFamily: fonts.default,
-    // ...FONTS.body,
-    // ...FONTS.luloClean,
   },
 })

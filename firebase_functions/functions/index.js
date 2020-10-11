@@ -1,6 +1,7 @@
 'use strict';
 
-const XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest
+const algoliasearch = require('algoliasearch')
+const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 admin.initializeApp();
@@ -12,45 +13,19 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-03-02',
 });
 
-const MUX_TOKEN_ID = "45fba3d3-8c60-48c6-a767-e87270351be8"
-const MUX_TOKEN_SECRET = "XRuq11za83MwMYHgbhYYKwktVG7v0bkmHajeB2YglnRZhzPyN85XL5C3oKAog2oGUS3yzo9i9EP"
+const MUX_TOKEN_ID = '45fba3d3-8c60-48c6-a767-e87270351be8'
+const MUX_TOKEN_SECRET = 'XRuq11za83MwMYHgbhYYKwktVG7v0bkmHajeB2YglnRZhzPyN85XL5C3oKAog2oGUS3yzo9i9EP'
 
 const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 
+const ALGOLIA_ID = 'K75AA7U1MZ'
+const ALGOLIA_ADMIN_KEY = 'adc88238cd4fee1c06aec6f83f594870'
+const ALGOLIA_SEARCH_KEY = 'c25a5639752b7ab096eeba92f81e99b6'
+
+const ALGOLIA_GYM_INDEX = 'gyms'
+const algoliaClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
 
 
-/**
- * Geocodes text address into a { lat, long } using Google's Geocoding API.
- * Validates whether address is a street address.
- * Returns coordinates or null.
- */
-// exports.geocodeAddress = functions.https.onCall(async (data, context) => {
-//   const { address } = data
-//   let geolocation
-
-//   let xhr = new XMLHttpRequest()
-//   xhr.onload = async () => {
-//     console.log("xhr onload firing ..")
-//     const res = JSON.parse(xhr.responseText)
-//     console.log("res", res)
-//     geolocation = res.results.geometry.location
-//   }
-
-//   xhr.open(
-//     'GET',
-//     `https://maps.googleapis.com/maps/api/geocode/json`
-//     + `?address=${address}`
-//     + `&key=${GOOGLE_API_KEY}`)
-  
-//   // await xhr.send()
-//   xhr.send()
-
-//   // console.log("probably not finished yet, although await has been used", xhr.responseText)
-//   console.log("probably not finished yet", xhr.responseText)
-
-//   await new Promise(r => setTimeout(r, 4500))
-//   return geolocation || null
-// })
 
 exports.createLivestream = functions.https.onCall(async (data, context) => {
   const { uid } = context.auth
@@ -85,9 +60,13 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
     //   .set({
     //     playback_id,
     //   }, { merge: true })
+
+    console.log("gymId", gymId)
+    console.log("playback_id", playback_id)
     
     // Making playback_id accessible to users
     await admin
+      .firestore()
       .collection('gyms')
       .doc(gymId)
       .set({
@@ -158,6 +137,40 @@ exports.populateGym = functions.firestore
   .document('gyms/{gymId}')
   .onCreate(async (snap, context) => {
     snap.ref.set({ id: snap.id }, { merge: true })
+
+    // Enabling Algolia-provided search service
+    const gym = snap.data()
+    gym.id = snap.id
+    gym.objectID = snap.id
+
+    // Saving index
+    const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
+    return index.saveObject(gym)
+  })
+
+exports.cleanUpAfterGym = functions.firestore
+  .document('gyms/{gymId}')
+  .onDelete(async (snap, context) => {
+    const { id: gymId } = snap
+
+    // Delete Algolia search index
+    const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
+    return index.deleteObject(gymId)
+  })
+
+exports.updateGym = functions.firestore
+  .document('gyms/{gymId}')
+  .onUpdate(async (snap, context) => {
+    const { id: gymId } = snap.after
+
+    // Update Algolia search index
+    const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
+    return index.partialUpdateObject({
+      ...snap.after.data(),
+      objectID: gymId,
+    }, {
+      createIfNotExists: true,
+    })
   })
 
 /**

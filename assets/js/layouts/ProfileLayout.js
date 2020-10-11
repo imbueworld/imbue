@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-import { StackActions, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import { FONTS } from '../contexts/Styles'
 
 import CustomCapsule from "../components/CustomCapsule"
 import { simpleShadow } from '../contexts/Colors'
-import BackButton from '../components/BackButton'
+import BackButton from '../components/BackButton' 
 import LogOutButton from '../components/buttons/LogOutButton'
 import AppBackground from '../components/AppBackground'
 import Icon from '../components/Icon'
@@ -32,6 +32,7 @@ export default function ProfileLayout(props) {
     const init = async () => {
       const user = new User()
       setUser(await user.retrieveUser())
+      const userSettings = null
     }; init()
   }, [])
 
@@ -42,12 +43,14 @@ export default function ProfileLayout(props) {
       },
       logOut: {
         show: false,
-        onLongPress: () => {
+        onPress: () => {
           auth().signOut()
           GoogleSignin.signOut()
           LoginManager.logOut()
-          const pushAction = StackActions.push("Boot")
-          navigation.dispatch(pushAction)
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Boot' }],
+          })
         },
       },
       editPfp: {
@@ -65,8 +68,6 @@ export default function ProfileLayout(props) {
     setButtonOptions(defaultButtonOptions)
   }, [])
 
-
-
   if (!user || !buttonOptions) return <View />
 
   return (
@@ -80,7 +81,8 @@ export default function ProfileLayout(props) {
       borderRadius: 40,
     }}/>
 
-    <KeyboardAwareScrollView
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollView}
         keyboardShouldPersistTaps="handled"
         alwaysBounceVertical={false} 
@@ -114,14 +116,16 @@ export default function ProfileLayout(props) {
         }}>
           {buttonOptions.editPfp.show
           ? <EditButton
-              containerStyle={{
-                top: 145,
-                left: 65,
-              }}
-              onPress={() => pickAndUploadFile(setErrorMsg)}
-              // [uncomment upon DEBUG start]
-              // onLongPress={() => pickAndUploadFile(setErrorMsg)}
-              // [comment upon DEBUG end]
+                containerStyle={{
+                  top: 145,
+                  left: 65,
+                }}
+                onPress={async () =>
+                  pickAndUploadFile()
+                  // [uncomment upon DEBUG start]
+                  // onLongPress={() => pickAndUploadFile(setErrorMsg)}
+                  // [comment upon DEBUG end]
+                }
             />
           : null}
         </View>
@@ -196,9 +200,8 @@ const styles = StyleSheet.create({
     // marginTop: 15,
     marginBottom: 10,
     alignSelf: "center",
-    fontSize: 22,
-    // fontFamily: fonts.default,
     ...FONTS.title,
+    fontSize: 22,
   },
   sidePanelButtonContainer: {
     ...simpleShadow,

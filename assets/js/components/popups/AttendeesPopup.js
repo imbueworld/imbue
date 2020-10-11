@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import CustomPopup from '../CustomPopup'
 import { publicStorage } from '../../backend/BackendFunctions'
-import { fonts } from '../../contexts/Styles'
+import { FONTS } from '../../contexts/Styles'
 import { ScrollView } from 'react-native-gesture-handler'
 import AttendeeCard from '../AttendeeCard'
 import { colors } from '../../contexts/Colors'
@@ -131,7 +131,7 @@ s
         borderRadius: 30,
         backgroundColor: colors.buttonAccent,
       }}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{
             marginVertical: 20,
           }}>
@@ -165,14 +165,14 @@ s
 const styles = StyleSheet.create({
   title: {
     paddingHorizontal: "6%",
+    ...FONTS.title,
     textAlign: "center",
     fontSize: 20,
-    fontFamily: fonts.default,
   },
   subtitle: {
     paddingHorizontal: "6%",
+    ...FONTS.subtitle,
     textAlign: "center",
     fontSize: 14,
-    fontFamily: fonts.default,
   },
 })

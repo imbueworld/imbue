@@ -5,6 +5,7 @@ import CollectionObject from '../backend/storage/CollectionObject';
 import Gym from '../backend/storage/Gym'
 import cache from '../backend/storage/cache';
 import User from '../backend/storage/User';
+import STRUCTURE from '../backend/storage/STRUCTURE';
 
 
 
@@ -12,7 +13,7 @@ export default function _TestingGrounds(props) {
   useEffect(() => {
     const init = async () => {
       const p = console.log
-      let x
+      let x, y
     }; init()
   }, [])
 

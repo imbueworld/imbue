@@ -265,11 +265,11 @@ export function classType(type) {
  * Permission checking, primarily for Android,
  * any potential iOS stuff can also be added.
  * 
- * @param {Object[]} perms
+ * @param {Array<String>} perms
  * 
- * @returns {(Object[] | null)}
+ * @returns {(Array<String> | null)}
  * `null`, if all permissions were fulfilled, or
- * `Array` of permissions that were not.
+ * an `Array` of permissions that were not.
  */
 export async function requestPermissions(perms) {
   if (Platform.OS = 'android') {

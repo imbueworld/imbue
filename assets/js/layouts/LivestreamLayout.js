@@ -263,28 +263,28 @@ export default function LivestreamLayout(props) {
 
   function setDeck(state) {
     // [uncomment upon DEBUG start]
-    // buttonOptions.viewButtonPanel.state = "open"
-    // refresh(r => r + 1)
+    buttonOptions.viewButtonPanel.state = "open"
+    refresh(r => r + 1)
     // [comment upon DEBUG end]
     
     // [comment upon DEBUG start]
-    clearTimeout(buttonOptions.viewButtonPanel.data)
-    buttonOptions.viewButtonPanel.state = state
+    // clearTimeout(buttonOptions.viewButtonPanel.data)
+    // buttonOptions.viewButtonPanel.state = state
 
-    if (state === "open") {
-      let timeout = setTimeout(() => {
-        if (buttonOptions.viewChat.state === "open"
-            ||buttonOptions.viewParticipants.state === "open") {
-            return
-          }
+    // if (state === "open") {
+    //   let timeout = setTimeout(() => {
+    //     if (buttonOptions.viewChat.state === "open"
+    //         ||buttonOptions.viewParticipants.state === "open") {
+    //         return
+    //       }
 
-        buttonOptions.viewButtonPanel.state = "closed"
-        refresh(r => r + 1)
-      }, 4500)
-      buttonOptions.viewButtonPanel.data = timeout
-    }
+    //     buttonOptions.viewButtonPanel.state = "closed"
+    //     refresh(r => r + 1)
+    //   }, 4500)
+    //   buttonOptions.viewButtonPanel.data = timeout
+    // }
 
-    refresh(r => r + 1)
+    // refresh(r => r + 1)
     // [uncomment upon DEBUG end]
   }
 

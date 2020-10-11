@@ -64,7 +64,7 @@ export default function PartnerSignUp(props) {
   }
 
   return (
-    <KeyboardAwareScrollView contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
+    <KeyboardAwareScrollView showsVerticalScrollIndicator={false} contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
       {/* back button */}
       <TouchableHighlight
         style={styles.sidePanelButtonContainer}
@@ -86,10 +86,10 @@ export default function PartnerSignUp(props) {
         <Text style={{
           marginTop: 20,
           marginBottom: 20,
+          ...FONTS.title,
           alignSelf: "center",
           fontSize: 25,
           color: colors.gray,
-          ...FONTS.title,
         }}>Partner Sign Up</Text>
 
         {errorMsg

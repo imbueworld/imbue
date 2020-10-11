@@ -10,7 +10,6 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
 
-import { initializeAccount } from "../backend/BackendFunctions"
 import { handleAuthError } from '../backend/HelperFunctions'
 import SocialLogin from '../components/SocialLogin'
 import { StackActions, useNavigation } from '@react-navigation/native'
@@ -63,6 +62,7 @@ export default function SignUp(props) {
 
   return (
     <KeyboardAwareScrollView
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"
       alwaysBounceVertical={false} 

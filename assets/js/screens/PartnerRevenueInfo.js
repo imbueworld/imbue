@@ -57,10 +57,9 @@ export default function PartnerRevenueInfo(props) {
       <Text style={{
         paddingTop: 15,
         paddingBottom: 10,
+        ...FONTS.subtitle,
         textAlign: "center",
         fontSize: 22,
-        // fontFamily: fonts.default,
-        ...FONTS.subtitle,
       }}>Payouts</Text>
       <CustomButton
         title="Bank Account"

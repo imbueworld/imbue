@@ -1,6 +1,15 @@
+import React, { useEffect, useState } from 'react'
 import storage from '@react-native-firebase/storage'
 import config from '../../../App.config'
 import cache from './storage/cache'
+import algoliasearch from 'algoliasearch'
+import ImagePicker from 'react-native-image-picker';
+
+
+
+const ALGOLIA_ID = 'K75AA7U1MZ'
+const ALGOLIA_SEARCH_KEY = 'c25a5639752b7ab096eeba92f81e99b6'
+const ALGOLIA_GYM_INDEX = 'gyms' 
 
 
 
@@ -10,7 +19,13 @@ const defaultFnOptions = {
   },
 }
 
-
+useEffect(() => {
+  const init = async () => {
+    const user = new User()
+    setUser(await user.retrieveUser())
+    userSettings = cache(`${user}`)
+  }; init()
+}, [])
 
 /**
  * allowed_return_type in options can be set to null to avoid using this filter.
@@ -73,12 +88,52 @@ export function geocodeAddress(address, callback=(() => {}), options=defaultFnOp
  * to retrieve a file from Google Cloud Storage.
  */
 export async function publicStorage(fileName) {
+  if (!fileName) return ''
+
   let file = cache(`files/${fileName}`).get()
-  if (!file || !fileName) {
+  if (!file) {
     try {
       file = await storage().ref(fileName).getDownloadURL()
       cache(`files/${fileName}`).set(file)
     } catch (err) { }
   }
   return file || ''
+}
+
+
+
+/**
+ * Searches gyms with Algolia search service.
+ * 
+ * @param {String} query
+ */
+export async function algoliaSearch(query) {
+  const client = algoliasearch(ALGOLIA_ID, ALGOLIA_SEARCH_KEY)
+  const index = client.initIndex(ALGOLIA_GYM_INDEX)
+  return await index.search(query)
+}
+
+
+// Selects photo from camera roll for profile photos
+export function pickAndUploadFile(user) {
+  ImagePicker.showImagePicker((response) => {
+    console.log('Response = ', response);
+
+    if (response.didCancel) {
+      console.log('User cancelled image picker');
+    } else if (response.error) {
+      console.log('ImagePicker Error: ', response.error);
+    } else if (response.customButton) {
+      console.log('User tapped custom button: ', response.customButton);
+    } else {
+      const source = { uri: response.uri };
+      userSettings.set({ icon_uri: source })
+      console.log("user img: " + user.icon_uri)
+      
+      return source
+
+      // You can also display the image using data:
+      // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+    }
+  });
 }
