@@ -23,23 +23,34 @@ const STRUCTURE = {
     icon_uri_foreign: String,
     revenue: Number,
     revenue_total: Number,
+    //
+    company_address: Object,
+    company_name: String,
+    tax_id: String,
+    //
+    phone: String,
+    dob: Object,
+    address: Object,
+    formatted_address: String,
+    ssn_last_4: String,
     // Fields not meant for editting
     // id: String,
   }),
   gyms: Object.freeze({
-    active_clients_memberships: Array,
     name: String,
     description: String,
     genres: Array,
-    address: String,
+    address: Object,
+    formatted_address: String,
     membership_price: Number,
     coordinate: Object,
     icon_uri: String,
     image_uris: Array,
+    // Core fields
+    partner_id: String,
+    product_id: String,
     // Fields not meant for editting
     // id: String,
-    // partner_id: String,
-    // product_id: String,
   }),
   classes: Object.freeze({
     active_times: Array,
@@ -49,10 +60,28 @@ const STRUCTURE = {
     genres: Array,
     type: String,
     price: Number,
+    // Core fields
+    gym_id: String,
+    partner_id: String,
     // Fields not meant for editting
     // id: String,
-    // gym_id: String,
-    // partner_id: String,
+  }),
+  
+  // Uid == User uid
+  membership_instances: Object.freeze({
+    // Fields not meant for editting
+    // id: String,
+  }),
+  // Uid == Date, in format of `mm_dd_yyyy`
+  'membership_instances/visits': Object.freeze({
+    //////////////////// Fields not meant for editting
+    begin_time: Number, // milliseconds timestamp
+    end_time: Number, // milliseconds timestamp
+  }),
+  // Uid == Gym uid
+  'membership_instances/visits/gyms': Object.freeze({
+    times_scheduled: Number,
+    times_visited: Number,
   }),
 }
 

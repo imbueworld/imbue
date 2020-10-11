@@ -13,6 +13,8 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-03-02',
 });
 
+
+
 const MUX_TOKEN_ID = '45fba3d3-8c60-48c6-a767-e87270351be8'
 const MUX_TOKEN_SECRET = 'XRuq11za83MwMYHgbhYYKwktVG7v0bkmHajeB2YglnRZhzPyN85XL5C3oKAog2oGUS3yzo9i9EP'
 
@@ -27,17 +29,86 @@ const algoliaClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
 
 
 
+const users = admin.firestore().collection('users')
+const partners = admin.firestore().collection('partners')
+const classes = admin.firestore().collection('classes')
+const gyms = admin.firestore().collection('gyms')
+//
+const membership_instances = admin.firestore().collection('membership_instances')
+const stripe_customers = admin.firestore().collection('stripe_customers')
+const stripe_products = admin.firestore().collection('stripe_products')
+const stripe_prices = admin.firestore().collection('stripe_prices')
+
+
+
+function _extractOnlyData(snapshots) {
+  snapshots.forEach((item, idx, arr) => {
+    arr[ idx ] = item.data() || {}
+  })
+  return snapshots
+}
+
+/**
+ * @returns {String} `mm-dd-yyy`
+ */
+function getEndStringDateOfLastMonth(offset=0) {
+  const currentUTCDate = new Date()
+  // Last day of last month format, turning it into
+  const formattedUTCDate = new Date(Date.UTC(
+    currentUTCDate.getUTCFullYear(),
+    currentUTCDate.getUTCMonth() + offset,
+    0
+  ))
+
+  let mm = (formattedUTCDate.getUTCMonth() + 1).toString()
+  if (mm.length < 2) mm = `0${mm}` // ascertain two digits
+  let dd = formattedUTCDate.getUTCDate().toString()
+  if (dd.length < 2) dd = `0${dd}` // ascertain two digits
+  let yyyy = formattedUTCDate.getUTCFullYear()
+
+  return `${mm}_${dd}_${yyyy}`
+}
+
+
+
+/**
+ * Calculates all payout information for each gym by going through
+ * membership_instances collection.
+ * 
+ * Objectives for full formula calculation (per user):
+ * -  Calculate total visits for user,
+ * -  Calculate total visits to all other gyms (per gym),
+ * -  Pull gym membership price (per gym),
+ * 
+ * Write and Read data:
+ * -  ..
+ * -  ..
+ * Total: 
+ */
+// exports.calculatePayouts = functions.https.onCall(async (data, context) => {
+//   async function getBatch(last='') {
+//     return (await membership_instances
+//       .orderBy('id')
+//       .startAfter(last)
+//       .limit(50)
+//       .get()
+//     ).docs
+//   }
+
+//   let lastFirebaseDoc
+
+//   const docs = await getBatch(lastFirebaseDoc)
+// })
+
 exports.createLivestream = functions.https.onCall(async (data, context) => {
   const { uid } = context.auth
   const { gymId } = data
 
-  // console.log("[START]")
   let xhr = new XMLHttpRequest()
   xhr.onload = async () => {
-    // console.log("[START OF ONLOAD SCOPE]")
     let data = JSON.parse(xhr.responseText).data
     let { stream_key, playback_ids } = data
-    let playback_id = playback_ids[0].id
+    let playback_id = playback_ids[ 0 ].id
 
     // Saving of the stream_key,
     // and playback_id, just in case it is ever needed for partner
@@ -49,20 +120,6 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
         stream_key,
         playback_id,
       }, { merge: true })
-
-    // Public portion
-    // await admin
-    //   .firestore()
-    //   .collection("partners")
-    //   .doc(uid)
-    //   .collection("public")
-    //   .doc("livestream")
-    //   .set({
-    //     playback_id,
-    //   }, { merge: true })
-
-    console.log("gymId", gymId)
-    console.log("playback_id", playback_id)
     
     // Making playback_id accessible to users
     await admin
@@ -72,7 +129,6 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
       .set({
         playback_id,
       }, { merge: true })
-    console.log("[END OF ONLOAD SCOPE]")
   }
 
 
@@ -89,18 +145,6 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
   }))
 
   await new Promise(r => setTimeout(r, 4500))
-  // console.log("[END OF MAIN SCOPE]")
-})
-
-exports.listenToLivestreams = functions.https.onCall(async (data, context) => {
-  console.log("[START listenToLivestreams]")
-  
-  console.log("data", data)
-  // This function does not work,
-  // maybe have to upgrade Node.js version
-  // (error: Too many fields in body, idk what it mean)
-
-  console.log("[END listenToLivestreams]")
 })
 
 /**
@@ -110,12 +154,8 @@ exports.listenToLivestreams = functions.https.onCall(async (data, context) => {
  */
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
-  // const intent = await stripe.setupIntents.create({
-  //   customer: customer.id,
-  // });
   await admin.firestore().collection('stripe_customers').doc(user.uid).set({
     customer_id: customer.id,
-    // setup_secret: intent.client_secret,
   });
 
   const defaultIcon = "default-icon.png"
@@ -129,6 +169,102 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
 
   return;
 });
+
+exports.createStripeSeller = functions.https.onCall(async (data, context) => {
+  const p = console.log
+  const e = console.error
+
+  const { auth: { uid } } = context
+  const {
+    // Company details
+    company_address,
+    company_name,
+    product_description,
+    tax_id,
+
+    // Person details
+    first: first_name,
+    last: last_name,
+    email,
+    phone,
+    dob,
+    address,
+    ssn_last_4,
+
+    // TOS agreement
+    ip,
+  } = data
+  const CURRENT_TS = Math.floor(Date.now() / 1000)
+
+  // Create Custom Stripe account
+  const newStripeAccount = await stripe.accounts.create({
+    type: 'custom',
+    country: company_address.country,
+    email,
+    business_type: 'company',
+    company: {
+      name: company_name,
+      address: company_address,
+      phone,
+      tax_id,
+    },
+    requested_capabilities: [
+      'card_payments',
+      'transfers',
+    ],
+    business_profile: {
+      mcc: '7941', // stands for "Sports Clubs/Fields"
+      product_description,
+    },
+    tos_acceptance: {
+      date: CURRENT_TS,
+      ip,
+    },
+  })
+  
+  // p("newStripeAccount success")
+  const { id: stripe_account_id } = newStripeAccount
+
+  // Create a Stripe Person, linking it to the Custom Account
+  const newStripePerson = await stripe.accounts.createPerson(
+    stripe_account_id,
+    {
+      address,
+      first_name,
+      last_name,
+      email,
+      phone,
+      dob,
+      ssn_last_4,
+      relationship: {
+        title: 'Owner',
+        owner: true,
+        representative: true,
+        executive: true,
+      },
+    }
+  )
+
+  // p("newStripePerson success")
+  const { id: stripe_person_id } = newStripePerson
+  
+  // Update the Custom Account, telling that person has been successfully created
+  await stripe.accounts.update(
+    stripe_account_id,
+    {
+      company: {
+        owners_provided: true,
+        executives_provided: true,
+      },
+    }
+  )
+
+  // Save seller stripe account id to their doc
+  await partners.doc(uid).set({
+    stripe_account_id,
+    stripe_person_id,
+  }, { merge: true })
+})
 
 /**
  * Sets the [id] field inside of the document to that of doc's actual id, for ease of access
@@ -200,141 +336,6 @@ exports.populatePartners = functions.firestore
     snap.ref.set({ id: snap.id }, { merge: true })
   })
 
-
-// exports.initializePartnerAccount = functions.https.onCall(async ({ first, last }, context) => {
-//   const dbRef = admin
-//     .firestore()
-//     .collection("partners")
-
-//   dbRef
-//     .doc(context.auth.uid)
-//     .set({
-//       account_type: "partner",
-//       first,
-//       last,
-//     }, { merge: true })
-// })
-
-// exports.initializeUserAccount = functions.https.onCall(async ({ first, last, email }, context) => {
-//   const dbRef = admin
-//     .firestore()
-//     .collection("users")
-
-//   dbRef
-//     .doc(context.auth.uid)
-//     .set({
-//       account_type: "user",
-//       first,
-//       last,
-//       email,
-//     }, { merge: true })
-// })
-
-// exports.getUserData = functions.https.onCall(async (data, context) => {
-//   const uid = context.auth.uid || null
-//   if (!uid) return null
-//   let userData
-
-//   userData = (await admin
-//     .firestore()
-//     .collection("partners")
-//     .doc(uid)
-//     .get()
-//   ).data()
-
-//   if (userData) return userData
-
-//   userData = (await admin
-//     .firestore()
-//     .collection("users")
-//     .doc(uid)
-//     .get()
-//   ).data()
-
-//   if (userData) return userData
-// })
-
-/**
- * When adding the payment method ID on the client,
- * this function is triggered to retrieve the payment method details.
- * 
- * [DISABLED]
- * Why:   The payment method details are already there, on the assumption that
- *        stripe.customers.createSource() returns the details needed.
- */
-// exports.addPaymentMethodDetails = functions.firestore
-//   .document('/stripe_customers/{userId}/payment_methods/{pushId}')
-//   .onCreate(async (snap, context) => {
-//     try {
-//       const paymentMethodId = snap.data().id;
-//       const paymentMethod = await stripe.paymentMethods.retrieve(
-//         paymentMethodId
-//       );
-//       await snap.ref.set(paymentMethod);
-//       // Create a new SetupIntent so the customer can add a new method next time.
-//       const intent = await stripe.setupIntents.create({
-//         customer: paymentMethod.customer,
-//       });
-//       await snap.ref.parent.parent.set(
-//         {
-//           setup_secret: intent.client_secret,
-//         },
-//         { merge: true }
-//       );
-//       return;
-//     } catch (error) {
-//       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
-//       await reportError(error, { user: context.params.userId });
-//     }
-//   });
-
-/**
- * When a payment document is written on the client,
- * this function is triggered to create the payment in Stripe.
- *
- * @see https://stripe.com/docs/payments/save-and-reuse#web-create-payment-intent-off-session
- * 
- * [DISABLED]
- * Why:   using stripe.charges.create() instead.
- */
-
-// [START chargecustomer]
-
-// exports.createStripePayment = functions.firestore
-//   .document('stripe_customers/{userId}/payments/{pushId}')
-//   .onCreate(async (snap, context) => {
-//     const { amount, currency, payment_method } = snap.data();
-//     try {
-//       // Look up the Stripe customer id.
-//       const customer = (await snap.ref.parent.parent.get()).data().customer_id;
-//       // Create a charge using the pushId as the idempotency key
-//       // to protect against double charges.
-//       const idempotencyKey = context.params.pushId;
-//       const payment = await stripe.paymentIntents.create(
-//         {
-//           amount,
-//           currency,
-//           customer,
-//           payment_method,
-//           off_session: false,
-//           confirm: true,
-//           confirmation_method: 'manual',
-//         },
-//         { idempotencyKey }
-//       );
-//       // If the result is successful, write it back to the database.
-//       await snap.ref.set(payment);
-//     } catch (error) {
-//       // We want to capture errors and render them in a user-friendly way, while
-//       // still logging an exception with StackDriver
-//       console.log(error);
-//       await snap.ref.set({ error: userFacingMessage(error) }, { merge: true });
-//       await reportError(error, { user: context.params.userId });
-//     }
-//   });
-
-// [END chargecustomer]
-
 /**
  * When 3D Secure is performed, we need to reconfirm the payment
  * after authentication has been performed.
@@ -382,7 +383,67 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
     .delete()
 
   return;
-});
+})
+
+exports.cleanUpAfterPartner = functions.firestore
+  .document('partners/{partnerId}')
+  .onDelete(async (snap, context) => {
+    const { stripe_account_id } = snap.data()
+    if (stripe_account_id) {
+      const res = await stripe.accounts.del(stripe_account_id)
+      // const { deleted } = res || {}
+    }
+  })
+
+/**
+ * Must ONLY be called when membership_price has been set in gym doc.
+ */
+exports.createGymProduct = functions.https.onCall(async (data, context) => {
+  const p = console.log
+
+  const { gymId } = data
+
+  const {
+    name: gymName,
+    membership_price: unit_amount,
+  } = (
+    await gyms
+      .doc(gymId)
+      .get()
+  ).data()
+
+  p('gymName', gymName)
+  p('membership_price', unit_amount)
+  if (!unit_amount) {
+    console.error('membership_price not in gym doc.')
+    return
+  }
+
+  const product = await stripe.products.create({
+    id: gymId,
+    name: `Imbue, Gym Online Membership — ${gymName}`,
+    description: `Grants access to all online content that ${gymName} provide.`,
+  })
+
+  const recurringPrice = await stripe.prices.create({
+    product: gymId,
+    currency: 'usd',
+    unit_amount,
+    recurring: {
+      interval: 'month',
+    },
+    nickname: `Monthly price — ${gymName}`, // Dev-side info
+  })
+
+  await Promise.all([
+    stripe_products
+      .doc(gymId)
+      .set(product),
+    stripe_prices
+      .doc(gymId)
+      .set(recurringPrice),
+  ])
+})
 
 /**
  * Adds a payment method for the user.
@@ -433,596 +494,401 @@ exports.addPaymentMethod = functions.https.onCall(async (data, context) => {
 })
 
 /**
- * Charges the user.
- * 
- * params
- *  data: { cardId, amount, description }
+ * One Time Class Purchase
+ * Used to charge a known (added) user's credit card.
  */
-exports.chargeCustomer = functions.https.onCall(async ({ amount, cardId, description }, context) => {
-  const uid = context.auth.uid
+exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, context) => {
+  const p = console.log
 
-  const customerData = (await admin
-    .firestore()
-    .collection("stripe_customers")
-    .doc(uid)
-    .get()
+  const { auth: { uid } } = context
+  const {
+    paymentMethodId,
+    classId,
+    timeId,
+  } = data
+  const IMBUE_PERCENTAGE_CUT = 0.05
+
+  // Do not continue if insufficient parameters
+  if (!paymentMethodId || !classId || !timeId)
+    throw 'Insufficient params.'
+
+  const { active_classes=[] } = (
+    await users
+      .doc(uid)
+      .get()
   ).data()
 
-  const payment = await stripe.charges.create({
-    amount: amount,
-    currency: "usd",
-    customer: customerData.customer_id,
-    source: cardId,
-    description: description,
+  // Do not continue if class, for whatever reason, is already registered.
+  active_classes.forEach(({ class_id, time_id }) => {
+    if (class_id == classId && time_id == timeId)
+      throw 'Class already owned.'
   })
 
-  await admin
-    .firestore()
-    .collection('stripe_customers')
+  const { id: source, customer } = (
+    await stripe_customers
+      .doc(uid)
+      .collection('payment_methods')
+      .doc(paymentMethodId)
+      .get()
+  ).data()
+
+  p('source', source)
+  p('customer', customer)
+
+  const {
+    price: amount,
+    name: className,
+    partner_id: partnerId,
+  } = (
+    await classes
+      .doc(classId)
+      .get()
+  ).data()
+
+  p('price', amount)
+  p('className', className)
+  p('partner_id', partnerId)
+
+  const { stripe_account_id: destination } = (
+    await partners
+      .doc(partnerId)
+      .get()
+  ).data()
+
+  p('stripe_account_id', destination)
+  
+  // variable is INCOMPLETE
+  const application_fee_amount = Math.floor(IMBUE_PERCENTAGE_CUT * amount)
+  p('application_fee_amount', application_fee_amount)
+
+  if (
+    !amount || !customer || !source
+    || !destination || !application_fee_amount
+  ) throw 'Values can\'t be empty.'
+
+  const payment = await stripe.charges.create({
+    currency: 'usd',
+    amount,
+    customer,
+    source,
+    description: `Imbue, One Time Class Purchase — ${className}`,
+    transfer_data: {
+      destination,
+    },
+    application_fee_amount,
+  })
+
+  stripe_customers
     .doc(uid)
     .collection('payments')
-    .add(payment)
-
-  return "200 OK"
+    .doc(payment.id)
+    .set(payment)
 })
 
-exports.subscribeCustomer = functions.https.onCall(async ({ gymId, amount, cardId, description }, context) => {
-  const uid = context.auth.uid
+exports.purchaseMembership = functions.https.onCall(async (data, context) => {
+  const p = console.log
+  const e = console.error
 
-  let customerGet = admin
-    .firestore()
-    .collection("stripe_customers")
-    .doc(uid)
-    .get()
+  const { auth: { uid } } = context
+  const {
+    paymentMethodId,
+    gymId,
+  } = data
 
-  let gymGet = admin
-    .firestore()
-    .collection("gyms")
-    .doc(gymId)
-    .get()
+  p('gymId', gymId)
 
-  let res = await Promise.all([
-    customerGet,
-    gymGet,
-  ])
+  // Do not continue if insufficient parameters have been provided.
+  if (!paymentMethodId || !gymId) throw 'Insufficient params.'
 
-  const customer = res[0].data()
-  const gymDoc = res[1].data()
-  
-  let productId = gymDoc.product_id || null
-  if (!productId) {
-    const product = await stripe.products.create({
-      name: `${gymDoc.name} Gym Online Membership`,
-      description: `Grants access to all online content that the gym provides.`,
-    })
+  const { active_memberships=[] } = (
+    await users
+      .doc(uid)
+      .get()
+  ).data()
 
-    admin.firestore().collection("gyms").doc(gymId).set({
-      product_id: product.id
-    }, { merge: true })
-
-    productId = product.id
-    console.log(`[${gymDoc.id}] Creating new Product Object`)
-  } else console.log(`[${gymDoc.id}] Using existing Product Object`)
-
-  const sub = await stripe.subscriptions.create({
-    customer: customer.customer_id,
-    items: [
-      {
-        price_data: {
-          currency: "usd",
-          product: productId,
-          recurring: {
-            interval: "month",
-          },
-          unit_amount: amount,
-        },
-      }
-    ],
-    default_source: cardId,
-    metadata: {
-      description,
-      gym_id: gymId,
-    },
+  // Do not continue if, for whatever reason, membership is already owned.
+  active_memberships.forEach(gym_id => {
+    if (gym_id == gymId) throw 'Membership already owned.'
   })
 
-  await admin
-    .firestore()
-    .collection('stripe_customers')
+  const [
+    { customer, id: default_source },
+    { id: price },
+    { partner_id: partnerId },
+  ] = _extractOnlyData(
+    await Promise.all([
+      stripe_customers
+        .doc(uid)
+        .collection('payment_methods')
+        .doc(paymentMethodId)
+        .get(),
+      stripe_prices
+        .doc(gymId)
+        .get(),
+      gyms
+        .doc(gymId)
+        .get(),
+    ])
+  )
+
+  p('partnerId', partnerId)
+
+  const { stripe_account_id: destination } = (
+    await partners
+      .doc(partnerId)
+      .get()
+  ).data()
+
+  p('customer_id', customer)
+  p('default_source_id', default_source)
+  p('price_id', price)
+  p('destination', destination)
+  if (!customer) e('customer_id not found.')
+  if (!default_source) e('default_source_id not found.')
+  if (!price) e('price_id not found.')
+  if (!destination) e('destination not found.')
+  if (!customer || !default_source
+    || !price || !destination) throw 'Values listed above cannot be empty.'
+  
+  const subscription = await stripe.subscriptions.create({
+    customer,
+    default_source,
+    items: [{ price }],
+    transfer_data: {
+      destination,
+    },
+    application_fee_percent: 5,
+  })
+
+  await Promise.all([
+    stripe_customers
+      .doc(uid)
+      .collection('subscriptions')
+      .doc(gymId)
+      .set(subscription)
+  ])
+})
+
+exports.cancelMembership = functions.https.onCall(async (data, context) => {
+  const { auth: { uid } } = context
+  const { gymId } = data
+
+  const { id: subId } = (
+    await stripe_customers
+      .doc(uid)
+      .collection('subscriptions')
+      .doc(gymId)
+      .get()
+  ).data()
+
+  const subscription = await stripe.subscriptions.del(subId)
+
+  // Update subscription object
+  await stripe_customers
     .doc(uid)
     .collection('subscriptions')
-    .add({
-      ...sub,
-      gym_id: gymId,
+    .doc(gymId)
+    .set(subscription)
+})
+
+/**
+ * Assumes that if 'imbue' is in USER_DOC.active_memberships,
+ * the user is scheduling on the grounds of having Imbue UGM,
+ * otherwise -- Gym Online Membership.
+ * Read more about determining purchase_type inside of fn code.
+ * 
+ * Currently scheduling a class is handled by storing it in
+ * USER_DOC.scheduled_classes (Array).
+ * 
+ * *Perhaps* this should be done by creating Schedule objects inside of a new
+ * collection 'scheduled_classes'.
+ * 
+ * Right now, listening to USER_DOC updates.
+ * 
+ * ____
+ * scheduled_classes is Array == [{ class_id, time_id }, ..]
+ */
+exports.completeClassSignUp = functions.firestore
+  .document('users/{userId}')
+  .onUpdate(async (snap, context) => {
+    const p = console.log
+    
+    const { params: { userId } } = context
+    const {
+      scheduled_classes: prevScheduledClasses,
+      active_classes: prevActiveClasses,
+    } = snap.before.data()
+    const {
+      scheduled_classes: currScheduledClasses,
+      active_classes: currActiveClasses,
+      active_memberships,
+    } = snap.after.data()
+    const timestamp = Date.now()
+    const CURR_END_DATE_STRING = getEndStringDateOfLastMonth(1)
+
+    // Determine new active_classes (related to One Time Class Purchase)
+    const newlyActivatedClasses = currActiveClasses.filter(({
+      class_id,
+      time_id,
+    }) => {
+      let isNew = true
+      prevActiveClasses.forEach(({
+        class_id: class_id_existing,
+        time_id: time_id_existing,
+      }) => {
+        if (
+          class_id == class_id_existing
+          && time_id == time_id_existing
+        ) isNew = false
+      })
+      if (isNew) return true
     })
 
-  return "200 OK"
-})
+    p('newlyActivatedClasses', newlyActivatedClasses)
 
-exports.deleteSubscription = functions.https.onCall(async ({ gymIds }, context) => {
-  const uid = context.auth.uid
-  const collRef = admin
-    .firestore()
-    .collection("stripe_customers")
-    .doc(uid)
-    .collection("subscriptions")
+    /**
+     * purchase_method is determined as follows:
+     * 1. if there is a new item in active_classes,
+     *    assume -- 'class'
+     * 2. otherwise, if 'imbue' in active_memberships,
+     *    assume -- 'imbue_membership'
+     * 3. else,
+     *    assume -- 'gym_membership'
+     */
+    const purchase_method =
+      newlyActivatedClasses.length
+        ? 'class'
+        : active_memberships.includes('imbue')
+            ? 'imbue_membership'
+            : 'gym_membership'
 
-  let updateables = []
-  const subIds = (await collRef
-    .where("gym_id", "in", gymIds)
-    .get()
-  ).docs
-    .filter(doc => doc.data().status === "active")
-    .map(doc => {
-      updateables.push(doc.id)
-      return doc.data().id
+    p('purchase_method', purchase_method)
+
+    // Determine newly scheduled classes (core way of determining new classes)
+    const newlyScheduledClasses = currScheduledClasses.filter(({
+      class_id,
+      time_id,
+    }) => {
+      let isNew = true
+      prevScheduledClasses.forEach(({
+        class_id: class_id_existing,
+        time_id: time_id_existing,
+      }) => {
+        if (
+          class_id == class_id_existing
+          && time_id == time_id_existing
+        ) isNew = false
+      })
+      if (isNew) return true
     })
 
-  let promises
-  promises = []
-  subIds.forEach(id => {
-    promises.push(
-      stripe.subscriptions.del(id)
-    )
+    p('newlyScheduledClasses', newlyScheduledClasses)
+    // If there are no new classes, return
+    if (!newlyScheduledClasses.length) return
+
+    const { first, last, icon_uri } = (
+      await users
+        .doc(userId)
+        .get()
+    ).data()
+
+    const batch = admin.firestore().batch()
+
+    for (let { class_id, time_id } of newlyScheduledClasses) {
+      batch.set(
+        classes
+          .doc(class_id)
+          .collection('active_times')
+          .doc(time_id)
+          .collection('clients')
+          .doc(userId),
+        {
+          purchase_method,
+          timestamp,
+          first,
+          last,
+          icon_uri,
+        }
+      )
+
+      // Increment times_visited in membership_instances to track membership usage by the user
+      const { gym_id: gymId } = ( await classes.doc(class_id).get() ).data()
+      const { membership_price: membership_price_paid } = ( await gyms.doc(gymId).get() ).data()
+
+      p('gymId', gymId)
+      p('membership_price_paid', membership_price_paid)
+      p('CURR_END_DATE_STRING', CURR_END_DATE_STRING)
+
+      batch.set(
+        membership_instances
+          .doc(userId)
+          .collection('visits')
+          .doc(CURR_END_DATE_STRING)
+          .collection('gyms')
+          .doc(gymId),
+        {
+          membership_price_paid,
+          times_visited: admin.firestore.FieldValue.increment(1),
+        },
+        { merge: true }
+      )
+    }
+
+    await batch.commit()
   })
-  let res = await Promise.all(promises)
-
-  promises = []
-  updateables.forEach((id, idx) => {
-    promises.push(
-      collRef.doc(id).update(res[idx])
-    )
-  })
-  await Promise.all(promises)
-})
-
-exports.documentClassPurchase = functions.https.onCall(async ({ classId, timeId, partnerId, amount, user }, context) => {
-  const uid = context.auth.uid
-  const currentTimestamp = Date.now()
-  
-  const activeTimesCollectionRef = admin
-    .firestore()
-    .collection("classes")
-    .doc(classId)
-    .collection("active_times")
-  const clientDocRef = admin
-    .firestore()
-    .collection("classes")
-    .doc(classId)
-    .collection("active_times")
-    .doc(timeId)
-    .collection("clients")
-    .doc(uid)
-  
-  const partnerDocRef = admin
-    .firestore()
-    .collection("partners")
-    .doc(partnerId)
-
-  // Increase pratner's revenue appropriately
-  const partnerDoc = ( await partnerDocRef.get() ).data()
-  let revenue_total = partnerDoc.revenue_total || 0
-  let revenue = partnerDoc.revenue || 0
-  await partnerDocRef
-    .set({
-      revenue_total: revenue_total + amount,
-      revenue: Math.round(revenue + (amount * 0.8))
-    }, { merge: true })
-
-  // Document the user buying the class inside of active_times in the class doc
-  // const user = ( await admin.firestore().collection("users").doc(uid).get() ).data()
-  let { first, last, icon_uri } = user
-  await clientDocRef
-    .set({
-      purchase_timestamp: currentTimestamp,
-      purchase_method: "class",
-      scheduled: true,
-      first,
-      last,
-      icon_uri,
-    }, { merge: true })
-
-  // Get current clients
-  // const timeDoc = (await activeTimesCollectionRef
-  //   .doc(timeId)
-  //   .get()
-  // )
-  // let clients = []
-  // if (timeDoc.exists) clients = timeDoc.data().clients
-
-  // Do not add a duplicate, return if caught
-  // let duplicate = false
-  // clients.forEach(doc => {
-  //   if (doc.user_id === uid) duplicate = true
-  // })
-  // if (duplicate) return
-
-  // Update databases
-  // activeTimesCollectionRef
-  //   .doc(timeId)
-  //   .set({
-  //     clients: [
-  //       ...clients,
-  //       {
-  //         user_id: uid,
-  //         timestamp: currentTimestamp,
-  //         // purchase_method: "class",
-  //       },
-  //     ],
-  //   }, { merge: true })
-})
-
-exports.documentMembershipPurchase = functions.https.onCall(async ({ partnerId, gymId, amount }, context) => {
-  const uid = context.auth.uid
-  // const currentTimestamp = Date.now()
-
-  // partnerId should only be absent on Imbue Universal Gym Membership purchase
-  if (partnerId) {
-    const partnerDocRef = admin
-      .firestore()
-      .collection("partners")
-      .doc(partnerId)
-
-    const partnerDoc = ( await partnerDocRef.get() ).data()
-    let revenue_total = partnerDoc.revenue_total || 0
-    let revenue = partnerDoc.revenue || 0
-    await partnerDocRef
-      .set({
-        revenue_total: revenue_total + amount,
-        revenue: Math.round(revenue + (amount * 0.8))
-      }, { merge: true })
-  }
-
-  const gymDocRef = admin
-    .firestore()
-    .collection("gyms")
-    .doc(gymId)
-  
-  // Get current data
-  const gymDoc = ( await gymDocRef.get() ).data()
-  const activeClientsMemberships = gymDoc.active_clients_memberships || []
-
-  // Do not add duplicate, return if caught
-  if (activeClientsMemberships.includes(uid)) return
-
-  // Update database
-  await gymDocRef.set({
-    active_clients_memberships: [
-      ...activeClientsMemberships,
-      uid
-    ]
-  }, { merge: true })
-})
-
-exports.documentScheduledClass = functions.https.onCall(async ({ classId, timeId, user }, context) => {
-  const uid = context.auth.uid
-  const clientDocRef = admin
-    .firestore()
-    .collection("classes")
-    .doc(classId)
-    .collection("active_times")
-    .doc(timeId)
-    .collection("clients")
-    .doc(uid)
-  
-  // const user = ( await admin.firestore().collection("users").doc(uid).get() ).data()
-  let { first, last, icon_uri } = user
-  
-  await clientDocRef.set({
-    purchase_method: "membership",
-    scheduled: true,
-    first,
-    last,
-    icon_uri,
-  }, { merge: true })
-})
-
-/**
- * Registers for which class the user made the purchase:
- * adds classIds to active_classes for user
- * 
- * Takes data: { classIds }
- */
-// exports.registerClasses = functions.https.onCall(async ({ classIds }, context) => {
-//   const uid = context.auth.uid
-//   let docRef = admin
-//     .firestore()
-//     .collection("users")
-//     .doc(uid)
-
-//   // let activeClasses = []
-//   // try { activeClasses = ( await docRef.get() ).data().active_classes } catch(err) {}
-//   let activeClasses = ( await docRef.get() ).data().active_classes
-//   if (!activeClasses) activeClasses = []
-
-//   await docRef.set({ "active_classes": [...activeClasses, ...classIds] }, { merge: true })
-//   return "200 OK"
-// })
-
-/**
- * Registers for which membership the user made the purchase:
- * adds membershipIds to active_memberships for user
- * 
- * Takes data: { gymIds }
- */
-// exports.registerMemberships = functions.https.onCall(async (data, context) => {
-//   const uid = context.auth.uid
-//   let docRef = admin
-//     .firestore()
-//     .collection("users")
-//     .doc(uid)
-
-//   let activeMemberships = ( await docRef.get() ).data().active_memberships
-//   if (!activeMemberships) activeMemberships = []
-
-//   docRef.set({ "active_memberships": [...activeMemberships, ...data.membershipIds] }, { merge: true })
-//   return "200 OK"
-// })
-
-/**
- * Gets customer data, their payment_methods.
- */
-// exports.getCustomerData = functions.https.onCall(async (data, context) => {
-//   return (await admin
-//     .firestore()
-//     .collection("stripe_customers")
-//     .doc(context.auth.uid)
-//     .collection("payment_methods")
-//     .get()
-//   ).docs.map(doc => doc.data())
-// })
-
-/**
- * Gets customer data, their payments
- */
-// exports.getUserTransactions = functions.https.onCall(async (data, context) => {
-//   return (await admin
-//     .firestore()
-//     .collection("stripe_customers")
-//     .doc(context.auth.uid)
-//     .collection("payments")
-//     .get()
-//   ).docs.map(doc => doc.data())
-// })
-
-/**
- * Gets markers for gyms in database
- * Optionally, takes data -- { gymIds: [..] }
- */
-// exports.getGyms = functions.https.onCall(async ({ gymIds }, context) => {
-//   let collRef = admin
-//     .firestore()
-//     .collection("gyms")
-
-//   let docs
-//   // Optionally, filters the data
-//   if (gymIds) docs = ( await collRef.get() ).docs.filter(doc => gymIds.includes(doc.id))
-//   else docs = ( await collRef.get() ).docs
-
-//   // if (data.gymIds) {
-//   //   docs = docs.filter(doc => data.gymIds.includes(doc.id))
-//   // }
-
-//   return docs.map(doc => {
-//     let data = doc.data()
-//     data.id = doc.id
-//     return data
-//   })
-// })
-
-/**
- * Adds a class to database
- * probably soon to be deprecated, using createClass() instead
- * [DEPRECATED]
- */
-// exports.addClass = functions.https.onCall(async (data, context) => {
-//   await admin
-//     .firestore()
-//     .collection("classes")
-//     .add(data)
-//   return "200 OK"
-// })
-
-/**
- * Creates a new class entity.
- */
-// exports.createClass = functions.https.onCall(async (form, context) => {
-//   const partner_uid = context.auth.uid
-//   form.partner_id = partner_uid
-
-//   await admin
-//     .firestore()
-//     .collection("classes")
-//     .add(form)
-//   return "200 OK"
-// })
-
-/**
- * Populates a class with provided active_dates
- */
-// exports.populateClass = functions.https.onCall(async ({ class_id, active_dates }, context) => {
-//   await admin
-//     .firestore()
-//     .collection("classes")
-//     .doc(class_id)
-//     .set({ active_dates }, { merge: true })
-//   return "200 OK"
-// })
-
-/**
- * Gets classes that are associated with the partner
- */
-// exports.getPartnerClasses = functions.https.onCall(async (data, context) => {
-//   const uid = context.auth.uid
-
-//   return (await admin
-//     .firestore()
-//     .collection("classes")
-//     .get()
-//   ).docs.filter(doc => doc.data().partner_id === uid).map(doc => {
-//     let data = doc.data()
-//     data.id = doc.id
-//     return data
-//   })
-// })
-
-/**
- * Gets active classes for user
- */
-// exports.getUserClasses = functions.https.onCall(async ({ classIds }, context) => {
-//   const uid = context.auth.uid
-
-//   // const activeClasses = (await admin
-//   //   .firestore()
-//   //   .collection("users")
-//   //   .doc(uid)
-//   //   .get()
-//   // ).data()["active_classes"]
-
-//   return (await admin
-//     .firestore()
-//     .collection("classes")
-//     .get()
-//   ).docs.filter(doc => classIds.includes(doc.id)).map(doc => {
-//     let data = doc.data()
-//     data.id = doc.id
-//     return data
-//   })
-// })
-
-/**
- * Gets all classes associated to a gym
- */
-// exports.getGymClasses = functions.https.onCall(async (gymId, context) => {
-//   return (await admin
-//     .firestore()
-//     .collection("classes")
-//     .get()
-//   ).docs.filter(doc => doc.data().gym_id === gymId).map(doc => {
-//     let data = doc.data()
-//     data.id = doc.id
-//     return data
-//   })
-// })
-
-/**
- * Gets membership data based off its key
- */
-// exports.getMemberships = functions.https.onCall(async ({ membershipIds }, context) => {
-//   let docs = (await admin
-//     .firestore()
-//     .collection("memberships")
-//     .get()
-//   ).docs
-
-//   if (membershipIds) {
-//     docs = docs.filter(doc => membershipIds.includes(doc.id))
-//   }
-
-//   return docs.map(doc => {
-//     let data = doc.data()
-//     data.id = doc.id
-//     return data
-//   })
-// })
-
-/**
- * Adds data to a collection
- */
-exports.addDataToUser = functions.https.onCall(async ({ collection, data }, context) => {
-  const uid = context.auth.uid
-
-  await admin
-    .firestore()
-    .collection(collection)
-    .doc(uid)
-    .set(data, { merge: true })
-  return "200 OK"
-})
-
-/**
- * Adds data to a gym
- * Takes
- *    data -- { gymId, data }
- */
-exports.addDataToGym = functions.https.onCall(async ({ gymId, data }, context) => {
-  await admin
-    .firestore()
-    .collection("gyms")
-    .doc(gymId)
-    .set(data, { merge: true })
-  return "200 OK"
-})
-
-/**
- * Gets playbackId for user, from "partners" collection
- */
-exports.getPlaybackId = functions.https.onCall(async ({ gymId }, context) => {
-  // const partnerId = await admin
-  //   .firestore()
-  //   .collection("gyms")
-  //   .where("partner_id", "")
-
-  return (await admin
-    .firestore()
-    .collection("partners")
-    .where("associated_gyms", "array-contains", gymId)
-    .get()
-  ).docs[0].data()["playback_id"]
-})
 
 
 
-/**
- * To keep on top of errors, we should raise a verbose error report with Stackdriver rather
- * than simply relying on console.error. This will calculate users affected + send you email
- * alerts, if you've opted into receiving them.
- */
 
-// [START reporterror]
 
-function reportError(err, context = {}) {
-  // This is the name of the StackDriver log stream that will receive the log
-  // entry. This name can be any valid log stream name, but must contain "err"
-  // in order for the error to be picked up by StackDriver Error Reporting.
-  const logName = 'errors';
-  const log = logging.log(logName);
 
-  // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
-  const metadata = {
-    resource: {
-      type: 'cloud_function',
-      labels: { function_name: process.env.FUNCTION_NAME },
-    },
-  };
+// /**
+//  * To keep on top of errors, we should raise a verbose error report with Stackdriver rather
+//  * than simply relying on console.error. This will calculate users affected + send you email
+//  * alerts, if you've opted into receiving them.
+//  */
 
-  // https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorEvent
-  const errorEvent = {
-    message: err.stack,
-    serviceContext: {
-      service: process.env.FUNCTION_NAME,
-      resourceType: 'cloud_function',
-    },
-    context: context,
-  };
+// function reportError(err, context = {}) {
+//   // This is the name of the StackDriver log stream that will receive the log
+//   // entry. This name can be any valid log stream name, but must contain "err"
+//   // in order for the error to be picked up by StackDriver Error Reporting.
+//   const logName = 'errors';
+//   const log = logging.log(logName);
 
-  // Write the error log entry
-  return new Promise((resolve, reject) => {
-    log.write(log.entry(metadata, errorEvent), (error) => {
-      if (error) {
-        return reject(error);
-      }
-      return resolve();
-    });
-  });
-}
+//   // https://cloud.google.com/logging/docs/api/ref_v2beta1/rest/v2beta1/MonitoredResource
+//   const metadata = {
+//     resource: {
+//       type: 'cloud_function',
+//       labels: { function_name: process.env.FUNCTION_NAME },
+//     },
+//   };
 
-// [END reporterror]
+//   // https://cloud.google.com/error-reporting/reference/rest/v1beta1/ErrorEvent
+//   const errorEvent = {
+//     message: err.stack,
+//     serviceContext: {
+//       service: process.env.FUNCTION_NAME,
+//       resourceType: 'cloud_function',
+//     },
+//     context: context,
+//   };
 
-/**
- * Sanitize the error message for the user.
- */
-function userFacingMessage(error) {
-  return error.type
-    ? error.message
-    : 'An error occurred, developers have been alerted';
-}
+//   // Write the error log entry
+//   return new Promise((resolve, reject) => {
+//     log.write(log.entry(metadata, errorEvent), (error) => {
+//       if (error) {
+//         return reject(error);
+//       }
+//       return resolve();
+//     });
+//   });
+// }
+
+// /**
+//  * Sanitize the error message for the user.
+//  */
+// function userFacingMessage(error) {
+//   return error.type
+//     ? error.message
+//     : 'An error occurred, developers have been alerted';
+// }

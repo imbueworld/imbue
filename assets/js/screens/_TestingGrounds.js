@@ -6,6 +6,7 @@ import Gym from '../backend/storage/Gym'
 import cache from '../backend/storage/cache';
 import User from '../backend/storage/User';
 import STRUCTURE from '../backend/storage/STRUCTURE';
+import { geocodeAddress } from '../backend/BackendFunctions';
 
 
 

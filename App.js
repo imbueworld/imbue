@@ -14,7 +14,7 @@ import UserDashboard from "./assets/js/screens/UserDashboard"
 import ProfileSettings from "./assets/js/screens/ProfileSettings"
 import PaymentSettings from "./assets/js/screens/PaymentSettings"
 import AddPaymentMethod from "./assets/js/screens/AddPaymentMethod"
-import PartnerSignUp from "./assets/js/screens/PartnerSignUp"
+import PartnerSignUpV2 from "./assets/js/screens/PartnerSignUpV2"
 import PartnerDashboard from "./assets/js/screens/PartnerDashboard"
 import PartnerGymSettings from "./assets/js/screens/PartnerGymSettings"
 import PartnerUpdateMemberships from "./assets/js/screens/PartnerUpdateMemberships"
@@ -88,7 +88,7 @@ export default function App() {
         />
         <Stack.Screen
           name="PartnerSignUp"
-          component={PartnerSignUp}
+          component={PartnerSignUpV2}
           initialParams={{}}
         />
         <Stack.Screen
