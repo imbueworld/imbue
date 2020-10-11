@@ -77,7 +77,7 @@ export default function AddPaymentMethod(props) {
   if (!user) return <View />
 
   return (
-    <KeyboardAwareScrollView>
+    <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
       <ProfileLayout
         innerContainerStyle={styles.innerContainer}
       >

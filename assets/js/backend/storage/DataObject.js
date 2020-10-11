@@ -2,6 +2,7 @@ import firestore from '@react-native-firebase/firestore'
 import cache from './cache'
 import { BusyError } from '../Errors'
 import { getRandomId } from '../HelperFunctions'
+import STRUCTURE from './STRUCTURE'
 
 
 
@@ -70,38 +71,57 @@ export default class DataObject {
   }
 
   async push(options={}) {
-    const data = this._getData()
-
     const { forceNew } = options
 
     // It will not be premitted to push manually a new entry,
     // rather the developer has to use the appropriate .create() methods
     if (!this.uid && !forceNew) {
-      console.warn('Push was not done, manual pushing is not permitted. Use or create method: .create()')
+      console.warn('Push was not done, manual pushing is not permitted. Use or create method: .create() for the respective Class (Gym, Class etc.)')
       this.__DEBUG()
       return
     }
 
     let modifiedData = this._getModifiedData()
-    if (!Object.keys(modifiedData).length) return // Do not push an empty doc
+
+    // Curate modified data to match the collection's standard for what
+    // a doc must look like (what fields it must and must not have).
+    // In other words, do not push data that does not adhere to the set structure.
+    const dataToBePushed = {}
+    const structure = STRUCTURE[ this.collection ]
+    for (let item in modifiedData) {
+      // Ascertain that such field is accepted
+      if (!Object.keys(structure).includes(item)) continue
+      // Ascertain that the type checks out
+      if (structure[ item ] !== new Object(modifiedData[ item ]).constructor) {
+        console.warn(`Item '${item}' (${new Object(modifiedData[ item ]).constructor.name}: ${modifiedData[ item ]}) was not pushed to database, because it was not of required type: ${structure[ item ].name}`)
+        continue
+      }
+      dataToBePushed[ item ] = modifiedData[ item ]
+    }
+
+    // console.log("dataToBePushed", dataToBePushed) // DEBUG
+
+    if (!Object.keys(dataToBePushed).length) return // Do not push an empty doc
 
     // If uid is not present, add new entry
     if (!this.uid) {
-      let firebaseDoc = await this._getCollectionDbRef().add(data)
-      this._modifiedFields = [] // update
+
+      let firebaseDoc = await this._getCollectionDbRef().add(dataToBePushed)
+      this._modifiedFields = [] // fields have been synced
 
       // this is important: when changing internal uid here,
       // pass on existing data to the new uid in cache
+      const data = this._getData() // current cache data
       this.uid = firebaseDoc.id
-      this._setData(data)
+      this._setData(data) // assign this data to new location, too
       return firebaseDoc
     }
 
     // Else just merge changed data,
     // by sending only the new data over to the server
     let firebaseDoc = await this._getDocDbRef()
-      .set(modifiedData, { merge: true })
-    this._modifiedFields = [] // update
+      .set(dataToBePushed, { merge: true })
+    this._modifiedFields = [] // fields have been synced
 
     return firebaseDoc
   }

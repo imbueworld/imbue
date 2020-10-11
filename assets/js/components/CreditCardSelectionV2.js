@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import CreditCardBadgeV2 from './CreditCardBadgeV2'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 
 
@@ -60,8 +60,8 @@ export default function CreditCardSelectionV2(props) {
       onPress={() => navigation.navigate("AddPaymentMethod")}
     >
       <Text style={{
+        ...FONTS.luloClean,
         textDecorationLine: "underline",
-        fontFamily: fonts.default,
       }}>Add a new card</Text>
     </TouchableWithoutFeedback>
 
@@ -74,8 +74,8 @@ export default function CreditCardSelectionV2(props) {
       onPress={props.onX || undefined}
     >
       <Text style={{
+        ...FONTS.luloClean,
         textDecorationLine: "underline",
-        fontFamily: fonts.default,
       }}>Cancel</Text>
     </TouchableWithoutFeedback>
 
@@ -90,9 +90,9 @@ export default function CreditCardSelectionV2(props) {
           alignSelf: "center",
         }}>
           <Text style={{
+            ...FONTS.luloClean,
             textAlign: "center",
             fontSize: 20,
-            fontFamily: fonts.default,
           }}>{title}</Text>
         </View>
         : null}
@@ -104,9 +104,9 @@ export default function CreditCardSelectionV2(props) {
         marginBottom: 4,
       }}>
         <Text style={{
+          ...FONTS.luloClean,
           textAlign: "justify",
           fontSize: 12,
-          fontFamily: fonts.default,
         }}>
           To confirm, press and hold the card
           that you wish to make the payment with,
@@ -120,7 +120,7 @@ export default function CreditCardSelectionV2(props) {
         overflow: "hidden",
         ...props.contentContainerStyle,
       }}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {Cards}
         </ScrollView>
       </View>

@@ -1,8 +1,7 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { View, Text } from 'react-native'
 import Icon from '../Icon'
-import { colors } from '../../contexts/Colors'
-import { fonts } from '../../contexts/Styles'
+import { FONTS } from '../../contexts/Styles'
 
 
 
@@ -28,15 +27,13 @@ export default function LiveSoonIcon(props) {
       <Text style={{
         paddingHorizontal: 5,
         position: "absolute",
-        color: "white",
+        bottom: 0,
         backgroundColor: "#00000030",
+        ...FONTS.body,
+        color: "white",
         textAlign: "center",
         textDecorationLine: "underline",
-        bottom: 0,
-        fontFamily: fonts.default,
       }}>in {props.value}min</Text>
     </View>
   )
 }
-
-const styles = StyleSheet.create({})

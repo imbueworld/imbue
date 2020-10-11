@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import { colors } from "../contexts/Colors"
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -59,7 +59,6 @@ const styles = StyleSheet.create({
         fontSize: 14,
     },
     font: {
-        // fontFamily: fonts.default,
         ...FONTS.body,
     },
 })

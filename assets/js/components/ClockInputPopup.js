@@ -55,6 +55,7 @@ export default function ClockInputPopup(props) {
                 fadingEdgeLength={200}
                 ref={scrollViewRef}
                 onScroll={onScroll}
+                
             >
                 {props.children}
             </ScrollView>

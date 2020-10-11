@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, TextInput } from 'react-native'
 import { colors } from '../contexts/Colors'
-import { fonts, FONTS } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   input: {
+    ...FONTS.subtitle,
     height: "100%",
     // paddingVertical: 20,
     paddingTop: 0,
@@ -80,7 +81,6 @@ const styles = StyleSheet.create({
     fontSize: 20,
     zIndex: 100,
     // fontFamily: fonts.default,
-    ...FONTS.subtitle,
   },
   // placeholderContainer: {
   //     width: "100%",

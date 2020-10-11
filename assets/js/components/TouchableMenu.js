@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import { highShadow, colors } from '../contexts/Colors'
 
 
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
         padding: 10,
         backgroundColor: "white",
         borderRadius: 999,
+        ...FONTS.body,
         textAlign: "center",
-        fontFamily: fonts.default,
     },
 })

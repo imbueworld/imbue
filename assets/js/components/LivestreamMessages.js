@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { colors } from '../contexts/Colors'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 
 import { clockFromTimestamp } from '../backend/HelperFunctions'
 import Icon from './Icon'
@@ -77,11 +77,11 @@ export default function LivestreamMessages(props) {
       <Text style={{
         marginRight: stickToRight ? 6 : 0,
         marginLeft: stickToRight ? 0 : 6,
+        paddingTop: 3,
+        ...FONTS.body,
         color: colors.grayInactive,
         textAlignVertical: "top",
-        paddingTop: 3,
         fontSize: 12,
-        fontFamily: fonts.default,
       }}>{clockFromTimestamp(props.timestamp)}</Text>
     const UserIcon =
       <Icon
@@ -126,7 +126,7 @@ export default function LivestreamMessages(props) {
                 ? Time
                 : null}
               <Text style={{
-                fontFamily: fonts.default,
+                ...FONTS.body,
                 flexShrink: 1,
                 ...props.labelStyle,
               }}>{props.name}</Text>
@@ -136,7 +136,7 @@ export default function LivestreamMessages(props) {
             </View>
 
             <Text style={{
-              fontFamily: fonts.default,
+              ...FONTS.body,
               ...props.style,
             }}>{props.message}</Text>
           </View>
@@ -229,7 +229,7 @@ export default function LivestreamMessages(props) {
             }}
           >
             <Text style={{
-              fontFamily: fonts.default,
+              ...FONTS.body,
             }}>More messages below</Text>
           </TouchableOpacity>
         </View>

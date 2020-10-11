@@ -5,7 +5,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import { simpleShadow, colors } from "../contexts/Colors"
 
 import CustomCapsule from "./CustomCapsule"
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import LivestreamMessages from './LivestreamMessages'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 
@@ -45,8 +45,8 @@ export default function Chat(props) {
                     <TextInput
                         style={{
                             paddingHorizontal: 10,
+                            ...FONTS.body,
                             color: "white",
-                            fontFamily: fonts.default,
                             ...props.style,
                         }}
                         multiline

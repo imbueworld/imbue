@@ -44,9 +44,9 @@ export default function PartnerUpdateClasses(props) {
       alignItems: "center",
     }}>
       <Text style={{
+        ...FONTS.body,
         color: colors.buttonAccent,
         fontSize: 20,
-        ...FONTS.body,
       }}>{classDoc.name}</Text>
     </View>
   )
@@ -66,8 +66,8 @@ export default function PartnerUpdateClasses(props) {
               marginTop: 5,
               marginBottom: 20,
               alignSelf: "center",
-              fontSize: 20,
               ...FONTS.subtitle,
+              fontSize: 20,
             }}>List of Classes</Text>
             {Classes}
           </View>

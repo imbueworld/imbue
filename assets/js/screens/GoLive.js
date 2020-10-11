@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, PermissionsAndroid, Platform } from 'react-native'
+import { View, Platform, StatusBar } from 'react-native'
 
 import {PERMISSIONS} from 'react-native-permissions';
 import { NodeCameraView } from "react-native-nodemediaclient"
@@ -7,28 +7,8 @@ import LivestreamLayout from '../layouts/LivestreamLayout'
 
 import cache from '../backend/storage/cache'
 import User from '../backend/storage/User'
-
-
-
-async function checkPermissions() {
-  try {
-    const granted = await PermissionsAndroid.requestMultiple([
-      PermissionsAndroid.PERMISSIONS.CAMERA,
-      PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-      PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
-    ])
-    let hasAllPermissions = true
-    Object.keys(granted).forEach(key => {
-      if (granted[key] !== "granted") {
-        hasAllPermissions = false
-      }
-    })
-    return hasAllPermissions
-  } catch (err) {
-    console.error(err)
-    return false
-  }
-}
+import { requestPermissions } from '../backend/HelperFunctions'
+import { colors } from '../contexts/Colors'
 
 async function checkPermissionsiOS() {
   let hasAllPermissionsiOS = false
@@ -76,6 +56,7 @@ export default function GoLive(props) {
   const [hasAllPermissionsiOS, setHasAllPermisionsiOS] = useState(false)
   const [streamKey, setStreamKey] = useState(null)
 
+  // Init
   useEffect(() => {
     const init = async () => {
       const partner = new User()
@@ -86,7 +67,16 @@ export default function GoLive(props) {
 
       setUser(partnerDoc)
       setGymId(gymId)
+
+      // Hiding obstructing bars
+      StatusBar.setBackgroundColor('#00000000')
+      StatusBar.setTranslucent(true)
     }; init()
+
+    return () => {
+      StatusBar.setBackgroundColor(colors.bg)
+      StatusBar.setTranslucent(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -99,6 +89,15 @@ export default function GoLive(props) {
         setHasAllPermisionsiOS(has)
       }
     }; init()
+    const perms = async () => {
+      let unfulfilledPerms = await requestPermissions([
+        'CAMERA',
+        'RECORD_AUDIO',
+        'WRITE_EXTERNAL_STORAGE',
+      ])
+
+      setHasAllPermisions(unfulfilledPerms ? false : true)
+    }; perms()
   }, [])
 
 
@@ -139,9 +138,9 @@ export default function GoLive(props) {
       return
     }
 
-    const userObj = new User()
-    await userObj.createLivestream() // Will not create livestream, if it already has been
-    const { stream_key } = await userObj.retrieveUser()
+    const partnerObj = new User()
+    await partnerObj.createLivestream({ gymId }) // Will not create livestream, if it already has been
+    const { stream_key } = await partnerObj.retrieveUser()
     setStreamKey(stream_key)
 
     stream.start()
@@ -176,7 +175,7 @@ export default function GoLive(props) {
       }}>
 
         {(Platform.OS === "android") ? 
-          {/* {hasAllPermissions 
+          hasAllPermissions 
           ? <NodeCameraView
             style={{
               width: "100%",
@@ -194,7 +193,7 @@ export default function GoLive(props) {
             video={settings.video}
             autopreview
           />
-          : null} */}
+          : null
           :
             <NodeCameraView
             style={{

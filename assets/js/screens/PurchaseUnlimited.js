@@ -11,7 +11,7 @@ import { colors } from '../contexts/Colors'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 
@@ -26,7 +26,6 @@ export default function PurchaseUnlimited(props) {
   const [imbueMembership, setImbueMembership] = useState(null)
 
   const [hasImbueMembership, setHasImbueMembership] = useState(null)
-  const [selectedCard, selectCard] = useState(null)
   const [popup, setPopup] = useState(null)
 
   useEffect(() => {
@@ -61,7 +60,7 @@ export default function PurchaseUnlimited(props) {
   const membershipPrice = `$${currencyFromZeroDecimal(imbueMembership.membership_price)}`
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollView}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
 
       <CustomCapsule
@@ -80,16 +79,16 @@ export default function PurchaseUnlimited(props) {
 
         <View style={styles.textContainer}>
           <Text style={{
+            ...FONTS.body,
             textAlign: "justify",
             fontSize: 18,
-            fontFamily: fonts.default,
           }}>
             {imbueMembership.description}
           </Text>
           <Text style={{
+            ...FONTS.body,
             alignSelf: "flex-end",
             fontSize: 18,
-            fontFamily: fonts.default,
           }}>
             {membershipPrice}
           </Text>

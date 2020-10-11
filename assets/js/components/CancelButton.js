@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { StyleSheet, TouchableOpacity, Text, View } from 'react-native'
-import { fonts } from '../contexts/Styles';
+import { Text, View } from 'react-native'
+import { FONTS } from '../contexts/Styles';
 import { TouchableHighlight } from 'react-native-gesture-handler';
 import { colors } from '../contexts/Colors';
 
@@ -29,9 +29,9 @@ export default function CancelButton(props) {
                     borderRadius: 999,
                 }}>
                     <Text style={{
+                        ...FONTS.body,
                         color: "white",
                         fontSize: 14,
-                        fontFamily: fonts.default,
                     }}>Hold to Exit</Text>
                 </View>
             :   null}
@@ -50,8 +50,8 @@ export default function CancelButton(props) {
                 <Text style={{
                     color: "white",
                     paddingHorizontal: 10,
+                    ...FONTS.body,
                     fontSize: 16,
-                    fontFamily: fonts.default,
                     ...props.textStyle,
                 }}>{ holdToExit ? "  ".repeat(title.length) : title }</Text>
             </TouchableHighlight>

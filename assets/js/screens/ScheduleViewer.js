@@ -12,7 +12,7 @@ import {
 import {
   filterUserClasses,
 } from '../backend/HelperFunctions'
-import { fonts } from '../contexts/Styles'
+import { FONTS } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
 import CustomCapsule from '../components/CustomCapsule'
 import GoBackButton from '../components/buttons/GoBackButton'
@@ -76,8 +76,11 @@ export default function ScheduleViewer(props) {
       } else {
         console.log(3333)
 
-        classData = (await user.retrieveClasses()).map(it => it.getAll())
+        classData = ( await user.retrieveScheduledClasses() )
+          .map(it => it.getFormatted())
         // if (user.accountType == 'user') classData = await filterUserClasses()
+
+        console.log("classData", classData) // DEBUG
 
         setTitle('My Classes')
       }
@@ -104,7 +107,7 @@ export default function ScheduleViewer(props) {
   if (!user || !dataIsFormatted) return <View />
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
 
       <AppBackground />
 
@@ -145,15 +148,15 @@ export default function ScheduleViewer(props) {
           <Text style={{
             width: "100%",
             textAlign: "center",
+            ...FONTS.body,
             fontSize: 30,
-            fontFamily: fonts.default,
           }}>{title}</Text>
           {subtitle ?
           <Text style={{
             width: "100%",
+            ...FONTS.body,
             textAlign: "center",
             fontSize: 18,
-            fontFamily: fonts.default,
           }}>{subtitle}</Text> : null}
           </View>
 
