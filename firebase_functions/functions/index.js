@@ -2,16 +2,27 @@
 
 const algoliasearch = require('algoliasearch')
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-admin.initializeApp();
-const { Logging } = require('@google-cloud/logging');
-const logging = new Logging({
-  projectId: process.env.GCLOUD_PROJECT,
-});
+const functions = require('firebase-functions')
+const admin = require('firebase-admin')
+admin.initializeApp()
+// const { Logging } = require('@google-cloud/logging');
+// const logging = new Logging({
+//   projectId: process.env.GCLOUD_PROJECT,
+// })
 const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-03-02',
-});
+})
+
+
+
+const {
+  p, w, e,
+  _extractOnlyData,
+  getEndDateStringOfLastMonth,
+  getEndDateStringOfTimestamp,
+  getDateStringOfTimestamp,
+} = require('./src/HelperFunctions')
+const { Reports } = require('./src/Reports')
 
 
 
@@ -40,65 +51,6 @@ const stripe_products = admin.firestore().collection('stripe_products')
 const stripe_prices = admin.firestore().collection('stripe_prices')
 
 
-
-function _extractOnlyData(snapshots) {
-  snapshots.forEach((item, idx, arr) => {
-    arr[ idx ] = item.data() || {}
-  })
-  return snapshots
-}
-
-/**
- * @returns {String} `mm-dd-yyy`
- */
-function getEndStringDateOfLastMonth(offset=0) {
-  const currentUTCDate = new Date()
-  // Last day of last month format, turning it into
-  const formattedUTCDate = new Date(Date.UTC(
-    currentUTCDate.getUTCFullYear(),
-    currentUTCDate.getUTCMonth() + offset,
-    0
-  ))
-
-  let mm = (formattedUTCDate.getUTCMonth() + 1).toString()
-  if (mm.length < 2) mm = `0${mm}` // ascertain two digits
-  let dd = formattedUTCDate.getUTCDate().toString()
-  if (dd.length < 2) dd = `0${dd}` // ascertain two digits
-  let yyyy = formattedUTCDate.getUTCFullYear()
-
-  return `${mm}_${dd}_${yyyy}`
-}
-
-
-
-/**
- * Calculates all payout information for each gym by going through
- * membership_instances collection.
- * 
- * Objectives for full formula calculation (per user):
- * -  Calculate total visits for user,
- * -  Calculate total visits to all other gyms (per gym),
- * -  Pull gym membership price (per gym),
- * 
- * Write and Read data:
- * -  ..
- * -  ..
- * Total: 
- */
-// exports.calculatePayouts = functions.https.onCall(async (data, context) => {
-//   async function getBatch(last='') {
-//     return (await membership_instances
-//       .orderBy('id')
-//       .startAfter(last)
-//       .limit(50)
-//       .get()
-//     ).docs
-//   }
-
-//   let lastFirebaseDoc
-
-//   const docs = await getBatch(lastFirebaseDoc)
-// })
 
 exports.createLivestream = functions.https.onCall(async (data, context) => {
   const { uid } = context.auth
@@ -711,20 +663,21 @@ exports.cancelMembership = functions.https.onCall(async (data, context) => {
 exports.completeClassSignUp = functions.firestore
   .document('users/{userId}')
   .onUpdate(async (snap, context) => {
-    const p = console.log
-    
     const { params: { userId } } = context
     const {
-      scheduled_classes: prevScheduledClasses,
-      active_classes: prevActiveClasses,
+      scheduled_classes: prevScheduledClasses=[],
+      active_classes: prevActiveClasses=[],
     } = snap.before.data()
     const {
-      scheduled_classes: currScheduledClasses,
-      active_classes: currActiveClasses,
-      active_memberships,
+      scheduled_classes: currScheduledClasses=[],
+      active_classes: currActiveClasses=[],
+      active_memberships=[],
     } = snap.after.data()
-    const timestamp = Date.now()
-    const CURR_END_DATE_STRING = getEndStringDateOfLastMonth(1)
+    const CURR_TIMESTAMP = Date.now()
+    const CURR_DATE_STRING = getDateStringOfTimestamp()
+    //
+    const reports = new Reports(CURR_DATE_STRING, 'completeClassSignUp')
+    const DEBUG = {}
 
     // Determine new active_classes (related to One Time Class Purchase)
     const newlyActivatedClasses = currActiveClasses.filter(({
@@ -744,25 +697,8 @@ exports.completeClassSignUp = functions.firestore
       if (isNew) return true
     })
 
+    DEBUG['newlyActivatedClasses'] = newlyActivatedClasses
     p('newlyActivatedClasses', newlyActivatedClasses)
-
-    /**
-     * purchase_method is determined as follows:
-     * 1. if there is a new item in active_classes,
-     *    assume -- 'class'
-     * 2. otherwise, if 'imbue' in active_memberships,
-     *    assume -- 'imbue_membership'
-     * 3. else,
-     *    assume -- 'gym_membership'
-     */
-    const purchase_method =
-      newlyActivatedClasses.length
-        ? 'class'
-        : active_memberships.includes('imbue')
-            ? 'imbue_membership'
-            : 'gym_membership'
-
-    p('purchase_method', purchase_method)
 
     // Determine newly scheduled classes (core way of determining new classes)
     const newlyScheduledClasses = currScheduledClasses.filter(({
@@ -782,9 +718,29 @@ exports.completeClassSignUp = functions.firestore
       if (isNew) return true
     })
 
+    DEBUG['newlyScheduledClasses'] = newlyScheduledClasses
     p('newlyScheduledClasses', newlyScheduledClasses)
     // If there are no new classes, return
     if (!newlyScheduledClasses.length) return
+
+    /**
+     * purchase_method is determined as follows:
+     * 1. if there is a new item in active_classes,
+     *    assume -- 'class'
+     * 2. otherwise, if 'imbue' in active_memberships,
+     *    assume -- 'imbue_membership'
+     * 3. else,
+     *    assume -- 'gym_membership'
+     */
+    const purchase_method =
+      newlyActivatedClasses.length
+        ? 'class'
+        : active_memberships.includes('imbue')
+            ? 'imbue_membership'
+            : 'gym_membership'
+
+    DEBUG['purchase_method'] = purchase_method
+    p('purchase_method', purchase_method)
 
     const { first, last, icon_uri } = (
       await users
@@ -795,6 +751,46 @@ exports.completeClassSignUp = functions.firestore
     const batch = admin.firestore().batch()
 
     for (let { class_id, time_id } of newlyScheduledClasses) {
+      const {
+        gym_id: gymId,
+        active_times=[],
+      } = ( await classes.doc(class_id).get() ).data()
+      const {
+        membership_price: membership_price_paid,
+      } = ( await gyms.doc(gymId).get() ).data()
+      //
+      const SCHED_CLASS_DEBUG = {}
+
+      SCHED_CLASS_DEBUG['gymId'] = gymId
+      SCHED_CLASS_DEBUG['membership_price_paid'] = membership_price_paid
+      p('gymId', gymId)
+      p('membership_price_paid', membership_price_paid)
+
+      const { begin_time, end_time } = active_times.filter(it => it.time_id == time_id)[0]
+      const CLASS_END_DATE_STRING = getEndDateStringOfTimestamp(end_time)
+
+      SCHED_CLASS_DEBUG['class_id'] = class_id
+      SCHED_CLASS_DEBUG['time_id'] = time_id
+      SCHED_CLASS_DEBUG['begin_time'] = begin_time
+      SCHED_CLASS_DEBUG['end_time'] = end_time
+      SCHED_CLASS_DEBUG['CLASS_END_DATE_STRING'] = CLASS_END_DATE_STRING
+      p('end_time', end_time)
+      p('CLASS_END_DATE_STRING', CLASS_END_DATE_STRING)
+      // This if-statement is currently the only thing that
+      // validates begin_time & end_time
+      if (!CLASS_END_DATE_STRING) {
+        SCHED_CLASS_DEBUG['__message'] = 'CLASS_END_DATE_STRING cannot be empty.'
+        reports.log(userId, SCHED_CLASS_DEBUG, true)
+      }
+
+      // Do not schedule classes that have already started / are in the past now.
+      if (CURR_TIMESTAMP > begin_time) {
+        SCHED_CLASS_DEBUG['__message'] = `Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`
+        reports.log(userId, SCHED_CLASS_DEBUG)
+        w(`Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`)
+        continue
+      }
+
       batch.set(
         classes
           .doc(class_id)
@@ -804,7 +800,7 @@ exports.completeClassSignUp = functions.firestore
           .doc(userId),
         {
           purchase_method,
-          timestamp,
+          timestamp: CURR_TIMESTAMP,
           first,
           last,
           icon_uri,
@@ -812,18 +808,11 @@ exports.completeClassSignUp = functions.firestore
       )
 
       // Increment times_visited in membership_instances to track membership usage by the user
-      const { gym_id: gymId } = ( await classes.doc(class_id).get() ).data()
-      const { membership_price: membership_price_paid } = ( await gyms.doc(gymId).get() ).data()
-
-      p('gymId', gymId)
-      p('membership_price_paid', membership_price_paid)
-      p('CURR_END_DATE_STRING', CURR_END_DATE_STRING)
-
       batch.set(
         membership_instances
           .doc(userId)
           .collection('visits')
-          .doc(CURR_END_DATE_STRING)
+          .doc(CLASS_END_DATE_STRING)
           .collection('gyms')
           .doc(gymId),
         {
@@ -837,8 +826,97 @@ exports.completeClassSignUp = functions.firestore
     await batch.commit()
   })
 
+/**
+ * The function basically undos whatever .completeClassSignUp did!
+ */
+exports.completeClassUnschedule = functions.firestore
+.document('users/{userId}')
+.onUpdate(async (snap, context) => {
+  const { params: { userId } } = context
+  const {
+    scheduled_classes: prevScheduledClasses=[],
+  } = snap.before.data()
+  const {
+    scheduled_classes: currScheduledClasses=[],
+  } = snap.after.data()
+  const CURR_TIMESTAMP = Date.now()
+  const CURR_DATE_STRING = getDateStringOfTimestamp()
+  //
+  const reports = new Reports(CURR_DATE_STRING, 'completeClassUnschedule')
+  const DEBUG = {}
 
+  // Determine which classes got unscheduled
+  const undidClasses = prevScheduledClasses.filter(({ class_id, time_id }) => {
+    for (let { class_id: ci2, time_id: ti2 } of currScheduledClasses) {
+      if (class_id == ci2 && time_id == ti2) return false
+    }
+    return true
+  })
 
+  DEBUG['undidClasses'] = undidClasses
+  p('undidClasses', undidClasses)
+  // If there are no undid classes, return
+  if (!undidClasses.length) return
+
+  const batch = admin.firestore().batch()
+
+  for (let { class_id, time_id } of undidClasses) {
+    const {
+      gym_id: gymId,
+      active_times=[],
+    } = ( await classes.doc(class_id).get() ).data()
+    //
+    const UNDID_CLASSES_DEBUG = {}
+
+    const { begin_time, end_time } = active_times.filter(it => it.time_id == time_id)[0]
+    const CLASS_END_DATE_STRING = getEndDateStringOfTimestamp(end_time)
+
+    UNDID_CLASSES_DEBUG['class_id'] = class_id
+    UNDID_CLASSES_DEBUG['time_id'] = time_id
+    UNDID_CLASSES_DEBUG['begin_time'] = begin_time
+    UNDID_CLASSES_DEBUG['end_time'] = end_time
+    UNDID_CLASSES_DEBUG['CLASS_END_DATE_STRING'] = CLASS_END_DATE_STRING
+    p('end_time', end_time)
+    p('CLASS_END_DATE_STRING', CLASS_END_DATE_STRING)
+    // This if statement with throw is currently the only thing that
+    // validates begin_time & end_time
+    if (!CLASS_END_DATE_STRING) {
+      UNDID_CLASSES_DEBUG['__message'] = 'CLASS_END_DATE_STRING cannot be empty.'
+      reports.log(userId, UNDID_CLASSES_DEBUG, true)
+    }
+
+    // Do not schedule classes that have already started / are in the past now.
+    if (CURR_TIMESTAMP > begin_time) {
+      UNDID_CLASSES_DEBUG['__message'] = `Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`
+      reports.log(userId, UNDID_CLASSES_DEBUG)
+      w(`Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`)
+      continue
+    }
+    
+    batch.delete(
+      classes
+        .doc(class_id)
+        .collection('active_times')
+        .doc(time_id)
+        .collection('clients')
+        .doc(userId)
+    )
+    batch.set(
+      membership_instances
+        .doc(userId)
+        .collection('visits')
+        .doc(CLASS_END_DATE_STRING)
+        .collection('gyms')
+        .doc(gymId),
+      {
+        times_visited: admin.firestore.FieldValue.increment(-1),
+      },
+      { merge: true }
+    )
+  }
+
+  await batch.commit()
+})
 
 
 
