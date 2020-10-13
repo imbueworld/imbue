@@ -150,7 +150,6 @@ export default function PartnerSignUpV2(props) {
 
   // DEBUG stuff
   useEffect(() => {
-    if (true) return // DEBUG
     if (!config.DEBUG) return
 
     setValue('company_address', '1111 S Figueroa St, Los Angeles, CA 90015')
