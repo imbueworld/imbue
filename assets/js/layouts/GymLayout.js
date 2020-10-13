@@ -12,6 +12,7 @@ import { StackActions, useNavigation } from '@react-navigation/native'
 import GoToLivestreamButton from '../components/buttons/GoToLivestreamButton'
 import AttendeesPopup from '../components/popups/AttendeesPopup'
 import CustomButton from '../components/CustomButton'
+import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarButton'
 
 
 
@@ -56,7 +57,11 @@ export default function GymLayout(props) {
       show: false,
       state: "closed" || "open",
       data: { classId: null, timeId: null },
-      onPress: () => { },
+      onPress: () => {},
+    },
+    removeFromCalendar: {
+      show: false,
+      onPress: () => {},
     },
   }
   
@@ -169,9 +174,15 @@ export default function GymLayout(props) {
                 {...buttonProps}
                 onPress={buttonOptions.addToCalendar.onPress}
               />
-            : <CalendarSuccessButton
+            : <>
+              <RemoveFromCalendarButton
+                {...buttonProps}
+                onPress={buttonOptions.removeFromCalendar.onPress}
+              />
+              <CalendarSuccessButton
                 {...buttonProps}
               />
+              </>
           : null}
           
           {buttonOptions.viewAttendees.show

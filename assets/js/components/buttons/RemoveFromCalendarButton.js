@@ -2,11 +2,11 @@ import React from 'react'
 import { View } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { simpleShadow } from '../../contexts/Colors'
-import CalendarAddIcon from '../badges/CalendarAddIcon'
+import Icon from '../Icon'
 
 
 
-export default function AddToCalendarButton(props) {
+export default function RemoveFromCalendarButton(props) {
   const {
     containerStyle={},
     imageContainerStyle={},
@@ -30,9 +30,10 @@ export default function AddToCalendarButton(props) {
         underlayColor="#00000020"
         onPress={onPress}
       >
-        <CalendarAddIcon
+        <Icon
           containerStyle={imageContainerStyle}
           imageStyle={imageStyle}
+          source={require('../img/png/cancel.png')}
         />
       </TouchableHighlight>
     </View>

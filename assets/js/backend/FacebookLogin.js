@@ -22,7 +22,7 @@ export async function FacebookLogin(accountType, onAuthChange) {
   const facebookCredential = auth.FacebookAuthProvider.credential(data.accessToken);
 
   // Sign-in the user with the credential
-  const { user } = auth().signInWithCredential(facebookCredential);
+  const { user } = await auth().signInWithCredential(facebookCredential);
 
   if (user) {
     if (user.displayName.substring(0, 5) === "user_") {
