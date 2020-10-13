@@ -122,6 +122,7 @@ export default function ProfileLayout(props) {
                 }}
                 onPress={async () =>
                   pickAndUploadFile()
+
                   // [uncomment upon DEBUG start]
                   // onLongPress={() => pickAndUploadFile(setErrorMsg)}
                   // [comment upon DEBUG end]

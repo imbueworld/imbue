@@ -19,14 +19,6 @@ const defaultFnOptions = {
   },
 }
 
-useEffect(() => {
-  const init = async () => {
-    const user = new User()
-    setUser(await user.retrieveUser())
-    userSettings = cache(`${user}`)
-  }; init()
-}, [])
-
 /**
  * allowed_return_type in options can be set to null to avoid using this filter.
  * By default, only returns addresses of type 'ROOFTOPS' (the actual building).
@@ -153,6 +145,13 @@ export async function algoliaSearch(query) {
 }
 
 
+const init = async () => {
+  const user = new User()
+  setUser(await user.retrieveUser())
+  userSettings = cache(`${user}`)
+}; init()
+
+
 // Selects photo from camera roll for profile photos
 export function pickAndUploadFile(user) {
   ImagePicker.showImagePicker((response) => {
@@ -168,9 +167,8 @@ export function pickAndUploadFile(user) {
       const source = { uri: response.uri };
       userSettings.set({ icon_uri: source })
       console.log("user img: " + user.icon_uri)
-      
-      return source
 
+      return source
       // You can also display the image using data:
       // const source = { uri: 'data:image/jpeg;base64,' + response.data };
     }
