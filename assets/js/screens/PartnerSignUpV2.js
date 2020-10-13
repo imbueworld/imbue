@@ -150,6 +150,7 @@ export default function PartnerSignUpV2(props) {
 
   // DEBUG stuff
   useEffect(() => {
+    if (true) return // DEBUG
     if (!config.DEBUG) return
 
     setValue('company_address', '1111 S Figueroa St, Los Angeles, CA 90015')
@@ -293,8 +294,6 @@ export default function PartnerSignUpV2(props) {
 
 
 
-  // const formErrorType = 
-
   return (
     <KeyboardAwareScrollView>
       <AppBackground />
@@ -304,9 +303,12 @@ export default function PartnerSignUpV2(props) {
 
       <Text style={styles.sectionTitle}>Partner Sign Up</Text>
 
-      {/* <FormStatusMessage type={formErrorType}>
-        
-      </FormStatusMessage> */}
+      <FormStatusMessage type='error' containerStyle={{
+        alignSelf: 'center',
+        marginBottom: 10,
+      }}>
+        { errors && (errors[Object.keys(errors)[ 0 ]] || {}).message }
+      </FormStatusMessage>
 
       <View>
         {/* Company details */}
