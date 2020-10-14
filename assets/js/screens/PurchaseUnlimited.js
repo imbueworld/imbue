@@ -14,6 +14,8 @@ import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
+import GoBackButton from '../components/buttons/GoBackButton'
+
 
 
 
@@ -62,6 +64,21 @@ export default function PurchaseUnlimited(props) {
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
+
+      <GoBackButton
+            containerStyle={{
+              position: "absolute",
+              left: 15,
+              top: 40
+            }}
+            imageContainerStyle={{
+              width: 48,
+              height: 48,
+            }}
+          />
+
+      
+
 
       <CustomCapsule
         containerStyle={styles.container}
