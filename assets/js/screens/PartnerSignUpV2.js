@@ -9,6 +9,8 @@ import { geocodeAddress } from '../backend/BackendFunctions'
 import config from '../../../App.config'
 import functions from '@react-native-firebase/functions'
 import { useNavigation } from '@react-navigation/native'
+import User from '../backend/storage/User'
+import Gym from '../backend/storage/Gym'
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from '../components/AppBackground'
@@ -16,8 +18,7 @@ import CompanyLogo from '../components/CompanyLogo'
 import GoBackButton from '../components/buttons/GoBackButton'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
 import CustomButton from '../components/CustomButton'
-import User from '../backend/storage/User'
-import Gym from '../backend/storage/Gym'
+import FormStatusMessage from '../components/FormStatusMessage'
 
 
 
@@ -301,7 +302,12 @@ export default function PartnerSignUpV2(props) {
 
       <Text style={styles.sectionTitle}>Partner Sign Up</Text>
 
-      {/* error messages somewhere here */}
+      <FormStatusMessage type='error' containerStyle={{
+        alignSelf: 'center',
+        marginBottom: 10,
+      }}>
+        { errors && (errors[Object.keys(errors)[ 0 ]] || {}).message }
+      </FormStatusMessage>
 
       <View>
         {/* Company details */}

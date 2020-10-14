@@ -38,10 +38,14 @@ export default class User extends DataObject {
     // When instantiating the user could be signed in, could also not be
     if (firebaseUser) {
       const { displayName } = firebaseUser
-      let idx = displayName.search('_')
-      accountType = displayName.slice(0, idx)
-  
-      if (accountType == 'partner') collection = 'partners'
+      // console.log('firebaseUser', firebaseUser) // DEBUG
+      // console.log('displayName', displayName) // DEBUG
+      if (displayName) {
+        let idx = displayName.search('_')
+        accountType = displayName.slice(0, idx)
+    
+        if (accountType == 'partner') collection = 'partners'
+      }
     }
 
     super(collection)
@@ -59,7 +63,7 @@ export default class User extends DataObject {
    * (avoiding wasteful computation).
    */
   async init() {
-    const uid = this.firebaseUser.uid
+    const { uid } = this.firebaseUser || {}
     await this.initByUid(uid)
 
     // If data is missing (about user's uid) from database,
@@ -445,7 +449,25 @@ export default class User extends DataObject {
   /**
    * Unschedules a class
    */
-  async unscheduleClass(details) {}
+  async unscheduleClass(details) {
+    return await this._BusyErrorWrapper('unscheduleClass', async () => {
+      await this.init()
+
+      let { classId, timeId } = details
+
+      // Filter out of the list of scheduled classes
+      const { scheduled_classes=[] } = this.getAll()
+      const filteredClasses = scheduled_classes.filter(({ class_id, time_id }) => {
+        if (class_id == classId && time_id == timeId) return
+        return true
+      })
+
+      // Push new list to user doc,
+      // and let the Google Cloud .onUpdate function do the rest.
+      this.mergeItems({ scheduled_classes: filteredClasses })
+      await this.push()
+    })
+  }
 
   /**
    * Purchases a Gym Online Membership from one of the gyms
