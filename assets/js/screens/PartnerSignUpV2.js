@@ -159,14 +159,14 @@ export default function PartnerSignUpV2(props) {
 
     setValue('first', 'First')
     setValue('last', 'Last')
-    setValue('email', '123@gmail.com')
+    setValue('email', '')
     setValue('phone', '888 867 5309')
     setValue('dob', '7-6-1998')
     setValue('address', '1111 S Figueroa St, Los Angeles, CA 90015')
     setValue('ssn_last_4', '0000')
 
-    setValue('password', '123@gmail.comA')
-    setValue('confirm_password', '123@gmail.comA')
+    setValue('password', '')
+    setValue('confirm_password', '')
   }, [])
 
 
