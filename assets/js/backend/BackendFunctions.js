@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import storage from '@react-native-firebase/storage'
 import config from '../../../App.config'
 import cache from './storage/cache'
@@ -118,11 +118,11 @@ export function geocodeAddress(address, options=defaultFnOptions.geocodeAddress)
  * Converts a file_id into a fully functioning uri
  * to retrieve a file from Google Cloud Storage.
  */
-export async function publicStorage(fileName) {
+export async function publicStorage(fileName, forcePull=false) {
   if (!fileName) return ''
 
   let file = cache(`files/${fileName}`).get()
-  if (!file) {
+  if (!file || forcePull) {
     try {
       file = await storage().ref(fileName).getDownloadURL()
       cache(`files/${fileName}`).set(file)
@@ -145,6 +145,15 @@ export async function algoliaSearch(query) {
 }
 
 
+
+
+
+/**
+ * These can be deleted now.
+ * 
+ * 
+ * 
+ */
 // const init = async () => {
 //   const user = new User()
 //   setUser(await user.retrieveUser())
@@ -153,25 +162,31 @@ export async function algoliaSearch(query) {
 
 
 // Selects photo from camera roll for profile photos
-export function pickAndUploadFile(user) {
+// export function pickAndUploadFile(user) {
 
-  userSettings = cache(`${user}`)
+//   userSettings = cache(`${user}`)
 
-  ImagePicker.showImagePicker((response) => {
-    console.log('Response = ', response);
+//   ImagePicker.showImagePicker((response) => {
+//     console.log('Response = ', response);
 
-    if (response.didCancel) {
-      console.log('User cancelled image picker');
-    } else if (response.error) {
-      console.log('ImagePicker Error: ', response.error);
-    } else if (response.customButton) {
-      console.log('User tapped custom button: ', response.customButton);
-    } else {
-      const source = { uri: response.uri };
-      userSettings.set({ icon_uri: source })
-      return source
-      // You can also display the image using data:
-      // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-    }
-  });
-}
+//     if (response.didCancel) {
+//       console.log('User cancelled image picker');
+//     } else if (response.error) {
+//       console.log('ImagePicker Error: ', response.error);
+//     } else if (response.customButton) {
+//       console.log('User tapped custom button: ', response.customButton);
+//     } else {
+//       const source = { uri: response.uri };
+//       userSettings.set({ icon_uri: source })
+//       return source
+//       // You can also display the image using data:
+//       // const source = { uri: 'data:image/jpeg;base64,' + response.data };
+//     }
+//   });
+// }
+/**
+ * 
+ * 
+ * 
+ * 
+ */

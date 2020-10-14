@@ -14,7 +14,6 @@ import Icon from '../components/Icon'
 import EditButton from '../components/buttons/EditButton'
 
 import auth from "@react-native-firebase/auth"
-import { pickAndUploadFile } from '../backend/BackendFunctions'
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
 import User from '../backend/storage/User'
@@ -26,13 +25,14 @@ export default function ProfileLayout(props) {
 
   const [errorMsg, setErrorMsg] = useState('')
   const [user, setUser] = useState()
+  if (user) console.log('user', { icon_uri_full: user.icon_uri_full, icon_uri: user.icon_uri }) // DEBUG
   const [buttonOptions, setButtonOptions] = useState(null)
+  const [r, refresh] = useState(0)
 
   useEffect(() => {
     const init = async () => {
       const user = new User()
       setUser(await user.retrieveUser())
-      const userSettings = null
     }; init()
   }, [])
 
@@ -67,6 +67,19 @@ export default function ProfileLayout(props) {
     }
     setButtonOptions(defaultButtonOptions)
   }, [])
+
+
+
+  const editPfp = async () => {
+    setErrorMsg('')
+    const user = new User()
+    try {
+      await user.changeIcon()
+      refresh(r => r + 1)
+    } catch(errorMsg) { setErrorMsg(errorMsg) }
+  }
+
+
 
   if (!user || !buttonOptions) return <View />
 
@@ -116,17 +129,14 @@ export default function ProfileLayout(props) {
         }}>
           {buttonOptions.editPfp.show
           ? <EditButton
-                containerStyle={{
-                  top: 145,
-                  left: 65,
-                }}
-                onPress={async () =>
-                  pickAndUploadFile()
-
-                  // [uncomment upon DEBUG start]
-                  // onLongPress={() => pickAndUploadFile(setErrorMsg)}
-                  // [comment upon DEBUG end]
-                }
+              containerStyle={{
+                top: 145,
+                left: 65,
+              }}
+              onPress={editPfp}
+              // [uncomment upon DEBUG start]
+              // onLongPress={editPfp}
+              // [comment upon DEBUG end]
             />
           : null}
         </View>
