@@ -145,15 +145,18 @@ export async function algoliaSearch(query) {
 }
 
 
-const init = async () => {
-  const user = new User()
-  setUser(await user.retrieveUser())
-  userSettings = cache(`${user}`)
-}; init()
+// const init = async () => {
+//   const user = new User()
+//   setUser(await user.retrieveUser())
+//   userSettings = cache(`${user}`)
+// }; init()
 
 
 // Selects photo from camera roll for profile photos
 export function pickAndUploadFile(user) {
+
+  userSettings = cache(`${user}`)
+
   ImagePicker.showImagePicker((response) => {
     console.log('Response = ', response);
 
@@ -166,8 +169,6 @@ export function pickAndUploadFile(user) {
     } else {
       const source = { uri: response.uri };
       userSettings.set({ icon_uri: source })
-      console.log("user img: " + user.icon_uri)
-
       return source
       // You can also display the image using data:
       // const source = { uri: 'data:image/jpeg;base64,' + response.data };

@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
-
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomTextInput from "../components/CustomTextInput"
@@ -25,7 +24,6 @@ import User from '../backend/storage/User'
 // }
 
 
-
 export default function AddPaymentMethod(props) {
   const { referrer } = props.route.params
 
@@ -45,6 +43,8 @@ export default function AddPaymentMethod(props) {
       setUser(await user.retrieveUser())
     }; init()
   }, [])
+
+
 
   async function validateAndProceed() {
     let [expMonth, expYear] = expireDateText.split('/')
