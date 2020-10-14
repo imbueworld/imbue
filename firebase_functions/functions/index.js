@@ -22,7 +22,8 @@ const {
   getEndDateStringOfTimestamp,
   getDateStringOfTimestamp,
 } = require('./src/HelperFunctions')
-const { Reports } = require('./src/Reports')
+const { Reports } = require('./src/Reports');
+const { Mindbody } = require('./src/Mindbody');
 
 
 
@@ -51,6 +52,12 @@ const stripe_products = admin.firestore().collection('stripe_products')
 const stripe_prices = admin.firestore().collection('stripe_prices')
 
 
+
+exports.zxc = functions.https.onCall(async (data, context) => {
+  const mindbody = new Mindbody(true)
+  mindbody.setAuthentication('-99')
+  return await mindbody.retrieveUserToken('Siteowner', 'apitest1234')
+})
 
 exports.createLivestream = functions.https.onCall(async (data, context) => {
   const { uid } = context.auth
