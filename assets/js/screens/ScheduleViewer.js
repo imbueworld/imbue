@@ -107,7 +107,7 @@ export default function ScheduleViewer(props) {
   if (!user || !dataIsFormatted) return <View />
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
 
       <AppBackground />
 

@@ -62,6 +62,7 @@ export default function SignUp(props) {
 
   return (
     <KeyboardAwareScrollView
+      showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"
       alwaysBounceVertical={false} 

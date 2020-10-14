@@ -98,7 +98,7 @@ export default function GymLayout(props) {
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollView}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
 
       {buttonOptions.viewAttendees.state === 'open'
@@ -134,10 +134,11 @@ export default function GymLayout(props) {
           data={gym.image_uris}
         />
 
+      {/* Back Button */}
         <View style={{
           position: "absolute",
           top: 50,
-          left: 15,
+        left: 15,
         }}>
           {buttonOptions.goBackButton.show
           ? <GoBackButton
@@ -228,7 +229,9 @@ export default function GymLayout(props) {
 
 const styles = StyleSheet.create({
   scrollView: {
-    minHeight: "100%",
+    flexGrow: 1, justifyContent: 'center',
+    
+
   },
   container: {
     width: "94%",

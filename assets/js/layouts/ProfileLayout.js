@@ -7,7 +7,7 @@ import { FONTS } from '../contexts/Styles'
 
 import CustomCapsule from "../components/CustomCapsule"
 import { simpleShadow } from '../contexts/Colors'
-import BackButton from '../components/BackButton'
+import BackButton from '../components/BackButton' 
 import LogOutButton from '../components/buttons/LogOutButton'
 import AppBackground from '../components/AppBackground'
 import Icon from '../components/Icon'
@@ -32,6 +32,7 @@ export default function ProfileLayout(props) {
     const init = async () => {
       const user = new User()
       setUser(await user.retrieveUser())
+      const userSettings = null
     }; init()
   }, [])
 
@@ -67,8 +68,6 @@ export default function ProfileLayout(props) {
     setButtonOptions(defaultButtonOptions)
   }, [])
 
-
-
   if (!user || !buttonOptions) return <View />
 
   return (
@@ -82,7 +81,8 @@ export default function ProfileLayout(props) {
       borderRadius: 40,
     }}/>
 
-    <KeyboardAwareScrollView
+      <KeyboardAwareScrollView
+        showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollView}
         keyboardShouldPersistTaps="handled"
         alwaysBounceVertical={false} 
@@ -116,14 +116,17 @@ export default function ProfileLayout(props) {
         }}>
           {buttonOptions.editPfp.show
           ? <EditButton
-              containerStyle={{
-                top: 145,
-                left: 65,
-              }}
-              onPress={() => pickAndUploadFile(setErrorMsg)}
-              // [uncomment upon DEBUG start]
-              // onLongPress={() => pickAndUploadFile(setErrorMsg)}
-              // [comment upon DEBUG end]
+                containerStyle={{
+                  top: 145,
+                  left: 65,
+                }}
+                onPress={async () =>
+                  pickAndUploadFile()
+
+                  // [uncomment upon DEBUG start]
+                  // onLongPress={() => pickAndUploadFile(setErrorMsg)}
+                  // [comment upon DEBUG end]
+                }
             />
           : null}
         </View>

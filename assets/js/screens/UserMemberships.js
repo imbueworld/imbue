@@ -115,7 +115,7 @@ export default function UserMemberships(props) {
             borderRadius: 30,
             backgroundColor: colors.buttonAccent,
           }}>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
               { PastTransactions }
               <View style={{ height: 10 }} />
             </ScrollView>

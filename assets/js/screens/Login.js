@@ -48,6 +48,7 @@ export default function Login(props) {
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"
       alwaysBounceVertical={false} 
+      showsVerticalScrollIndicator={false}
     >
       <AppBackground />
       {/* <Image

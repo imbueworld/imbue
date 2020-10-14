@@ -72,6 +72,8 @@
 	<string>Imbue requires access to the location to locate nearby gyms.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Imbue requires access to the photo library for adding profile pictures.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Imbue requires access to the photo library for livestreaming video.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>LuloClean-Bold.ttf</string>
