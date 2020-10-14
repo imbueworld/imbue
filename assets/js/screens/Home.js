@@ -22,7 +22,7 @@ export default function Home(props) {
     }
 
     return (
-        <ScrollView alwaysBounceVertical={false}  contentContainerStyle={styles.scrollView}>
+        <ScrollView alwaysBounceVertical={false} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
             <AppBackground />
             <CompanyLogo
                 containerStyle={{

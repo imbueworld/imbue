@@ -131,7 +131,7 @@ s
         borderRadius: 30,
         backgroundColor: colors.buttonAccent,
       }}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           <View style={{
             marginVertical: 20,
           }}>

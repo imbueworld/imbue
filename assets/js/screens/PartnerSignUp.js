@@ -85,7 +85,7 @@ export default function PartnerSignUp(props) {
 
 
   return (
-    <KeyboardAwareScrollView contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
+    <KeyboardAwareScrollView showsVerticalScrollIndicator={false} contentContaineStyle={styles.scrollView} alwaysBounceVertical={false} >
       {/* back button */}
       <TouchableHighlight
         style={styles.sidePanelButtonContainer}

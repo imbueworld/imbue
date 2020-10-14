@@ -117,7 +117,7 @@ export default function CreditCardSelectionV2(props) {
         overflow: "hidden",
         ...props.contentContainerStyle,
       }}>
-        <ScrollView>
+        <ScrollView showsVerticalScrollIndicator={false}>
           {Cards}
         </ScrollView>
       </View>

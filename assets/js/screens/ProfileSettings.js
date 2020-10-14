@@ -125,7 +125,7 @@ export default function ProfileSettings(props) {
       setRedFields(redFields)
       setErrorMsg(errorMsg)
     }
-  }
+  } 
 
 
 

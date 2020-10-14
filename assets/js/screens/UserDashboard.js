@@ -179,7 +179,7 @@ export default function UserDashboard(props) {
 
   return (
     <>
-    <AlgoliaSearchAbsoluteOverlay />
+      <AlgoliaSearchAbsoluteOverlay style={{position: 'absolute', top: 300, }}/>
 
     <MapView
       style={styles.map}

@@ -22,11 +22,13 @@ export default function AlgoliaSearchAbsoluteOverlay(props) {
       position: 'absolute',
       ...containerStyle,
     }}>
-      <View style={{ backgroundColor: colors.bg }}>
+      <View style={{  }}>
         <AlgoliaSearchBar
           containerStyle={{
             marginHorizontal: 10,
             marginVertical: 5,
+            backgroundColor: colors.bg,
+            marginTop: 160,
           }}
           onX={() => setResultPanelIsOpen(false)}
           onSearchResult={({ hits }) => {

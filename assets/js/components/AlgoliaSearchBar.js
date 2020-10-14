@@ -7,6 +7,7 @@ import { FONTS } from '../contexts/Styles'
 import Icon from './Icon'
 
 import mockData from '../../algoliaMockData.json'
+import { Colors } from 'react-native/Libraries/NewAppScreen'
 
 
 
@@ -52,6 +53,7 @@ export default function AlgoliaSearchBar(props) {
       borderRadius: 15,
       paddingLeft: 15,
       overflow: 'hidden',
+      
       ...containerStyle,
     }}>
       <View style={{
@@ -60,12 +62,16 @@ export default function AlgoliaSearchBar(props) {
       }}>
         <TextInput
           style={{
+            color: "#000",
             flex: 1,
             ...FONTS.body,
             fontSize: 18,
             ...textStyle,
+            color: "#000",
+            
           }}
           placeholder={'Search for a gym...'}
+          placeholderTextColor = {colors.textInputPlaceholderLight}
           value={searchText}
           onChangeText={setSearchText}
         />
@@ -76,6 +82,8 @@ export default function AlgoliaSearchBar(props) {
             right: 0,
             alignSelf: 'center',
             backgroundColor: '#00000012',
+            color: '#000'
+            
           }}>
             <TouchableHighlight onPress={closeSearch} underlayColor='#00000012' style={{
               height: '100%',
@@ -87,6 +95,7 @@ export default function AlgoliaSearchBar(props) {
                 containerStyle={{
                   width: 30,
                   height: 30,
+                  color: "#fff"
                 }}
                 source={require('../components/img/png/x-3.png')}
               />
@@ -112,7 +121,7 @@ export default function AlgoliaSearchBar(props) {
             width: 30,
             height: 30,
           }}
-          source={require('../components/img/png/search.png')}
+          source={require('../components/img/png/search-white.png')}
         />
       </TouchableHighlight>
     </View>

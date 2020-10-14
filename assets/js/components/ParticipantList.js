@@ -77,7 +77,7 @@ export default function ParticipantList(props) {
                 ...FONTS.body,
                 fontSize: 20,
             }}>People Participating</Text>
-            <ScrollView>
+            <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{
                     paddingVertical: 15,
                 }}>
