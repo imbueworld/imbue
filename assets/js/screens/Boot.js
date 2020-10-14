@@ -84,7 +84,7 @@ export default function Boot(props) {
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
       <View style={styles.container}>
-        <View style={{ height: 10, borderBottomWidth: 1, }} />
+        <View style={{ height: 30, borderBottomWidth: 1, }} />
         <Button
           title="Normal Boot"
           onPress={() => {

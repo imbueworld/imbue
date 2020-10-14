@@ -233,6 +233,16 @@ export default function ClassDescription(props) {
             refresh(r + 1)
           }
         },
+        removeFromCalendar: {
+          onPress: async () => {
+            const { id: classId, time_id: timeId } = classDoc
+            
+            const user = new User()
+            await user.unscheduleClass({ classId, timeId })
+
+            refresh(r + 1)
+          },
+        },
         viewAttendees: {
           show: user.account_type === "partner" ? true : false,
           data: {
