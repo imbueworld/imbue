@@ -18,6 +18,7 @@ import {
 import { requestPermissions } from '../HelperFunctions'
 import ImagePicker from 'react-native-image-picker'
 import Class from './Class'
+import config from '../../../../App.config'
 
 
 
@@ -570,7 +571,7 @@ export default class User extends DataObject {
       await this.init()
 
       // Ascertain that all permissions have been granted
-      const unfulfilledPerms = requestPermissions([
+      const unfulfilledPerms = await requestPermissions([
         'CAMERA',
         'READ_EXTERNAL_STORAGE',
       ])
@@ -583,16 +584,18 @@ export default class User extends DataObject {
       ImagePicker.showImagePicker({}, async res => {
         if (res.didCancel) {
           // ...
+          if (config.DEBUG) console.log('Photo selection canceled:', res.didCancel)
         }
 
         if (res.error) {
+          if (config.DEBUG) console.error(res.error)
           reject('Something prevented the action.')
         }
 
         // Main portion
 
         const {
-          filePath,
+          path: filePath,
           fileSize,
         } = res
 
@@ -611,12 +614,14 @@ export default class User extends DataObject {
 
           this.mergeItems({
             icon_uri: userId,
+            icon_uri_full: await publicStorage(userId, true),
           })
 
           await this.push()
           resolve('Success.')
 
         } catch(err) {
+          if (config.DEBUG) console.error(err)
           reject('Something prevented upload.')
         }
       })
