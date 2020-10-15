@@ -184,13 +184,14 @@ export default function UserDashboard(props) {
     <MapView
       style={styles.map}
       // provider={PROVIDER_GOOGLE}
-      customMapStyle={mapStyle2}
       initialRegion={{
-        latitude: 37.78825,
+        latitude: 37.78825, 
         longitude: -122.4324,
         latitudeDelta: 0.0922,
         longitudeDelta: 0.0421,
       }}
+      // customMapStyle={mapStyle2}
+
     >
       { Markers }
     </MapView>

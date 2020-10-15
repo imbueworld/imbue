@@ -128,7 +128,7 @@
 ]
 
 
- const mapStyle2 = [
+ var mapStyle2 = [
   {
     "elementType": "geometry",
     "stylers": [

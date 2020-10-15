@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, ScrollView } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { TextInput } from 'react-native-gesture-handler'
+
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
@@ -24,11 +26,13 @@ import User from '../backend/storage/User'
 // }
 
 
+
 export default function AddPaymentMethod(props) {
+  
   const { referrer } = props.route.params
 
   const [holderNameText, setHolderNameText] = useState("")
-  const [creditCardText, setCreditCardText] = useState("")
+  const [creditCardText, setCreditCard] = useState("")
   const [expireDateText, setExpireDateText] = useState("")
   const [CVCText, setCVCText] = useState("")
   const [zipCodeText, setZipCodeText] = useState("")
@@ -43,7 +47,6 @@ export default function AddPaymentMethod(props) {
       setUser(await user.retrieveUser())
     }; init()
   }, [])
-
 
 
   async function validateAndProceed() {
@@ -73,38 +76,47 @@ export default function AddPaymentMethod(props) {
   }
 
 
-
   if (!user) return <View />
 
   return (
-    <KeyboardAwareScrollView showsVerticalScrollIndicator={false}>
+    // <KeyboardAwareScrollView keyboardShouldPersistTaps="always"
+    //         showsVerticalScrollIndicator={false}> 
       <ProfileLayout
         innerContainerStyle={styles.innerContainer}
       >
         <Text style={{ color: "red" }}>{errorMsg}</Text>
-
+        
         <CustomTextInput
-          placeholder="Name of Holder"
+        placeholder="Name of Holder"
+        multiline={true}
           value={holderNameText}
           onChangeText={(text) => setHolderNameText(text)}
         />
-        <CustomTextInput
-          placeholder="Credit Card Number"
-          keyboardType='number-pad'
+         <CustomTextInput
+        placeholder="Credit Card Number"
+        multiline={true}
           value={creditCardText}
-          onChangeText={(text) => setCreditCardText(text)}
+          keyboardType='number-pad'
+          // onChangeText={(text) => setCreditCardText(text)}
+          onChangeText={(text) => setCreditCard(text.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '),)}
         />
         <CustomTextInput
-          placeholder="MM/YY"
+        placeholder="MM/YY"
+        multiline={true}
+          keyboardType='number-pad'
           value={expireDateText}
           onChangeText={(text) => setExpireDateText(text)}
         />
-        <CustomTextInput
+      <CustomTextInput
+        multiline={true}
+        keyboardType='number-pad'
           placeholder="CCV"
           value={CVCText}
           onChangeText={(text) => setCVCText(text)}
         />
-        <CustomTextInput
+      <CustomTextInput
+        multiline={true}
+        keyboardType='number-pad'
           placeholder="ZIP"
           value={zipCodeText}
           onChangeText={(text) => setZipCodeText(text)}
@@ -113,8 +125,7 @@ export default function AddPaymentMethod(props) {
           title="Save"
           onPress={validateAndProceed}
         />
-      </ProfileLayout>
-    </KeyboardAwareScrollView>
+      </ProfileLayout>   
   )
 }
 

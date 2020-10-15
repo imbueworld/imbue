@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { useForm } from 'react-hook-form'
 import moment from 'moment'
 import { FONTS } from '../contexts/Styles'
@@ -10,12 +10,13 @@ import config from '../../../App.config'
 import functions from '@react-native-firebase/functions'
 import { useNavigation } from '@react-navigation/native'
 import User from '../backend/storage/User'
-import Gym from '../backend/storage/Gym'
+import Gym from '../backend/storage/Gym' 
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from '../components/AppBackground'
 import CompanyLogo from '../components/CompanyLogo'
 import GoBackButton from '../components/buttons/GoBackButton'
+import BackButton from '../components/BackButton'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
 import CustomButton from '../components/CustomButton'
 import FormStatusMessage from '../components/FormStatusMessage'
@@ -296,10 +297,20 @@ export default function PartnerSignUpV2(props) {
   return (
     <KeyboardAwareScrollView>
       <AppBackground />
+       {/* back button */}
+       <TouchableHighlight
+            style={styles.sidePanelButtonContainer}
+            underlayColor="#eed"
+            onPress={props.onBack || (() => navigation.goBack())}
+          >
+            <BackButton
+              imageStyle={{
+                width: 48,
+                height: 48,
+              }}
+            />
+      </TouchableHighlight>
       <CompanyLogo />
-
-      <GoBackButton />
-
       <Text style={styles.sectionTitle}>Partner Sign Up</Text>
 
       <FormStatusMessage type='error' containerStyle={{
@@ -397,7 +408,7 @@ export default function PartnerSignUpV2(props) {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    marginTop: 20,
+    // marginTop: 20,
     marginBottom: 20,
     ...FONTS.title,
     alignSelf: 'center',
@@ -406,8 +417,22 @@ const styles = StyleSheet.create({
   },
   inputField: {
     marginBottom: 20,
+    marginRight: 30,
+    marginLeft: 30
   },
   signUpButton: {
     marginBottom: 20,
+    marginRight: 30,
+    marginLeft: 30
+  },
+  sidePanelButtonContainer: {
+    backgroundColor: "white",
+    marginTop: 40,
+    marginLeft: 10,
+    position: "absolute",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 999,
+    zIndex: 110,
   },
 })
