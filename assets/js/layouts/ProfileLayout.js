@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View, TouchableHighlight, ScrollView } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useNavigation } from '@react-navigation/native'
@@ -16,7 +16,7 @@ import EditButton from '../components/buttons/EditButton'
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
-import User from '../backend/storage/User'
+import User from '../backend/storage/User' 
 
 
 
@@ -93,12 +93,11 @@ export default function ProfileLayout(props) {
       backgroundColor: "#F9F9F9",
       borderRadius: 40,
     }}/>
-
       <KeyboardAwareScrollView
-        showsVerticalScrollIndicator={false}
+        // showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollView}
-        keyboardShouldPersistTaps="handled"
-        alwaysBounceVertical={false} 
+      keyboardShouldPersistTaps='handled'
+        // alwaysBounceVertical={false} 
     >
       <AppBackground />
 
@@ -198,7 +197,7 @@ export default function ProfileLayout(props) {
         </CustomCapsule>
 
       </View>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
     </>
   )
 }
