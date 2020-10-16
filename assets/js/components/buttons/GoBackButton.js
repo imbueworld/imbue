@@ -9,6 +9,13 @@ import { useNavigation } from '@react-navigation/native'
 
 export default function GoBackButton(props) {
   const navigation = useNavigation()
+  const {
+    containerStyle={},
+    imageContainerStyle={},
+    imageStyle={},
+    //
+    onPress=() => navigation.goBack(),
+  } = props
 
 
   
@@ -18,24 +25,22 @@ export default function GoBackButton(props) {
       borderRadius: 999,
       zIndex: 110,
       ...simpleShadow,
-      ...props.containerStyle,
+      ...containerStyle,
     }}>
       <TouchableHighlight
         style={{
           borderRadius: 999,
         }}
         underlayColor="#00000020"
-        onPress={props.onPress || (() => navigation.goBack())}
+        onPress={onPress}
       >
         <Icon
           containerStyle={{
             width: 50,
             height: 50,
-            ...props.imageContainerStyle,
+            ...imageContainerStyle,
           }}
-          imageStyle={{
-            ...props.imageStyle,
-          }}
+          imageStyle={imageStyle}
           source={require("../img/png/back-button-4.png")}
         />
       </TouchableHighlight>

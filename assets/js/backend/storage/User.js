@@ -15,7 +15,7 @@ import {
   ClassAlreadyScheduledError,
   MembershipAlreadyBoughtError,
 } from '../Errors'
-import { requestPermissions } from '../HelperFunctions'
+import { handleAuthErrorAnonymous, handlePasswordResetError, requestPermissions } from '../HelperFunctions'
 import ImagePicker from 'react-native-image-picker'
 import Class from './Class'
 import config from '../../../../App.config'
@@ -626,6 +626,26 @@ export default class User extends DataObject {
         }
       })
     })
+  }
+
+  async sendPasswordResetEmail(email) {
+    try {
+      await auth().sendPasswordResetEmail(email)
+    } catch(err) {
+      const userFacingErrMsg = handleAuthErrorAnonymous(err)
+      console.log('errorMessage', userFacingErrMsg) // DEBUG
+      throw userFacingErrMsg
+    }
+  }
+
+  async confirmPasswordReset(code, newPass) {
+    try {
+      await auth().confirmPasswordReset(code, newPass)
+    } catch(err) {
+      const userFacingErrMsg = handlePasswordResetError(err)
+      console.log('errorMessage', userFacingErrMsg) // DEBUG
+      throw userFacingErrMsg
+    }
   }
 
   _getPaymentMethodsDbRef() {
