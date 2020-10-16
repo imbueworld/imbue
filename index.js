@@ -14,6 +14,7 @@ import { colors } from './assets/js/contexts/Colors'
 
 StatusBar.setBackgroundColor(colors.bg)
 StatusBar.setBarStyle('dark-content')
+StatusBar.setTranslucent(true)
 
 
 

@@ -413,7 +413,7 @@ const styles = StyleSheet.create({
     ...FONTS.title,
     alignSelf: 'center',
     fontSize: 25,
-    color: colors.gray,
+    color: colors.accent,
   },
   inputField: {
     marginBottom: 20,
