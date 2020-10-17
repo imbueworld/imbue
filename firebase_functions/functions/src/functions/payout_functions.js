@@ -1,3 +1,4 @@
+const functions = require('firebase-functions')
 const { Reports } = require("../Reports")
 
 

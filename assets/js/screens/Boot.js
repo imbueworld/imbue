@@ -139,7 +139,7 @@ export default function Boot(props) {
         <Button
           title="ClassDescription"
           onPress={() => {
-            const pushAction = StackActions.push("ClassDescription", { gymId: "4qmQLlVGU5Jgd0NLv3Wr" })
+            const pushAction = StackActions.push("ClassDescription", { gymId: "wUGdlSqTzNiaAR7VtkUy" })
             props.navigation.dispatch(pushAction)
           }}
         />
@@ -148,7 +148,7 @@ export default function Boot(props) {
         <Button
           title="GymDescription"
           onPress={() => {
-            const pushAction = StackActions.push("GymDescription", { gymId: "4qmQLlVGU5Jgd0NLv3Wr" })
+            const pushAction = StackActions.push("GymDescription", { gymId: "wUGdlSqTzNiaAR7VtkUy" })
             props.navigation.dispatch(pushAction)
           }}
         />
