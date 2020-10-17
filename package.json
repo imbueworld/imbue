@@ -10,6 +10,7 @@
         "lint": "eslint ."
     },
     "dependencies": {
+        "@invertase/react-native-apple-authentication": "^2.0.2",
         "@react-native-community/async-storage": "^1.12.1",
         "@react-native-community/google-signin": "^4.0.3",
         "@react-native-community/hooks": "^2.6.0",

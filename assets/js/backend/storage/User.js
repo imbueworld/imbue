@@ -171,7 +171,11 @@ export default class User extends DataObject {
         account_type = accountType
         uid = user.uid
   
-        let names = user.displayName.split(' ')
+        if (user.displayName) {
+          let names = user.displayName.split(' ')
+        } else {
+          names = ['No', 'Name']
+        }
         first = names[ 0 ]
         last = names.slice(1).join(' ')
         email = user.email
