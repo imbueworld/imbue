@@ -23,7 +23,6 @@ const {
   getDateStringOfTimestamp,
 } = require('./src/HelperFunctions')
 const { Reports } = require('./src/Reports');
-const { Mindbody } = require('./src/Mindbody');
 
 
 
@@ -53,11 +52,12 @@ const stripe_prices = admin.firestore().collection('stripe_prices')
 
 
 
-exports.zxc = functions.https.onCall(async (data, context) => {
-  const mindbody = new Mindbody(true)
-  mindbody.setAuthentication('-99')
-  return await mindbody.retrieveUserToken('Siteowner', 'apitest1234')
-})
+exports.zxc = functions.https.onCall(async (data, context) => {})
+
+const mindbody_functions = require('./src/functions/mindbody_functions')
+for (let fnName in mindbody_functions) {
+  exports[ fnName ] = mindbody_functions[ fnName ]
+}
 
 exports.createLivestream = functions.https.onCall(async (data, context) => {
   const { uid } = context.auth
@@ -787,13 +787,13 @@ exports.completeClassSignUp = functions.firestore
       // validates begin_time & end_time
       if (!CLASS_END_DATE_STRING) {
         SCHED_CLASS_DEBUG['__message'] = 'CLASS_END_DATE_STRING cannot be empty.'
-        reports.log(userId, SCHED_CLASS_DEBUG, true)
+        await reports.log(userId, SCHED_CLASS_DEBUG, true)
       }
 
       // Do not schedule classes that have already started / are in the past now.
       if (CURR_TIMESTAMP > begin_time) {
         SCHED_CLASS_DEBUG['__message'] = `Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`
-        reports.log(userId, SCHED_CLASS_DEBUG)
+        await reports.log(userId, SCHED_CLASS_DEBUG)
         w(`Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`)
         continue
       }
@@ -889,13 +889,13 @@ exports.completeClassUnschedule = functions.firestore
     // validates begin_time & end_time
     if (!CLASS_END_DATE_STRING) {
       UNDID_CLASSES_DEBUG['__message'] = 'CLASS_END_DATE_STRING cannot be empty.'
-      reports.log(userId, UNDID_CLASSES_DEBUG, true)
+      await reports.log(userId, UNDID_CLASSES_DEBUG, true)
     }
 
     // Do not schedule classes that have already started / are in the past now.
     if (CURR_TIMESTAMP > begin_time) {
       UNDID_CLASSES_DEBUG['__message'] = `Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`
-      reports.log(userId, UNDID_CLASSES_DEBUG)
+      await reports.log(userId, UNDID_CLASSES_DEBUG)
       w(`Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`)
       continue
     }
