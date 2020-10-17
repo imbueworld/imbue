@@ -15,6 +15,9 @@ import { StackActions, useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
 import auth from '@react-native-firebase/auth'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { FONTS } from '../contexts/Styles'
+import { colors } from '../contexts/Colors'
 
 
 export default function Login(props) {
@@ -147,11 +150,20 @@ export default function Login(props) {
                 return
               }
               // Otherwise...
-              // setRedFields(redFields)
               setErrorMsg(errorMsg)
             }
           }}
         />
+
+        <TouchableWithoutFeedback
+          style={{ alignSelf: 'center', padding: 10 }}
+          onPress={() => navigation.navigate('PasswordReset')}
+        >
+          <Text style={[ styles.text, {
+            textDecorationLine: 'underline',
+            fontSize: 16,
+          }]}>Forgot Password</Text>
+        </TouchableWithoutFeedback>
       </CustomCapsule>
 
       </KeyboardAwareScrollView>
@@ -162,7 +174,6 @@ const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
     backgroundColor: "#F9F9F9",
-    
   },
   container: {
     width: "88%",
@@ -179,5 +190,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 999,
     zIndex: 110,
+  },
+  text: {
+    ...FONTS.body,
+    color: colors.accent,
   },
 })
