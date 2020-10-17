@@ -249,29 +249,29 @@ PODS:
     - FBSDKShareKit/Share (= 7.1.1)
   - FBSDKShareKit/Share (7.1.1):
     - FBSDKCoreKit (~> 7.1.1)
-  - Firebase/Auth (6.28.1):
+  - Firebase/Auth (6.30.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 6.7.0)
-  - Firebase/CoreOnly (6.28.1):
-    - FirebaseCore (= 6.9.1)
-  - Firebase/Database (6.28.1):
+    - FirebaseAuth (~> 6.8.0)
+  - Firebase/CoreOnly (6.30.0):
+    - FirebaseCore (= 6.10.0)
+  - Firebase/Database (6.30.0):
     - Firebase/CoreOnly
-    - FirebaseDatabase (~> 6.4.0)
-  - Firebase/Firestore (6.28.1):
+    - FirebaseDatabase (~> 6.5.0)
+  - Firebase/Firestore (6.30.0):
     - Firebase/CoreOnly
-    - FirebaseFirestore (~> 1.16.2)
-  - Firebase/Functions (6.28.1):
+    - FirebaseFirestore (~> 1.16.4)
+  - Firebase/Functions (6.30.0):
     - Firebase/CoreOnly
-    - FirebaseFunctions (~> 2.7.0)
-  - Firebase/Storage (6.28.1):
+    - FirebaseFunctions (~> 2.8.0)
+  - Firebase/Storage (6.30.0):
     - Firebase/CoreOnly
-    - FirebaseStorage (~> 3.8.0)
-  - FirebaseAuth (6.7.1):
-    - FirebaseCore (~> 6.8)
+    - FirebaseStorage (~> 3.9.0)
+  - FirebaseAuth (6.8.0):
+    - FirebaseCore (~> 6.10)
     - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
     - GoogleUtilities/Environment (~> 6.7)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (6.9.1):
+  - FirebaseCore (6.10.0):
     - FirebaseCoreDiagnostics (~> 1.3)
     - GoogleUtilities/Environment (~> 6.7)
     - GoogleUtilities/Logger (~> 6.7)
@@ -280,10 +280,10 @@ PODS:
     - GoogleUtilities/Environment (~> 6.7)
     - GoogleUtilities/Logger (~> 6.7)
     - nanopb (~> 1.30905.0)
-  - FirebaseDatabase (6.4.0):
-    - FirebaseCore (~> 6.8)
+  - FirebaseDatabase (6.5.0):
+    - FirebaseCore (~> 6.10)
     - leveldb-library (~> 1.22)
-  - FirebaseFirestore (1.16.3):
+  - FirebaseFirestore (1.16.4):
     - abseil/algorithm (= 0.20200225.0)
     - abseil/base (= 0.20200225.0)
     - abseil/memory (= 0.20200225.0)
@@ -291,26 +291,26 @@ PODS:
     - abseil/strings/strings (= 0.20200225.0)
     - abseil/time (= 0.20200225.0)
     - abseil/types (= 0.20200225.0)
-    - FirebaseCore (~> 6.8)
+    - FirebaseCore (~> 6.10)
     - "gRPC-C++ (~> 1.28.0)"
     - leveldb-library (~> 1.22)
     - nanopb (~> 1.30905.0)
-  - FirebaseFunctions (2.7.0):
-    - FirebaseCore (~> 6.8)
+  - FirebaseFunctions (2.8.0):
+    - FirebaseCore (~> 6.10)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseStorage (3.8.0):
-    - FirebaseCore (~> 6.8)
+  - FirebaseStorage (3.9.1):
+    - FirebaseCore (~> 6.10)
     - GTMSessionFetcher/Core (~> 1.1)
   - Flipper (0.41.5):
     - Flipper-Folly (~> 2.2)
     - Flipper-RSocket (~> 1.1)
   - Flipper-DoubleConversion (1.1.7)
-  - Flipper-Folly (2.2.0):
+  - Flipper-Folly (2.3.0):
     - boost-for-react-native
     - CocoaLibEvent (~> 1.0)
     - Flipper-DoubleConversion
     - Flipper-Glog
-    - OpenSSL-Universal (= 1.0.2.19)
+    - OpenSSL-Universal (= 1.0.2.20)
   - Flipper-Glog (0.3.6)
   - Flipper-PeerTalk (0.0.4)
   - Flipper-RSocket (1.1.0):
@@ -437,13 +437,13 @@ PODS:
     - nanopb/encode (= 1.30905.0)
   - nanopb/decode (1.30905.0)
   - nanopb/encode (1.30905.0)
-  - NodeMediaClient (2.7.12)
-  - OpenSSL-Universal (1.0.2.19):
-    - OpenSSL-Universal/Static (= 1.0.2.19)
-  - OpenSSL-Universal/Static (1.0.2.19)
+  - NodeMediaClient (2.8.7)
+  - OpenSSL-Universal (1.0.2.20):
+    - OpenSSL-Universal/Static (= 1.0.2.20)
+  - OpenSSL-Universal/Static (1.0.2.20)
   - Permission-Camera (2.2.2):
     - RNPermissions
-  - PromisesObjC (1.2.10)
+  - PromisesObjC (1.2.11)
   - RCTRequired (0.63.2)
   - RCTTypeSafety (0.63.2):
     - FBLazyVector (= 0.63.2)
@@ -628,19 +628,21 @@ PODS:
     - Google-Maps-iOS-Utils (= 2.1.0)
     - GoogleMaps (= 3.5.0)
     - React
-  - react-native-image-picker (2.3.3):
-    - React
+  - react-native-image-picker (2.3.4):
+    - React-Core
   - react-native-maps (0.27.1):
     - React
-  - react-native-nodemediaclient (0.2.5):
-    - NodeMediaClient (= 2.7.12)
+  - react-native-network-info (5.2.1):
     - React
-    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.2.5)
-  - react-native-nodemediaclient/RCTNodeMediaClient (0.2.5):
-    - NodeMediaClient (= 2.7.12)
+  - react-native-nodemediaclient (0.2.13):
+    - NodeMediaClient (= 2.8.7)
     - React
-  - react-native-safe-area-context (3.0.7):
+    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.2.13)
+  - react-native-nodemediaclient/RCTNodeMediaClient (0.2.13):
+    - NodeMediaClient (= 2.8.7)
     - React
+  - react-native-safe-area-context (3.1.8):
+    - React-Core
   - react-native-video (4.4.5):
     - React
     - react-native-video/Video (= 4.4.5)
@@ -706,32 +708,34 @@ PODS:
     - React-Core (= 0.63.2)
     - React-cxxreact (= 0.63.2)
     - React-jsi (= 0.63.2)
-  - RNCAsyncStorage (1.12.0):
-    - React
+  - RNAppleAuthentication (2.0.2):
+    - React-Core
+  - RNCAsyncStorage (1.12.1):
+    - React-Core
   - RNCMaskedView (0.1.10):
     - React
-  - RNFBApp (8.3.0):
-    - Firebase/CoreOnly (~> 6.28.1)
-    - React
-  - RNFBAuth (8.3.1):
-    - Firebase/Auth (~> 6.28.1)
-    - React
-    - RNFBApp
-  - RNFBDatabase (7.4.1):
-    - Firebase/Database (~> 6.28.1)
+  - RNFBApp (8.4.5):
+    - Firebase/CoreOnly (~> 6.30.0)
+    - React-Core
+  - RNFBAuth (8.3.3):
+    - Firebase/Auth (~> 6.30.0)
     - React
     - RNFBApp
-  - RNFBFirestore (7.5.1):
-    - Firebase/Firestore (~> 6.28.1)
-    - React
+  - RNFBDatabase (7.5.11):
+    - Firebase/Database (~> 6.30.0)
+    - React-Core
     - RNFBApp
-  - RNFBFunctions (7.3.1):
-    - Firebase/Functions (~> 6.28.1)
-    - React
+  - RNFBFirestore (7.8.6):
+    - Firebase/Firestore (~> 6.30.0)
+    - React-Core
     - RNFBApp
-  - RNFBStorage (7.3.1):
-    - Firebase/Storage (~> 6.28.1)
-    - React
+  - RNFBFunctions (7.4.8):
+    - Firebase/Functions (~> 6.30.0)
+    - React-Core
+    - RNFBApp
+  - RNFBStorage (7.4.9):
+    - Firebase/Storage (~> 6.30.0)
+    - React-Core
     - RNFBApp
   - RNGestureHandler (1.6.1):
     - React
@@ -796,6 +800,7 @@ DEPENDENCIES:
   - react-native-google-maps (from `../node_modules/react-native-maps`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
   - react-native-maps (from `../node_modules/react-native-maps`)
+  - react-native-network-info (from `../node_modules/react-native-network-info`)
   - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
@@ -809,6 +814,7 @@ DEPENDENCIES:
   - React-RCTText (from `../node_modules/react-native/Libraries/Text`)
   - React-RCTVibration (from `../node_modules/react-native/Libraries/Vibration`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
+  - "RNAppleAuthentication (from `../node_modules/@invertase/react-native-apple-authentication`)"
   - "RNCAsyncStorage (from `../node_modules/@react-native-community/async-storage`)"
   - "RNCMaskedView (from `../node_modules/@react-native-community/masked-view`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
@@ -909,6 +915,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-image-picker"
   react-native-maps:
     :path: "../node_modules/react-native-maps"
+  react-native-network-info:
+    :path: "../node_modules/react-native-network-info"
   react-native-nodemediaclient:
     :path: "../node_modules/react-native-nodemediaclient"
   react-native-safe-area-context:
@@ -935,6 +943,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/Libraries/Vibration"
   ReactCommon:
     :path: "../node_modules/react-native/ReactCommon"
+  RNAppleAuthentication:
+    :path: "../node_modules/@invertase/react-native-apple-authentication"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-community/async-storage"
   RNCMaskedView:
@@ -981,17 +991,17 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: b46507dc8b8cefed31d644e74d7cc30e2a715ef8
   FBSDKLoginKit: 1a61d79e2b25e2fc0d03dccab1e34b38bbdf2546
   FBSDKShareKit: 00a055c1999b099596e00212dd1c0600c6697019
-  Firebase: ed042590caa0029392257529a8003c25ee82bc18
-  FirebaseAuth: a818d73466d51db897d3bf3c0f3baa3dae7fd4c0
-  FirebaseCore: 687b8e6a0a4337b898a6326d68254c2f80c143af
+  Firebase: 210f41ca352067d83b1ba4fd2e7fb49a0c017397
+  FirebaseAuth: 300433de340c1b058dbb8aec224a3f1bcfda5184
+  FirebaseCore: 9a41e2de78fef10f63cee30ab10e2945266bc1fc
   FirebaseCoreDiagnostics: 7535fe695737f8c5b350584292a70b7f8ff0357b
-  FirebaseDatabase: 55e69fe802ccb438d9c6ee51eb32fd425d5409d3
-  FirebaseFirestore: 5ea7b0878363f9ec66bdcee0c29ad875d1b511ac
-  FirebaseFunctions: 13d690cb93e98eea1b304ab05b4bc4436538482a
-  FirebaseStorage: 3ef81ca5fa7817f85451ca09d516a34d2c7542a7
+  FirebaseDatabase: d85b47213273708e48c972012b39105f76229588
+  FirebaseFirestore: ff82cd15f8ed3b417c307eb729e3e2e68aad0bdd
+  FirebaseFunctions: e0694e614a5e3300120a10d925e2cd3be60a9c81
+  FirebaseStorage: 15e0f15ef3c7fec3d1899d68623e47d4447066b4
   Flipper: 33585e2d9810fe5528346be33bcf71b37bb7ae13
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
-  Flipper-Folly: c12092ea368353b58e992843a990a3225d4533c3
+  Flipper-Folly: e4493b013c02d9347d5e0cb4d128680239f6c78a
   Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   Flipper-RSocket: 64e7431a55835eb953b0bf984ef3b90ae9fdddd7
@@ -1009,10 +1019,10 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
   leveldb-library: 55d93ee664b4007aac644a782d11da33fba316f7
   nanopb: c43f40fadfe79e8b8db116583945847910cbabc9
-  NodeMediaClient: 06c0977d552abb898c863448daa9f560f1b2ef6b
-  OpenSSL-Universal: 8b48cc0d10c1b2923617dfe5c178aa9ed2689355
+  NodeMediaClient: c52ef6564764c364b5032d1d8d1f255d5e4aadb0
+  OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   Permission-Camera: 375576c57ea625c88137d2cc52ba6dfeb21db036
-  PromisesObjC: b14b1c6b68e306650688599de8a45e49fae81151
+  PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   RCTRequired: f13f25e7b12f925f1f6a6a8c69d929a03c0129fe
   RCTTypeSafety: 44982c5c8e43ff4141eb519a8ddc88059acd1f3a
   React: e1c65dd41cb9db13b99f24608e47dd595f28ca9a
@@ -1025,10 +1035,11 @@ SPEC CHECKSUMS:
   React-jsinspector: b14e62ebe7a66e9231e9581279909f2fc3db6606
   react-native-fbsdk: 00c15d138bba6d4efa628670886fc58cec858c19
   react-native-google-maps: 0a989abda71059db2caa98b9dacca7a8f38a47d0
-  react-native-image-picker: a6c3d644751a388b0fc8b56822ff7cbd398a3008
+  react-native-image-picker: 32d1ad2c0024ca36161ae0d5c2117e2d6c441f11
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
-  react-native-nodemediaclient: 4feb7f63ba6da5e1bae4645c0d47f60a44cc4a19
-  react-native-safe-area-context: c39fc20a20cd66ebf1d56c6f8b8711142fbfee98
+  react-native-network-info: d1290ffc0bd0709e11436f5b8d7f605dcc5c4530
+  react-native-nodemediaclient: 824e5b6b0e46325e97e08bdb5058ae0f72e575fa
+  react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
   react-native-video: aa527b0acb37f94c4491e70df0274cb26979405d
   React-RCTActionSheet: 910163b6b09685a35c4ebbc52b66d1bfbbe39fc5
   React-RCTAnimation: 9a883bbe1e9d2e158d4fb53765ed64c8dc2200c6
@@ -1040,14 +1051,15 @@ SPEC CHECKSUMS:
   React-RCTText: 1b6773e776e4b33f90468c20fe3b16ca3e224bb8
   React-RCTVibration: 4d2e726957f4087449739b595f107c0d4b6c2d2d
   ReactCommon: a0a1edbebcac5e91338371b72ffc66aa822792ce
-  RNCAsyncStorage: 3eea36d9460c5159b592f9ecbe5a77f8aca98006
+  RNAppleAuthentication: 09bf9752c73e1a19ba71b27538bc76cb4f8441a6
+  RNCAsyncStorage: cb9a623793918c6699586281f0b51cbc38f046f9
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
-  RNFBApp: d55b3a69d199cff25ecf4f3bf41a86c47aa37d57
-  RNFBAuth: 8cdec65b3c88e8f5b2aa0109d8cbfbaaa73fb379
-  RNFBDatabase: 2de49cc2b01698412b231b2e369af88c33465d73
-  RNFBFirestore: 85df763f15f97c0cc8ec0a429aaa18dc8196e386
-  RNFBFunctions: 1ba29a29d4c48d1930864fcf798942329d3e59aa
-  RNFBStorage: ba5508aa4e1b92643c29ac52daf99f60e300a951
+  RNFBApp: 570b136767f588b7eef0ab918284e9fe364d0c3e
+  RNFBAuth: 8fd5ea881020a13deae2ca3e9810e30d15ce42ac
+  RNFBDatabase: f4d2ff8a7dc534ef88ac0e1e896214918642ca97
+  RNFBFirestore: af1be97b4fa9cede20b34f724c8e3260c6e2540d
+  RNFBFunctions: db82a1c996b8a8a63bf0c0027c579d4abd200982
+  RNFBStorage: f7d269f1ca0035995d573dfd0b892c0ecba8fbfb
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNGoogleSignin: ccf71ee4b6cfd324fd788a41e457e2043838c0d9
   RNPermissions: 067727df624665d4a6c8e2cffcc172ba608b96ed

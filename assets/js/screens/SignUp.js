@@ -1,6 +1,9 @@
-import React, { useState } from 'react'
-import { StyleSheet, Text, TouchableHighlight } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, Text, TouchableHighlight, Platform, View, Image } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import { AppleButton } from '@invertase/react-native-apple-authentication';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
+import auth from '@react-native-firebase/auth'
 
 import AppBackground from "../components/AppBackground"
 
@@ -19,6 +22,7 @@ import User from '../backend/storage/User'
 
 
 
+
 export default function SignUp(props) {
   const navigation = useNavigation()
 
@@ -30,7 +34,8 @@ export default function SignUp(props) {
   const [last, setLast] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [passwordConfirm, setPasswordConfirm] = useState("")
+  const [passwordConfirm, setPasswordConfirm] = useState("")// passing in an empty array as the second argument ensures this is only ran once when component mounts initially.
+
 
   function invalidate() {
     let redFields = []
@@ -94,7 +99,7 @@ export default function SignUp(props) {
             />
       </TouchableHighlight>
 
-      <CustomCapsule style={styles.container}>
+      <CustomCapsule style={styles.container}>   
 
         <SocialLogin
           containerStyle={{
@@ -107,6 +112,18 @@ export default function SignUp(props) {
             navigation.dispatch(pushAction)
           }}
         />
+
+        {/* <View style={{textAlign: 'center'}}> 
+          <AppleButton
+            cornerRadius={999}
+            style={{
+              width: 64,
+              height: 64,
+            }}
+            onPress={() => onAppleButtonPress()} >
+            <Image style={{width: 64, height: 64,}} source={require('../components/img/png/apple-sign-in.png')} />
+          </AppleButton>
+        </View> */}
 
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>
