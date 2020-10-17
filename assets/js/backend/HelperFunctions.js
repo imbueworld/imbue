@@ -226,8 +226,34 @@ export function handleAuthErrorAnonymous(err) {
       break
     default:
       errorMsg = "Something prevented the action."
+      break
   }
   return [errorMsg, redFields]
+}
+
+export function handlePasswordResetError(err) {
+  let errMsg
+  switch(err.code) {
+    case 'auth/expired-action-code':
+      errMsg = 'Code has expired.'
+      break
+    case 'auth/invalid-action-code':
+      errMsg = 'Entered code was not the correct one.'
+      break
+    case 'user-disabled':
+      errMsg = 'User is disabled.'
+      break
+    case 'auth/user-not-found':
+      errMsg = 'User was not found.'
+      break
+    case 'auth/weak-password':
+      errMsg = 'Weak password.'
+      break
+    default:
+      errMsg = 'Something prevented the action.'
+      break
+  }
+  return errMsg
 }
 
 /**

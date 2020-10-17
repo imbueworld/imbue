@@ -25,7 +25,6 @@ export default function ProfileLayout(props) {
 
   const [errorMsg, setErrorMsg] = useState('')
   const [user, setUser] = useState()
-  if (user) console.log('user', { icon_uri_full: user.icon_uri_full, icon_uri: user.icon_uri }) // DEBUG
   const [buttonOptions, setButtonOptions] = useState(null)
   const [r, refresh] = useState(0)
 

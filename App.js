@@ -28,6 +28,7 @@ import GymDescription from "./assets/js/screens/GymDescription"
 import UserMemberships from "./assets/js/screens/UserMemberships"
 import ClassDescription from "./assets/js/screens/ClassDescription"
 import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
+import PasswordReset from './assets/js/screens/PasswordReset'
 
 const Stack = createStackNavigator()
 
@@ -156,9 +157,14 @@ export default function App() {
           component={_TestingGrounds}
           initialParams={{}}
         />
+        <Stack.Screen
+          name='PasswordReset'
+          component={PasswordReset}
+          initialParams={{}}
+        />
         {/*
         <Stack.Screen
-          name=""
+          name=''
           component={}
           initialParams={{}}
         />

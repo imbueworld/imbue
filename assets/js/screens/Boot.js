@@ -16,9 +16,9 @@ import User from '../backend/storage/User'
 
 export default function Boot(props) {
   // signs out user on app load
-  // auth().signOut()
   // GoogleSignin.signOut()
   // LoginManager.logOut()
+  // auth().signOut()
 
   const navigation = useNavigation()
 
