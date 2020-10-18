@@ -7,6 +7,7 @@ const STRUCTURE = {
     email: String,
     first: String,
     last: String,
+    dob: Object,
     icon_uri: String,
     icon_uri_foreign: String,
     // Fields not meant for editting

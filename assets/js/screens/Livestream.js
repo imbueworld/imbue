@@ -7,84 +7,6 @@ import Gym from '../backend/storage/Gym'
 
 
 
-// const ptcListData = [
-//     {
-//         profileId: "1",
-//         name: "Participant 1",
-//         iconUri: require("../components/img/png/pfp-yoga.png"),
-//     },
-//     {
-//         profileId: "2",
-//         name: "Participant 2",
-//         iconUri: require("../components/img/png/pfp-fitness.png"),
-//     },
-//     {
-//         profileId: "3",
-//         name: "Participant 3",
-//         iconUri: require("../components/img/png/pfp-man.png"),
-//     },
-//     {
-//         profileId: "4",
-//         name: "Participant 4",
-//         iconUri: require("../components/img/png/pfp-woman.png"),
-//     },
-//     {
-//         profileId: "5",
-//         name: "Participant 1",
-//         iconUri: require("../components/img/png/pfp-man-2.png"),
-//     },
-//     {
-//         profileId: "6",
-//         name: "Participant 2",
-//         iconUri: require("../components/img/png/pfp-man-3.png"),
-//     },
-//     {
-//         profileId: "7",
-//         name: "Participant 3",
-//         iconUri: require("../components/img/png/pfp-man.png"),
-//     },
-//     {
-//         profileId: "8",
-//         name: "Participant 4",
-//         iconUri: require("../components/img/png/pfp-woman.png"),
-//     },
-// ]
-
-// const chatData = [
-//     {
-//         profileId: "8",
-//         name: "Participant 4",
-//         msgId: "-ABCDEF-",
-//         message: "Let's goooo!",
-//     },
-//     {
-//         profileId: "7",
-//         name: "Participant 3",
-//         msgId: "-ZXCVB-",
-//         message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Habitant morbi tristique senectus et netus. Augue mauris augue neque gravida in. Ipsum nunc aliquet bibendum enim facilisis gravida neque convallis.",
-//     },
-//     {
-//         profileId: "1",
-//         name: "Participant 1",
-//         msgId: "-BNM-",
-//         message: "Risus sed vulputate odio ut enim blandit volutpat. In tellus integer feugiat scelerisque varius. Nisl vel pretium lectus quam id leo in vitae turpis. Ultricies mi quis hendrerit dolor magna. Lectus arcu bibendum at varius vel.",
-//     },
-//     {
-//         profileId: "7",
-//         name: "Participant 3",
-//         msgId: "-FEDCBA-",
-//         message: "Nice!",
-//     },
-// ]
-
-// const selfProfileData = {
-//     name: "Participant 3",
-//     iconUri: require("../components/img/png/pfp-man.png"),
-//     profileId: "7",
-// }
-
-
-
 function getPlaybackLink(playbackId) {
   return `https://stream.mux.com/${playbackId}.m3u8`
 }
@@ -118,22 +40,22 @@ export default function Livestream(props) {
 
   return (
     <>
-      <LivestreamLayout
-        gymId={gymId}
-        user={user}
-      />
+    <LivestreamLayout
+      gymId={gymId}
+      user={user}
+    />
 
-      {   playbackLink
-        ? <Video
-          style={styles.video}
-          source={{ uri: playbackLink }}
-          onBuffer={() => { console.log("Buffering video...") }}
-          onError={() => { console.log("Error on video!") }}
-          paused={false}
-          resizeMode={"contain"}
-        // repeat={true}
-        />
-        : null}
+    {   playbackLink
+      ? <Video
+        style={styles.video}
+        source={{ uri: playbackLink }}
+        onBuffer={() => { console.log("Buffering video...") }}
+        onError={() => { console.log("Error on video!") }}
+        paused={false}
+        resizeMode={"contain"}
+      // repeat={true}
+      />
+      : null}
     </>
   )
 }
