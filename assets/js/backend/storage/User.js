@@ -437,6 +437,18 @@ export default class User extends DataObject {
           throw 'Class already scheduled.'
       })
 
+      // [ Mindbody ]
+      // Check whether it is a Mindbody class, and
+      // if it is, try to sign up for it as a Mindbody Client.
+      // If that fails, return
+      const classObj = new Class()
+      let { mindbody_integration } = await classObj.retrieveClass(classId)
+      if (mindbody_integration) {
+        const addClient = functions().httpsCallable('addMindbodyClientToClass')
+        const { error } = ( await addClient({ classId }) ).data || {}
+        if (error) throw error
+      }
+
       // Add to schedule, push it to user doc,
       // and let the Google Cloud .onUpdate function do the rest.
       let newEntry = { class_id: classId, time_id: timeId }
@@ -467,6 +479,20 @@ export default class User extends DataObject {
       // and let the Google Cloud .onUpdate function do the rest.
       this.mergeItems({ scheduled_classes: filteredClasses })
       await this.push()
+
+      // [ Mindbody ]
+      // Unlike in .scheduleClass,
+      // Try to unschedule from Mindbody database lastly,
+      // because it is more important that local membership instances
+      // get updated
+      const classObj = new Class()
+      let { mindbody_integration } = await classObj.retrieveClass(classId)
+      console.log('classData.mindbody_integration', mindbody_integration) // DEBUG
+      if (mindbody_integration) {
+        const removeClient = functions().httpsCallable('removeMindbodyClientFromClass')
+        await removeClient({ classId })
+      }
+      console.log('Does not continue further, if failed') // DEBUG
     })
   }
 
@@ -646,6 +672,17 @@ export default class User extends DataObject {
       console.log('errorMessage', userFacingErrMsg) // DEBUG
       throw userFacingErrMsg
     }
+  }
+
+  /**
+   * Partner Mindbody function to get the Activation Link & Code with.
+   */
+  async requestMindbodyActivation(details) {
+    return await this._BusyErrorWrapper('requestMindbodyActivation', async () => {
+      // let { siteId } = details
+      const requestActivation = functions().httpsCallable('getMindbodyActivationCode')
+      return ( await requestActivation(details) ).data
+    })
   }
 
   _getPaymentMethodsDbRef() {

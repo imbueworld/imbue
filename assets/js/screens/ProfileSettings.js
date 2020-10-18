@@ -7,18 +7,24 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 
 import auth from "@react-native-firebase/auth"
+import moment from 'moment'
 import { handleAuthError } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
+import CustomTextInputV2 from '../components/CustomTextInputV2'
+import config from '../../../App.config'
 
 
 
 export default function ProfileSettings(props) {
   const [user, setUser] = useState(null)
+  const [isForeignUser, setIsForeignUser] = useState()
 
   useEffect(() => {
     const init = async () => {
       const user = new User()
-      setUser(await user.retrieveUser())
+      const userDoc = await user.retrieveUser()
+      setUser(userDoc)
+      setIsForeignUser( userDoc.icon_uri_foreign ? true : false )
     }; init()
   }, [])
 
@@ -28,6 +34,9 @@ export default function ProfileSettings(props) {
     setFirstNameField(user.first)
     setLastNameField(user.last)
     setEmailField(user.email)
+    let { day, month, year } = user.dob || {}
+    let dobString = user.dob ? `${month}-${day}-${year}` : ''
+    setDob(dobString)
   }, [user])
 
   const [redFields, setRedFields] = useState([])
@@ -39,11 +48,13 @@ export default function ProfileSettings(props) {
   const [lastNameField, setLastNameField] = useState("")
   const [emailField, setEmailField] = useState("")
   const [passwordField, setPasswordField] = useState("")
+  //
+  const [dob, setDob] = useState('')
 
   const [changePasswordField, setChangePasswordField] = useState("")
   const [changePasswordFieldConfirm, setChangePasswordFieldConfirm] = useState("")
 
-  async function updateSafeInfo() {
+  const updateSafeInfo = async () => {
     setRedFields([])
     setErrorMsg("")
     setSuccessMsg("")
@@ -52,7 +63,8 @@ export default function ProfileSettings(props) {
     if (firstNameField.length === 0) redFields.push("first")
     if (lastNameField.length === 0) redFields.push("last")
     if (emailField.length === 0) redFields.push("email")
-    if (passwordField.length === 0) redFields.push("main_password")
+    if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
+    if (dob.split('-').length != 3) redFields.push('dob')
     setRedFields(redFields)
 
     if (redFields.length) {
@@ -60,9 +72,23 @@ export default function ProfileSettings(props) {
       return
     }
 
+    const DateMoment = moment(dob, 'MM-DD-YYYY')
+    if (!DateMoment.isValid()) {
+      redFields.push('dob')
+      setRedFields(redFields)
+      setErrorMsg('Date of Birth is invalid.')
+      return
+    }
+
     try {
-      await auth().signInWithEmailAndPassword(user.email, passwordField)
-      let updatables = {}
+      if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
+      let updatables = {
+        dob: {
+          day: DateMoment.date(),
+          month: DateMoment.month() + 1,
+          year: DateMoment.year(),
+        },
+      }
 
       if (firstNameField !== user.first) updatables.first = firstNameField
       if (lastNameField !== user.last) updatables.last = lastNameField
@@ -76,14 +102,16 @@ export default function ProfileSettings(props) {
         return
       }
 
-      const user = new User()
-      user.mergeItems(updatables)
-      await user.push()
+      const userObj = new User()
+      await userObj.init()
+      userObj.mergeItems(updatables)
+      await userObj.push()
 
       setSuccessMsg('Successfully updated profile information.')
       setPasswordField('')
       Keyboard.dismiss()
     } catch (err) {
+      if (config.DEBUG) console.error(err)
       let [errorMsg, redFields] = handleAuthError(err)
       setRedFields(redFields)
       setErrorMsg(errorMsg)
@@ -98,7 +126,7 @@ export default function ProfileSettings(props) {
 
     if (changePasswordField.length === 0) redFields.push("change_password")
     if (changePasswordFieldConfirm.length === 0) redFields.push("change_password_confirm")
-    if (passwordField.length === 0) redFields.push("main_password")
+    if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
 
     if (redFields.length) {
       setErrorMsg("Required fields need to be filled.")
@@ -129,7 +157,15 @@ export default function ProfileSettings(props) {
 
 
 
-  if (!user) return <View />
+  if (!user || isForeignUser === undefined) return <View />
+
+  const submit = () => {
+    if (changing === "safeInfo") {
+      updateSafeInfo()
+    } else if (changing === "password") {
+      updatePassword()
+    }
+  }
 
   return (
     <ProfileLayout
@@ -189,6 +225,14 @@ export default function ProfileSettings(props) {
             value={emailField}
             onChangeText={setEmailField}
           />
+
+          <CustomTextInputV2
+            red={redFields.includes('dob')}
+            keyboardType='numeric'
+            placeholder='Date of Birth (MM-DD-YYYY)'
+            value={dob}
+            onChangeText={setDob}
+          />
         </>
         : null}
 
@@ -216,6 +260,7 @@ export default function ProfileSettings(props) {
         : null}
 
 
+      {!isForeignUser &&
       <CustomTextInput
         containerStyle={{
           borderColor: redFields.includes("main_password")
@@ -224,7 +269,7 @@ export default function ProfileSettings(props) {
         placeholder="Current Password"
         value={passwordField}
         onChangeText={setPasswordField}
-      />
+      />}
       {/* <CustomTextInput
                 placeholder="Confirm Password"
                 value={confPasswordField}
@@ -234,13 +279,7 @@ export default function ProfileSettings(props) {
       <CustomButton
         style={styles.button}
         title="Save"
-        onPress={() => {
-          if (changing === "safeInfo") {
-            updateSafeInfo()
-          } else if (changing === "password") {
-            updatePassword()
-          }
-        }}
+        onPress={submit}
       />
     </ProfileLayout>
   )

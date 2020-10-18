@@ -11,6 +11,7 @@ export default function CustomTextInputV2(props) {
     style={},
     containerStyle={},
     //
+    red=false,
     onBlur=() => {},
   } = props
 
@@ -46,7 +47,7 @@ export default function CustomTextInputV2(props) {
           minHeight: 72,
           borderRadius: 30,
           borderWidth: 1,
-          borderColor: colors.textInputBorder,
+          borderColor: red ? 'red' : colors.textInputBorder,
           backgroundColor: colors.textInputFill,
           overflow: 'hidden',
           ...FONTS.subtitle,
