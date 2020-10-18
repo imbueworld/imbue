@@ -8,10 +8,12 @@ import CustomButton from "../components/CustomButton"
 import Icon from '../components/Icon'
 import Gym from '../backend/storage/Gym'
 import User from '../backend/storage/User'
+import { StackActions, useNavigation } from '@react-navigation/native'
 
 
 
 export default function PartnerGymSettings(props) {
+  const navigation = useNavigation()
   const [redFields, setRedFields] = useState([])
   const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
@@ -164,6 +166,14 @@ export default function PartnerGymSettings(props) {
         title="More Information"
         onPress={() => props.navigation.navigate(
           "PartnerRevenueInfo")}
+      />
+
+      <CustomButton
+        title='Mindbody Integration'
+        onPress={() => {
+          const pushAction = StackActions.push('MindbodyActivation')
+          navigation.dispatch(pushAction)
+        }}
       />
     </ProfileLayout>
   )

@@ -39,7 +39,7 @@ export default function GymLayout(props) {
     addToCalendar: {
       show: false,
       state: "opportunity" || "fulfilled",
-      onPress: () => { },
+      onPress: () => {},
     },
     goToCalendar: {
       show: false,
@@ -114,124 +114,112 @@ export default function GymLayout(props) {
         />
       : null}
 
-      {/* <CustomCapsule
-        containerStyle={[
-          styles.container,
-          props.containerStyle,
-        ]}
-        innerContainerStyle={[
-          styles.innerContainer,
-          props.innerContainerStyle,
-        ]}
-      > */}
-        <ImageSlideshow
-          containerStyle={{
-            zIndex: -100,
-          }}
-          imageStyle={styles.image}
-          imageInterval={5000}
-          // data={"https://firebasestorage.googleapis.com/v0/b/spring-ranger-281214.appspot.com/o/imbue%202.jpg?alt=media&token=8c430e5f-05d3-43f5-9320-0ebe163c99bd"}
-          data={gym.image_uris}
-        />
+      <ImageSlideshow
+        containerStyle={{
+          zIndex: -100,
+        }}
+        imageStyle={styles.image}
+        imageInterval={5000}
+        data={gym.image_uris}
+      />
 
       {/* Back Button */}
-        <View style={{
-          position: "absolute",
-          top: 50,
+      <View style={{
+        position: "absolute",
+        top: 50,
         left: 15,
-        }}>
-          {buttonOptions.goBackButton.show
-          ? <GoBackButton
-              imageContainerStyle={{
-                width: 42,
-                height: 42,
-              }}
-              onPress={buttonOptions.goBackButton.onPress}
-            />
-          : null}
-        </View>
+      }}>
+        {buttonOptions.goBackButton.show
+        ? <GoBackButton
+            imageContainerStyle={{
+              width: 48,
+              height: 48,
+            }}
+            onPress={buttonOptions.goBackButton.onPress}
+          />
+        : null}
+      </View>
 
-        <View style={{
-          position: "absolute",
-          top: 7,
-          right: 7,
-          flexDirection: "row",
-        }}>
-          {buttonOptions.goToLivestream.show
-          ? buttonOptions.goToLivestream.state === "normal"
-            ? <GoToLivestreamButton
-                {...buttonProps}
-                onPress={buttonOptions.goToLivestream.onPress}
-              />
-            : <GoToLivestreamButton
-                {...buttonProps}
-                inactive
-              />
-          : null}
-
-          {buttonOptions.addToCalendar.show
-          ? buttonOptions.addToCalendar.state === "opportunity"
-            ? <AddToCalendarButton
-                {...buttonProps}
-                onPress={buttonOptions.addToCalendar.onPress}
-              />
-            : <>
-              <RemoveFromCalendarButton
-                {...buttonProps}
-                onPress={buttonOptions.removeFromCalendar.onPress}
-              />
-              <CalendarSuccessButton
-                {...buttonProps}
-              />
-              </>
-          : null}
-          
-          {buttonOptions.viewAttendees.show
-          ? <CustomButton
-              style={{
-                marginVertical: 0,
-                paddingHorizontal: 10,
-                height: 42,
-              }}
-              textStyle={{
-                fontSize: 13,
-              }}
-              title="Attendees"
-              onPress={() => {
-                setCustomState({
-                  ...customState,
-                  viewAttendees: {
-                    state: "open",
-                  }
-                })
-              }}
-            />
-          : null}
-
-          {buttonOptions.goToCalendar.show
-          ? <GoToCalendarButton
+      <View style={{
+        position: "absolute",
+        // top: 7,
+        // right: 7,
+        top: 50,
+        right: 15,
+        flexDirection: "row",
+      }}>
+        {buttonOptions.goToLivestream.show
+        ? buttonOptions.goToLivestream.state === "normal"
+          ? <GoToLivestreamButton
               {...buttonProps}
-              onPress={buttonOptions.goToCalendar.onPress}
+              onPress={buttonOptions.goToLivestream.onPress}
             />
-          : null}
-        </View>
+          : <GoToLivestreamButton
+              {...buttonProps}
+              inactive
+            />
+        : null}
 
-        <View style={{
-          paddingHorizontal: 10,
-        }}>
-          {props.children}
-        </View>
+        {buttonOptions.addToCalendar.show
+        ? buttonOptions.addToCalendar.state === "opportunity"
+          ? <AddToCalendarButton
+              {...buttonProps}
+              onPress={buttonOptions.addToCalendar.onPress}
+            />
+          : <>
+            <RemoveFromCalendarButton
+              {...buttonProps}
+              onPress={buttonOptions.removeFromCalendar.onPress}
+            />
+            <CalendarSuccessButton
+              {...buttonProps}
+            />
+            </>
+        : null}
+        
+        {buttonOptions.viewAttendees.show
+        ? <CustomButton
+            style={{
+              marginVertical: 0,
+              paddingHorizontal: 10,
+              height: 42,
+            }}
+            textStyle={{
+              fontSize: 13,
+            }}
+            title="Attendees"
+            onPress={() => {
+              setCustomState({
+                ...customState,
+                viewAttendees: {
+                  state: "open",
+                }
+              })
+            }}
+          />
+        : null}
 
-      {/* </CustomCapsule> */}
+        {buttonOptions.goToCalendar.show
+        ? <GoToCalendarButton
+            {...buttonProps}
+            onPress={buttonOptions.goToCalendar.onPress}
+          />
+        : null}
+      </View>
+
+      <View style={{
+        paddingHorizontal: 10,
+      }}>
+        {props.children}
+      </View>
     </ScrollView>
   )
 }
 
 const styles = StyleSheet.create({
   scrollView: {
-    flexGrow: 1, justifyContent: 'center',
-    
-
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   container: {
     width: "94%",

@@ -11,16 +11,18 @@ import GymLayout from '../layouts/GymLayout'
 import { colors } from "../contexts/Colors"
 import { FONTS } from '../contexts/Styles'
 import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
-import { classType, currencyFromZeroDecimal } from '../backend/HelperFunctions'
+import { classType, currencyFromZeroDecimal, representDatabaseField } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 import Class from '../backend/storage/Class'
 import config from '../../../App.config'
+import { StackActions, useNavigation } from '@react-navigation/native'
 
 
 
 export default function ClassDescription(props) {
   const { classId, timeId } = props.route.params
+  const navigation = useNavigation()
 
   const [r, refresh] = useState(0)
   const [errorMsg, setErrorMsg] = useState("")
@@ -32,7 +34,7 @@ export default function ClassDescription(props) {
   const [Content, ContentCreate] = useState(null)
 
   const [popup, setPopup] = useState(false)
-  const [PopupCCNotFound, PopupCCNotFoundCreate] = useState(null)
+  // const [PopupCCNotFound, PopupCCNotFoundCreate] = useState(null)
 
   const [hasMembership, setHasMembership] = useState(null)
 
@@ -149,39 +151,39 @@ export default function ClassDescription(props) {
       </View>
     )
     
-    PopupCCNotFoundCreate(
-      <CustomPopup
-        containerStyle={{
-          padding: 0,
-        }}
-        onX={() => setPopup(false)}
-      >
-        <View style={{
-          flexDirection: "row",
-          marginHorizontal: 20,
-        }}>
-          <CustomButton
-            style={{
-              flex: 1,
-              marginRight: 10,
-            }}
-            title="Yes"
-            onPress={() => {
-              setPopup(false)
-              props.navigation.navigate("AddPaymentMethod")
-            }}
-          />
-          <CustomButton
-            style={{
-              flex: 1,
-              marginLeft: 10,
-            }}
-            title="Cancel"
-            onPress={() => setPopup(false)}
-          />
-        </View>
-      </CustomPopup>
-    )
+    // PopupCCNotFoundCreate(
+    //   <CustomPopup
+    //     containerStyle={{
+    //       padding: 0,
+    //     }}
+    //     onX={() => setPopup(false)}
+    //   >
+    //     <View style={{
+    //       flexDirection: "row",
+    //       marginHorizontal: 20,
+    //     }}>
+    //       <CustomButton
+    //         style={{
+    //           flex: 1,
+    //           marginRight: 10,
+    //         }}
+    //         title="Yes"
+    //         onPress={() => {
+    //           setPopup(false)
+    //           props.navigation.navigate("AddPaymentMethod")
+    //         }}
+    //       />
+    //       <CustomButton
+    //         style={{
+    //           flex: 1,
+    //           marginLeft: 10,
+    //         }}
+    //         title="Cancel"
+    //         onPress={() => setPopup(false)}
+    //       />
+    //     </View>
+    //   </CustomPopup>
+    // )
   }, [classDoc, hasMembership])
 
 
@@ -228,7 +230,35 @@ export default function ClassDescription(props) {
             } = classDoc
 
             const user = new User()
-            await user.scheduleClass({ classId, timeId })
+            try {
+              await user.scheduleClass({ classId, timeId })
+            } catch(error) {
+              if (config.DEBUG) console.error(error)
+              if (error.code == 'insufficient_fields') {
+                let additionalFields = error.context
+                  .map(representDatabaseField).join(', ')
+                Alert.alert(
+                  'Information Request',
+                  `At the request of owner of this class, you must be`
+                  + `providing additional fields: ${additionalFields}.`,
+                  [
+                    {
+                      text: 'Add Now',
+                      onPress: () => {
+                        navigation.dispatch(StackActions.push('ProfileSettings'))
+                      },
+                    },
+                    {
+                      text: 'Cancel',
+                      style: 'cancel',
+                    },
+                  ],
+                  { cancelable: true },
+                )
+              } else {
+                Alert.alert('Action was not possible at this time.')
+              }
+            }
 
             refresh(r + 1)
           }

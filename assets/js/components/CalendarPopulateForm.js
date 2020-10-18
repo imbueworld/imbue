@@ -6,7 +6,7 @@ import ClockInputDismissOverlay from './ClockInputDismissOverlay'
 import CustomButton from './CustomButton'
 import CustomDropDownPicker from './CustomDropDownPicker'
 import { colors } from '../contexts/Colors'
-import { id } from '../backend/HelperFunctions'
+import { getRandomId } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
 
@@ -104,7 +104,7 @@ export default function CalendarPopulateForm(props) {
       const dateTsLocal = dateObj.getTime()
         + dateObj.getTimezoneOffset() * 60 * 1000 // minutes ===> milliseconds
       activeTimes.push({
-        time_id: id(),
+        time_id: getRandomId(),
         begin_time: dateTsLocal + bH + bM,
         end_time: dateTsLocal + eH + eM
       })

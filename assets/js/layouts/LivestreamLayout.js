@@ -110,18 +110,28 @@ export default function LivestreamLayout(props) {
         icon_uri: user.icon_uri,
       })
 
-      await chatNodeRef.once('value', snap => {
-        let data = snap.val()
-        if (data) {
-          const messages = Object.values(data)
-          // Assumes existing data that may be in cache upon the very first
-          // render of this component is irrelevant and to be overwritten
-          cache("livestream/chat").set(messages)
-        }
-      })
+      // [COMMENTED OUT IN ORDER TO NOT SHOW PAST MESSAGES,
+      // POSSIBLY FROM LAST LIVESTREAM]
+      // await chatNodeRef.once('value', snap => {
+      //   let data = snap.val()
+      //   if (data) {
+      //     const messages = Object.values(data)
+      //     // Assumes existing data that may be in cache upon the very first
+      //     // render of this component is irrelevant and to be overwritten
+      //     cache("livestream/chat").set(messages)
+      //   }
+      // })
 
       chatNodeRef.limitToLast(1).on('child_added', snap => {
         const message = snap.val()
+
+        console.log("DEBUG123", message)
+        // Don't show very first message, because it is most likely not a live message
+        let canShowMessageNow = cache('livestream/canShowMessageNow')
+        if (!canShowMessageNow.get()) {
+          canShowMessageNow.set(true)
+          return
+        }
 
         let existingMessages = cache("livestream/chat").get() || []
 
