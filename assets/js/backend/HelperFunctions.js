@@ -1,4 +1,5 @@
 import { PermissionsAndroid, Platform } from "react-native"
+import config from "../../../App.config"
 
 /**
  * inp -- must be passed in the format of [YYYY-MM-DD HH-MM]
@@ -121,6 +122,20 @@ export function shortDateFromTimestamp(ts) {
       break
   }
   return `${weekday}, ${mo} ${day}`
+}
+
+export function representDatabaseField(field) {
+  switch (field) {
+    case 'dob':
+      return 'Date of Birth'
+    case 'gender':
+      return 'Gender'
+    // case '':
+    //   return ''
+    default:
+      if (config.DEBUG) console.warn(`HelperFunctions/representDatabaseField field ${field} not set.`)
+      return field
+  }
 }
 
 /**

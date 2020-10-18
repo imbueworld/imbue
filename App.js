@@ -29,6 +29,7 @@ import UserMemberships from "./assets/js/screens/UserMemberships"
 import ClassDescription from "./assets/js/screens/ClassDescription"
 import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
 import PasswordReset from './assets/js/screens/PasswordReset'
+import MindbodyActivation from './assets/js/screens/MindbodyActivation'
 
 const Stack = createStackNavigator()
 
@@ -160,6 +161,11 @@ export default function App() {
         <Stack.Screen
           name='PasswordReset'
           component={PasswordReset}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='MindbodyActivation'
+          component={MindbodyActivation}
           initialParams={{}}
         />
         {/*
