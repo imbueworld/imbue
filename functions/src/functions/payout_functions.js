@@ -1,39 +1,38 @@
+const admin = require('firebase-admin')
 const functions = require('firebase-functions')
-const { Reports } = require("../Reports")
+const stripe = require('stripe')(functions.config().stripe.secret, {
+  apiVersion: '2020-03-02',
+})
+const { Reports } = require('../Reports')
+const {
+  membership_instances,
+  // stripe_transfers,
+  partners,
+} = require('../Collections')
+const {
+  getEndDateStringOfLastMonth
+} = require('../HelperFunctions')
 
 
 
-//
-// NOT READY FOR DEPLOYMENT
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//
 /**
  * Calculates all payout information for each gym by going through
  * membership_instances collection.
  */
-exports.calculatePayouts = async function(mode) {
-  if (mode != 'inspection' && mode != 'commitment') throw 'ValueError on param mode.'
+async function coreCalculatePayouts(mode) {
+  if (mode !== 'inspection' && mode !== 'commitment') throw 'ValueError on param mode.'
 
   const DOC_LIMIT_TOTAL = 50
-  const DOC_LIMIT_BATCH = 3
-  const CURR_DATE_STRING = getEndStringDateOfLastMonth()
+  const DOC_LIMIT_BATCH = 10
+  const MO_END_DATE_STRING = getEndDateStringOfLastMonth()
   const DAYS_IN_MONTH = 30
-  const IMBUE_UNIVERSAL_PRICE = ( await gyms.doc('imbue').get() ).data().membership_price
+  // const IMBUE_UNIVERSAL_PRICE = ( await gyms.doc('imbue').get() ).data().membership_price
+  IMBUE_UNIVERSAL_PRICE = 19390 // USD 200 - USD 6.10 fee
   let lastFirebaseDoc
   let gym_docs_done = 0
   const GYM_REVENUES = {} // product, final goal
   // DEBUG VARIABLES
-  const reports = new Reports(CURR_DATE_STRING, 'payouts', 5)
+  const reports = new Reports(MO_END_DATE_STRING, '_payouts', 5)
   await reports.deleteLogs()
   const DEBUG = {
     MEMBERSHIP_INSTANCES_READ: 0,
@@ -41,7 +40,7 @@ exports.calculatePayouts = async function(mode) {
   }
 
   // DEBUG
-  DEBUG['CURR_DATE_STRING'] = CURR_DATE_STRING
+  DEBUG['MO_END_DATE_STRING'] = MO_END_DATE_STRING
   DEBUG['IMBUE_UNIVERSAL_PRICE'] = IMBUE_UNIVERSAL_PRICE
   if (!IMBUE_UNIVERSAL_PRICE) {
     DEBUG['__message'] = 'Imbue Universal Membership Price was not found.'
@@ -61,7 +60,7 @@ exports.calculatePayouts = async function(mode) {
     return (await membership_instances
       .doc(userId)
       .collection('visits')
-      .doc(CURR_DATE_STRING)
+      .doc(MO_END_DATE_STRING)
       .collection('gyms')
       .get()
     ).docs
@@ -170,36 +169,111 @@ exports.calculatePayouts = async function(mode) {
 
         // DEBUG
         USER_DEBUG['USER_MONEY_INPUT'] -= Math.round(GROSS_COMPENSATIONS[ id ] + fundsMultiplier * unallocatedFunds)
+        gym_docs_done++
       })
 
       // DEBUG
       DEBUG['MEMBERSHIP_INSTANCES_READ']++
       DEBUG['TOTAL_IMBUE_REVENUE'] += USER_DEBUG['USER_MONEY_INPUT']
-      p('USER_DEBUG', USER_DEBUG)
     }
-
-    gym_docs_done += DOC_LIMIT_BATCH
 
     // DEBUG
     DEBUG['DOC_LIMIT_TOTAL'] = DOC_LIMIT_TOTAL
-    DEBUG[`gym_docs_done (+0/-${DOC_LIMIT_BATCH - 1})`] = gym_docs_done
+    DEBUG['gym_docs_done'] = gym_docs_done
   }
 
   // DEBUG
   DEBUG['TOTAL_GYMS_REVENUE'] = Object.values(GYM_REVENUES).reduce((total, val) => total + val)
-  p('GYM_REVENUES', GYM_REVENUES)
-  p('DEBUG', DEBUG)
+  // p('GYM_REVENUES', GYM_REVENUES)
+  // p('DEBUG', DEBUG)
 
   await reports.log('__GENERAL', DEBUG)
 
 
 
-  // Continue with documenting all the payouts,
-  // once manual review has been done and fn is run with mode commitment
+  // Once manual review has been done, fn can be run with mode 'commitment'
   if (mode != 'commitment') return
 
+  // [IMPORTANT NOTE]
+  // It is vital that throughout the payout process,
+  // each payout is being documented as the fn is still executing,
+  // on top of that -- written to Firestore PROMPTLY after creation.
+  //
+  // Thus enabling us to continue if at any very unfortunate point the code breaks,
+  // (by checking whether a payout for that date exists already)
+  // avoiding having no clue whether a certain partner has been paid or not.
+  //
+  // Payouts are to be stored in partners/{partnerId}/payouts,
+  // and written to after each and every single successful payout.
+
+  const existingPayouts = {}
+  let x = (await admin.firestore()
+    .collectionGroup('payouts')
+    .select('metadata')
+    .get()
+  ).docs.forEach(firebaseDoc => {
+    let { metadata: { endDateString }={} } = firebaseDoc.data()
+    if (!endDateString) return // I suppose this could be missing, therefore irrelevant
+    const partnerId = firebaseDoc.ref.parent.parent.id
+    existingPayouts[ partnerId ] = [
+      ...(existingPayouts[ partnerId ] || []),
+      endDateString,
+    ]
+  })
+
+  const failedPayouts = new Reports(MO_END_DATE_STRING, '_failed_payouts')
+  const PAYOUTS_DEBUG = {}
+
   for (const gymId in GYM_REVENUES) {
-    // Commitment stuff with Stripe API
-    // here...
+    // DEBUG
+    PAYOUTS_DEBUG['gymId'] = gymId
+
+    const partnerFirebaseDoc = (
+      await partners
+        .where('associated_gyms', 'array-contains', gymId)
+        .get()
+    ).docs[ 0 ]
+
+    // Do not do a payout for this user, if they have already
+    // received a payout (or it is on the way)
+    if ((existingPayouts[ partnerFirebaseDoc.id ] || []).includes(MO_END_DATE_STRING)) {
+      console.log(`partner ${partnerFirebaseDoc.id} has already received a payout!`) // QUICK TEMP DEBUG
+      continue
+    }
+
+    const {
+      stripe_account_id: destination,
+    } = partnerFirebaseDoc.data()
+
+    // DEBUG
+    PAYOUTS_DEBUG['stripe_account_id'] = destination
+    PAYOUTS_DEBUG['amount'] = GYM_REVENUES[ gymId ]
+
+    try {
+      const payout = await stripe.transfers.create({
+        amount: GYM_REVENUES[ gymId ],
+        currency: 'usd',
+        destination,
+        description: `Imbue monthly payout`,
+        metadata: {
+          endDateString: MO_END_DATE_STRING,
+        },
+      })
+
+      await partners
+        .doc(partnerFirebaseDoc.id)
+        .collection('payouts')
+        .doc(payout.id)
+        .set(payout)
+    } catch(err) {
+      PAYOUTS_DEBUG['__message'] = err.message || err
+      await failedPayouts.log(gymId, PAYOUTS_DEBUG)
+      continue
+    }
   }
 }
+exports.coreCalculatePayouts = coreCalculatePayouts
+
+exports.calculatePayouts = functions.https.onCall(async (mode, context) => {
+  await coreCalculatePayouts(mode)
+})

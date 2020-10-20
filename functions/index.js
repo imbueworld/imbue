@@ -31,9 +31,9 @@ const MUX_TOKEN_SECRET = 'XRuq11za83MwMYHgbhYYKwktVG7v0bkmHajeB2YglnRZhzPyN85XL5
 
 const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 
-const ALGOLIA_ID = 'K75AA7U1MZ'
-const ALGOLIA_ADMIN_KEY = 'adc88238cd4fee1c06aec6f83f594870'
-const ALGOLIA_SEARCH_KEY = 'c25a5639752b7ab096eeba92f81e99b6'
+const ALGOLIA_ID = 'O50JZXNYWV'
+const ALGOLIA_SEARCH_KEY = '2300b356761715188aa0242530b512d9'
+const ALGOLIA_ADMIN_KEY = '11abb122276b5eed15a3a0119b53622a'
 
 const ALGOLIA_GYM_INDEX = 'gyms'
 const algoliaClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
@@ -52,12 +52,59 @@ const stripe_prices = admin.firestore().collection('stripe_prices')
 
 
 
-const mindbody_functions = require('./src/functions/mindbody_functions')
-for (let fnName in mindbody_functions) {
-  exports[ fnName ] = mindbody_functions[ fnName ]
+function forward_exports(fns) {
+  for (let fnName in fns) {
+    exports[ fnName ] = fns[ fnName ]
+  }
 }
 
-exports.zxc = functions.https.onCall(async (data, context) => {})
+const mindbody_functions = require('./src/functions/mindbody_functions')
+// for (let fnName in mindbody_functions) {
+//   exports[ fnName ] = mindbody_functions[ fnName ]
+// }
+forward_exports(mindbody_functions)
+
+const mindbody_webhook_functions = require('./src/functions/mindbody_webhook_functions')
+// for (let fnName in mindbody_webhook_functions) {
+//   exports[ fnName ] = mindbody_webhook_functions[ fnName ]
+// }
+forward_exports(mindbody_webhook_functions)
+
+const payout_functions = require('./src/functions/payout_functions')
+// for (let fnName in payout_functions) {
+//   exports[ fnName ] = payout_functions[ fnName ]
+// }
+forward_exports(payout_functions)
+
+exports.createImbueProduct = functions.https.onCall(async (data, context) => {
+  const imbueId = 'imbue'
+  const unit_amount = 20000 // USD 200
+
+  const product = await stripe.products.create({
+    id: imbueId,
+    name: `Imbue, Universal Gym Membership`,
+    description: `Grants access to all online & offline content that is hosted or connected through Imbue.`,
+  })
+
+  const recurringPrice = await stripe.prices.create({
+    product: imbueId,
+    currency: 'usd',
+    unit_amount,
+    recurring: {
+      interval: 'month',
+    },
+    nickname: `Monthly price — Imbue UGM`, // Dev-side info
+  })
+
+  await Promise.all([
+    stripe_products
+      .doc(imbueId)
+      .set(product),
+    stripe_prices
+      .doc(imbueId)
+      .set(recurringPrice),
+  ])
+})
 
 exports.createLivestream = functions.https.onCall(async (data, context) => {
   const { uid } = context.auth
@@ -358,8 +405,6 @@ exports.cleanUpAfterPartner = functions.firestore
  * Must ONLY be called when membership_price has been set in gym doc.
  */
 exports.createGymProduct = functions.https.onCall(async (data, context) => {
-  const p = console.log
-
   const { gymId } = data
 
   const {
@@ -545,16 +590,11 @@ exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, con
 })
 
 exports.purchaseMembership = functions.https.onCall(async (data, context) => {
-  const p = console.log
-  const e = console.error
-
   const { auth: { uid } } = context
   const {
     paymentMethodId,
     gymId,
   } = data
-
-  p('gymId', gymId)
 
   // Do not continue if insufficient parameters have been provided.
   if (!paymentMethodId || !gymId) throw 'Insufficient params.'
@@ -567,7 +607,7 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
 
   // Do not continue if, for whatever reason, membership is already owned.
   active_memberships.forEach(gym_id => {
-    if (gym_id == gymId) throw 'Membership already owned.'
+    if (gym_id == gymId) throw `Membership already owned. (user_id: ${uid}, gym_id: ${gymId})`
   })
 
   const [
@@ -606,8 +646,8 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
   if (!default_source) e('default_source_id not found.')
   if (!price) e('price_id not found.')
   if (!destination) e('destination not found.')
-  if (!customer || !default_source
-    || !price || !destination) throw 'Values listed above cannot be empty.'
+  if (!customer || !default_source || !price || !destination)
+    throw 'Values listed above cannot be empty.'
   
   const subscription = await stripe.subscriptions.create({
     customer,
@@ -626,6 +666,60 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
       .doc(gymId)
       .set(subscription)
   ])
+})
+
+exports.purchaseImbueMembership = functions.https.onCall(async (data, context) => {
+  const { auth: { uid } } = context
+  const { paymentMethodId } = data
+  const imbueId = 'imbue'
+
+  // Do not continue if insufficient parameters have been provided.
+  if (!paymentMethodId) throw 'Insufficient params.'
+
+  const { active_memberships=[] } = (
+    await users
+      .doc(uid)
+      .get()
+  ).data()
+
+  // Do not continue if, for whatever reason, membership is already owned.
+  active_memberships.forEach(gym_id => {
+    if (gym_id == imbueId) throw `Membership already owned. (user_id: ${uid}, gym_id: ${gymId})`
+  })
+
+  const [
+    { customer, id: default_source },
+    { id: price },
+  ] = _extractOnlyData(
+    await Promise.all([
+      stripe_customers
+        .doc(uid)
+        .collection('payment_methods')
+        .doc(paymentMethodId)
+        .get(),
+      stripe_prices
+        .doc(imbueId)
+        .get(),
+    ])
+  )
+
+  if (!customer) e('customer_id not found.')
+  if (!default_source) e('default_source_id not found.')
+  if (!price) e('price_id not found.')
+  if (!customer || !default_source || !price)
+    throw 'Values listed above cannot be empty.'
+  
+  const subscription = await stripe.subscriptions.create({
+    customer,
+    default_source,
+    items: [{ price }],
+  })
+
+  await stripe_customers
+    .doc(uid)
+    .collection('subscriptions')
+    .doc(imbueId)
+    .set(subscription)
 })
 
 exports.cancelMembership = functions.https.onCall(async (data, context) => {

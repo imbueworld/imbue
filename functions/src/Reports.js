@@ -1,13 +1,20 @@
+const admin = require('firebase-admin')
+const {
+  reports,
+} = require('./Collections')
+
+
+
 class Reports {
   constructor(dateString, collection, errorLimitBeforeThrow=0) {
     this.collection = collection
     this.dateString = dateString
-    this.errorLimitBeforeThrow = errorLimitBeforeThrow || null
+    this.errorLimitBeforeThrow = errorLimitBeforeThrow || undefined
     this.errorsLogged = 0
   }
 
   async deleteLogs() {
-    const batch = firebase.firestore().batch()
+    const batch = admin.firestore().batch()
     let x = (await reports
       .doc(this.dateString)
       .collection(this.collection)

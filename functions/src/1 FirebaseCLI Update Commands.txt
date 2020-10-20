@@ -1,0 +1,11 @@
+mindbody_functions.js
+firebase deploy --only functions:getMindbodyActivationCode,functions:syncMindbodyClasses,functions:addMindbodyClientToClass,functions:removeMindbodyClientFromClass,functions:scheduleSyncMindbodyClasses
+
+.
+
+
+
+mindbody_webhook_functions.js
+firebase deploy --only functions:webhookUpdateMindbodyClasses1,functions:webhookUpdateMindbodyClasses2,functions:webhookSyncMindbodyClasses
+
+.

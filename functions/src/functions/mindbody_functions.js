@@ -41,37 +41,41 @@ exports.getMindbodyActivationCode = functions.https.onCall(async (data, context)
   return res
 })
 
-exports.syncMindbodyClasses = functions.https.onCall(async (data, context) => {
-  const { auth: { uid } } = context
-  let {
-    test=false, // Boolean
-    gymId, // String
-  } = data || {}
-  //
-  const DEBUG = {
-    userId: uid,
-    gymId,
-  }
+/**
+ * @param {Object} queryParams
+ * Specifies how to retrieve the Mindbody classes
+ * @see https://developers.mindbodyonline.com/PublicDocumentation/V6?python#get-classes
+ */
+exports.coreSyncMindbodyClasses = async (siteId, queryParams={}) => {
+  const DEBUG = {}
   const reports = new Reports(getDateStringOfTimestamp(), 'mindbody_syncMindbodyClasses')
 
-  if (!gymId) throw 'gymId missing.'
+  const partnerDocs = (
+    await partners
+      .where('mindbody_site_id', '==', siteId)
+      .select('associated_classes', 'associated_gyms')
+      .get()
+  ).docs
 
-  const NEXT_YEAR_ISO_DATE_STRING =
-    // The magic number stands for a year in milliseconds
-    new Date(Date.now() + 31536000000).toISOString()
+  if (!partnerDocs.length) {
+    DEBUG['__message'] = 'mindbody_site_id was not found on any single partner doc.'
+    await reports.log(siteId, DEBUG, true)
+  }
 
   const {
-    mindbody_site_id: siteId,
-    associated_classes,
-  } = ( await partners.doc(uid).get() ).data()
+    associated_classes=[],
+    associated_gyms=[],
+  } = partnerDocs[ 0 ].data() // There should be only one doc that was found.
+                              // This could also not be the case, but only if
+                              // partner tried using siteId on another account.
 
-  const mindbody = new Mindbody(test)
+  const uid = partnerDocs[ 0 ].id
+  const gymId = associated_gyms[ 0 ] // Currently App functions with 1 gym per partner
+
+  const mindbody = new Mindbody()
   mindbody.setRequestHeader('SiteId', siteId)
   await mindbody.useSourceCredentials()
-  const mindbodyClasses = await mindbody.retrieveClasses({
-    EndDateTime: NEXT_YEAR_ISO_DATE_STRING,
-    limit: 25, // HARD CAPPED LIMIT OF 25 ATM
-  })
+  const mindbodyClasses = await mindbody.retrieveClasses(queryParams)
 
   const batch = admin.firestore().batch()
   let newlyAssociatedClasses = []
@@ -122,7 +126,7 @@ exports.syncMindbodyClasses = functions.https.onCall(async (data, context) => {
         begin_time,
         end_time,
         time_id: Id.toString(),
-      }], // Going to try not to use this, but for safety provide default val
+      }],
       description: Description,
       instructor,
       name: Name,
@@ -131,7 +135,7 @@ exports.syncMindbodyClasses = functions.https.onCall(async (data, context) => {
       partner_id: uid,
       // unique type of class
       mindbody_integration: true,
-      mindbody_id: Id.toString(),
+      mindbody_id: Id,
       // DEBUG for ease of deletion later
       temporary_entry: true,
     })
@@ -148,6 +152,19 @@ exports.syncMindbodyClasses = functions.https.onCall(async (data, context) => {
   })
 
   await batch.commit()
+}
+
+exports.syncMindbodyClasses = functions.https.onCall(async (data, context) => {
+  let { siteId } = data
+
+  const NEXT_YEAR_ISO_DATE_STRING =
+    // The magic number stands for a year in milliseconds
+    new Date(Date.now() + 31536000000).toISOString()
+  
+  await exports.coreSyncMindbodyClasses(siteId, {
+    EndDateTime: NEXT_YEAR_ISO_DATE_STRING,
+    limit: 25, // A HARD CAP OF 25
+  })
 })
 
 exports.addMindbodyClientToClass = functions.https.onCall(async (data, context) => {
@@ -176,7 +193,7 @@ exports.addMindbodyClientToClass = functions.https.onCall(async (data, context) 
 
   if (!siteId) {
     DEBUG['__message'] = 'siteId was not found in partner doc.'
-    reports.log(`class_${classId}`, DEBUG, true)
+    await reports.log(`class_${classId}`, DEBUG, true)
   }
 
   const mindbody = new Mindbody(test)
@@ -296,4 +313,21 @@ exports.removeMindbodyClientFromClass = functions.https.onCall(async (data, cont
   // format of Integrated-from-Mindbody class uid is `${partner_id}_${ClassId}`
   const ClassId = parseInt(classId.split('_')[ 1 ])
   await mindbody.removeClientFromClass({ ClientId, ClassId })
+})
+
+exports.scheduleSyncMindbodyClasses = functions.pubsub.schedule('every 24 hours').onRun(async context => {
+  let allSiteIds = (
+    await partners.select('mindbody_site_id').get()
+  ).docs.map(doc => doc.data().mindbody_site_id).filter(Boolean)
+
+  // Remove duplicates, if there are any (there shouldn't)
+  allSiteIds = [...new Set(allSiteIds)]
+
+  const opts = {
+    limit: 10, // Something for now... (default would be 100)
+  }
+
+  await Promise.all(
+    allSiteIds.map(siteId => exports.coreSyncMindbodyClasses(siteId, opts))
+  )
 })
