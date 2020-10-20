@@ -65,10 +65,12 @@ async function onAppleButtonPress(onAuthChange) {
 
 export default function SocialLogin(props) {
   useEffect(() => {
-    // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
-    return appleAuth.onCredentialRevoked(async () => {
-      console.warn('If this function executes, User Credentials have been Revoked');
-    });
+    if (appleAuth.isSupported) {
+      // onCredentialRevoked returns a function that will remove the event listener. useEffect will call this function when the component unmounts
+      return appleAuth.onCredentialRevoked(async () => {
+        console.warn('If this function executes, User Credentials have been Revoked');
+      });
+    }
   }, []); // passing in an empty array as the second argument ensures this is only ran once when component mounts initially.
 
 
@@ -96,6 +98,7 @@ export default function SocialLogin(props) {
         onAuthChange={onAuthChange}
         onError={onError}
       />
+      { appleAuth.isSupported &&
       <AppleButton
          onAuthChange={onAuthChange}
           buttonStyle={AppleButton.Style.BLACK}
@@ -110,7 +113,7 @@ export default function SocialLogin(props) {
             onAppleButtonPress(onAuthChange)
           } >
           {/* <Image style={{width: 64, height: 64,}} source={require('../components/img/png/apple-sign-in.png')} /> */}
-      </AppleButton>
+      </AppleButton>}
       <FacebookLoginButton
         accountType={options.accountType}
         imageStyle={styles.socialIcon}

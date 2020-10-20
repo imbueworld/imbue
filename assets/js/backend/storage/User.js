@@ -533,8 +533,8 @@ export default class User extends DataObject {
       let { paymentMethodId } = details
 
       // Charge user
-      const makePurchase = functions().httpsCallable('purchaseMembership')
-      await makePurchase({ paymentMethodId, gymId: 'imbue' })
+      const makePurchase = functions().httpsCallable('purchaseImbueMembership')
+      await makePurchase({ paymentMethodId })
 
       // After a successful charge, register the membership
       const { active_memberships=[] } = this.getAll()
@@ -710,17 +710,3 @@ export default class User extends DataObject {
       .collection('subscriptions')
   }
 }
-
-
-
-// function appropriate() {
-//   switch (user.account_type) {
-//       case "user":
-//           let activeClassIds = user.active_classes.map(active => active.class_id)
-//           return cache.classes
-//               .filter(doc => activeClassIds.includes(doc.id))
-//       case "partner":
-//           return cache.classes
-//               .filter(doc => doc.partner_id === user.id)
-//   }
-// }
