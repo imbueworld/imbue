@@ -71,7 +71,7 @@ export default class User extends DataObject {
     // If data is missing (about user's uid) from database,
     // then assume the user has been deleted, and log out
     if (!this._getCacheObj().get()) {
-      auth().signOut()
+      await auth().signOut()
       return
     }
 
@@ -540,8 +540,8 @@ export default class User extends DataObject {
       let { paymentMethodId } = details
 
       // Charge user
-      const makePurchase = functions().httpsCallable('purchaseMembership')
-      await makePurchase({ paymentMethodId, gymId: 'imbue' })
+      const makePurchase = functions().httpsCallable('purchaseImbueMembership')
+      await makePurchase({ paymentMethodId })
 
       // After a successful charge, register the membership
       const { active_memberships=[] } = this.getAll()
@@ -727,17 +727,3 @@ export default class User extends DataObject {
       .collection('subscriptions')
   }
 }
-
-
-
-// function appropriate() {
-//   switch (user.account_type) {
-//       case "user":
-//           let activeClassIds = user.active_classes.map(active => active.class_id)
-//           return cache.classes
-//               .filter(doc => activeClassIds.includes(doc.id))
-//       case "partner":
-//           return cache.classes
-//               .filter(doc => doc.partner_id === user.id)
-//   }
-// }

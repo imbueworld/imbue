@@ -228,7 +228,7 @@ export default function ProfileSettings(props) {
 
           <CustomTextInputV2
             red={redFields.includes('dob')}
-            keyboardType='numeric'
+            // keyboardType='numeric'
             placeholder='Date of Birth (MM-DD-YYYY)'
             value={dob}
             onChangeText={setDob}
