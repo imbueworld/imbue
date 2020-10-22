@@ -421,11 +421,11 @@ export default function UserDashboard(props) {
                 GoogleSignin.signOut(),
                 LoginManager.logOut(),
               ])
+              if (expanded) setExpanded(false)
               navigation.reset({
                 index: 0,
                 routes: [{ name: 'Boot' }],
               })
-              if (expanded) setExpanded(false)
             }
           },
         }}
