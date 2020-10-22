@@ -93,7 +93,7 @@ export default function ProfileLayout(props) {
       borderRadius: 40,
     }}/>
       <KeyboardAwareScrollView
-        // showsVerticalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps='handled'
         // alwaysBounceVertical={false} 

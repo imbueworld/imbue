@@ -113,18 +113,7 @@ export default function SignUp(props) {
           }}
         />
 
-        {/* <View style={{textAlign: 'center'}}> 
-          <AppleButton
-            cornerRadius={999}
-            style={{
-              width: 64,
-              height: 64,
-            }}
-            onPress={() => onAppleButtonPress()} >
-            <Image style={{width: 64, height: 64,}} source={require('../components/img/png/apple-sign-in.png')} />
-          </AppleButton>
-        </View> */}
-
+       
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>
           : <Text style={{ color: "green" }}>{successMsg}</Text>}
@@ -158,6 +147,7 @@ export default function SignUp(props) {
           containerStyle={{
             borderColor: redFields.includes("password") ? "red" : undefined,
           }}
+          multiline={false}
           placeholder="Password"
           value={password}
           onChangeText={setPassword}

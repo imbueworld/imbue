@@ -19,6 +19,7 @@ import { handleAuthErrorAnonymous, handlePasswordResetError, requestPermissions 
 import ImagePicker from 'react-native-image-picker'
 import Class from './Class'
 import config from '../../../../App.config'
+import { Platform } from 'react-native'
 
 
 
@@ -172,14 +173,20 @@ export default class User extends DataObject {
         uid = user.uid
   
         if (user.displayName) {
-          let names = user.displayName.split(' ')
+          let names = user.displayName.split(' ');
+          first = names[ 0 ]
+          last = names.slice(1).join(' ')
+          email = user.email
+          icon_uri_foreign = user.photoURL
         } else {
-          names = ['No', 'Name']
+          let names = ['No', 'Name']
+          first = names[ 0 ]
+          last = names.slice(1).join(' ')
+          email = user.email
+          icon_uri_foreign = user.photoURL
         }
-        first = names[ 0 ]
-        last = names.slice(1).join(' ')
-        email = user.email
-        icon_uri_foreign = user.photoURL
+        // console.log(user.displayName)
+        // console.log(JSON.stringify(user));
       }
   
       // Determine collection
@@ -594,21 +601,23 @@ export default class User extends DataObject {
         await new Promise(r => setTimeout(r, 3500)) // sleep
       }
     })
-  }
+  } 
 
-  changeIcon() {
+  changeIcon() { 
     return new Promise(async (resolve, reject) => {
       await this.init()
 
       // Ascertain that all permissions have been granted
-      const unfulfilledPerms = await requestPermissions([
-        'CAMERA',
-        'READ_EXTERNAL_STORAGE',
-      ])
-      if (unfulfilledPerms) reject(
-        'Missing permissions: '
-        + unfulfilledPerms.join(', ')
-      )
+      if (Platform == "android") {
+        const unfulfilledPerms = await requestPermissions([
+          'CAMERA',
+          'READ_EXTERNAL_STORAGE',
+        ])
+        if (unfulfilledPerms) reject(
+          'Missing permissions: '
+          + unfulfilledPerms.join(', ')
+        )
+      }
 
       // Do the image stuff
       ImagePicker.showImagePicker({}, async res => {
@@ -624,23 +633,30 @@ export default class User extends DataObject {
 
         // Main portion
 
-        const {
-          path: filePath,
-          fileSize,
-        } = res
+        // const {
+        //   path: filePath,
+        //   fileSize,
+        // } = res
+
+        const source = { uri: res.uri };
+
+        console.log("source: " + JSON.stringify(source));
+        // console.log("uri: " + source)
 
         const {
           id: userId,
         } = this.getAll()
 
         // 8MB of file size limit
-        if (fileSize > 8 * 1024 * 1024) {
-          reject('Image file size must not exceed 8MB.')
-        }
+        // if (fileSize > 8 * 1024 * 1024) {
+        //   reject('Image file size must not exceed 8MB.')
+        // }
 
         try {
           const fileRef = storage().ref(userId)
-          await fileRef.putFile(filePath)
+          // await fileRef.putFile(filePath)
+          await fileRef.putFile(source.uri)
+          
 
           this.mergeItems({
             icon_uri: userId,
@@ -650,9 +666,10 @@ export default class User extends DataObject {
           await this.push()
           resolve('Success.')
 
-        } catch(err) {
+        } catch (err) {
           if (config.DEBUG) console.error(err)
           reject('Something prevented upload.')
+          console.error(err)
         }
       })
     })

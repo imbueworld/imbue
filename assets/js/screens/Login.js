@@ -110,7 +110,7 @@ export default function Login(props) {
         />
         <CustomTextInput
           secureTextEntry
-          containerStyle={{
+          containerStyle={{ 
             borderColor: redFields.includes("password") ? "red" : undefined,
           }}
           placeholder="Password"

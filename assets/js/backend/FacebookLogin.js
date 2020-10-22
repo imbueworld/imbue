@@ -1,10 +1,12 @@
 import auth from '@react-native-firebase/auth';
 import { LoginManager, AccessToken } from 'react-native-fbsdk';
+import User from './storage/User'
 
 
 
 export async function FacebookLogin(accountType, onAuthChange) {
   // Attempt login with permissions
+  // LoginManager.logOut();
   const result = await LoginManager.logInWithPermissions(['public_profile', 'email']);
 
   if (result.isCancelled) {
@@ -23,6 +25,9 @@ export async function FacebookLogin(accountType, onAuthChange) {
 
   // Sign-in the user with the credential
   const { user } = await auth().signInWithCredential(facebookCredential);
+
+  console.log("user: " +  JSON.stringify(user))
+  
 
   if (user) {
     if (user.displayName.substring(0, 5) === "user_") {
