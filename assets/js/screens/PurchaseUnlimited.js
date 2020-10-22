@@ -15,6 +15,7 @@ import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 import GoBackButton from '../components/buttons/GoBackButton'
+import config from '../../../App.config'
 
 
 
@@ -145,6 +146,7 @@ export default function PurchaseUnlimited(props) {
                     // After success with purchase
                     setHasImbueMembership(true)
                   } catch(err) {
+                    if (config.DEBUG) console.error(err)
                     switch (err.code) {
                       case "busy":
                         setErrorMsg(err.message)
