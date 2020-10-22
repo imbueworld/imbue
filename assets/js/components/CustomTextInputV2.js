@@ -47,6 +47,7 @@ export default function CustomTextInputV2(props) {
           minHeight: 72,
           borderRadius: 30,
           borderWidth: 1,
+          paddingTop: 20,
           borderColor: red ? 'red' : colors.textInputBorder,
           backgroundColor: colors.textInputFill,
           overflow: 'hidden',

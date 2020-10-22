@@ -356,21 +356,7 @@ export default function UserDashboard(props) {
 
     { CurrentGymBadge }
 
-    {/* <CustomTextInput
-      containerStyle={{
-        // borderColor: redFields.includes("first") ? "red" : undefined,
-        position: "absolute", paddingTop: 0, top: 170, left: 35, width: 300, height: 60, textAlign: "center", backgroundColor: "#fff", fontSize: 24
-      }}
-    placeholder="Search for a gym"
-    multiline={false}
-    numberOfLines={1}
-      // value={first}
-      // onChangeText={setFirst}
-    /> */}
-    {/* <CustomTextInput style={{ position: "absolute", top: 170, left: 35, width: 300, height: 60, textAlign: "center", backgroundColor: "#fff", fontSize: 24 }} placeholderTextColor={"#000"} placeholder={
-      "Testing"
-    }>
-    </CustomTextInput> */}
+    
 
     {
     !user ? null :

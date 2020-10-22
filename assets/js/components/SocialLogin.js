@@ -6,9 +6,9 @@ import { AppleButton } from '@invertase/react-native-apple-authentication';
 import { appleAuth } from '@invertase/react-native-apple-authentication';
 import { firebase, auth } from '@react-native-firebase/auth'
 import User from '../backend/storage/User'
+ 
 
-
-
+ 
 async function onAppleButtonPress(onAuthChange) {
   // performs login request
   const appleAuthRequestResponse = await appleAuth.performRequest({
@@ -109,8 +109,8 @@ export default function SocialLogin(props) {
             // console.log('pressed')
             onAppleButtonPress(onAuthChange)
           } >
-          {/* <Image style={{width: 64, height: 64,}} source={require('../components/img/png/apple-sign-in.png')} /> */}
-      </AppleButton>
+         {/* <Image style={{width: 64, height: 64,}} source={require('../components/img/png/apple-sign-in.png')} />  */}
+      </AppleButton> 
       <FacebookLoginButton
         accountType={options.accountType}
         imageStyle={styles.socialIcon}

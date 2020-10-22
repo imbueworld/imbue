@@ -12,7 +12,11 @@ import { FONTS } from '../contexts/Styles'
  */
 export default function CustomTextInput(props) {
   let multiline = props.value > 15 ? false : true
-  if (props.multiline) multiline = true // overrides
+  if (props.multiline) {
+    multiline = true // overrides
+  } else {
+    multiline = false
+  }
 
   let secureTextEntry = false
   if (props.secureTextEntry) {
@@ -27,7 +31,7 @@ export default function CustomTextInput(props) {
     ]}>
       <TextInput
         style={[
-          styles.input,
+          (multiline) ? styles.input : styles.inputMultilineFalse,
           props.style,
         ]}
         secureTextEntry={secureTextEntry}
@@ -61,11 +65,21 @@ const styles = StyleSheet.create({
   input: {
     ...FONTS.subtitle,
     height: "100%",
-    // paddingVertical: 20,
-    paddingTop: 20,
+    paddingTop: 20,   
     paddingBottom: 1,
     textAlign: "center",
-    // textAlignVertical: "center",
+    textAlignVertical: "center",
+    fontSize: 20,
+    zIndex: 100,
+    // fontFamily: fonts.default,
+  },
+  inputMultilineFalse: {
+    ...FONTS.subtitle,
+    height: "100%",
+    // paddingVertical: 20,
+    paddingBottom: 1,
+    textAlign: "center",
+    textAlignVertical: "center",
     fontSize: 20,
     zIndex: 100,
     // fontFamily: fonts.default,
