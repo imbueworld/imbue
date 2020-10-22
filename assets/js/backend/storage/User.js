@@ -70,7 +70,7 @@ export default class User extends DataObject {
     // If data is missing (about user's uid) from database,
     // then assume the user has been deleted, and log out
     if (!this._getCacheObj().get()) {
-      auth().signOut()
+      await auth().signOut()
       return
     }
 

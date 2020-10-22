@@ -415,10 +415,12 @@ export default function UserDashboard(props) {
         buttonOptions={{
           logOut: {
             show: true,
-            onPress: () => {
-              auth().signOut()
-              GoogleSignin.signOut()
-              LoginManager.logOut()
+            onPress: async () => {
+              await Promise.all([
+                auth().signOut(),
+                GoogleSignin.signOut(),
+                LoginManager.logOut(),
+              ])
               navigation.reset({
                 index: 0,
                 routes: [{ name: 'Boot' }],
