@@ -16,6 +16,7 @@ import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge'
 import cache from '../backend/storage/cache'
 import GoLiveButton from '../components/buttons/GoLiveButton'
 import GoBackButton from '../components/buttons/GoBackButton'
+import config from '../../../App.config'
 
 
 
@@ -272,30 +273,35 @@ export default function LivestreamLayout(props) {
   // }
 
   function setDeck(state) {
-    // [uncomment upon DEBUG start]
-    buttonOptions.viewButtonPanel.state = "open"
-    refresh(r => r + 1)
-    // [comment upon DEBUG end]
+    // [v DEBUG ONLY v]
+    if (config.DEBUG) {
+      buttonOptions.viewButtonPanel.state = "open"
+      refresh(r => r + 1)
+    }
+    // [^ DEBUG ONLY ^]
     
-    // [comment upon DEBUG start]
-    // clearTimeout(buttonOptions.viewButtonPanel.data)
-    // buttonOptions.viewButtonPanel.state = state
-
-    // if (state === "open") {
-    //   let timeout = setTimeout(() => {
-    //     if (buttonOptions.viewChat.state === "open"
-    //         ||buttonOptions.viewParticipants.state === "open") {
-    //         return
-    //       }
-
-    //     buttonOptions.viewButtonPanel.state = "closed"
-    //     refresh(r => r + 1)
-    //   }, 4500)
-    //   buttonOptions.viewButtonPanel.data = timeout
-    // }
-
-    // refresh(r => r + 1)
-    // [uncomment upon DEBUG end]
+    
+    // [v DISABLED DURING DEBUG v]
+    if (!config.DEBUG) {
+      clearTimeout(buttonOptions.viewButtonPanel.data)
+      buttonOptions.viewButtonPanel.state = state
+  
+      if (state === "open") {
+        let timeout = setTimeout(() => {
+          if (buttonOptions.viewChat.state === "open"
+              ||buttonOptions.viewParticipants.state === "open") {
+              return
+            }
+  
+          buttonOptions.viewButtonPanel.state = "closed"
+          refresh(r => r + 1)
+        }, 4500)
+        buttonOptions.viewButtonPanel.data = timeout
+      }
+  
+      refresh(r => r + 1)
+    }
+    // [^ DISABLED DURING DEBUG ^]
   }
 
   useEffect(() => {
@@ -364,12 +370,12 @@ export default function LivestreamLayout(props) {
             layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
             refresh(r => r + 1)
           }}
-          // [uncomment upon DEBUG start]
-          // onLongPress={() => {
-          //   layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
-          //   refresh(r => r + 1)
-          // }}
-          // [comment upon DEBUG end]
+          // [v DEBUG ONLY v]
+          onLongPress={config.DEBUG ? () => {
+            layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
+            refresh(r => r + 1)
+          } : null}
+          // [^ DEBUG ONLY ^]
         >
           <LiveViewerCountBadge
             hidden={!layoutOptions.viewerCount.show}

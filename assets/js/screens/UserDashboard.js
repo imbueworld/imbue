@@ -21,6 +21,7 @@ import User from '../backend/storage/User'
 import GymsCollection from '../backend/storage/GymsCollection'
 import cache from '../backend/storage/cache'
 import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay'
+import config from '../../../App.config'
 
 
 
@@ -387,9 +388,9 @@ export default function UserDashboard(props) {
           }}
           underlayColor="#000000C0"
           onPress={() => setExpanded(!expanded)}
-          // [uncomment upon DEBUG start]
-          onLongPress={() => setExpanded(!expanded)}
-          // [comment upon DEBUG end]
+          // [v DEBUG ONLY v]
+          onLongPress={config.DEBUG ? (() => setExpanded(!expanded)) : undefined}
+          // [^ DEBUG ONLY ^]
         >
           <Icon
             containerStyle={{
