@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Calendar } from "react-native-calendars"
+import config from '../../../App.config'
 
 
 
@@ -53,11 +54,11 @@ export default function CalendarView(props) {
         onDayPress={day => {
           props.setSlctdDate(day.dateString)
         }}
-        // [uncomment upon DEBUG start]
-        onDayLongPress={day => {
+        // [v DEBUG ONLY v]
+        onDayLongPress={config.DEBUG ? day => {
           props.setSlctdDate(day.dateString)
-        }}
-      // [comment upon DEBUG end]
+        } : undefined}
+        // [^ DEBUG ONLY ^]
       />
     </View>
   )

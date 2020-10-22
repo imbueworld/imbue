@@ -17,6 +17,7 @@ import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
 import User from '../backend/storage/User' 
+import config from '../../../App.config'
 
 
 
@@ -134,9 +135,9 @@ export default function ProfileLayout(props) {
                 left: 65,
               }}
               onPress={editPfp}
-              // [uncomment upon DEBUG start]
-              // onLongPress={editPfp}
-              // [comment upon DEBUG end]
+              // [v DEBUG ONLY v]
+              onLongPress={config.DEBUG ? editPfp : undefined}
+              // [^ DEBUG ONLY ^]
             />
           : null}
         </View>

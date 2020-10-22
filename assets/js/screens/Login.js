@@ -24,7 +24,7 @@ export default function Login(props) {
   const navigation = useNavigation()
 
   const [redFields, setRedFields] = useState([])
-  const [successMsg, setSuccessMsg] = useState("")
+  // const [successMsg, setSuccessMsg] = useState("")
   const [errorMsg, setErrorMsg] = useState("")
 
   const [email, setEmail] = useState("")
@@ -98,7 +98,8 @@ export default function Login(props) {
 
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-          : <Text style={{ color: "green" }}>{successMsg}</Text>}
+          : null }
+          {/* : <Text style={{ color: "green" }}>{successMsg}</Text>} */}
 
         <CustomTextInput
           containerStyle={{
@@ -126,7 +127,7 @@ export default function Login(props) {
           onPress={async () => {
             setRedFields([])
             setErrorMsg("")
-            setSuccessMsg("")
+            // setSuccessMsg("")
 
             let errorMsg
             try {
@@ -136,7 +137,7 @@ export default function Login(props) {
               
               // Log in
               await auth().signInWithEmailAndPassword(email, password)
-              setSuccessMsg("You've signed in!")
+              // setSuccessMsg("You've signed in!")
 
               // Navigate
               const pushAction = StackActions.push("Boot")
