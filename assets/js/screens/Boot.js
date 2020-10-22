@@ -60,14 +60,20 @@ export default function Boot(props) {
     // Do not redirect automatically, if DEBUG
     if (config.DEBUG) return
 
-    if (auth().currentUser) {
-      bootWithUser()
-    } else {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: "Home" }],
-      })
-    }
+    const init = async () => {
+
+      // Let the logo show for at least 200ms
+      await new Promise(r => setTimeout(r, 200))
+
+      if (auth().currentUser) {
+        await bootWithUser()
+      } else {
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "Home" }],
+        })
+      }
+    }; init()
   }, [])
 
 
