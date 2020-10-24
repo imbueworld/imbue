@@ -82,8 +82,8 @@ export default function GoLive(props) {
   useEffect(() => {
     const init = async () => {
       if (Platform.OS === "android") {
-        let has = await checkPermissions()
-        setHasAllPermisions(has)
+        // let has = await checkPermissions()
+        // setHasAllPermisions(has)
       } else if (Platform.OS === "ios") {
         let has = await checkPermissionsiOS()
         setHasAllPermisionsiOS(has)
@@ -96,7 +96,7 @@ export default function GoLive(props) {
         'WRITE_EXTERNAL_STORAGE',
       ])
 
-      setHasAllPermisions(unfulfilledPerms ? false : true)
+      setHasAllPermisions(!Boolean(unfulfilledPerms))
     }; perms()
   }, [])
 

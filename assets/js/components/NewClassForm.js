@@ -10,6 +10,7 @@ import { simpleShadow, colors } from '../contexts/Colors'
 import { zeroDecimalFromCurrency } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
+import config from '../../../App.config'
 
 
 
@@ -47,6 +48,7 @@ export default function NewClassForm(props) {
       ).map(it => it.getAll())
 
       let dropDownGyms = gyms.map(gym => ({ label: gym.name, value: gym.id }))
+      if (config.DEBUG) console.log('dropDownGyms', dropDownGyms)
       setDropDownGyms(dropDownGyms)
 
       setInitialized(true)

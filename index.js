@@ -12,7 +12,8 @@ AppRegistry.registerComponent(appName, () => App)
 
 import { colors } from './assets/js/contexts/Colors'
 
-StatusBar.setBackgroundColor(colors.bg)
+// StatusBar.setBackgroundColor(colors.bg)
+StatusBar.setBackgroundColor(`${colors.bg}00`) // 00 stands for making it completely transparent
 StatusBar.setBarStyle('dark-content')
 StatusBar.setTranslucent(true)
 

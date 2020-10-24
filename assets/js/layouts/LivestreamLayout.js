@@ -126,7 +126,6 @@ export default function LivestreamLayout(props) {
       chatNodeRef.limitToLast(1).on('child_added', snap => {
         const message = snap.val()
 
-        console.log("DEBUG123", message)
         // Don't show very first message, because it is most likely not a live message
         let canShowMessageNow = cache('livestream/canShowMessageNow')
         if (!canShowMessageNow.get()) {
