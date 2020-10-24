@@ -91,7 +91,7 @@ export default function PartnerUpdateClasses(props) {
         paddingBottom: 10,
       }}
     >
-      { PageContent}
+      { PageContent }
     </ProfileLayout>
   )
 }

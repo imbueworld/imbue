@@ -6,12 +6,17 @@ import { FONTS } from '../contexts/Styles'
 
 
 
+/**
+ * The only prop atm you cannot use with this Component is 'ref',
+ * because of the inner dependency on it.
+ */
 export default function CustomTextInputV2(props) {
   const {
     style={},
     containerStyle={},
     //
     red=false,
+    secureTextEntry,
     onBlur=() => {},
   } = props
 
@@ -28,8 +33,9 @@ export default function CustomTextInputV2(props) {
             width: '100%',
             height: '100%',
             position: 'absolute',
-            // backgroundColor: 'red', // DEBUG
+            borderRadius: 20,
             zIndex: 1,
+            // backgroundColor: 'blue', // DEBUG
           }}
           onTouchEnd={() => {
             ref.current.focus()
@@ -41,7 +47,9 @@ export default function CustomTextInputV2(props) {
         // Prop order is important here,
         // with regards to what `{...props}` overrides, and not
         placeholderTextColor={colors.textInputPlaceholder}
-        multiline
+        multiline={secureTextEntry ? false : true} // multiline can never be
+                                                   // enabled if there is a desire
+                                                   // to use secureTextEntry
         {...props}
         style={{
           minHeight: 72,

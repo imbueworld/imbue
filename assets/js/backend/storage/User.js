@@ -8,6 +8,7 @@ import firestore from '@react-native-firebase/firestore'
 import functions from '@react-native-firebase/functions'
 import storage from '@react-native-firebase/storage'
 import {
+  geocodeAddress,
   publicStorage,
 } from '../BackendFunctions'
 import {
@@ -19,6 +20,8 @@ import { handleAuthErrorAnonymous, handlePasswordResetError, requestPermissions 
 import ImagePicker from 'react-native-image-picker'
 import Class from './Class'
 import config from '../../../../App.config'
+import Gym from './Gym'
+const p = console.log
 
 
 
@@ -344,7 +347,7 @@ export default class User extends DataObject {
 
     // console.log("relevantClasses", relevantClasses) // DEBUG
 
-    const classes = await collection.retrieveWhere('id', 'in', relevantClasses)
+    const classes = await collection.retrieveDocs(relevantClasses)
     return classes
   }
 
@@ -687,6 +690,85 @@ export default class User extends DataObject {
       const requestActivation = functions().httpsCallable('getMindbodyActivationCode')
       return ( await requestActivation(details) ).data
     })
+  }
+
+  /**
+   * Acts as a "compiler", or "packager", that turns a simple one layer provided
+   * Object into the necessary object for Stripe API.
+   * Updates according object, for which information has been provided,
+   * can update both.
+   * @see https://stripe.com/docs/api/accounts/update
+   * @see https://stripe.com/docs/api/persons/update
+   */
+  async updateStripeAccount(details, prefetchedData) {
+    let {
+      dob,
+      address: individualAddressText,
+      phone,
+      ssn_last_4,
+      company_address: companyAddressText,
+      company_name,
+      tax_id,
+      // .. more can be incorporated
+    } = details
+
+    let {
+      pfGeocodeAddress,
+      pfGeocodeCompanyAddress,
+    } = prefetchedData
+
+    let updateAccount, updatePerson // If these become true, update according one, or both, ofc
+    const accountFinalDocument = {
+      company: {},
+    }
+    const personFinalDocument = {}
+
+    // Transform descriptive address strings into geolocation components
+    //
+    if (companyAddressText) {
+      const {
+        address: company_address,
+      } = pfGeocodeCompanyAddress || await geocodeAddress(companyAddressText) || {}
+      if (config.DEBUG) p('company_address', company_address)
+      // Do not continue, if provided address is invalid.
+      if (!company_address)
+        throw 'Provided company\'s address was not specific enough.'
+      
+      updateAccount = true
+      accountFinalDocument.company.address = company_address
+    }
+    //
+    if (individualAddressText) {
+      const {
+        address,
+      } = pfGeocodeAddress || await geocodeAddress(individualAddressText) || {}
+      if (config.DEBUG) p('address', address)
+      // Do not continue, if provided address is invalid.
+      if (!address)
+        throw 'Provided individual\'s address was not specific enough.'
+      
+      updatePerson = true
+      personFinalDocument.address = address
+    }
+
+    accountFinalDocument.company.name = company_name
+    accountFinalDocument.company.tax_id = tax_id
+    accountFinalDocument.company.phone = phone
+    if (company_name || tax_id || phone) updateAccount = true
+
+    personFinalDocument.dob = dob
+    personFinalDocument.phone = phone
+    personFinalDocument.ssn_last_4 = ssn_last_4
+    if (dob || ssn_last_4 || phone) updatePerson = true
+    
+    if (updateAccount) {
+      const updateAccount = functions().httpsCallable('updateStripeAccount')
+      await updateAccount(accountFinalDocument)
+    }
+    if (updatePerson) {
+      const updatePerson = functions().httpsCallable('updateStripePerson')
+      await updatePerson(personFinalDocument)
+    }
   }
 
   _getPaymentMethodsDbRef() {

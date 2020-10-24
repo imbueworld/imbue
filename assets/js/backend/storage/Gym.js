@@ -1,5 +1,6 @@
 import DataObject from './DataObject'
 import { geocodeAddress } from '../BackendFunctions'
+import auth from '@react-native-firebase/auth'
 
 
 
@@ -12,10 +13,16 @@ export default class Gym extends DataObject {
   async create(details) {
     this.mergeItems(details)
     await this.push({ forceNew: true })
+    return this.getAll()
   }
 
   async retrieveGym(uid) {
     await this.initByUid(uid)
+    return this.getAll()
+  }
+
+  async retrievePartnerGym() {
+    await this.initByUid(auth().currentUser.uid)
     return this.getAll()
   }
 

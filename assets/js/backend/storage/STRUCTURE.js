@@ -26,6 +26,7 @@ const STRUCTURE = {
     revenue_total: Number,
     //
     company_address: Object,
+    formatted_company_address: String,
     company_name: String,
     tax_id: String,
     //
