@@ -494,12 +494,10 @@ export default class User extends DataObject {
       // get updated
       const classObj = new Class()
       let { mindbody_integration } = await classObj.retrieveClass(classId)
-      console.log('classData.mindbody_integration', mindbody_integration) // DEBUG
       if (mindbody_integration) {
         const removeClient = functions().httpsCallable('removeMindbodyClientFromClass')
         await removeClient({ classId })
       }
-      console.log('Does not continue further, if failed') // DEBUG
     })
   }
 
@@ -666,7 +664,6 @@ export default class User extends DataObject {
       await auth().sendPasswordResetEmail(email)
     } catch(err) {
       const userFacingErrMsg = handleAuthErrorAnonymous(err)
-      console.log('errorMessage', userFacingErrMsg) // DEBUG
       throw userFacingErrMsg
     }
   }
@@ -676,7 +673,6 @@ export default class User extends DataObject {
       await auth().confirmPasswordReset(code, newPass)
     } catch(err) {
       const userFacingErrMsg = handlePasswordResetError(err)
-      console.log('errorMessage', userFacingErrMsg) // DEBUG
       throw userFacingErrMsg
     }
   }
