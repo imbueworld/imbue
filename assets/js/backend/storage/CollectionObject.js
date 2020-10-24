@@ -97,7 +97,7 @@ export default class CollectionObject {
     // console.log('availableData', availableData) // DEBUG
     let putAsideData = []
 
-    console.log(1, 'docUids', docUids) // DEBUG
+    // console.log(1, 'docUids', docUids) // DEBUG
     // Subtract docs that are already available from those to be queried yet
     docUids = docUids.filter(uid => {
       for (let availDoc of availableData) {
@@ -108,7 +108,7 @@ export default class CollectionObject {
       }
       return true
     })
-    console.log(2, 'docUids', docUids) // DEBUG
+    // console.log(2, 'docUids', docUids) // DEBUG
 
     // Retrieve the ones that hadn't been cached
     let reads = []
@@ -125,12 +125,11 @@ export default class CollectionObject {
     
     // Make sure to save them on cache, which can be accompished by
     // instantiating `DataObject` with .fromEntry
-    console.log('docs', docs) // DEBUG
-    console.log('putAsideData', putAsideData) // DEBUG
+    // console.log('docs', docs) // DEBUG
+    // console.log('putAsideData', putAsideData) // DEBUG
     let allData = [...docs, ...putAsideData]
     const dataObjects = []
     allData.forEach(doc => {
-      console.log(doc)
       const dataObject = new this.DataObject
       dataObject.fromEntry([doc.id, doc])
       dataObjects.push(dataObject)
