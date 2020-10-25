@@ -7,6 +7,11 @@ const config = {
       marginTop: 40,
       marginLeft: 10,
     },
+    CornerButton_rightSide_screenDefault: {
+      position: 'absolute',
+      top: 40,
+      right: 10,
+    },
   },
 }
 

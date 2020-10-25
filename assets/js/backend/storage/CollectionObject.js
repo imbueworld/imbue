@@ -1,4 +1,5 @@
 import firestore from '@react-native-firebase/firestore'
+import { BusyError } from '../Errors'
 import cache from './cache'
 
 
@@ -199,5 +200,21 @@ export default class CollectionObject {
     const dataObject = new this.DataObject()
     dataObject.fromEntry(entry)
     return dataObject
+  }
+
+
+  async _BusyErrorWrapper(fnIdentifier, exec) {
+    const cacheObj = cache(`working/${fnIdentifier}`)
+
+    if (cacheObj.get()) throw BusyError
+    else cacheObj.set(true)
+
+    try {
+      return await exec()
+    } catch(err) {
+      throw err
+    } finally {
+      cacheObj.set(false)
+    }
   }
 }
