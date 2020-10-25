@@ -45,7 +45,7 @@ const STRUCTURE = {
     address: Object,
     formatted_address: String,
     membership_price: Number,
-    coordinate: Object,
+    coordinates: Object,
     icon_uri: String,
     image_uris: Array,
     // Core fields

@@ -54,6 +54,19 @@ export default function ProfileLayout(props) {
             routes: [{ name: 'Boot' }],
           })
         },
+        // [v DEBUG ONLY v]
+        onLongPress: config.DEBUG ? async () => {
+          await Promise.all([
+            auth().signOut(),
+            GoogleSignin.signOut(),
+            LoginManager.logOut(),
+          ])
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Boot' }],
+          })
+        } : null,
+        // [^ DEBUG ONLY ^]
       },
       editPfp: {
         show: false,

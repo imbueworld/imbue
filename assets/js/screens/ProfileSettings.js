@@ -7,6 +7,7 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 
 import auth from "@react-native-firebase/auth"
+import firestore from '@react-native-firebase/firestore'
 import moment from 'moment'
 import { handleAuthError } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
@@ -154,7 +155,7 @@ export default function ProfileSettings(props) {
     setValue('ssn_last_4', '0000')
 
     setValue('password', 'asdfg')
-  })
+  }, [])
 
 
 
@@ -243,10 +244,10 @@ export default function ProfileSettings(props) {
 
         // Since company address and gym address are synced together,
         // update the gym as well
+        await gym.updateCoordinates(location)
         gym.mergeItems({
           address,
           formatted_address,
-          coordinate: location,
         })
       }
 
