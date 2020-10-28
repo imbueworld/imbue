@@ -9,3 +9,10 @@ mindbody_webhook_functions.js
 firebase deploy --only functions:webhookUpdateMindbodyClasses1,functions:webhookUpdateMindbodyClasses2,functions:webhookSyncMindbodyClasses
 
 .
+
+
+
+index.js:StripeFunctions
+firebase deploy --only functions:createStripeCustomer,functions:createStripeSeller,functions:updateStripeAccount,functions:updateStripePerson
+
+.

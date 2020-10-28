@@ -59,22 +59,16 @@ function forward_exports(fns) {
 }
 
 const mindbody_functions = require('./src/functions/mindbody_functions')
-// for (let fnName in mindbody_functions) {
-//   exports[ fnName ] = mindbody_functions[ fnName ]
-// }
 forward_exports(mindbody_functions)
 
 const mindbody_webhook_functions = require('./src/functions/mindbody_webhook_functions')
-// for (let fnName in mindbody_webhook_functions) {
-//   exports[ fnName ] = mindbody_webhook_functions[ fnName ]
-// }
 forward_exports(mindbody_webhook_functions)
 
 const payout_functions = require('./src/functions/payout_functions')
-// for (let fnName in payout_functions) {
-//   exports[ fnName ] = payout_functions[ fnName ]
-// }
 forward_exports(payout_functions)
+
+// waitlist_functions
+forward_exports(require('./src/functions/waitlist_functions'))
 
 exports.createImbueProduct = functions.https.onCall(async (data, context) => {
   const imbueId = 'imbue'
@@ -110,47 +104,48 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
   const { uid } = context.auth
   const { gymId } = data
 
-  let xhr = new XMLHttpRequest()
-  xhr.onload = async () => {
-    let data = JSON.parse(xhr.responseText).data
-    let { stream_key, playback_ids } = data
-    let playback_id = playback_ids[ 0 ].id
+  return await new Promise(resolve => {
+    let xhr = new XMLHttpRequest()
+    xhr.onload = async () => {
+      let data = JSON.parse(xhr.responseText).data
+      let { stream_key, playback_ids } = data
+      let playback_id = playback_ids[ 0 ].id
 
-    // Saving of the stream_key,
-    // and playback_id, just in case it is ever needed for partner
-    await admin
-      .firestore()
-      .collection("partners")
-      .doc(uid)
-      .set({
-        stream_key,
-        playback_id,
-      }, { merge: true })
-    
-    // Making playback_id accessible to users
-    await admin
-      .firestore()
-      .collection('gyms')
-      .doc(gymId)
-      .set({
-        playback_id,
-      }, { merge: true })
-  }
-
-
-  xhr.open(
-    "POST",
-    "https://api.mux.com/video/v1/live-streams",
-    true, MUX_TOKEN_ID, MUX_TOKEN_SECRET)
-  xhr.setRequestHeader("Content-Type", "application/json")
-  xhr.send(JSON.stringify({
-    "playback_policy": ["public"],
-    "new_asset_settings": {
-      "playback_policy": ["public"]
+      // Saving of the stream_key,
+      // and playback_id, just in case it is ever needed for partner
+      await admin
+        .firestore()
+        .collection("partners")
+        .doc(uid)
+        .set({
+          stream_key,
+          playback_id,
+        }, { merge: true })
+      
+      // Making playback_id accessible to users
+      await admin
+        .firestore()
+        .collection('gyms')
+        .doc(gymId)
+        .set({
+          playback_id,
+        }, { merge: true })
+      
+      resolve()
     }
-  }))
 
-  await new Promise(r => setTimeout(r, 4500))
+    xhr.open(
+      "POST",
+      "https://api.mux.com/video/v1/live-streams",
+      true, MUX_TOKEN_ID, MUX_TOKEN_SECRET)
+    xhr.setRequestHeader("Content-Type", "application/json")
+    xhr.send(JSON.stringify({
+      "playback_policy": ["public"],
+      "new_asset_settings": {
+        "playback_policy": ["public"]
+      }
+    }))
+  })
 })
 
 /**
@@ -177,9 +172,6 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
 });
 
 exports.createStripeSeller = functions.https.onCall(async (data, context) => {
-  const p = console.log
-  const e = console.error
-
   const { auth: { uid } } = context
   const {
     // Company details
@@ -197,15 +189,16 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     address,
     ssn_last_4,
 
-    // TOS agreement
+    // TOS agreement, other
     ip,
+    country,
   } = data
   const CURRENT_TS = Math.floor(Date.now() / 1000)
 
   // Create Custom Stripe account
   const newStripeAccount = await stripe.accounts.create({
     type: 'custom',
-    country: company_address.country,
+    country: 'us',
     email,
     business_type: 'company',
     company: {
@@ -228,7 +221,7 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     },
   })
   
-  // p("newStripeAccount success")
+  p("newStripeAccount success")
   const { id: stripe_account_id } = newStripeAccount
 
   // Create a Stripe Person, linking it to the Custom Account
@@ -251,7 +244,7 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     }
   )
 
-  // p("newStripePerson success")
+  p("newStripePerson success")
   const { id: stripe_person_id } = newStripePerson
   
   // Update the Custom Account, telling that person has been successfully created
@@ -270,6 +263,49 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     stripe_account_id,
     stripe_person_id,
   }, { merge: true })
+})
+
+/**
+ * Updates Stripe Connect Account object for Partner,
+ * based on the data provided.
+ * @param {Object} data needs to be formatted as documented
+ * in Stripe API reference.
+ * @see https://stripe.com/docs/api/accounts/update
+ */
+exports.updateStripeAccount = functions.https.onCall(async (data, context) => {
+  const { auth: { uid } } = context
+
+  // Retrieve stripe account id, based on uid of the caller
+  const {
+    stripe_account_id,
+  } = ( await partners.doc(uid).get() ).data()
+
+  // Update stripe with provided information
+  await stripe.accounts.update(stripe_account_id, data)
+})
+
+/**
+ * Updates Stripe Connect Person object for Partner,
+ * based on the data provided.
+ * @param {Object} data needs to be formatted as documented
+ * in Stripe API reference.
+ * @see https://stripe.com/docs/api/persons/update
+ */
+exports.updateStripePerson = functions.https.onCall(async (data, context) => {
+  const { auth: { uid } } = context
+
+  // Retrieve stripe person id, based on uid of the caller
+  const {
+    stripe_account_id,
+    stripe_person_id,
+  } = ( await partners.doc(uid).get() ).data()
+
+  await stripe.accounts.updatePerson(stripe_account_id, stripe_person_id, data)
+})
+
+exports.retrieveStripeAccount = functions.https.onCall(async (data, context) => {
+  let { stripe_account_id } = data
+  return await stripe.accounts.retrieve(stripe_account_id)
 })
 
 /**

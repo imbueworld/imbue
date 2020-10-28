@@ -122,6 +122,7 @@ exports.coreSyncMindbodyClasses = async (siteId, queryParams={}) => {
 
     // Add the class to Imbue's Cloud Firestore
     batch.set(classes.doc(ClassId), {
+      id: ClassId,
       active_times: [{
         begin_time,
         end_time,
@@ -173,7 +174,7 @@ exports.addMindbodyClientToClass = functions.https.onCall(async (data, context) 
     test=false, // Boolean
     classId, // String
   } = data || {}
-  // 
+  //
   const DEBUG = {
     userId: uid,
     classId,
