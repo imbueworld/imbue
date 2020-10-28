@@ -19,6 +19,9 @@ import { StackActions, useNavigation } from '@react-navigation/native'
 
 import BackButton from '../components/BackButton'
 import User from '../backend/storage/User'
+import GoBackButton from '../components/buttons/GoBackButton';
+import config from '../../../App.config';
+import CustomTextInputV2 from '../components/CustomTextInputV2';
 
 
 
@@ -35,6 +38,8 @@ export default function SignUp(props) {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")// passing in an empty array as the second argument ensures this is only ran once when component mounts initially.
+
+  const [referrerToken, setReferrerToken] = useState('')
 
 
   function invalidate() {
@@ -72,32 +77,9 @@ export default function SignUp(props) {
       keyboardShouldPersistTaps="handled"
       alwaysBounceVertical={false} 
     >
-
       <AppBackground />
-      {/* <Image
-          style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-          }}
-          source={require("../components/img/workout-21.jpg")}
-      /> */}
       <CompanyLogo />
-        
-
-      {/* back button */}
-      <TouchableHighlight
-            style={styles.sidePanelButtonContainer}
-            underlayColor="#eed"
-            onPress={props.onBack || (() => navigation.goBack())}
-          >
-            <BackButton
-              imageStyle={{
-                width: 48,
-                height: 48,
-              }}
-            />
-      </TouchableHighlight>
+      <GoBackButton containerStyle={styles.GoBackButton} />
 
       <CustomCapsule style={styles.container}>   
 
@@ -171,6 +153,14 @@ export default function SignUp(props) {
           value={passwordConfirm}
           onChangeText={setPasswordConfirm}
         />
+
+        <CustomTextInputV2
+          containerStyle={styles.input}
+          placeholder='Referrer Token (optional)'
+          value={referrerToken}
+          onChangeText={setReferrerToken}
+        />
+
         <CustomButton
           style={{
             marginBottom: 20,
@@ -196,6 +186,8 @@ export default function SignUp(props) {
                 password,
                 type,
               })
+
+              await user.addToWaitlist(email, referrerToken)
 
               setSuccessMsg("You've been signed up!")
 
@@ -232,14 +224,10 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     alignSelf: "center",
   },
-  sidePanelButtonContainer: {
-    backgroundColor: "white",
-    marginTop: 40,
-    marginLeft: 10,
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 999,
-    zIndex: 110,
+  input: {
+    marginVertical: 10,
+  },
+  GoBackButton: {
+    ...config.styles.GoBackButton_screenDefault,
   },
 })

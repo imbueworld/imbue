@@ -1,4 +1,4 @@
-export default function InformationStorageMechanism(Database, query) {
+export default function InformationStorageMechanism(Database, query='_UNSET') {
   const RESERVED_FIELDS = ['_data', '_listeners']
   const fields = query.split('/')
   let nextBase
@@ -81,5 +81,10 @@ export default function InformationStorageMechanism(Database, query) {
       return res
     },
     _getDatabase: () => Database,
+    _resetCache: () => {
+      for (let key in Database) {
+        delete Database[ key ]
+      }
+    },
   }
 }
