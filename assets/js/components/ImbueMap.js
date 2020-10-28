@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   RetryButton: {
-    ...config.styles.CornerButton_rightSide_screenDefault,
+    ...config.styles.GoBackButton_rightSide_screenDefault,
     width: 64,
     height: 64,
   },

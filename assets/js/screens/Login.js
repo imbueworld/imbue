@@ -18,6 +18,8 @@ import auth from '@react-native-firebase/auth'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
+import GoBackButton from '../components/buttons/GoBackButton'
+import config from '../../../App.config'
 
 
 export default function Login(props) {
@@ -29,8 +31,6 @@ export default function Login(props) {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-
-  // const { state, navigate } = this.props.navigation; 
 
   function invalidate() {
     let redFields = []
@@ -54,18 +54,10 @@ export default function Login(props) {
       showsVerticalScrollIndicator={false}
     >
       <AppBackground />
-      {/* <Image
-          style={{
-              width: "100%",
-              height: "100%",
-              position: "absolute",
-          }}
-          source={require("../components/img/workout-23.jpg")}
-      /> */}
       <CompanyLogo />
 
       {/* back button */}
-      <TouchableHighlight
+      {/* <TouchableHighlight
             style={styles.sidePanelButtonContainer}
             underlayColor="#eed"
             onPress={props.onBack || (() => navigation.goBack())}
@@ -76,7 +68,8 @@ export default function Login(props) {
                 height: 48,
               }}
             />
-      </TouchableHighlight>
+      </TouchableHighlight> */}
+      <GoBackButton containerStyle={styles.GoBackButton} />
 
       <CustomCapsule containerStyle={styles.container}>
 
@@ -90,10 +83,11 @@ export default function Login(props) {
             const pushAction = StackActions.push("Boot")
             props.navigation.dispatch(pushAction)
           }}
-          // onError={err => {
-          //   // setErrorMsg(err.message)
-          //   setErrorMsg(`${err.code}  |  ${err.message}`)
-          // }}
+          onError={err => {
+            // setErrorMsg(err.message)
+            // setErrorMsg(`${err.code}  |  ${err.message}`)
+            setErrorMsg('Something prevented the action.')
+          }}
         />
 
         {errorMsg
@@ -182,15 +176,18 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     backgroundColor: "#F9F9F9",
   },
-  sidePanelButtonContainer: {
-    backgroundColor: "white",
-    marginTop: 40,
-    marginLeft: 10,
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 999,
-    zIndex: 110,
+  // sidePanelButtonContainer: {
+  //   backgroundColor: "white",
+  //   marginTop: 40,
+  //   marginLeft: 10,
+  //   position: "absolute",
+  //   justifyContent: "center",
+  //   alignItems: "center",
+  //   borderRadius: 999,
+  //   zIndex: 110,
+  // },
+  GoBackButton: {
+    ...config.styles.GoBackButton_screenDefault,
   },
   text: {
     ...FONTS.body,

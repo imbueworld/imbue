@@ -3,15 +3,22 @@ import { View } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import Icon from '../Icon'
 import { simpleShadow } from '../../contexts/Colors'
+import { useNavigation } from '@react-navigation/native'
+import { logOutAndRedirect } from '../../backend/HelperFunctions'
+import config from '../../../../App.config'
 
 
 
+/**
+ * By default log outs the user from everywhere and redirects to Boot screen.
+ */
 export default function LogOutButton(props) {
+  const navigation = useNavigation()
   const {
     containerStyle={},
     //
-    onPress=() => {},
-    onLongPress=() => {},
+    onPress=() => logOutAndRedirect(navigation),
+    onLongPress=config.DEBUG ? () => logOutAndRedirect(navigation) : () => {}, // Why? Because sometimes, when React Native Debugger is enabled, the simple onPress doesn't register.
   } = props
 
 

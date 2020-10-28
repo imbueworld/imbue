@@ -12,6 +12,7 @@ import { StackActions, useNavigation } from '@react-navigation/native'
 import { colors } from '../contexts/Colors'
 
 import User from '../backend/storage/User'
+import cache from '../backend/storage/cache'
 
 
 export default function Boot(props) {
@@ -25,6 +26,20 @@ export default function Boot(props) {
   const bootWithUser = async () => {
     const user = new User()
     const { account_type } = await user.retrieveUser()
+
+    // Waitlist stuff:
+    // Determine whether to let in or not
+    const { waitlist_threshhold, current_priority } = await user.retrieveWaitlistStatus()
+
+    // If user's waitlist current priority falls below the cutoff,
+    // Redirect to a screen that tells them that they're still gonna have to wait
+    if (current_priority > waitlist_threshhold) {
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Waitlist' }],
+      })
+      return // Do not continue
+    }
 
     switch (account_type) {
       case "user":
@@ -50,18 +65,12 @@ export default function Boot(props) {
   
   useEffect(() => {
     // Clear (session) cache no matter what, when entering this screen
-    // Object.keys(cache).forEach(key => {
-    //   cache[key] = null
-    // })
-    // cache.working = {}
-    // [COMMENTED, BECAUSE THIS MAY NOT BE NEEDED ANYMORE]
-
+    cache()._resetCache()
 
     // Do not redirect automatically, if DEBUG
     if (config.DEBUG) return
 
     const init = async () => {
-
       // Let the logo show for at least 200ms
       await new Promise(r => setTimeout(r, 200))
 

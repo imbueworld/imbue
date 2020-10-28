@@ -184,8 +184,8 @@ export default function PartnerSignUpV2(props) {
   return (
     <KeyboardAwareScrollView>
       <AppBackground />
-       {/* back button */}
-       <TouchableHighlight
+      <CompanyLogo />
+       {/* <TouchableHighlight
         style={styles.sidePanelButtonContainer}
         underlayColor="#eed"
         onPress={props.onBack || (() => navigation.goBack())}
@@ -196,8 +196,9 @@ export default function PartnerSignUpV2(props) {
             height: 48,
           }}
         />
-      </TouchableHighlight>
-      <CompanyLogo />
+      </TouchableHighlight> */}
+      <GoBackButton containerStyle={styles.GoBackButton} />
+
       <Text style={styles.sectionTitle}>Partner Sign Up</Text>
 
       <FormStatusMessage type='error' containerStyle={{
@@ -287,14 +288,7 @@ const styles = StyleSheet.create({
     marginRight: 30,
     marginLeft: 30
   },
-  sidePanelButtonContainer: {
-    backgroundColor: "white",
-    marginTop: 40,
-    marginLeft: 10,
-    position: "absolute",
-    justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 999,
-    zIndex: 110,
+  GoBackButton: {
+    ...config.styles.GoBackButton_screenDefault,
   },
 })

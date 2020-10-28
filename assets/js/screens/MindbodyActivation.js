@@ -91,5 +91,5 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 20,
   },
-  backButton: config.styles.BackButton_screenDefault,
+  backButton: config.styles.GoBackButton_screenDefault,
 })
