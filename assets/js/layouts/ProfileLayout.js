@@ -30,7 +30,7 @@ export default function ProfileLayout(props) {
 
   useEffect(() => {
     const init = async () => {
-      const user = new User()
+      const user = new User() 
       setUser(await user.retrieveUser())
     }; init()
   }, [])
@@ -42,7 +42,7 @@ export default function ProfileLayout(props) {
       },
       logOut: {
         show: false,
-        onPress: async () => {
+       onPress: async () => {
           await Promise.all([
             auth().signOut(),
             GoogleSignin.signOut(),
@@ -52,6 +52,7 @@ export default function ProfileLayout(props) {
             index: 0,
             routes: [{ name: 'Boot' }],
           })
+         
         },
       },
       editPfp: {

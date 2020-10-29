@@ -3,7 +3,6 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
-
 #import <Firebase.h>
 
 #ifdef FB_SONARKIT_ENABLED
@@ -46,6 +45,8 @@ static void InitializeFlipper(UIApplication *application) {
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
+       
+
 
   [GMSServices provideAPIKey:@"AIzaSyDMqJscgDIPOIIKsIoXevLJhFW8Qbx7OK4"];
 

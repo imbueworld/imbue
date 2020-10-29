@@ -20,6 +20,7 @@ export default function Boot(props) {
   // LoginManager.logOut()
   // auth().signOut()
 
+
   const navigation = useNavigation()
 
   const bootWithUser = async () => {
