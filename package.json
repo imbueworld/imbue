@@ -25,6 +25,7 @@
         "@react-navigation/stack": "^5.9.3",
         "algoliasearch": "^4.5.1",
         "firebase-functions": "^3.11.0",
+        "geofirestore": "^4.3.0",
         "moment": "^2.29.1",
         "react": "16.13.1",
         "react-hook-form": "^6.9.2",

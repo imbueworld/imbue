@@ -1,4 +1,7 @@
+import { GoogleSignin } from "@react-native-community/google-signin"
 import { PermissionsAndroid, Platform } from "react-native"
+import { LoginManager } from "react-native-fbsdk"
+import auth from '@react-native-firebase/auth'
 import config from "../../../App.config"
 
 /**
@@ -327,6 +330,25 @@ export async function requestPermissions(perms) {
   } else if (Platform.OS = 'ios') {
     // iOS .. ?
   }
+}
+
+
+
+export async function logOutAndRedirect(navigation) {
+  if (!navigation) {
+    if (config.DEBUG) console.warn('logOutAndRedirect did not execute because param `navigation` was not provided, it should be something you get from useNavigation().')
+    return
+  }
+
+  await Promise.all([
+    GoogleSignin.signOut(),
+    LoginManager.logOut(),
+    auth().signOut(),
+  ])
+  navigation.reset({
+    index: 0,
+    routes: [{ name: 'Boot' }],
+  })
 }
 
 

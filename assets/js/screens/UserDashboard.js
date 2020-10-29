@@ -2,25 +2,23 @@ import React, { useState, useEffect, useRef } from 'react'
 import { StyleSheet, View, Animated, TouchableHighlight, BackHandler } from 'react-native'
 
 import { useDimensions } from '@react-native-community/hooks'
-import MapView, { PROVIDER_GOOGLE, Marker } from 'react-native-maps'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomButton from "../components/CustomButton"
-import GymBadge from "../components/GymBadge"
 import CustomTextInput from "../components/CustomTextInput"
 
 import auth from "@react-native-firebase/auth"
 import Icon from '../components/Icon'
-import { publicStorage } from '../backend/BackendFunctions'
 import { simpleShadow } from '../contexts/Colors'
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
 import { useNavigation } from '@react-navigation/native'
 import User from '../backend/storage/User'
-import GymsCollection from '../backend/storage/GymsCollection'
 import cache from '../backend/storage/cache'
 import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay'
+import config from '../../../App.config'
+import ImbueMap from '../components/ImbueMap'
 
 
 
@@ -33,21 +31,11 @@ export default function UserDashboard(props) {
   const slidingAnim = useRef(new Animated.Value(-1 * width - 25)).current
 
   const [user, setUser] = useState(null)
-  const [gyms, setGyms] = useState(null)
-
-  const [Markers, MarkersCreate] = useState(null)
-  const [CurrentGymBadge, GymBadgeCreate] = useState(null)
 
   useEffect(() => {
-    async function init() {
+    const init = async () => {
       const user = new User()
       setUser(await user.retrieveUser())
-
-      const gyms = new GymsCollection()
-      let temp = (
-        await gyms.__retrieveAll()
-      ).map(it => it.getAll())
-      setGyms(temp)
 
       // This acts as a prefetch for when user eventually navs to ScheduleViewer
       user.retrieveClasses()
@@ -90,68 +78,6 @@ export default function UserDashboard(props) {
     BackHandler.addEventListener('hardwareBackPress', onBack)
   }, [expanded])
 
-  useEffect(() => {
-    if (!gyms) return
-
-    MarkersCreate(gyms.map((gym, idx) => {
-      const {
-        hidden_on_map,
-        coordinate,
-      } = gym
-
-      if (hidden_on_map) return
-      if (!coordinate) return
-
-      // Make sure coordinates are of type number
-      const parsedCoordinates = {}
-      for (let coord in coordinate) {
-        parsedCoordinates[ coord ] = parseFloat(coordinate[ coord ])
-      }
-
-      return (
-        <Marker
-          coordinate={parsedCoordinates}
-          key={idx}
-          onPress={async () => {
-            const gymIconUri = await publicStorage(gym.icon_uri)
-
-            GymBadgeCreate(
-              gyms
-                .filter((gym, idx2) => idx2 === idx)
-                .map(gym => {
-                  const {
-                    name,
-                    description,
-                    rating,
-                    rating_weight,
-                    id,
-                  } = gym
-
-                  return (
-                    <GymBadge
-                      containerStyle={styles.badgeContainer}
-                      name={name}
-                      desc={description}
-                      rating={`${rating} (${rating_weight})`}
-                      relativeDistance={""}
-                      iconUri={gymIconUri}
-                      key={idx}
-                      onMoreInfo={() => {
-                        props.navigation.navigate(
-                          "GymDescription", { gymId: id })
-                      }}
-                      onX={() => GymBadgeCreate(null)}
-                    />
-                  )
-                })
-            )
-          }}
-          />
-      )
-    }
-    ))
-  }, [gyms])
-
   function sidePanelSlideIn() {
     Animated.timing(slidingAnim, {
       toValue: -1 * width - 25, // -25 to hide the added side in <ProfileLayout /> as well
@@ -174,172 +100,13 @@ export default function UserDashboard(props) {
     else sidePanelSlideIn()
   }, [expanded])
 
-  var mapStyle = [
-    {
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#f5f5f5"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.icon",
-      "stylers": [
-        {
-          "visibility": "off"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#616161"
-        }
-      ]
-    },
-    {
-      "elementType": "labels.text.stroke",
-      "stylers": [
-        {
-          "color": "#f5f5f5"
-        }
-      ]
-    },
-    {
-      "featureType": "administrative.land_parcel",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#bdbdbd"
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#eeeeee"
-        }
-      ]
-    },
-    {
-      "featureType": "poi",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#757575"
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#e5e5e5"
-        }
-      ]
-    },
-    {
-      "featureType": "poi.park",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#9e9e9e"
-        }
-      ]
-    },
-    {
-      "featureType": "road",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#ffffff"
-        }
-      ]
-    },
-    {
-      "featureType": "road.arterial",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#757575"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#dadada"
-        }
-      ]
-    },
-    {
-      "featureType": "road.highway",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#616161"
-        }
-      ]
-    },
-    {
-      "featureType": "road.local",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#9e9e9e"
-        }
-      ]
-    },
-    {
-      "featureType": "transit.line",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#e5e5e5"
-        }
-      ]
-    },
-    {
-      "featureType": "transit.station",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#eeeeee"
-        }
-      ]
-    },
-    {
-      "featureType": "water",
-      "elementType": "geometry",
-      "stylers": [
-        {
-          "color": "#c9c9c9"
-        }
-      ]
-    },
-    {
-      "featureType": "water",
-      "elementType": "labels.text.fill",
-      "stylers": [
-        {
-          "color": "#9e9e9e"
-        }
-      ]
-    }
-  ]
 
 
   return (
     <>
-      <AlgoliaSearchAbsoluteOverlay style={{position: 'absolute', top: 300, }}/>
+    <AlgoliaSearchAbsoluteOverlay style={{ position: 'absolute', top: 300 }}/>
 
+<<<<<<< HEAD
     <MapView
       provider={PROVIDER_GOOGLE}
       style={styles.map}
@@ -357,6 +124,9 @@ export default function UserDashboard(props) {
     { CurrentGymBadge }
 
     
+=======
+    <ImbueMap style={styles.map} />
+>>>>>>> b2269d2f21fd5c68d02d327dde3c9eacf53609bd
 
     {
     !user ? null :
@@ -373,9 +143,9 @@ export default function UserDashboard(props) {
           }}
           underlayColor="#000000C0"
           onPress={() => setExpanded(!expanded)}
-          // [uncomment upon DEBUG start]
-          onLongPress={() => setExpanded(!expanded)}
-          // [comment upon DEBUG end]
+          // [v DEBUG ONLY v]
+          onLongPress={config.DEBUG ? (() => setExpanded(!expanded)) : undefined}
+          // [^ DEBUG ONLY ^]
         >
           <Icon
             containerStyle={{
@@ -484,14 +254,13 @@ const styles = StyleSheet.create({
   },
   map: {
     position:'absolute',
-    top:0,
-    left:0,
-    right:0,
-    bottom:0,
-    // width: "100%",
-    // height: "100%",
-    // backgroundColor: "#addbff", // water fill before map loads
-    zIndex: -1000,
+    // top:0,
+    // left:0,
+    // right:0,
+    // bottom:0,
+    width: '100%',
+    height: '100%',
+    zIndex: -100,
   },
   badgeContainer: {
     width: "100%",

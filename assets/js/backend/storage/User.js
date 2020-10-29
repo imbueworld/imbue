@@ -8,6 +8,7 @@ import firestore from '@react-native-firebase/firestore'
 import functions from '@react-native-firebase/functions'
 import storage from '@react-native-firebase/storage'
 import {
+  geocodeAddress,
   publicStorage,
 } from '../BackendFunctions'
 import {
@@ -19,7 +20,8 @@ import { handleAuthErrorAnonymous, handlePasswordResetError, requestPermissions 
 import ImagePicker from 'react-native-image-picker'
 import Class from './Class'
 import config from '../../../../App.config'
-import { Platform } from 'react-native'
+import Gym from './Gym'
+const p = console.log
 
 
 
@@ -261,6 +263,44 @@ export default class User extends DataObject {
   }
 
   /**
+   * Signs the user up for waitlist, or returns relevant infomration
+   * about their position in it.
+   */
+  async addToWaitlist(email, referrerToken) {
+    const add = functions().httpsCallable('addUserToWaitlist')
+    const res = ( await add({ email, referrerToken }) ).data
+    // delete res.total_waiters_currently // Since this information is being saved, this field would soon become irrelevant/inaccurate
+    // await this._getWaitlistDbRef().set({
+    //   ...res,
+    //   referral_token: res.referral_link.split('=')[ 1 ],
+    // })
+    res.referral_token = res.referral_link.split('=')[ 1 ]
+    this._getCacheObj().ref('waitlist').set(res)
+    return res
+  }
+
+  async retrieveWaitlistStatus() {
+    await this.init()
+    const retrieveStatus = functions().httpsCallable('addUserToWaitlist') // Works also as a status retrieval function/endpoint
+    let userStatus = this._getCacheObj().ref('waitlist').get()
+
+    if (!userStatus) {
+      const { email } = this.getAll()
+
+      userStatus = ( await retrieveStatus({ email }) ).data
+      userStatus.referral_token = userStatus.referral_link.split('=')[ 1 ]
+      userStatus.waitlist_threshhold = (
+        await firestore().collection('waitlist').doc('__GENERAL').get()
+      ).data().waitlist_threshhold
+      
+      // Cache it
+      this._getCacheObj().ref('waitlist').set(userStatus)
+    }
+
+    return userStatus
+  }
+
+  /**
    * Main user data retrieval function
    */
   async retrieveUser() {
@@ -351,7 +391,7 @@ export default class User extends DataObject {
 
     // console.log("relevantClasses", relevantClasses) // DEBUG
 
-    const classes = await collection.retrieveWhere('id', 'in', relevantClasses)
+    const classes = await collection.retrieveDocs(relevantClasses)
     return classes
   }
 
@@ -498,12 +538,10 @@ export default class User extends DataObject {
       // get updated
       const classObj = new Class()
       let { mindbody_integration } = await classObj.retrieveClass(classId)
-      console.log('classData.mindbody_integration', mindbody_integration) // DEBUG
       if (mindbody_integration) {
         const removeClient = functions().httpsCallable('removeMindbodyClientFromClass')
         await removeClient({ classId })
       }
-      console.log('Does not continue further, if failed') // DEBUG
     })
   }
 
@@ -680,7 +718,6 @@ export default class User extends DataObject {
       await auth().sendPasswordResetEmail(email)
     } catch(err) {
       const userFacingErrMsg = handleAuthErrorAnonymous(err)
-      console.log('errorMessage', userFacingErrMsg) // DEBUG
       throw userFacingErrMsg
     }
   }
@@ -690,7 +727,6 @@ export default class User extends DataObject {
       await auth().confirmPasswordReset(code, newPass)
     } catch(err) {
       const userFacingErrMsg = handlePasswordResetError(err)
-      console.log('errorMessage', userFacingErrMsg) // DEBUG
       throw userFacingErrMsg
     }
   }
@@ -704,6 +740,85 @@ export default class User extends DataObject {
       const requestActivation = functions().httpsCallable('getMindbodyActivationCode')
       return ( await requestActivation(details) ).data
     })
+  }
+
+  /**
+   * Acts as a "compiler", or "packager", that turns a simple one layer provided
+   * Object into the necessary object for Stripe API.
+   * Updates according object, for which information has been provided,
+   * can update both.
+   * @see https://stripe.com/docs/api/accounts/update
+   * @see https://stripe.com/docs/api/persons/update
+   */
+  async updateStripeAccount(details, prefetchedData) {
+    let {
+      dob,
+      address: individualAddressText,
+      phone,
+      ssn_last_4,
+      company_address: companyAddressText,
+      company_name,
+      tax_id,
+      // .. more can be incorporated
+    } = details
+
+    let {
+      pfGeocodeAddress,
+      pfGeocodeCompanyAddress,
+    } = prefetchedData
+
+    let updateAccount, updatePerson // If these become true, update according one, or both, ofc
+    const accountFinalDocument = {
+      company: {},
+    }
+    const personFinalDocument = {}
+
+    // Transform descriptive address strings into geolocation components
+    //
+    if (companyAddressText) {
+      const {
+        address: company_address,
+      } = pfGeocodeCompanyAddress || await geocodeAddress(companyAddressText) || {}
+      if (config.DEBUG) p('company_address', company_address)
+      // Do not continue, if provided address is invalid.
+      if (!company_address)
+        throw 'Provided company\'s address was not specific enough.'
+      
+      updateAccount = true
+      accountFinalDocument.company.address = company_address
+    }
+    //
+    if (individualAddressText) {
+      const {
+        address,
+      } = pfGeocodeAddress || await geocodeAddress(individualAddressText) || {}
+      if (config.DEBUG) p('address', address)
+      // Do not continue, if provided address is invalid.
+      if (!address)
+        throw 'Provided individual\'s address was not specific enough.'
+      
+      updatePerson = true
+      personFinalDocument.address = address
+    }
+
+    accountFinalDocument.company.name = company_name
+    accountFinalDocument.company.tax_id = tax_id
+    accountFinalDocument.company.phone = phone
+    if (company_name || tax_id || phone) updateAccount = true
+
+    personFinalDocument.dob = dob
+    personFinalDocument.phone = phone
+    personFinalDocument.ssn_last_4 = ssn_last_4
+    if (dob || ssn_last_4 || phone) updatePerson = true
+    
+    if (updateAccount) {
+      const updateAccount = functions().httpsCallable('updateStripeAccount')
+      await updateAccount(accountFinalDocument)
+    }
+    if (updatePerson) {
+      const updatePerson = functions().httpsCallable('updateStripePerson')
+      await updatePerson(personFinalDocument)
+    }
   }
 
   _getPaymentMethodsDbRef() {
@@ -725,5 +840,11 @@ export default class User extends DataObject {
       .collection('stripe_customers')
       .doc(this.uid)
       .collection('subscriptions')
+  }
+
+  _getWaitlistDbRef() {
+    return firestore()
+      .collection('waitlist')
+      .doc(this.uid)
   }
 }
