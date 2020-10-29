@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import config from '../../../App.config'
 import User from '../backend/storage/User'
+import GoBackButton from '../components/buttons/GoBackButton'
 import CompanyLogo from '../components/CompanyLogo'
 import CustomButton from '../components/CustomButton'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
@@ -36,6 +38,7 @@ export default function MindbodyActivation(props) {
       keyboardShouldPersistTaps='handled'
     >
       <CompanyLogo />
+      <GoBackButton containerStyle={styles.backButton} />
 
       <View style={styles.container}>
 
@@ -88,4 +91,5 @@ const styles = StyleSheet.create({
   section: {
     marginTop: 20,
   },
+  backButton: config.styles.GoBackButton_screenDefault,
 })

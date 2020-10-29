@@ -65,7 +65,7 @@ export default class DataObject {
    * Meant for constructing a Data Object from an existing piece of data,
    * assuming it as up-to-date and in no need of a push
    */
-  fromEntry([ id, doc ]) {
+  fromEntry([id, doc]) {
     this.uid = id
     this.mergeItems(doc)
     this._modifiedFields = []

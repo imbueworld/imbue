@@ -3,6 +3,7 @@ import { View, Image } from 'react-native'
 import { publicStorage } from '../backend/BackendFunctions'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { colors } from '../contexts/Colors'
+import config from '../../../App.config'
 
 
 
@@ -45,21 +46,23 @@ export default function ImageSlideshow(props) {
     else setCurrentIdx(imageCount - 1)
   }
 
-  // [comment upon DEBUG start]
-  // useEffect(() => {
-  //   let itrvl = setInterval((cIdx => {
-  //     if (cIdx[0] + 1 < imageCount) {
-  //       setCurrentIdx(idx => idx + 1)
-  //       cIdx[0]++
-  //     } else {
-  //       setCurrentIdx(0)
-  //       cIdx[0] = 0
-  //     }
-  //   }).bind(null, [cIdx]), imageInterval)
-
-  //   return () => clearInterval(itrvl)
-  // }, [cIdx])
-  // [uncomment upon DEBUG end]
+  useEffect(() => {
+    // [v DISABLED DURING DEBUG v]
+    if (!config.DEBUG) {
+      let itrvl = setInterval((cIdx => {
+        if (cIdx[0] + 1 < imageCount) {
+          setCurrentIdx(idx => idx + 1)
+          cIdx[0]++
+        } else {
+          setCurrentIdx(0)
+          cIdx[0] = 0
+        }
+      }).bind(null, [cIdx]), imageInterval)
+  
+      return () => clearInterval(itrvl)
+    }
+    // [^ DISABLED DURING DEBUG ^]
+  }, [cIdx])
 
 
 

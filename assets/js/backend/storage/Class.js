@@ -22,10 +22,9 @@ export default class Class extends DataObject {
 
 
     /**
-     * [COMMENT SECTION 1]
-     * This is not going to a valid solution for now,
-     * move active_times to MAIN_DOC.collection('active_times'),
-     * go from there with this commented section.
+     * [COMMENT: SECTION 1]
+     * This code below is not going to be a valid solution for now,
+     * move active_times to MAIN_DOC.collection('active_times') first.
      * 
      * Until then, use .getFormatted(), internally (in this file),
      * outside of it nothing changes: keep using .retrieveClass()
@@ -79,9 +78,9 @@ export default class Class extends DataObject {
   }
 
   getFormatted() {
-    const processedClass = { ...this.getAll() } // do not affect cache
+    const processedClass = { ...this.getAll() } // avoid affecting cache
     processedClass.active_times = processedClass.active_times
-      .map(timeDoc => ({ ...timeDoc })) // do not affect cache
+      .map(timeDoc => ({ ...timeDoc })) // avoid affecting cache
     const { active_times } = processedClass
     const currentTs = Date.now()
     let additionalFields

@@ -26,6 +26,7 @@ const STRUCTURE = {
     revenue_total: Number,
     //
     company_address: Object,
+    formatted_company_address: String,
     company_name: String,
     tax_id: String,
     //
@@ -44,7 +45,7 @@ const STRUCTURE = {
     address: Object,
     formatted_address: String,
     membership_price: Number,
-    coordinate: Object,
+    coordinates: Object,
     icon_uri: String,
     image_uris: Array,
     // Core fields
