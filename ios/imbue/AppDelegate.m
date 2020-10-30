@@ -15,17 +15,6 @@
 
 static void InitializeFlipper(UIApplication *application) {
   
-  for (NSString* family in [UIFont familyNames])
-  {
-      NSLog(@"%@", family);
-
-      for (NSString* name in [UIFont fontNamesForFamilyName: family])
-      {
-          NSLog(@"Family name:  %@", name);
-      }
-  }
-  
-  
   FlipperClient *client = [FlipperClient sharedClient];
   SKDescriptorMapper *layoutDescriptorMapper = [[SKDescriptorMapper alloc] initWithDefaults];
   [client addPlugin:[[FlipperKitLayoutPlugin alloc] initWithRootNode:application withDescriptorMapper:layoutDescriptorMapper]];

@@ -112,6 +112,7 @@ export default function PartnerSignUpV2(props) {
 
 
   const onSubmit = async form => {
+    console.log("Hiiiii")
     // At this point the form has been validated, as far as individual fields go.
     // Certain data still needs to be gotten, based on form data...
 
@@ -291,4 +292,4 @@ const styles = StyleSheet.create({
   GoBackButton: {
     ...config.styles.GoBackButton_screenDefault,
   },
-})
+}) 
