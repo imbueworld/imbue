@@ -106,27 +106,7 @@ export default function UserDashboard(props) {
     <>
     <AlgoliaSearchAbsoluteOverlay style={{ position: 'absolute', top: 300 }}/>
 
-<<<<<<< HEAD
-    <MapView
-      provider={PROVIDER_GOOGLE}
-      style={styles.map}
-      initialRegion={{
-        latitude: 37.78825, 
-        longitude: -122.4324,
-        latitudeDelta: 0.0922,
-        longitudeDelta: 0.0421,
-      }}
-      customMapStyle={mapStyle}
-    >
-      { Markers }
-    </MapView>
-
-    { CurrentGymBadge }
-
-    
-=======
     <ImbueMap style={styles.map} />
->>>>>>> b2269d2f21fd5c68d02d327dde3c9eacf53609bd
 
     {
     !user ? null :

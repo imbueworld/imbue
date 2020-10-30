@@ -27,20 +27,37 @@ export default function Boot(props) {
   const bootWithUser = async () => {
     const user = new User()
     const { account_type } = await user.retrieveUser()
+    
 
     // Waitlist stuff:
     // Determine whether to let in or not
-    const { waitlist_threshhold, current_priority } = await user.retrieveWaitlistStatus()
+    switch (account_type) {
+      case "user":
+        const { waitlist_threshhold, current_priority } = await user.retrieveWaitlistStatus()
 
-    // If user's waitlist current priority falls below the cutoff,
-    // Redirect to a screen that tells them that they're still gonna have to wait
-    if (current_priority > waitlist_threshhold) {
-      navigation.reset({
-        index: 0,
-        routes: [{ name: 'Waitlist' }],
-      })
-      return // Do not continue
+        // If user's waitlist current priority falls below the cutoff,
+        // Redirect to a screen that tells them that they're still gonna have to wait
+        if (current_priority > waitlist_threshhold) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'Waitlist' }],
+          })
+          return // Do not continue
+        }
+      case "partner":
+        navigation.reset({
+          index: 0,
+          routes: [{ name: "PartnerDashboard" }],
+        })
+        break
+      default:
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Landing' }],
+        })
+        break
     }
+    
 
     switch (account_type) {
       case "user":
@@ -58,7 +75,7 @@ export default function Boot(props) {
       default:
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Home' }],
+          routes: [{ name: 'Landing' }],
         })
         break
     }
@@ -80,7 +97,7 @@ export default function Boot(props) {
       } else {
         navigation.reset({
           index: 0,
-          routes: [{ name: "Home" }],
+          routes: [{ name: "Landing" }],
         })
       }
     }; init()
@@ -109,7 +126,7 @@ export default function Boot(props) {
             } else {
               navigation.reset({
                 index: 0,
-                routes: [{ name: "Home" }]
+                routes: [{ name: " v" }]
               })
             }
           }}

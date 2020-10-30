@@ -5,9 +5,12 @@ import { createStackNavigator } from '@react-navigation/stack'
 import _TestingGrounds from './assets/js/screens/_TestingGrounds'
 
 import Boot from './assets/js/screens/Boot'
-import Home from './assets/js/screens/Home'
+import MemberHome from './assets/js/screens/MemberHome'
+import Landing from './assets/js/screens/Landing'
+import PartnerHome from './assets/js/screens/PartnerHome'
 import SignUp from './assets/js/screens/SignUp'
 import Login from './assets/js/screens/Login'
+import LoginPartner from './assets/js/screens/LoginPartner'
 import UserDashboard from './assets/js/screens/UserDashboard'
 import ProfileSettings from './assets/js/screens/ProfileSettings'
 import PaymentSettings from './assets/js/screens/PaymentSettings'
@@ -50,8 +53,18 @@ export default function App() {
           initialParams={{}}
         />
         <Stack.Screen
-          name='Home'
-          component={Home}
+          name='Landing'
+          component={Landing}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='MemberHome'
+          component={MemberHome}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='PartnerHome'
+          component={PartnerHome}
           initialParams={{}}
         />
         <Stack.Screen
@@ -62,6 +75,11 @@ export default function App() {
         <Stack.Screen
           name='Login'
           component={Login}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='LoginPartner'
+          component={LoginPartner}
           initialParams={{}}
         />
         <Stack.Screen

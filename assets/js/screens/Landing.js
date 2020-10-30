@@ -12,7 +12,7 @@ import { FONTS } from '../contexts/Styles'
 
 
 
-export default function Home(props) {
+export default function Landing(props) {
     function signUp() {
         props.navigation.navigate("SignUp")
     }
@@ -21,12 +21,21 @@ export default function Home(props) {
         props.navigation.navigate("PartnerSignUp")
     }
 
+    // User home
+    function memberHome() {
+        props.navigation.navigate("MemberHome")
+    }
+
+    function partnerHome() {
+        props.navigation.navigate("PartnerHome")
+    }
+
     return (
         <ScrollView alwaysBounceVertical={false} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
             <AppBackground />
             <CompanyLogo
                 containerStyle={{
-                    top: 0,
+                    top: 0, 
                     position: "absolute",
                     alignSelf: "center",
                 }}
@@ -39,13 +48,22 @@ export default function Home(props) {
                     marginBottom: 50,
                 }}
             >
+                 <Text style={{
+                        marginTop: 0,
+                        marginBottom: 0,
+                        color: colors.gray,
+                        textAlign: "center",
+                        fontSize: 18,
+                        
+            }}>I'm a:</Text>
+
                 <CustomButton
                     style={{
                         marginTop: 20,
                         marginBottom: 0,
                     }}
-                    onPress={signUp}
-                    title="Sign Up"
+                    onPress={memberHome}
+                    title="member"
                 />
                 <CustomButton
                     styleIsInverted
@@ -53,22 +71,9 @@ export default function Home(props) {
                         marginTop: 20,
                         marginBottom: 0,
                     }}
-                    title="Login"
-                    onPress={() => props.navigation.navigate("Login")}
+                    title="gym owner"
+                    onPress={partnerHome}
                 />
-                <TouchableOpacity
-                    onPress={partnerSignUp}
-                >
-                    <Text style={{
-                        marginTop: 20,
-                        marginBottom: 20,
-                        ...FONTS.body,
-                        color: colors.gray,
-                        textAlign: "center",
-                        fontSize: 16,
-                        textDecorationLine: "underline",
-                    }}>Gym / Influencer Sign Up</Text>
-                </TouchableOpacity>
             </CustomCapsule>
 
         </ScrollView>
