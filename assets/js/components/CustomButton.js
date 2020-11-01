@@ -67,6 +67,7 @@ const styles = StyleSheet.create({
         ...FONTS.luloClean,
         // color: colors.gray,
         alignSelf: "center",
+        textAlign: "center",
         fontSize: 18,
         // fontFamily: fonts.default,
     },

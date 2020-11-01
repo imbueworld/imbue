@@ -36,6 +36,7 @@ export default function SignUp(props) {
   const [first, setFirst] = useState("")
   const [last, setLast] = useState("")
   const [email, setEmail] = useState("")
+  const [city, setCity] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")// passing in an empty array as the second argument ensures this is only ran once when component mounts initially.
 
@@ -47,6 +48,7 @@ export default function SignUp(props) {
     if (!first) redFields.push("first")
     if (!last) redFields.push("last")
     if (!email) redFields.push("email")
+    if (!city) redFields.push("city")
     if (!password) redFields.push("password")
     if (!passwordConfirm) redFields.push("passwordConfirm")
 
@@ -125,6 +127,15 @@ export default function SignUp(props) {
           onChangeText={setEmail}
         />
         <CustomTextInput
+          containerStyle={{
+            borderColor: redFields.includes("city") ? "red" : undefined,
+          }}
+          multiline={false}
+          placeholder="City"
+          value={city}
+          onChangeText={setCity}
+        />
+        <CustomTextInput
           secureTextEntry
           containerStyle={{
             borderColor: redFields.includes("password") ? "red" : undefined,
@@ -146,7 +157,7 @@ export default function SignUp(props) {
 
         <CustomTextInputV2
           containerStyle={styles.input}
-          placeholder='Referrer Token (optional)'
+          placeholder='Referral Token (optional)'
           value={referrerToken}
           onChangeText={setReferrerToken}
         />
@@ -173,6 +184,7 @@ export default function SignUp(props) {
                 first,
                 last,
                 email,
+                city,
                 password,
                 type,
               })

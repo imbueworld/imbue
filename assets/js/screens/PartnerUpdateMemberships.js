@@ -59,7 +59,7 @@ export default function PartnerUpdateMemberships(props) {
     init()
   }, [r])
 
-  if (!user) return <View />
+  // if (!user) return <View />
 
   return (
     <ProfileLayout

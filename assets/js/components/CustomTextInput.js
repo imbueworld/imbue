@@ -52,6 +52,7 @@ export default function CustomTextInput(props) {
         style={[
           (multiline) ? styles.input : styles.inputMultilineFalse,
           props.style,
+          styles.input
         ]}
         secureTextEntry={secureTextEntry}
         multiline={multiline}

@@ -82,7 +82,8 @@ export default class User extends DataObject {
 
     const {
       first='',
-      last='',
+      last = '',
+      city = '',
       icon_uri='default-icon.png',
       icon_uri_foreign='',
       // For user:  These three should always be present as Arrays
@@ -113,6 +114,7 @@ export default class User extends DataObject {
       first,
       last,
       name: `${first} ${last}`,
+      city,
       icon_uri,
       icon_uri_foreign,
       icon_uri_full:
@@ -134,6 +136,7 @@ export default class User extends DataObject {
         first,
         last,
         email,
+        city,
         password,
         type,
         // for partner, specifically
@@ -161,7 +164,7 @@ export default class User extends DataObject {
         } catch {
           return 'Email is taken.'
         }
-        
+        city = user.city
         uid = user.user.uid
         icon_uri_foreign = null
       } else {
@@ -179,12 +182,14 @@ export default class User extends DataObject {
           first = names[ 0 ]
           last = names.slice(1).join(' ')
           email = user.email
+          city = city
           icon_uri_foreign = user.photoURL
         } else {
           let names = ['No', 'Name']
           first = names[ 0 ]
           last = names.slice(1).join(' ')
           email = user.email
+          city = city
           icon_uri_foreign = user.photoURL
         }
         // console.log(user.displayName)
@@ -213,6 +218,7 @@ export default class User extends DataObject {
         first,
         last,
         email,
+        city,
         icon_uri: 'default-icon.png',
         icon_uri_foreign,
       })

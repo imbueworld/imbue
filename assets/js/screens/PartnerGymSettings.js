@@ -161,13 +161,13 @@ export default function PartnerGymSettings(props) {
         icon={
           <Icon
             source={require("../components/img/png/ellipsis.png")}
-          />
+          /> 
         }
         title="More Information"
         onPress={() => props.navigation.navigate(
-          "PartnerRevenueInfo")}
+          "PartnerRevenueInfo"
+        )}
       />
-
       <CustomButton
         title='Mindbody Integration'
         onPress={() => {
