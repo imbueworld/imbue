@@ -36,7 +36,6 @@ export default function SignUp(props) {
   const [first, setFirst] = useState("")
   const [last, setLast] = useState("")
   const [email, setEmail] = useState("")
-  const [city, setCity] = useState("")
   const [password, setPassword] = useState("")
   const [passwordConfirm, setPasswordConfirm] = useState("")// passing in an empty array as the second argument ensures this is only ran once when component mounts initially.
 
@@ -127,15 +126,6 @@ export default function SignUp(props) {
           onChangeText={setEmail}
         />
         <CustomTextInput
-          containerStyle={{
-            borderColor: redFields.includes("city") ? "red" : undefined,
-          }}
-          multiline={false}
-          placeholder="City"
-          value={city}
-          onChangeText={setCity}
-        />
-        <CustomTextInput
           secureTextEntry
           containerStyle={{
             borderColor: redFields.includes("password") ? "red" : undefined,
@@ -184,10 +174,10 @@ export default function SignUp(props) {
                 first,
                 last,
                 email,
-                city,
                 password,
                 type,
               })
+
 
               await user.addToWaitlist(email, referrerToken)
 
