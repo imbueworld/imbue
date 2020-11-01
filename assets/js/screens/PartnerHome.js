@@ -22,8 +22,8 @@ export default function PartnerHome(props) {
         props.navigation.navigate("PartnerSignUp")
     }
 
-    function loginPartner() {
-        props.navigation.navigate("LoginPartner")
+    function login() {
+        props.navigation.navigate("Login")
     }
 
     return (
@@ -68,7 +68,7 @@ export default function PartnerHome(props) {
                         marginBottom: 0,
                     }}
                     title="Login"
-                    onPress={loginPartner}
+                    onPress={login}
                 />
             </CustomCapsule>
 
