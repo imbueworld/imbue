@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, ScrollView, View, Text } from 'react-native'
+import { ScrollView, View, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
+import { selectCard } from './CreditCardSelectionV2.backend'
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import CreditCardBadgeV2 from './CreditCardBadgeV2'
@@ -19,7 +20,10 @@ import User from '../backend/storage/User'
  */
 export default function CreditCardSelectionV2(props) {
   let navigation = useNavigation()
-  const title = props.title
+  const {
+    title,
+    onCardSelect=() => {},
+  } = props
 
   const [cards, setCards] = useState(null)
 
@@ -43,9 +47,10 @@ export default function CreditCardSelectionV2(props) {
         backgroundColor: "#00000008"
       }}
       data={card}
-      onLongPress={() => {
-        props.onCardSelect(card.paymentMethodId)
-      }}
+      onPress={() => selectCard(onCardSelect, card)}
+      // onLongPress={() => {
+      //   onCardSelect(card.paymentMethodId)
+      // }}
     />
   )
 

@@ -1,4 +1,11 @@
 /**
+ * @see https://reactnavigation.org/docs/getting-started
+ */
+import 'react-native-gesture-handler'
+
+
+
+/**
  * @format
  */
 

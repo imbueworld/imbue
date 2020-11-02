@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 
@@ -37,6 +37,10 @@ const Stack = createStackNavigator()
 
 
 
+/**
+ * Always keep initialParams initialized for each screen,
+ * otherwise may run into cannot read <property> of null/undefined error.
+ */
 export default function App() {
 
   

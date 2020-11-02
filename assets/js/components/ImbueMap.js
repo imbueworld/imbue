@@ -31,12 +31,6 @@ export default function ImbueMap(props) {
   // Init
   useEffect(() => {
     const init = async () => {
-      // const gyms = new GymsCollection()
-      // let temp = (
-      //   await gyms.__retrieveAll()
-      // ).map(it => it.getAll())
-      // setGyms(temp)
-
       const gyms = await (new GymsCollection)
         .retrieveGymsBasedOnLocation(currentMapCoords)
       setGyms(gyms)

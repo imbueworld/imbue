@@ -213,6 +213,8 @@ export default function ClassDescription(props) {
     return options
   }
 
+  const classHasPassed = false // TO-DO
+
   return (
     <GymLayout
       containerStyle={styles.container}
@@ -221,7 +223,7 @@ export default function ClassDescription(props) {
       buttonOptions={{
         goToLivestream: getGoToLivestreamButton(),
         addToCalendar: {
-          show: hasMembership && user.account_type == 'user',
+          show: hasMembership && user.account_type == 'user' && !classHasPassed,
           state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
           onPress: async () => {
             const {
@@ -239,8 +241,8 @@ export default function ClassDescription(props) {
                   .map(representDatabaseField).join(', ')
                 Alert.alert(
                   'Information Request',
-                  `At the request of owner of this class, you must be`
-                  + `providing additional fields: ${additionalFields}.`,
+                  `At the request of the owner of this class, you must be`
+                  + `providing additional information: ${additionalFields}.`,
                   [
                     {
                       text: 'Add Now',
