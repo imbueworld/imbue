@@ -13,7 +13,10 @@ import { FONTS } from '../contexts/Styles'
  *  .data -- { brand, last4, exp_month, exp_year }
  */
 export default function CreditCardBadgeV2(props) {
-  let CC = props.data
+  const {
+    data: CC,
+    onPress=() => {},
+  } = props
   let source = imageSourceFromCCBrand(CC.brand)
 
   return (
@@ -24,7 +27,7 @@ export default function CreditCardBadgeV2(props) {
         }}
         underlayColor="#00000012"
         delayLongPress={3000}
-        onLongPress={() => props.onLongPress(CC.id)}
+        onPress={() => onPress(CC.id)}
       >
         <View style={{
           flexDirection: "row",

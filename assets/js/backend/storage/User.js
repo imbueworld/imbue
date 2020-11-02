@@ -257,6 +257,7 @@ export default class User extends DataObject {
    * Permantently deletes user.
    */
   async delete() {
+    await this.init()
     this._getCacheObj().set(undefined)
     await auth().currentUser.delete()
   }
@@ -266,6 +267,7 @@ export default class User extends DataObject {
    * about their position in it.
    */
   async addToWaitlist(email, referrerToken) {
+    await this.init()
     const add = functions().httpsCallable('addUserToWaitlist')
     const res = ( await add({ email, referrerToken }) ).data
     // delete res.total_waiters_currently // Since this information is being saved, this field would soon become irrelevant/inaccurate
@@ -367,31 +369,33 @@ export default class User extends DataObject {
    * @returns {Array<Class>} An `Array` of backend `Class` objects
    */
   async retrieveClasses() {
-    await this.init()
-    const collection = new ClassesCollection()
-    const {
-      // user
-      active_classes=[],
-      scheduled_classes=[],
-      // partner
-      associated_classes=[],
-    } = this.getAll()
+    return await this._BusyErrorWrapper('retrieveClasses', async () => {
+      await this.init()
+      const collection = new ClassesCollection()
+      const {
+        // user
+        active_classes=[],
+        scheduled_classes=[],
+        // partner
+        associated_classes=[],
+      } = this.getAll()
 
-    let relevantClasses
-    if (this.accountType == 'partner') {
-      relevantClasses = associated_classes
-    } else {
-      // Extract the class_id from an Array of Objects containing class_id and time_id
-      let classIdsActive = active_classes.map(it => it.class_id)
-      let classIdsScheduled = scheduled_classes.map(it => it.class_id)
-      // Combine and remove duplicates
-      relevantClasses = [...new Set([...classIdsActive, ...classIdsScheduled])]
-    }
+      let relevantClasses
+      if (this.accountType == 'partner') {
+        relevantClasses = associated_classes
+      } else {
+        // Extract the class_id from an Array of Objects containing class_id and time_id
+        let classIdsActive = active_classes.map(it => it.class_id)
+        let classIdsScheduled = scheduled_classes.map(it => it.class_id)
+        // Combine and remove duplicates
+        relevantClasses = [...new Set([...classIdsActive, ...classIdsScheduled])]
+      }
 
-    // console.log("relevantClasses", relevantClasses) // DEBUG
+      // console.log("relevantClasses", relevantClasses) // DEBUG
 
-    const classes = await collection.retrieveDocs(relevantClasses)
-    return classes
+      const classes = await collection.retrieveDocs(relevantClasses)
+      return classes
+    })
   }
 
   /**
@@ -425,6 +429,7 @@ export default class User extends DataObject {
   }
 
   async addPaymentMethod(form) {
+    await this.init()
     let {
       cardNumber,
       expMonth,
@@ -735,7 +740,7 @@ export default class User extends DataObject {
    */
   async requestMindbodyActivation(details) {
     return await this._BusyErrorWrapper('requestMindbodyActivation', async () => {
-      // let { siteId } = details
+      let { siteId } = details
       const requestActivation = functions().httpsCallable('getMindbodyActivationCode')
       return ( await requestActivation(details) ).data
     })
@@ -750,6 +755,7 @@ export default class User extends DataObject {
    * @see https://stripe.com/docs/api/persons/update
    */
   async updateStripeAccount(details, prefetchedData) {
+    await this.init()
     let {
       dob,
       address: individualAddressText,

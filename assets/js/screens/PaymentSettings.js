@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, ScrollView, View, Text } from 'react-native'
+import { StyleSheet, ScrollView, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 
@@ -8,6 +8,7 @@ import CreditCardBadge from "../components/CreditCardBadge"
 import { colors } from '../contexts/Colors'
 import ProfileLayout from '../layouts/ProfileLayout'
 import User from '../backend/storage/User'
+import cache from '../backend/storage/cache'
 
 
 
@@ -21,7 +22,7 @@ export default function PaymentSettings(props) {
       const creditCards = await user.retrievePaymentMethods()
       setCreditCards(creditCards)
     }; init()
-  }, [props.route.params.referrer])
+  })
 
   useEffect(() => {
     if (!creditCards) return
@@ -77,7 +78,6 @@ const styles = StyleSheet.create({
     minHeight: "100%",
   },
   container: {
-    // paddingBottom: 0,
     width: "100%",
     alignSelf: "center",
   },

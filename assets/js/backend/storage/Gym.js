@@ -1,6 +1,5 @@
 import DataObject from './DataObject'
 import { geocodeAddress } from '../BackendFunctions'
-import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'
 import { initializeApp } from 'geofirestore'
 import User from './User'
@@ -34,21 +33,17 @@ export default class Gym extends DataObject {
   /**
    * Updates location with geocoordinates based on provided address text string.
    */
-  updateLocation(address, callback) {
-    geocodeAddress(address, async res => {
-      if (!res) {
-        callback(null)
-        return
-      }
+  async updateLocation(address) {
+    const res = await geocodeAddress(address)
+    if (!res) return
 
-      const { location, formatted_address } = res
+    const { location, formatted_address } = res
 
-      await this.updateCoordinates(location)
-      this.mergeItems({ address: formatted_address })
-      await this.push() // What if this was manually?  Okay. But then this fn should be returning a Promise.
+    await this.updateCoordinates(location)
+    this.mergeItems({ formatted_address })
+    await this.push()
 
-      callback('OK')
-    })
+    return 'OK'
   }
 
   async updateCoordinates(coordinates) {

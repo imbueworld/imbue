@@ -77,7 +77,7 @@ export default function ClassList(props) {
             }}
             // underlayColor="#83b02a"
             underlayColor="#00000008"
-            key={begin_time}
+            key={timeId}
             onPress={() => {
               navigation.navigate('ClassDescription', {
                 classId,

@@ -48,9 +48,6 @@ export default function CreditCardSelectionV2(props) {
       }}
       data={card}
       onPress={() => selectCard(onCardSelect, card)}
-      // onLongPress={() => {
-      //   onCardSelect(card.paymentMethodId)
-      // }}
     />
   )
 
@@ -99,7 +96,8 @@ export default function CreditCardSelectionV2(props) {
         </View>
         : null}
 
-      <View style={{
+      {/* Works on Alert.alert() now so it is commented out */}
+      {/* <View style={{
         width: "94%",
         alignSelf: "center",
         marginTop: 6,
@@ -114,7 +112,7 @@ export default function CreditCardSelectionV2(props) {
           that you wish to make the payment with,
           you will be charged insantly after a successful action.
         </Text>
-      </View>
+      </View> */}
 
       <View style={{
         maxHeight: 450,

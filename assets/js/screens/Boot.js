@@ -85,8 +85,8 @@ export default function Boot(props) {
     // Clear (session) cache no matter what, when entering this screen
     cache()._resetCache()
 
-    // Do not redirect automatically, if DEBUG
-    if (config.DEBUG) return
+    // (Optionally) Do not redirect automatically, if DEBUG
+    // if (config.DEBUG) return
 
     const init = async () => {
       // Let the logo show for at least 200ms
@@ -97,7 +97,7 @@ export default function Boot(props) {
       } else {
         navigation.reset({
           index: 0,
-          routes: [{ name: "Landing" }],
+          routes: [{ name: 'Landing' }],
         })
       }
     }; init()
@@ -143,53 +143,17 @@ export default function Boot(props) {
 
         <View style={{ height: 50 }} />
         <Button
-          title="Livestream"
+          title="Livestream (wUGdlSqTzNiaAR7VtkUy)" // wUGdlSqTzNiaAR7VtkUy // D4iONGuVmdWwx4zGk4BI
           onPress={() => {
-            props.navigation.navigate("Livestream", { gymId: "D4iONGuVmdWwx4zGk4BI" })
-          }}
-        />
-
-        <View style={{ height: 10 }} />
-        <Button
-          title="GoLive"
-          onPress={() => {
-            props.navigation.navigate("GoLive")
+            props.navigation.navigate("Livestream", { gymId: "wUGdlSqTzNiaAR7VtkUy" })
           }}
         />
 
         <View style={{ height: 10, borderBottomWidth: 1, }} />
-
-        <View style={{ height: 10 }} />
-        <Button
-          title="AddPaymentMethod"
-          onPress={() => {
-            const pushAction = StackActions.push("AddPaymentMethod")
-            props.navigation.dispatch(pushAction)
-          }}
-        />
-
-        <View style={{ height: 10 }} />
-        <Button
-          title="ClassDescription"
-          onPress={() => {
-            const pushAction = StackActions.push("ClassDescription", { gymId: "wUGdlSqTzNiaAR7VtkUy" })
-            props.navigation.dispatch(pushAction)
-          }}
-        />
-
-        <View style={{ height: 10 }} />
-        <Button
-          title="GymDescription"
-          onPress={() => {
-            const pushAction = StackActions.push("GymDescription", { gymId: "wUGdlSqTzNiaAR7VtkUy" })
-            props.navigation.dispatch(pushAction)
-          }}
-        />
-
         <View style={{ height: 10, borderBottomWidth: 1, }} />
 
       </View>
-      </ScrollView>
+    </ScrollView>
   )
 }
 

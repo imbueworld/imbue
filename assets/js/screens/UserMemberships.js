@@ -58,11 +58,11 @@ export default function UserMemberships(props) {
         style={{
           borderRadius: 30,
         }}
-        confirmColor="red"
-        confirmText="Remove"
+        confirmColor='red'
+        confirmText='Remove'
         onProceed={async () => {
-          setErrorMsg("")
-          setSuccessMsg("")
+          setErrorMsg('')
+          setSuccessMsg('')
 
           try {
             const {

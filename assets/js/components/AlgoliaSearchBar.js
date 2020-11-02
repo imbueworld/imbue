@@ -6,9 +6,6 @@ import { colors } from '../contexts/Colors'
 import { FONTS } from '../contexts/Styles'
 import Icon from './Icon'
 
-import mockData from '../../algoliaMockData.json'
-import { Colors } from 'react-native/Libraries/NewAppScreen'
-
 
 
 export default function AlgoliaSearchBar(props) {
@@ -29,7 +26,6 @@ export default function AlgoliaSearchBar(props) {
     onSearchStateChange(true)
 
     const res = await algoliaSearch(query)
-    // const res = mockData // DEBUG
     onSearchResult(res)
 
     setSearchIsInProgress(false)

@@ -9,6 +9,7 @@ import Icon from '../components/Icon'
 import Gym from '../backend/storage/Gym'
 import User from '../backend/storage/User'
 import { StackActions, useNavigation } from '@react-navigation/native'
+import config from '../../../App.config'
 
 
 
@@ -42,12 +43,12 @@ export default function PartnerGymSettings(props) {
       const {
         name,
         description,
-        address,
+        formatted_address,
       } = gymDoc
 
       setName(name)
       setDescription(description)
-      setAddress(address)
+      setAddress(formatted_address)
     }; init()
   }, [])
 
@@ -99,7 +100,7 @@ export default function PartnerGymSettings(props) {
       />
 
       <CustomButton
-        title="Save"
+        title='Save'
         onPress={async () => {
           setRedFields([])
           setErrorMsg("")
@@ -119,13 +120,9 @@ export default function PartnerGymSettings(props) {
             })
             await gymObj.push()
 
-            gymObj.updateLocation(address, res => {
-              if (!res) {
-                setErrorMsg('Provided address was not an address for a premise.')
-                return
-              }
-              setSuccessMsg('Information updated.')
-            })
+            const res = await gymObj.updateLocation(address)
+            if (!res) setErrorMsg('Provided address was not an address for a premise.')
+            else setSuccessMsg('Information updated.')
           } catch(err) {
             if (!errorMsg) {
               setErrorMsg('Something prevented the action.')
