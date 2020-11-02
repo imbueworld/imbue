@@ -26,10 +26,6 @@ exports.getMindbodyActivationCode = functions.https.onCall(async (data, context)
   } = data || {}
 
   if (!siteId) throw 'siteId was not provided.'
-  // const {
-  //   mindbody_site_id: siteId,
-  // } = ( await partners.doc(uid).get() ).data()
-  // if (!siteId) throw `siteId missing for partner_id ${uid}.`
 
   const mindbody = new Mindbody(test)
   mindbody.setRequestHeader('SiteId', siteId)
@@ -153,6 +149,7 @@ exports.coreSyncMindbodyClasses = async (siteId, queryParams={}) => {
   })
 
   await batch.commit()
+  p(`Added ${newlyAssociatedClasses.length} new classes to the classes collection.`) // DEBUG
 }
 
 exports.syncMindbodyClasses = functions.https.onCall(async (data, context) => {
@@ -321,7 +318,7 @@ exports.scheduleSyncMindbodyClasses = functions.pubsub.schedule('every 24 hours'
     await partners.select('mindbody_site_id').get()
   ).docs.map(doc => doc.data().mindbody_site_id).filter(Boolean)
 
-  // Remove duplicates, if there are any (there shouldn't)
+  // Remove duplicates, if there are any (there shouldn't be)
   allSiteIds = [...new Set(allSiteIds)]
 
   const opts = {

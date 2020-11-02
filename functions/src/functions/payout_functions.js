@@ -6,7 +6,6 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
 const { Reports } = require('../Reports')
 const {
   membership_instances,
-  // stripe_transfers,
   partners,
 } = require('../Collections')
 const {
@@ -22,12 +21,12 @@ const {
 async function coreCalculatePayouts(mode) {
   if (mode !== 'inspection' && mode !== 'commitment') throw 'ValueError on param mode.'
 
-  const DOC_LIMIT_TOTAL = 50
+  // const DOC_LIMIT_TOTAL = 50
   const DOC_LIMIT_BATCH = 10
   const MO_END_DATE_STRING = getEndDateStringOfLastMonth()
   const DAYS_IN_MONTH = 30
   // const IMBUE_UNIVERSAL_PRICE = ( await gyms.doc('imbue').get() ).data().membership_price
-  IMBUE_UNIVERSAL_PRICE = 19390 // USD 200 - USD 6.10 fee
+  IMBUE_UNIVERSAL_PRICE = 19390 // USD 200 - USD 6.10 Stripe fee
   let lastFirebaseDoc
   let gym_docs_done = 0
   const GYM_REVENUES = {} // product, final goal
@@ -66,7 +65,7 @@ async function coreCalculatePayouts(mode) {
     ).docs
   }
 
-  while(true && DOC_LIMIT_TOTAL > gym_docs_done) {
+  while(true/* && DOC_LIMIT_TOTAL > gym_docs_done*/) {
     const userDocs = await getBatchOfUsers(lastFirebaseDoc)
     if (!userDocs.length) break
     lastFirebaseDoc = userDocs[ userDocs.length - 1 ]
@@ -178,12 +177,13 @@ async function coreCalculatePayouts(mode) {
     }
 
     // DEBUG
-    DEBUG['DOC_LIMIT_TOTAL'] = DOC_LIMIT_TOTAL
+    // DEBUG['DOC_LIMIT_TOTAL'] = DOC_LIMIT_TOTAL
     DEBUG['gym_docs_done'] = gym_docs_done
   }
 
   // DEBUG
   DEBUG['TOTAL_GYMS_REVENUE'] = Object.values(GYM_REVENUES).reduce((total, val) => total + val)
+  DEBUG['GYM_REVENUES'] = GYM_REVENUES
   // p('GYM_REVENUES', GYM_REVENUES)
   // p('DEBUG', DEBUG)
 
@@ -277,3 +277,10 @@ exports.coreCalculatePayouts = coreCalculatePayouts
 exports.calculatePayouts = functions.https.onCall(async (mode, context) => {
   await coreCalculatePayouts(mode)
 })
+
+/**
+ * Runs on the 1st of every month at 00:00
+ */
+// exports.scheduleCommitPayouts = functions.pubsub.schedule('0 0 1 * *').onRun(async context => {
+//   await coreCalculatePayouts('commitment')
+// })

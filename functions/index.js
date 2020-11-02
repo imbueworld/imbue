@@ -887,6 +887,10 @@ exports.completeClassSignUp = functions.firestore
 
     const batch = admin.firestore().batch()
 
+    // The doc must have an id property for ordering and batching purposes,
+    // while executing GCF `calculatePayouts`, otherwise, it will not work.
+    batch.set(membership_instances.doc(userId), { id: userId }, { merge: true })
+
     for (let { class_id, time_id } of newlyScheduledClasses) {
       const {
         gym_id: gymId,
