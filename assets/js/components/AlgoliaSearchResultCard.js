@@ -19,7 +19,7 @@ export default function AlgoliaSearchResultsCard(props) {
   const {
     icon_uri: gymIconUri,
     genres,
-    address,
+    formatted_address,
     description,
     name,
     id: gymId,
@@ -82,7 +82,7 @@ export default function AlgoliaSearchResultsCard(props) {
             }}>
               <Text numberOfLines={1} style={styles.title}>{ name }</Text>
               <GymGenres data={genres} />
-              <Text numberOfLines={1} style={styles.body}>{ address }</Text>
+              <Text numberOfLines={1} style={styles.body}>{ formatted_address }</Text>
             </View>
           </View>
 

@@ -319,7 +319,7 @@ export default class User extends DataObject {
     const paymentMethods = (await this._getPaymentMethodsDbRef().get())
       .docs.map(doc => {
         // Scuffed, but only one that uses this extra
-        // var is <CreditCardSelectionV2 />
+        // property is <CreditCardSelectionV2 />
         let data = doc.data()
         data.paymentMethodId = doc.id
         return data
