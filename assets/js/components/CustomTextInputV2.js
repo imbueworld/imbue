@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react'
-import { View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { TextInput } from 'react-native-gesture-handler'
 import { colors } from '../contexts/Colors'
 import { FONTS } from '../contexts/Styles'
@@ -26,7 +26,9 @@ export default function CustomTextInputV2(props) {
 
 
   return (
-    <View style={containerStyle}>
+    <View style={[containerStyle, styles.container, {
+      borderColor: red ? 'red' : colors.textInputBorder,
+    }]}>
       {tapPanel && (
         <View
           style={{
@@ -52,17 +54,11 @@ export default function CustomTextInputV2(props) {
                                                    // to use secureTextEntry
         {...props}
         style={{
-          minHeight: 72,
-          borderRadius: 30,
-          borderWidth: 1,
-          paddingTop: 20,
-          borderColor: red ? 'red' : colors.textInputBorder,
-          backgroundColor: colors.textInputFill,
-          overflow: 'hidden',
           ...FONTS.subtitle,
           fontSize: 20,
           textAlign: 'center',
           ...style,
+          // backgroundColor: 'red', // DEBUG
         }}
         onBlur={e => {
           setTapPanel(true)
@@ -73,3 +69,14 @@ export default function CustomTextInputV2(props) {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  container: {
+    minHeight: 72,
+    justifyContent: 'center',
+    borderWidth: 1,
+    backgroundColor: colors.textInputFill,
+    borderRadius: 30,
+    overflow: 'hidden',
+  },
+})

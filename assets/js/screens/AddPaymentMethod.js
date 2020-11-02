@@ -50,7 +50,7 @@ export default function AddPaymentMethod(props) {
 
 
   async function validateAndProceed() {
-    let [expMonth, expYear] = expireDateText.split('/')
+    let [expMonth, expYear] = expireDateText.split(/[/\-\.]/)
 
     let form = {
       cardNumber: creditCardText,
@@ -79,53 +79,50 @@ export default function AddPaymentMethod(props) {
   if (!user) return <View />
 
   return (
-    // <KeyboardAwareScrollView keyboardShouldPersistTaps="always"
-    //         showsVerticalScrollIndicator={false}> 
-      <ProfileLayout
-        innerContainerStyle={styles.innerContainer}
-      >
-        <Text style={{ color: "red" }}>{errorMsg}</Text>
-        
-        <CustomTextInput
+    <ProfileLayout
+      innerContainerStyle={styles.innerContainer}
+    >
+      <Text style={{ color: "red" }}>{errorMsg}</Text>
+      
+      <CustomTextInput
         placeholder="Name of Holder"
         multiline={true}
-          value={holderNameText}
-          onChangeText={(text) => setHolderNameText(text)}
-        />
-         <CustomTextInput
+        value={holderNameText}
+        onChangeText={(text) => setHolderNameText(text)}
+      />
+      <CustomTextInput
         placeholder="Credit Card Number"
         multiline={true}
-          value={creditCardText}
-          keyboardType='number-pad'
-          // onChangeText={(text) => setCreditCardText(text)}
-          onChangeText={(text) => setCreditCard(text.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '),)}
-        />
-        <CustomTextInput
-        placeholder="MM/YY"
+        value={creditCardText}
+        keyboardType='number-pad'
+        onChangeText={(text) => setCreditCard(text.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '))}
+      />
+      <CustomTextInput
+        placeholder="MM-YY"
         multiline={true}
-          keyboardType='number-pad'
-          value={expireDateText}
-          onChangeText={(text) => setExpireDateText(text)}
-        />
+        keyboardType='number-pad'
+        value={expireDateText}
+        onChangeText={(text) => setExpireDateText(text)}
+      />
       <CustomTextInput
         multiline={true}
         keyboardType='number-pad'
-          placeholder="CCV"
-          value={CVCText}
-          onChangeText={(text) => setCVCText(text)}
-        />
+        placeholder="CCV"
+        value={CVCText}
+        onChangeText={(text) => setCVCText(text)}
+      />
       <CustomTextInput
         multiline={true}
         keyboardType='number-pad'
-          placeholder="ZIP"
-          value={zipCodeText}
-          onChangeText={(text) => setZipCodeText(text)}
-        />
-        <CustomButton
-          title="Save"
-          onPress={validateAndProceed}
-        />
-      </ProfileLayout>   
+        placeholder="ZIP"
+        value={zipCodeText}
+        onChangeText={(text) => setZipCodeText(text)}
+      />
+      <CustomButton
+        title="Save"
+        onPress={validateAndProceed}
+      />
+    </ProfileLayout>   
   )
 }
 

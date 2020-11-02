@@ -1,8 +1,10 @@
 import { colors } from "./assets/js/contexts/Colors"
 import { FONTS } from "./assets/js/contexts/Styles"
 
+
+
 const config = {
-  DEBUG: false,
+  DEBUG: true,
   GOOGLE_API_KEY: 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM',
   styles: {
     GoBackButton_screenDefault: {

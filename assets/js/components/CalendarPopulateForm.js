@@ -2,13 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import DateSelector from './DateSelector'
 import ClockInput from './ClockInput'
-import ClockInputDismissOverlay from './ClockInputDismissOverlay'
+// import ClockInputDismissOverlay from './ClockInputDismissOverlay'
 import CustomButton from './CustomButton'
 import CustomDropDownPicker from './CustomDropDownPicker'
 import { colors } from '../contexts/Colors'
 import { getRandomId } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
+import config from '../../../App.config'
 
 
 
@@ -18,8 +19,8 @@ export default function CalendarPopulateForm(props) {
   const [successMsg, setSuccessMsg] = useState("")
   const [redFields, setRedFields] = useState([])
 
-  const [forceCloseClock, setForceCloseClock] = useState(false)
-  const [dismissOverlay, setDismissOveraly] = useState(true)
+  // const [forceCloseClock, setForceCloseClock] = useState(false)
+  // const [dismissOverlay, setDismissOveraly] = useState(true)
 
   const [dropDownClasses, setDropDownClasses] = useState(null)
 
@@ -35,9 +36,12 @@ export default function CalendarPopulateForm(props) {
       const user = new User()
       const classes = await user.retrieveClasses()
 
-      let dropDownClasses = classes.map(entity => (
-        { label: entity.name, value: entity.id }
-      ))
+      let dropDownClasses = classes.map(entity => {
+        entity = entity.getAll()
+        // Leave out mindbody integration classes; refer to comment way below
+        if (entity.mindbody_integration) return
+        return { label: entity.name, value: entity.id }
+      }).filter(Boolean)
       setDropDownClasses(dropDownClasses)
 
       setInitialized(true)
@@ -194,29 +198,31 @@ export default function CalendarPopulateForm(props) {
             setRedFields([])
             setErrorMsg("")
             setSuccessMsg("")
+
+            const classObj = new Class()
+            await classObj.initByUid(class_id)
+
+            // Do not allow the spawning of more class entities that have come
+            // from Mindbody Integration.
+            // Why? Because those classes are meant to have only one active_time,
+            // it's just how they are managed. As well as, Mindbody classes should
+            // only be managed from Mindbody console or such.
+            if (classObj.getAll().mindbody_integration) {
+              setErrorMsg('You mustn\'t populate a class that has been integrated through Mindbody.')
+              return
+            }
             
             try {
               validate()
               let active_times = format()
 
-              const classObj = new Class()
-              await classObj.initByUid(class_id)
               await classObj.populate({
                 activeTimes: active_times,
               })
 
               setSuccessMsg("Successfully added class dates to the gym's official calendar.")
             } catch(err) {
-              switch(err.code) {
-                case "asdfg":
-                  setErrorMsg("asdfg")
-                  break
-                default:
-                  setErrorMsg("Something prevented the action.")
-                  // DEBUG
-                  setErrorMsg(err.message)
-                  break
-              }
+              setErrorMsg(err.message)
             }
           }}
         />

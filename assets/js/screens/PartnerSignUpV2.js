@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { useForm } from 'react-hook-form'
 import { FONTS } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
@@ -8,13 +8,12 @@ import config from '../../../App.config'
 import functions from '@react-native-firebase/functions'
 import { useNavigation } from '@react-navigation/native'
 import User from '../backend/storage/User'
-import Gym from '../backend/storage/Gym' 
+import Gym from '../backend/storage/Gym'
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from '../components/AppBackground'
 import CompanyLogo from '../components/CompanyLogo'
 import GoBackButton from '../components/buttons/GoBackButton'
-import BackButton from '../components/BackButton'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
 import CustomButton from '../components/CustomButton'
 import FormStatusMessage from '../components/FormStatusMessage'
@@ -28,7 +27,6 @@ export default function PartnerSignUpV2(props) {
   local.passwordText = watch('password', '')
   const [ip, setIp] = useState(ip)
   const [submitError, setSubmitError] = useState('')
-  // const [redFields, setRedFields] = useState([])
 
   useEffect(() => {
     const rules = {
@@ -78,14 +76,6 @@ export default function PartnerSignUpV2(props) {
     NetworkInfo.getIPAddress().then(setIp)
   }, [])
 
-  // useEffect(() => {
-  //   let redFields = []
-  //   for (let tag of Object.keys(errors)) {
-  //     redFields.push(tag)
-  //   }
-  //   setRedFields(redFields)
-  // }, [errors])
-
   // DEBUG stuff
   useEffect(() => {
     if (!config.DEBUG) return
@@ -112,19 +102,14 @@ export default function PartnerSignUpV2(props) {
 
 
   const onSubmit = async form => {
-    console.log("Hiiiii")
     // At this point the form has been validated, as far as individual fields go.
     // Certain data still needs to be gotten, based on form data...
 
-    const p = console.log
     setSubmitError('')
-    // setRedFields([])
 
     // Separate between core user data and other type of data,
     // and data that is to be adjusted/formatted in a sec
     let {
-      // dob: dobText,
-      //
       password,
       confirm_password,
       gym_description,
@@ -186,18 +171,6 @@ export default function PartnerSignUpV2(props) {
     <KeyboardAwareScrollView>
       <AppBackground />
       <CompanyLogo />
-       {/* <TouchableHighlight
-        style={styles.sidePanelButtonContainer}
-        underlayColor="#eed"
-        onPress={props.onBack || (() => navigation.goBack())}
-      >
-        <BackButton
-          imageStyle={{
-            width: 48,
-            height: 48,
-          }}
-        />
-      </TouchableHighlight> */}
       <GoBackButton containerStyle={styles.GoBackButton} />
 
       <Text style={styles.sectionTitle}>Partner Sign Up</Text>
@@ -272,7 +245,6 @@ export default function PartnerSignUpV2(props) {
 
 const styles = StyleSheet.create({
   sectionTitle: {
-    // marginTop: 20,
     marginBottom: 20,
     ...FONTS.title,
     alignSelf: 'center',

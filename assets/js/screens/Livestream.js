@@ -4,6 +4,7 @@ import LivestreamLayout from '../layouts/LivestreamLayout'
 import Video from 'react-native-video'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
+import config from '../../../App.config'
 
 
 
@@ -20,7 +21,7 @@ export default function Livestream(props) {
   const [user, setUser] = useState(null)
   const [playbackLink, setPlaybackLink] = useState(null)
 
-  console.log("playbackLink", playbackLink) // DEBUG
+  if (config.DEBUG) console.log('playbackLink', playbackLink) // DEBUG
 
   useEffect(() => {
     const init = async () => {
@@ -53,7 +54,7 @@ export default function Livestream(props) {
         onError={() => { console.log("Error on video!") }}
         paused={false}
         resizeMode={"contain"}
-      // repeat={true}
+        // repeat={true}
       />
       : null}
     </>

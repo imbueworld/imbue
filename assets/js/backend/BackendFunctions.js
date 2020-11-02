@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react' // Side-effects
 import storage from '@react-native-firebase/storage'
 import config from '../../../App.config'
 import cache from './storage/cache'
 import algoliasearch from 'algoliasearch'
-import ImagePicker from 'react-native-image-picker';
+// import ImagePicker from 'react-native-image-picker';
 
 
 
@@ -31,8 +31,6 @@ export function geocodeAddress(address, options=defaultFnOptions.geocodeAddress)
     let xhr = new XMLHttpRequest()
     xhr.onload = async () => {
       const res = JSON.parse(xhr.responseText)
-
-      // console.log("geocodeRes", res) // DEBUG
 
       switch (res.status) {
         case 'OK':
@@ -79,24 +77,24 @@ export function geocodeAddress(address, options=defaultFnOptions.geocodeAddress)
           // If does not include an allowed return type, return null
           if (options.allowed_return_type
               && geometry.location_type != options.allowed_return_type) {
-            // callback(null)
             resolve(null)
             break
           }
 
-          // callback(newRes)
           resolve(newRes)
           break
         case 'ZERO_RESULTS':
-          // callback(null)
-            resolve(null)
+          resolve(null)
           break
         default:
-          // callback(null)
-            resolve(null)
+          resolve(null)
           break
       }
     }
+
+    // Absolutely necessary conversions
+    address = address.replaceAll(' ', '%20')
+    address = address.replaceAll('#', '%23')
 
     xhr.open(
       'GET',

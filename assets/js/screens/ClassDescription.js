@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, Alert } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
-import CustomPopup from "../components/CustomPopup"
+// import CustomPopup from "../components/CustomPopup"
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import ClassApprovalBadge from '../components/ClassApprovalBadge'
@@ -37,6 +37,7 @@ export default function ClassDescription(props) {
   // const [PopupCCNotFound, PopupCCNotFoundCreate] = useState(null)
 
   const [hasMembership, setHasMembership] = useState(null)
+  const [classHasPassed, setClassHasPassed] = useState()
 
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
@@ -51,6 +52,11 @@ export default function ClassDescription(props) {
         ...classDoc,
         ...timeDoc,
       })
+
+      // Determine whether the class has passed, and, if it has, the variable
+      // is going to be used to not show scheduling button
+      const { begin_time } = timeDoc
+      setClassHasPassed(begin_time < Date.now())
 
       const { gym_id: classGymId } = classDoc
 
@@ -188,7 +194,7 @@ export default function ClassDescription(props) {
 
 
 
-  if (!gym || !user || !classDoc) return <View />
+  if (!gym || !user || !classDoc || classHasPassed === undefined) return <View />
 
   // helper variable
   const classIsAddedToCalendar =
@@ -212,8 +218,6 @@ export default function ClassDescription(props) {
     }
     return options
   }
-
-  const classHasPassed = false // TO-DO
 
   return (
     <GymLayout
