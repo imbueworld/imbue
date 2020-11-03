@@ -72,8 +72,8 @@ export default function PartnerSignUpV2(props) {
   }, [register])
 
   useEffect(() => {
-    // Temporary confirmation details
-    NetworkInfo.getIPAddress().then(setIp)
+    // Stripe TOS agreement requirement
+    NetworkInfo.getIPV4Address().then(setIp)
   }, [])
 
   // DEBUG stuff
@@ -179,7 +179,13 @@ export default function PartnerSignUpV2(props) {
         alignSelf: 'center',
         marginBottom: 10,
       }}>
-        { errors && (errors[Object.keys(errors)[ 0 ]] || {}).message }
+        {
+          errors
+            ? (errors[Object.keys(errors)[ 0 ]] || {}).message
+            : submitError
+                ? submitError
+                : null
+        }
       </FormStatusMessage>
 
       <View>
