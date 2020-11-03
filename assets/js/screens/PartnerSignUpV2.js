@@ -73,7 +73,8 @@ export default function PartnerSignUpV2(props) {
 
   useEffect(() => {
     // Temporary confirmation details
-    NetworkInfo.getIPAddress().then(setIp)
+    console.log(NetworkInfo.getIPV4Address())
+    NetworkInfo.getIPV4Address().then(setIp)
   }, [])
 
   // DEBUG stuff
