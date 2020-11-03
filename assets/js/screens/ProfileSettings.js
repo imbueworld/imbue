@@ -17,7 +17,7 @@ import { useForm } from 'react-hook-form'
 import { geocodeAddress } from '../backend/BackendFunctions'
 import Gym from '../backend/storage/Gym'
 const p = console.log
-
+ 
 
 
 export default function ProfileSettings(props) {
@@ -531,8 +531,9 @@ export default function ProfileSettings(props) {
 
 const styles = StyleSheet.create({
   button: {
-    paddingVertical: 10,
-    marginHorizontal: 30,
+    paddingVertical: 20,
+    marginHorizontal: 5,
+    borderRadius: 35
   },
   buttonText: {
     fontSize: 14,
