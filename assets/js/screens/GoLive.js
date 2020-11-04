@@ -150,9 +150,6 @@ export default function GoLive(props) {
 
 
 
-  console.log('gymId', gymId) // TEMP DEBUG
-  console.log('hasAllPermissions', hasAllPermissions) // TEMP DEBUG
-  console.log('hasAllPermissions', hasAllPermissions) // TEMP DEBUG
   return (
     <>
       <LivestreamLayout

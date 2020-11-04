@@ -226,6 +226,10 @@ dependencies {
     // v added manually v //////
     compile project(':react-native-video')
     implementation "androidx.appcompat:appcompat:1.0.0"
+
+    implementation project(':react-native-plaid-link-sdk')
+    implementation 'com.plaid.link:sdk-core:3.1.1'
+    implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.9.0'
 }
 
 // Run this once to be able to run the application with BUCK
