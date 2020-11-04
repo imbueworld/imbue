@@ -64,8 +64,6 @@ export default function GoLive(props) {
 
       const { associated_gyms=[] } = partnerDoc
       const gymIds = associated_gyms[0]
-      console.log("gymIds: " + gymIds)
-      console.log("associated_gyms[0]: " + associated_gyms[0])
 
       setUser(partnerDoc)
       setGymId(gymIds)
@@ -156,7 +154,7 @@ export default function GoLive(props) {
     <>
       <LivestreamLayout
         user={user}
-        // gymId={gymId}
+        gymId={gymId}
         buttonOptions={{
           leaveLivestream: {
             show: false,
