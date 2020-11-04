@@ -3,7 +3,7 @@
 buildscript {
     ext {
         buildToolsVersion = "29.0.2"
-        minSdkVersion = 16
+        minSdkVersion = 21 // changed from 16 to 21 for Plaid
         compileSdkVersion = 29
         targetSdkVersion = 29
         playServicesVersion = "17.0.0"

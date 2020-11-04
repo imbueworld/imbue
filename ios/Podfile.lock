@@ -642,6 +642,9 @@ PODS:
   - react-native-nodemediaclient/RCTNodeMediaClient (0.2.13):
     - NodeMediaClient (= 2.8.7)
     - React
+  - react-native-plaid-link-sdk (6.0.3-rc2):
+    - Plaid (~> 2.0.5)
+    - React
   - react-native-safe-area-context (3.1.8):
     - React-Core
   - react-native-video (4.4.5):
@@ -785,7 +788,7 @@ DEPENDENCIES:
   - Google-Maps-iOS-Utils
   - GoogleMaps
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
-  - Plaid (~> 2.0.5)
+  - Plaid (~> 2.0.1)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -804,6 +807,7 @@ DEPENDENCIES:
   - react-native-maps (from `../node_modules/react-native-maps`)
   - react-native-network-info (from `../node_modules/react-native-network-info`)
   - react-native-nodemediaclient (from `../node_modules/react-native-nodemediaclient`)
+  - react-native-plaid-link-sdk (from `../node_modules/react-native-plaid-link-sdk`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-video (from `../node_modules/react-native-video`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -922,6 +926,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-network-info"
   react-native-nodemediaclient:
     :path: "../node_modules/react-native-nodemediaclient"
+  react-native-plaid-link-sdk:
+    :path: "../node_modules/react-native-plaid-link-sdk"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
   react-native-video:
@@ -1043,6 +1049,7 @@ SPEC CHECKSUMS:
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-network-info: d1290ffc0bd0709e11436f5b8d7f605dcc5c4530
   react-native-nodemediaclient: 824e5b6b0e46325e97e08bdb5058ae0f72e575fa
+  react-native-plaid-link-sdk: 1d1e2fc2f65716f0bb99c3f3a8f05f0b1545f8aa
   react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
   react-native-video: aa527b0acb37f94c4491e70df0274cb26979405d
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
@@ -1074,6 +1081,6 @@ SPEC CHECKSUMS:
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: e235cf17c2a2c3904cc967fb6565b854776162a6
+PODFILE CHECKSUM: dbd9e7376e72e2fbb60f940a5269d409367b1315
 
 COCOAPODS: 1.9.3

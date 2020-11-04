@@ -25,7 +25,7 @@ target 'imbue' do
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
 
-  pod 'Plaid', '~> 2.0.5'
+  pod 'Plaid', '~> 2.0.1'
 
   target 'imbueTests' do
     inherit! :complete

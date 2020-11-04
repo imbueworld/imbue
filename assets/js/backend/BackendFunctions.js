@@ -1,4 +1,4 @@
-import React from 'react' // Side-effects
+import React from 'react' // for side-effects
 import storage from '@react-native-firebase/storage'
 import config from '../../../App.config'
 import cache from './storage/cache'
@@ -141,50 +141,3 @@ export async function algoliaSearch(query) {
   const index = client.initIndex(ALGOLIA_GYM_INDEX)
   return await index.search(query)
 }
-
-
-
-
-
-/**
- * These can be deleted now.
- * 
- * 
- * 
- */
-// const init = async () => {
-//   const user = new User()
-//   setUser(await user.retrieveUser())
-//   userSettings = cache(`${user}`)
-// }; init()
-
-
-// Selects photo from camera roll for profile photos
-// export function pickAndUploadFile(user) {
-
-//   userSettings = cache(`${user}`)
-
-//   ImagePicker.showImagePicker((response) => {
-//     console.log('Response = ', response);
-
-//     if (response.didCancel) {
-//       console.log('User cancelled image picker');
-//     } else if (response.error) {
-//       console.log('ImagePicker Error: ', response.error);
-//     } else if (response.customButton) {
-//       console.log('User tapped custom button: ', response.customButton);
-//     } else {
-//       const source = { uri: response.uri };
-//       userSettings.set({ icon_uri: source })
-//       return source
-//       // You can also display the image using data:
-//       // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-//     }
-//   });
-// }
-/**
- * 
- * 
- * 
- * 
- */
