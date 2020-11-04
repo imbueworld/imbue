@@ -46,7 +46,7 @@ export default function NewClassForm(props) {
         await user.retrievePartnerGyms()
       ).map(it => it.getAll())
 
-      let dropDownGyms = gyms.map(gym => ({ label: gym.name, value: gym.id }))
+      let dropDownGyms = gyms.map(gym => ({ label: gym.description, value: gym.id }))
       setDropDownGyms(dropDownGyms)
 
       setInitialized(true)
@@ -142,6 +142,7 @@ export default function NewClassForm(props) {
     }
   }
 
+
   return (
     <View style={styles.container}>
 
@@ -149,6 +150,7 @@ export default function NewClassForm(props) {
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
+      
       <DropDownPicker
         style={{
           ...styles.picker,

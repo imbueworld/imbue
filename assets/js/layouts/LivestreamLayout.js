@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, BackHandler } from 'react-native'
+import { View, Text, BackHandler, PanResponder } from 'react-native'
 
 import database from "@react-native-firebase/database"
 
@@ -16,7 +16,7 @@ import cache from '../backend/storage/cache'
 import GoLiveButton from '../components/buttons/GoLiveButton'
 import GoBackButton from '../components/buttons/GoBackButton'
 import config from '../../../App.config'
-
+import User from '../backend/storage/User'
 
 
 const layoutOptions = {
@@ -55,13 +55,13 @@ const buttonOptions = {
 
 
 export default function LivestreamLayout(props) {
-  const [gymId, setGymId] = useState(null)
-  const [user, setUser] = useState(null)
+  // const [gymId, setGymId] = useState(null)
+  // const [user, setUser] = useState(null)
 
-  // const gymId = props.gymId
-  // const user = props.user
-  // if (!gymId) throw new Error("prop gymId must be provided")
-  // if (!user) throw new Error("prop user must be provided")
+  const gymId = props.gymId
+  const user = props.user
+  if (!gymId) throw new Error("prop gymId must be provided")
+  if (!user) throw new Error("prop user must be provided")
   let navigation = useNavigation()
 
   const [r, refresh] = useState(0)
@@ -77,18 +77,32 @@ export default function LivestreamLayout(props) {
     }
   }, [])
 
+  // useEffect(() => {
+  //   console.log('1')
+  //   const init = async () => {
+  //     // Get gymID
+  //     const partner = new User()
+  //     const partnerDoc = await partner.retrieveUser() 
+  //     console.log("partnerDoc: " + JSON.stringify(partnerDoc))
+  //     const { associated_gyms = [] } = partnerDoc
+  //     const gymIds = associated_gyms[0]
+  //     console.log("gymIds: " + gymIds)
+  //     await registerParticipant({
+  //       gymIds,
+  //       name: partnerDoc.name,
+  //       uid: partnerDoc.id,
+  //       icon_uri: partnerDoc.icon_uri,
+  //     })
+  //     setUser(partnerDoc)
+  //     setGymId(gymIds)
+  //     console.log('2')
+  //   }
+  //   init()
+    
+  // }, [])
+
   useEffect(() => {
-    const chatNodeRef = database().ref(`livestreams/messages/${gymId}`)
-
     const init = async () => {
-      // Get gymID
-      const partner = new User()
-      const partnerDoc = await partner.retrieveUser()
-      const { associated_gyms=[] } = partnerDoc
-      const gymIds = associated_gyms[0]
-      setUser(partnerDoc)
-      setGymId(gymIds)
-
       await registerParticipant({
         gymId,
         name: user.name,
@@ -96,6 +110,7 @@ export default function LivestreamLayout(props) {
         icon_uri: user.icon_uri,
       })
 
+      const chatNodeRef = database().ref(`livestreams/messages/${gymId}`)
       // [COMMENTED OUT IN ORDER TO NOT SHOW PAST MESSAGES,
       // POSSIBLY FROM LAST LIVESTREAM]
       // await chatNodeRef.once('value', snap => {
@@ -139,9 +154,9 @@ export default function LivestreamLayout(props) {
       })
     }
     init()
-
     return () => chatNodeRef.off()
   }, [])
+
 
   useEffect(() => {
     const ptcsNodeRef = database().ref(`livestreams/participants/${gymId}`)
