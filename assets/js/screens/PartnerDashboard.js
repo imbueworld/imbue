@@ -82,7 +82,7 @@ export default function PartnerDashboard(props) {
           />
         }
         title="Manage Gym"
-        onPress={() => {
+        onPress={() => { 
           props.navigation.navigate(
             "PartnerGymSettings")
         }}

@@ -12,7 +12,7 @@ import { colors } from '../contexts/Colors'
 
 async function checkPermissionsiOS() {
   let hasAllPermissionsiOS = false
-  check(PERMISSIONS.IOS.CAMERA)
+  check(PERMISSIONS.IOS.CAMERA) 
     .then((result) => {
       switch (result) {
         case RESULTS.UNAVAILABLE:
@@ -63,10 +63,12 @@ export default function GoLive(props) {
       const partnerDoc = await partner.retrieveUser()
 
       const { associated_gyms=[] } = partnerDoc
-      const gymId = associated_gyms[ 0 ]
+      const gymIds = associated_gyms[0]
+      console.log("gymIds: " + gymIds)
+      console.log("associated_gyms[0]: " + associated_gyms[0])
 
       setUser(partnerDoc)
-      setGymId(gymId)
+      setGymId(gymIds)
 
       // Hiding obstructing bars
       StatusBar.setBackgroundColor('#00000000')
@@ -101,15 +103,6 @@ export default function GoLive(props) {
     }; perms()
   }, [])
 
-
-
-  // if (!user || !gymId) return <View />
-  // if (Platform.OS === "android" && !hasAllPermissions) return <View style={{
-  //   backgroundColor: "black",
-  //   width: "100%",
-  //   height: "100%",
-  //   position: "absolute",
-  // }} />
 
   const settings = {
     camera: { cameraId: 1, cameraFrontMirror: true },
@@ -148,16 +141,14 @@ export default function GoLive(props) {
     cache("isStreaming").set(true)
   }
 
-
-
   console.log('gymId', gymId) // TEMP DEBUG
   console.log('hasAllPermissions', hasAllPermissions) // TEMP DEBUG
-  console.log('hasAllPermissions', hasAllPermissions) // TEMP DEBUG
+  console.log('hasAllPermissionsiOS', hasAllPermissionsiOS) // TEMP DEBUG
   return (
     <>
       <LivestreamLayout
         user={user}
-        gymId={gymId}
+        // gymId={gymId}
         buttonOptions={{
           leaveLivestream: {
             show: false,

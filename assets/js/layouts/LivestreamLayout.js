@@ -43,7 +43,7 @@ const buttonOptions = {
   },
   viewChat: {
     show: true,
-    state: "closed" || "open",
+    state: "closed" || "open", 
   },
   viewButtonPanel: {
     show: true,
@@ -55,10 +55,13 @@ const buttonOptions = {
 
 
 export default function LivestreamLayout(props) {
-  const gymId = props.gymId
-  const user = props.user
-  if (!gymId) throw new Error("prop gymId must be provided")
-  if (!user) throw new Error("prop user must be provided")
+  const [gymId, setGymId] = useState(null)
+  const [user, setUser] = useState(null)
+
+  // const gymId = props.gymId
+  // const user = props.user
+  // if (!gymId) throw new Error("prop gymId must be provided")
+  // if (!user) throw new Error("prop user must be provided")
   let navigation = useNavigation()
 
   const [r, refresh] = useState(0)
@@ -78,6 +81,14 @@ export default function LivestreamLayout(props) {
     const chatNodeRef = database().ref(`livestreams/messages/${gymId}`)
 
     const init = async () => {
+      // Get gymID
+      const partner = new User()
+      const partnerDoc = await partner.retrieveUser()
+      const { associated_gyms=[] } = partnerDoc
+      const gymIds = associated_gyms[0]
+      setUser(partnerDoc)
+      setGymId(gymIds)
+
       await registerParticipant({
         gymId,
         name: user.name,
