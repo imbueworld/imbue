@@ -104,6 +104,15 @@ export default function GoLive(props) {
   }, [])
 
 
+
+  if (!user || !gymId) return <View />
+  // if (Platform.OS === "android" && !hasAllPermissions) return <View style={{
+  //   backgroundColor: "black",
+  //   width: "100%",
+  //   height: "100%",
+  //   position: "absolute",
+  // }} />
+
   const settings = {
     camera: { cameraId: 1, cameraFrontMirror: true },
     audio: { bitrate: 32000, profile: 1, samplerate: 44100 },
@@ -141,9 +150,8 @@ export default function GoLive(props) {
     cache("isStreaming").set(true)
   }
 
-  console.log('gymId', gymId) // TEMP DEBUG
-  console.log('hasAllPermissions', hasAllPermissions) // TEMP DEBUG
-  console.log('hasAllPermissionsiOS', hasAllPermissionsiOS) // TEMP DEBUG
+
+
   return (
     <>
       <LivestreamLayout
