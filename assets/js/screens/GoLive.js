@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { View, Platform, StatusBar } from 'react-native'
+import { View, Platform, StatusBar, Text } from 'react-native'
 
 import {PERMISSIONS} from 'react-native-permissions';
 import { NodeCameraView } from "react-native-nodemediaclient"
@@ -89,6 +89,7 @@ export default function GoLive(props) {
         setHasAllPermisionsiOS(has)
       }
     }; init()
+
     const perms = async () => {
       let unfulfilledPerms = await requestPermissions([
         'CAMERA',
@@ -119,7 +120,7 @@ export default function GoLive(props) {
       // profile: 2,
       // fps: 30,
       // videoFrontMirror: true,
-      preset: 5,
+      preset: 5, // controls video quality & res
       profile: 1,
       fps: 30,
       videoFrontMirror: false,
@@ -147,6 +148,11 @@ export default function GoLive(props) {
     cache("isStreaming").set(true)
   }
 
+
+
+  console.log('gymId', gymId) // TEMP DEBUG
+  console.log('hasAllPermissions', hasAllPermissions) // TEMP DEBUG
+  console.log('hasAllPermissions', hasAllPermissions) // TEMP DEBUG
   return (
     <>
       <LivestreamLayout
@@ -171,31 +177,10 @@ export default function GoLive(props) {
         height: "100%",
         position: "absolute",
         zIndex: -100,
-        ...props.containerStyle,
       }}>
-
-        {(Platform.OS === "android") ? 
-          hasAllPermissions 
-          ? <NodeCameraView
-            style={{
-              width: "100%",
-              height: "100%",
-              zIndex: -100,
-              // position: "absolute",
-            }}
-            ref={vb => {
-              // stream = vb
-              cache("streamRef").set(vb)
-            }}
-            outputUrl={`${base}${streamKey}`}
-            camera={settings.camera}
-            audio={settings.audio}
-            video={settings.video}
-            autopreview
-          />
-          : null
-          :
-            <NodeCameraView
+        {
+        (hasAllPermissions || hasAllPermissionsiOS) &&
+          <NodeCameraView
             style={{
               width: "100%",
               height: "100%",

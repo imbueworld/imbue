@@ -21,6 +21,8 @@ export default function AlgoliaSearchResultsTab(props) {
 
   const ResultCards = gyms.map(gym => {
     if (gym.hidden_on_map) return
+    // Skip ones that don't have certain fields
+    if (!gym.name || !gym.formatted_address) return
 
     return (
       <AlgoliaSearchResultsCard

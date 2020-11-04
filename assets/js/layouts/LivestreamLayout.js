@@ -11,7 +11,6 @@ import { useNavigation } from '@react-navigation/native'
 import { registerParticipant, sendMessage } from '../backend/LivestreamFunctions'
 import ParticipantList from '../components/ParticipantList'
 import Chat from '../components/Chat'
-import AppBackground from '../components/AppBackground'
 import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge'
 import cache from '../backend/storage/cache'
 import GoLiveButton from '../components/buttons/GoLiveButton'
@@ -60,7 +59,6 @@ export default function LivestreamLayout(props) {
   const user = props.user
   if (!gymId) throw new Error("prop gymId must be provided")
   if (!user) throw new Error("prop user must be provided")
-  const Content = props.children
   let navigation = useNavigation()
 
   const [r, refresh] = useState(0)
@@ -75,30 +73,6 @@ export default function LivestreamLayout(props) {
       })
     }
   }, [])
-
-  // Determine and set the initial customState value
-  // This is required for:
-  //   -  viewParticipants
-  //   -  viewChat
-  // This is required due to their states being tied together (one affects the other)
-  const [customState, setCustomState] = useState(/*{
-    viewParticipants: {
-      state: buttonOptions.viewParticipants.state,
-    },
-    viewChat: {
-      state: buttonOptions.viewChat.state,
-    },
-  }*/buttonOptions)
-  // Should customState's initial value just be the customOptions value?
-  // Is customState even needed, if I can `assignment = {...buttonOptions, x : {...buttonOptions[x], ..}}? // useReducer() also
-  // I think it is not even needed.
-
-  // Apply customState to buttonOptions
-  // Object.entries(customState).forEach(([button, instructions]) => {
-  //   Object.entries(instructions).forEach(([key, value]) => {
-  //     buttonOptions[ button ][ key ] = value
-  //   })
-  // })
 
   useEffect(() => {
     const chatNodeRef = database().ref(`livestreams/messages/${gymId}`)
@@ -254,23 +228,6 @@ export default function LivestreamLayout(props) {
     }
   }, [])
 
-
-  // function hideDeck() {
-  //   let timeout = setTimeout(() => {
-  //     buttonOptions.viewButtonPanel.state = "closed"
-  //     refresh(r => r + 1)
-  //   }, 4500)
-  //   buttonOptions.viewButtonPanel.data = timeout
-  // }
-
-  // function showDeck() {
-  //   clearTimeout(buttonOptions.viewButtonPanel.data)
-  //   buttonOptions.viewButtonPanel.state = "open"
-  //   refresh(r => r + 1)
-
-  //   hideDeck()
-  // }
-
   function setDeck(state) {
     // [v DEBUG ONLY v]
     if (config.DEBUG) {
@@ -324,9 +281,8 @@ export default function LivestreamLayout(props) {
       backgroundColor: "black",
       width: "100%",
       height: "100%",
-        zIndex: -110,
+      zIndex: -110,
     }} />
-    {/* <AppBackground /> */}
 
     {buttonOptions.viewButtonPanel.show
     ? <TouchableWithoutFeedback

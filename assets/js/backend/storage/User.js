@@ -222,7 +222,6 @@ export default class User extends DataObject {
           associated_classes: [],
           associated_gyms: [],
           revenue: 0,
-          revenue_total: 0,
           stream_key: null,
           playback_id: null,
           // below: primarily for stripe account creation purpose

@@ -21,13 +21,17 @@ export default function PartnerRevenueInfo(props) {
 
       const gym = (
         await user.retrievePartnerGyms()
-      ).map(it => it.getAll())[0]
+      ).map(it => it.getAll())[ 0 ]
       setUser(await user.retrieveUser())
       setGym(gym)
     }; init()
   }, [])
 
-  if (!user || !gym) return (
+  if (!user || !gym) return <View />
+
+  console.log('user.revenue', user.revenue) // TEMP DEBUG
+  
+  return (
     <ProfileLayout
       innerContainerStyle={{
         paddingBottom: 10,
@@ -38,56 +42,15 @@ export default function PartnerRevenueInfo(props) {
         containerStyle={styles.textContainer}
         label="Revenue"
       >
-        
-        {/* {`$${currencyFromZeroDecimal(user.revenue)}`} */}
-      </CustomText>
-      <CustomText
-        style={styles.text}
-        containerStyle={styles.textContainer}
-        label="Member Count"
-      >
-        ?
-      </CustomText>
-
-      <Text style={{
-        paddingTop: 15,
-        paddingBottom: 10,
-        ...FONTS.subtitle,
-        textAlign: "center",
-        fontSize: 22,
-      }}>Payouts</Text>
-      <CustomButton
-        title="Bank Account"
-      />
-      <CustomButton
-        title="Plaid"
-      />
-
-    </ProfileLayout>
-  )
-
-  if (user || gym) return (
-    
-    <ProfileLayout
-      innerContainerStyle={{
-        paddingBottom: 10,
-      }}
-    >
-      <CustomText
-        style={styles.text}
-        containerStyle={styles.textContainer}
-        label="Revenue"
-      >
-        
         {`$${currencyFromZeroDecimal(user.revenue)}`}
       </CustomText>
-      <CustomText
+      {/* <CustomText
         style={styles.text}
         containerStyle={styles.textContainer}
         label="Member Count"
       >
         ?
-      </CustomText>
+      </CustomText> */}
 
       <Text style={{
         paddingTop: 15,
@@ -96,6 +59,7 @@ export default function PartnerRevenueInfo(props) {
         textAlign: "center",
         fontSize: 22,
       }}>Payouts</Text>
+
       <CustomButton
         title="Bank Account"
       />

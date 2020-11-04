@@ -159,7 +159,79 @@ export default function ProfileSettings(props) {
 
 
 
-  const updateSafeInfo = async reactNativeForm => {
+  const updateSafeInfoForUser = async reactNativeForm => {
+    setRedFields([])
+    setErrorMsg('')
+    setSuccessMsg('')
+
+    let redFields = []
+
+    let {
+      dob,
+    } = reactNativeForm
+
+    if (firstNameField.length === 0) redFields.push("first")
+    if (lastNameField.length === 0) redFields.push("last")
+    if (emailField.length === 0) redFields.push("email")
+    if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
+    if (dob.split('-').length != 3) redFields.push('dob')
+
+    if (redFields.length) {
+      setRedFields(redFields)
+      setErrorMsg("Required fields need to be filled.")
+      return
+    }
+    
+    const DateMoment = moment(dob, 'MM-DD-YYYY')
+
+    try {
+      if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
+      let updatables = {
+        dob: {
+          day: DateMoment.date(),
+          month: DateMoment.month() + 1,
+          year: DateMoment.year(),
+        },
+      }
+
+      if (firstNameField !== user.first) {
+        updatables.first = firstNameField
+        updatables.name = `${firstNameField} ${user.last}` // Upadting the helper property
+      }
+      if (lastNameField !== user.last) {
+        updatables.last = lastNameField
+        updatables.name = `${user.first} ${lastNameField}` // Upadting the helper property
+      }
+      if (emailField !== user.email) {
+        updatables.email = emailField
+        await auth().currentUser.updateEmail(emailField)
+      }
+
+      // Return if no fields to update.
+      if (!Object.keys(updatables).length) {
+        setSuccessMsg('All information is up to date.')
+        return
+      }
+
+      if (config.DEBUG) p('updatables', updatables)
+
+      const userObj = new User()
+      await userObj.init()
+      userObj.mergeItems(updatables)
+      await userObj.push()
+
+      setSuccessMsg('Successfully updated profile information.')
+      setPasswordField('')
+      Keyboard.dismiss()
+    } catch (err) {
+      if (config.DEBUG) console.error(err)
+      let [errorMsg, redFields] = handleAuthError(err)
+      setRedFields(redFields)
+      setErrorMsg(errorMsg)
+    }
+  }
+
+  const updateSafeInfoForPartner = async reactNativeForm => {
     const gym = new Gym
     await gym.retrievePartnerGym() // Loads (or instantly accesses cached) data, finishes instantiation
     setRedFields([])
@@ -332,14 +404,6 @@ export default function ProfileSettings(props) {
 
 
   if (!user || isForeignUser === undefined) return <View />
-
-  const submit = () => {
-    if (changing === "safeInfo") {
-      handleSubmit(updateSafeInfo)
-    } else if (changing === "password") {
-      updatePassword()
-    }
-  }
 
   return (
     <ProfileLayout
@@ -522,7 +586,9 @@ export default function ProfileSettings(props) {
         style={styles.button}
         title="Save"
         onPress={changing == 'safeInfo'
-          ? handleSubmit(updateSafeInfo)
+          ? user.account_type == 'partner'
+              ? handleSubmit(updateSafeInfoForPartner)
+              : handleSubmit(updateSafeInfoForUser)
           : () => updatePassword()}
       />
     </ProfileLayout>
