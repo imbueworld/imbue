@@ -29,7 +29,7 @@
         "moment": "^2.29.1",
         "react": "16.13.1",
         "react-hook-form": "^6.9.6",
-        "react-native": "0.63.2",
+        "react-native": "0.63.3",
         "react-native-calendars": "^1.403.0",
         "react-native-dropdown-picker": "^3.7.1",
         "react-native-fbsdk": "^2.0.0",

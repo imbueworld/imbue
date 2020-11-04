@@ -6,7 +6,7 @@ import { FONTS } from '../contexts/Styles'
 
 
 
-/**
+/** 
  * THIS COMPONENT IS BASICALLY DEPRECATED;
  * USE & DEVELOP `<CustomTextInutV2 />` INSTEAD.
  */
@@ -43,7 +43,7 @@ export default function CustomTextInput(props) {
             // backgroundColor: 'blue', // DEBUG
           }}
           onTouchEnd={() => {
-            ref.current.focus()
+            // ref.current.focus()
             setTapPanel(false)
           }}
         />

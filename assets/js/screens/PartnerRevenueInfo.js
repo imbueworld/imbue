@@ -18,7 +18,6 @@ export default function PartnerRevenueInfo(props) {
   useEffect(() => {
     const init = async () => {
       const user = new User()
-
       const gym = (
         await user.retrievePartnerGyms()
       ).map(it => it.getAll())[ 0 ]

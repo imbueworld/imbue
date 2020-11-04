@@ -40,7 +40,7 @@ export default function CustomTextInputV2(props) {
             // backgroundColor: 'blue', // DEBUG
           }}
           onTouchEnd={() => {
-            ref.current.focus()
+            // ref.current.focus()
             setTapPanel(false)
           }}
         />
