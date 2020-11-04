@@ -7,8 +7,8 @@ import algoliasearch from 'algoliasearch'
 
 
 
-const ALGOLIA_ID = 'K75AA7U1MZ'
-const ALGOLIA_SEARCH_KEY = 'c25a5639752b7ab096eeba92f81e99b6'
+const ALGOLIA_ID = 'O50JZXNYWV'
+const ALGOLIA_SEARCH_KEY = '2300b356761715188aa0242530b512d9'
 const ALGOLIA_GYM_INDEX = 'gyms' 
 
 

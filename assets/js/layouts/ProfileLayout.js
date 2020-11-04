@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableHighlight, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useNavigation } from '@react-navigation/native'

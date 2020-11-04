@@ -23,7 +23,6 @@ const STRUCTURE = {
     icon_uri: String,
     icon_uri_foreign: String,
     revenue: Number,
-    revenue_total: Number,
     //
     company_address: Object,
     formatted_company_address: String,
@@ -67,23 +66,6 @@ const STRUCTURE = {
     partner_id: String,
     // Fields not meant for editting
     // id: String,
-  }),
-  
-  // Uid == User uid
-  membership_instances: Object.freeze({
-    // Fields not meant for editting
-    // id: String,
-  }),
-  // Uid == Date, in format of `mm_dd_yyyy`
-  'membership_instances/visits': Object.freeze({
-    //////////////////// Fields not meant for editting
-    begin_time: Number, // milliseconds timestamp
-    end_time: Number, // milliseconds timestamp
-  }),
-  // Uid == Gym uid
-  'membership_instances/visits/gyms': Object.freeze({
-    times_scheduled: Number,
-    times_visited: Number,
   }),
 }
 
