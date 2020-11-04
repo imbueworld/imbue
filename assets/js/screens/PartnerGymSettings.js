@@ -160,7 +160,7 @@ export default function PartnerGymSettings(props) {
             source={require("../components/img/png/ellipsis.png")}
           /> 
         }
-        title="More Information"
+        title='Revenue Information'
         onPress={() => props.navigation.navigate(
           "PartnerRevenueInfo"
         )}

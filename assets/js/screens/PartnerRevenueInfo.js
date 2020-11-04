@@ -8,27 +8,36 @@ import CustomButton from "../components/CustomButton"
 import { FONTS } from '../contexts/Styles'
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
+import PlaidButton from '../components/PlaidButton'
+import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry'
+import config from '../../../App.config'
 
 
 
 export default function PartnerRevenueInfo(props) {
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
+  const [hasBankAccountAdded, setHasBankAccountAdded] = useState()
+  const [errorMsg, setErrorMsg] = useState('')
+
+  const [r, refresh] = useState(0)
 
   useEffect(() => {
     const init = async () => {
       const user = new User()
+      const userDoc = await user.retrieveUser()
       const gym = (
         await user.retrievePartnerGyms()
       ).map(it => it.getAll())[ 0 ]
-      setUser(await user.retrieveUser())
+      setUser(userDoc)
       setGym(gym)
+      setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
     }; init()
-  }, [])
+  }, [r])
 
-  if (!user || !gym) return <View />
 
-  console.log('user.revenue', user.revenue) // TEMP DEBUG
+
+  if (!user || !gym || hasBankAccountAdded === undefined) return <View />
   
   return (
     <ProfileLayout
@@ -39,7 +48,7 @@ export default function PartnerRevenueInfo(props) {
       <CustomText
         style={styles.text}
         containerStyle={styles.textContainer}
-        label="Revenue"
+        label='Revenue of the ongoing month'
       >
         {`$${currencyFromZeroDecimal(user.revenue)}`}
       </CustomText>
@@ -59,12 +68,19 @@ export default function PartnerRevenueInfo(props) {
         fontSize: 22,
       }}>Payouts</Text>
 
-      <CustomButton
-        title="Bank Account"
-      />
-      <CustomButton
-        title="Plaid"
-      />
+      <Text style={styles.error}>{ errorMsg }</Text>
+
+      { !hasBankAccountAdded ? <>
+        <BankAccountFormWithButtonEntry
+          onError={setErrorMsg}
+          onSuccess={() => refresh(r => r + 1)}
+        />
+        <PlaidButton onError={setErrorMsg} />
+      </> : <>
+        <Text style={styles.confirmation}>Your bank account has been linked.</Text>
+      </>}
+
+      <Text style={styles.miniText}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
 
     </ProfileLayout>
   )
@@ -78,5 +94,21 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginVertical: 10,
+  },
+  miniText: {
+    ...config.styles.body,
+    fontSize: 12,
+    textAlign: 'justify',
+  },
+  confirmation: {
+    ...config.styles.body,
+    color: 'green',
+    textAlign: 'center',
+    paddingBottom: 10,
+  },
+  error: {
+    ...config.styles.body,
+    color: 'red',
+    textAlign: 'center',
   },
 })
