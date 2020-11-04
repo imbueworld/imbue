@@ -103,7 +103,7 @@ export default function GoLive(props) {
 
 
 
-  if (!user || !gymId) return <View />
+  // if (!user || !gymId) return <View />
   // if (Platform.OS === "android" && !hasAllPermissions) return <View style={{
   //   backgroundColor: "black",
   //   width: "100%",
