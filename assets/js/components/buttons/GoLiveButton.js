@@ -11,7 +11,7 @@ export default function GoLiveButton(props) {
     const [holdToExit, helpUser] = useState(false)
 
     return (
-        <View style={{
+        <View style={{ 
             backgroundColor: "#fff",
             borderWidth: 1,
             borderColor: colors.gray,
