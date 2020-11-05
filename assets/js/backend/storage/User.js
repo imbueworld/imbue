@@ -2,6 +2,7 @@ import DataObject from './DataObject'
 import ClassesCollection from './ClassesCollection'
 import GymsCollection from './GymsCollection'
 import cache from './cache'
+import {Platform} from 'react-native';
 
 import auth from '@react-native-firebase/auth'
 import firestore from '@react-native-firebase/firestore'

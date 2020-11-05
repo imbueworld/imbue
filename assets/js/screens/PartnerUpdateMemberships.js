@@ -40,6 +40,7 @@ export default function PartnerUpdateMemberships(props) {
 
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
+  const [priceStudio, setPriceStudio] = useState(null)
   const [priceUnlimited, setPriceUnlimited] = useState(null)
 
   useEffect(() => {
@@ -80,7 +81,27 @@ export default function PartnerUpdateMemberships(props) {
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
       <View style={styles.row}>
-        <Text style={styles.label}>
+      <Text style={styles.label}>
+          In Studio Membership
+                </Text>
+        <CustomTextInput
+          style={styles.price}
+          containerStyle={styles.priceContainer}
+          // placeholder="Enter price..."
+          value={priceStudio}
+          onChangeText={text => {
+            if (text.length <= 1) setPriceStudio("$")
+            if (!text.includes("$")) return
+            if (text.match(/[A-Za-z]/g)) return
+            let dots = text.match(/[.]/g)
+            if (dots) if (dots.length > 1) return
+            setPriceStudio(text)
+          }}
+        />  
+       
+      </View>
+      <View style={styles.row}>
+      <Text style={styles.label}>
           Online Membership
                 </Text>
         <CustomTextInput
@@ -98,7 +119,6 @@ export default function PartnerUpdateMemberships(props) {
           }}
         />
       </View>
-
       {/* <View style={styles.row}>
                 <CustomText containerStyle={styles.label}>
                     Single Class

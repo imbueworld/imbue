@@ -421,7 +421,7 @@ export default function ProfileSettings(props) {
           style={styles.button}
           textStyle={styles.buttonText}
           title="Change password"
-          onPress={() => change("password")}
+          onPress={() => change("password")} 
         />
         : <CustomButton
           style={styles.button}

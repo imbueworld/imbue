@@ -22,7 +22,7 @@ import config from '../../../App.config'
 
 
 export default function ProfileLayout(props) {
-  const navigation = useNavigation()
+  const navigation = useNavigation() 
 
   const [errorMsg, setErrorMsg] = useState('')
   const [user, setUser] = useState()

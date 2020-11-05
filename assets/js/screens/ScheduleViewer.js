@@ -156,7 +156,7 @@ export default function ScheduleViewer(props) {
             width: "100%",
             ...FONTS.body,
             textAlign: "center",
-            fontSize: 18,
+            fontSize: 30,
           }}>{subtitle}</Text> : null}
           </View>
 
