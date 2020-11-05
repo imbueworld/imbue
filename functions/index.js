@@ -18,7 +18,6 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
 const {
   p, w, e,
   _extractOnlyData,
-  getEndDateStringOfLastMonth,
   getEndDateStringOfTimestamp,
   getDateStringOfTimestamp,
 } = require('./src/HelperFunctions')
@@ -67,8 +66,11 @@ forward_exports(mindbody_webhook_functions)
 const payout_functions = require('./src/functions/payout_functions')
 forward_exports(payout_functions)
 
-// waitlist_functions
+// waitlist_functions.js
 forward_exports(require('./src/functions/waitlist_functions'))
+
+// stripe_functions.js
+forward_exports(require('./src/functions/stripe_functions'))
 
 exports.createImbueProduct = functions.https.onCall(async (data, context) => {
   const imbueId = 'imbue'

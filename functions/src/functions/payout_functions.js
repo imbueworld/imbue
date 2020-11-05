@@ -9,7 +9,8 @@ const {
   partners,
 } = require('../Collections')
 const {
-  getEndDateStringOfLastMonth
+  getEndDateStringOfLastMonth,
+  getEndDateStringOfTimestamp,
 } = require('../HelperFunctions')
 
 
@@ -19,19 +20,25 @@ const {
  * membership_instances collection.
  */
 async function coreCalculatePayouts(mode) {
-  if (mode !== 'inspection' && mode !== 'commitment') throw 'ValueError on param mode.'
+  if (mode !== 'inspect'
+    && mode !== 'commit'
+    && mode !== 'refresh') throw 'ValueError on param \'mode\'.'
 
   // const DOC_LIMIT_TOTAL = 50
   const DOC_LIMIT_BATCH = 10
   const MO_END_DATE_STRING = getEndDateStringOfLastMonth()
+  const CURRENT_DATE_STRING = getEndDateStringOfTimestamp()
+  const DATE_STRING = mode == 'refresh'
+    ? CURRENT_DATE_STRING
+    : MO_END_DATE_STRING
   const DAYS_IN_MONTH = 30
-  // const IMBUE_UNIVERSAL_PRICE = ( await gyms.doc('imbue').get() ).data().membership_price
+  // const IMBUE_UNIVERSAL_PRICE = ( await gyms.doc('imbue').get() ).data().membership_price // alternative
   IMBUE_UNIVERSAL_PRICE = 19390 // USD 200 - USD 6.10 Stripe fee
   let lastFirebaseDoc
   let gym_docs_done = 0
   const GYM_REVENUES = {} // product, final goal
   // DEBUG VARIABLES
-  const reports = new Reports(MO_END_DATE_STRING, '_payouts', 5)
+  const reports = new Reports(DATE_STRING, '_payouts', 5)
   await reports.deleteLogs()
   const DEBUG = {
     MEMBERSHIP_INSTANCES_READ: 0,
@@ -39,7 +46,10 @@ async function coreCalculatePayouts(mode) {
   }
 
   // DEBUG
-  DEBUG['MO_END_DATE_STRING'] = MO_END_DATE_STRING
+  DEBUG['mode'] = mode
+  DEBUG['1 MO_END_DATE_STRING'] = MO_END_DATE_STRING
+  DEBUG['2 CURRENT_DATE_STRING'] = CURRENT_DATE_STRING
+  DEBUG['3 DATE_STRING'] = CURRENT_DATE_STRING
   DEBUG['IMBUE_UNIVERSAL_PRICE'] = IMBUE_UNIVERSAL_PRICE
   if (!IMBUE_UNIVERSAL_PRICE) {
     DEBUG['__message'] = 'Imbue Universal Membership Price was not found.'
@@ -59,7 +69,7 @@ async function coreCalculatePayouts(mode) {
     return (await membership_instances
       .doc(userId)
       .collection('visits')
-      .doc(MO_END_DATE_STRING)
+      .doc(DATE_STRING)
       .collection('gyms')
       .get()
     ).docs
@@ -182,105 +192,128 @@ async function coreCalculatePayouts(mode) {
   }
 
   // DEBUG
-  DEBUG['TOTAL_GYMS_REVENUE'] = Object.values(GYM_REVENUES).reduce((total, val) => total + val)
-  DEBUG['GYM_REVENUES'] = GYM_REVENUES
+  DEBUG['TOTAL_GYMS_REVENUE'] = Object.values(GYM_REVENUES).reduce((total, val) => total + val, 0)
+  // DEBUG['GYM_REVENUES'] = GYM_REVENUES
   // p('GYM_REVENUES', GYM_REVENUES)
   // p('DEBUG', DEBUG)
 
   await reports.log('__GENERAL', DEBUG)
 
-
-
-  // Once manual review has been done, fn can be run with mode 'commitment'
-  if (mode != 'commitment') return
-
-  // [IMPORTANT NOTE]
-  // It is vital that throughout the payout process,
-  // each payout is being documented as the fn is still executing,
-  // on top of that -- written to Firestore PROMPTLY after creation.
-  //
-  // Thus enabling us to continue if at any very unfortunate point the code breaks,
-  // (by checking whether a payout for that date exists already)
-  // avoiding having no clue whether a certain partner has been paid or not.
-  //
-  // Payouts are to be stored in partners/{partnerId}/payouts,
-  // and written to after each and every single successful payout.
-
-  const existingPayouts = {}
-  let x = (await admin.firestore()
-    .collectionGroup('payouts')
-    .select('metadata')
-    .get()
-  ).docs.forEach(firebaseDoc => {
-    let { metadata: { endDateString }={} } = firebaseDoc.data()
-    if (!endDateString) return // I suppose this could be missing, therefore irrelevant
-    const partnerId = firebaseDoc.ref.parent.parent.id
-    existingPayouts[ partnerId ] = [
-      ...(existingPayouts[ partnerId ] || []),
-      endDateString,
-    ]
-  })
-
-  const failedPayouts = new Reports(MO_END_DATE_STRING, '_failed_payouts')
-  const PAYOUTS_DEBUG = {}
-
-  for (const gymId in GYM_REVENUES) {
-    // DEBUG
-    PAYOUTS_DEBUG['gymId'] = gymId
-
-    const partnerFirebaseDoc = (
-      await partners
-        .where('associated_gyms', 'array-contains', gymId)
+  switch (mode) {
+    case 'commit':
+      // [IMPORTANT NOTE]
+      // It is vital that throughout the payout process,
+      // each payout is being documented as the fn is still executing,
+      // on top of that -- written to Firestore PROMPTLY after creation.
+      //
+      // Thus enabling us to continue if at any very unfortunate point the code breaks,
+      // (by checking whether a payout for that date exists already)
+      // avoiding having no clue whether a certain partner has been paid or not.
+      //
+      // Payouts are to be stored in partners/{partnerId}/payouts,
+      // and written to after each and every single successful payout.
+    
+      const existingPayouts = {}
+      let x = (await admin.firestore()
+        .collectionGroup('payouts')
+        .select('metadata')
         .get()
-    ).docs[ 0 ]
-
-    // Do not do a payout for this user, if they have already
-    // received a payout (or it is on the way)
-    if ((existingPayouts[ partnerFirebaseDoc.id ] || []).includes(MO_END_DATE_STRING)) {
-      console.log(`partner ${partnerFirebaseDoc.id} has already received a payout!`) // QUICK TEMP DEBUG
-      continue
-    }
-
-    const {
-      stripe_account_id: destination,
-    } = partnerFirebaseDoc.data()
-
-    // DEBUG
-    PAYOUTS_DEBUG['stripe_account_id'] = destination
-    PAYOUTS_DEBUG['amount'] = GYM_REVENUES[ gymId ]
-
-    try {
-      const payout = await stripe.transfers.create({
-        amount: GYM_REVENUES[ gymId ],
-        currency: 'usd',
-        destination,
-        description: `Imbue monthly payout`,
-        metadata: {
-          endDateString: MO_END_DATE_STRING,
-        },
+      ).docs.forEach(firebaseDoc => {
+        let { metadata: { endDateString }={} } = firebaseDoc.data()
+        if (!endDateString) return // I suppose this could be missing, therefore irrelevant
+        const partnerId = firebaseDoc.ref.parent.parent.id
+        existingPayouts[ partnerId ] = [
+          ...(existingPayouts[ partnerId ] || []),
+          endDateString,
+        ]
       })
-
-      await partners
-        .doc(partnerFirebaseDoc.id)
-        .collection('payouts')
-        .doc(payout.id)
-        .set(payout)
-    } catch(err) {
-      PAYOUTS_DEBUG['__message'] = err.message || err
-      await failedPayouts.log(gymId, PAYOUTS_DEBUG)
-      continue
-    }
+    
+      const failedPayouts = new Reports(MO_END_DATE_STRING, '_failed_payouts')
+      const PAYOUTS_DEBUG = {}
+    
+      for (const gymId in GYM_REVENUES) {
+        // DEBUG
+        PAYOUTS_DEBUG['gymId'] = gymId
+    
+        const partnerFirebaseDoc = (
+          await partners
+            .where('associated_gyms', 'array-contains', gymId)
+            .get()
+        ).docs[ 0 ]
+    
+        // Do not do a payout for this user, if they have already
+        // received a payout (or it is on the way)
+        if ((existingPayouts[ partnerFirebaseDoc.id ] || []).includes(MO_END_DATE_STRING)) {
+          console.log(`partner ${partnerFirebaseDoc.id} has already received a payout! (skipping)`)
+          continue
+        }
+    
+        const {
+          stripe_account_id: destination,
+        } = partnerFirebaseDoc.data()
+    
+        // DEBUG
+        PAYOUTS_DEBUG['stripe_account_id'] = destination
+        PAYOUTS_DEBUG['amount'] = GYM_REVENUES[ gymId ]
+    
+        try {
+          const payout = await stripe.transfers.create({
+            amount: GYM_REVENUES[ gymId ],
+            currency: 'usd',
+            destination,
+            description: `Imbue monthly payout`,
+            metadata: {
+              endDateString: MO_END_DATE_STRING,
+            },
+          })
+    
+          await partners
+            .doc(partnerFirebaseDoc.id)
+            .collection('payouts')
+            .doc(payout.id)
+            .set(payout)
+        } catch(err) {
+          PAYOUTS_DEBUG['__message'] = err.message || err
+          await failedPayouts.log(gymId, PAYOUTS_DEBUG)
+          continue
+        }
+      }
+      break
+    case 'refresh':
+      for (const gymId in GYM_REVENUES) {
+        const partnerFirebaseDoc = (
+          await partners
+            .select('associated_gyms')
+            .where('associated_gyms', 'array-contains', gymId)
+            .get()
+        ).docs[ 0 ]
+        await partnerFirebaseDoc.ref.update({
+          revenue: GYM_REVENUES[ gymId ]
+        })
+      }
+      break
   }
+
 }
 exports.coreCalculatePayouts = coreCalculatePayouts
 
-exports.calculatePayouts = functions.https.onCall(async (mode, context) => {
-  await coreCalculatePayouts(mode)
-})
+// exports.calculatePayouts = functions.https.onCall(async (mode, context) => {
+//   await coreCalculatePayouts(mode)
+// })
 
 /**
  * Runs on the 1st of every month at 00:00
+ * Is what makes the payouts to the partners.
  */
-// exports.scheduleCommitPayouts = functions.pubsub.schedule('0 0 1 * *').onRun(async context => {
-//   await coreCalculatePayouts('commitment')
-// })
+exports.scheduleCommitPayouts = functions.pubsub.schedule('0 0 1 * *').onRun(async context => {
+  await coreCalculatePayouts('commit')
+})
+
+/**
+ * Runs every day.
+ * Is what updates values, so that partner sees their up-to-date current
+ * revenue for the month.
+ */
+exports.scheduleRefreshRevenueInfos = functions.pubsub.schedule('every 24 hours').onRun(async context => {
+  await coreCalculatePayouts('refresh')
+})
