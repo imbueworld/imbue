@@ -4,7 +4,6 @@ import { StyleSheet, Text, View } from 'react-native'
 import ProfileLayout from "../layouts/ProfileLayout"
 
 import CustomTextInput from "../components/CustomTextInput"
-import CustomText from "../components/CustomText"
 import CustomButton from "../components/CustomButton"
 import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import { colors } from '../contexts/Colors'
@@ -51,13 +50,16 @@ export default function PartnerUpdateMemberships(props) {
         await user.retrievePartnerGyms()
       ).map(it => it.getAll())[ 0 ]
 
-      const { membership_price } = gym
+      const {
+        membership_price_online=0,
+        membership_price_instudio=0,
+      } = gym
 
       setUser(await user.retrieveUser())
       setGym(gym)
-      setPriceUnlimited(`$${currencyFromZeroDecimal(membership_price)}`)
-    }
-    init()
+      setPriceUnlimited(`$${currencyFromZeroDecimal(membership_price_online)}`)
+      setPriceStudio(`$${currencyFromZeroDecimal(membership_price_instudio)}`)
+    }; init()
   }, [r])
 
   // if (!user) return <View />
@@ -81,13 +83,12 @@ export default function PartnerUpdateMemberships(props) {
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
       <View style={styles.row}>
-      <Text style={styles.label}>
-          In Studio Membership
-                </Text>
+        <Text style={styles.label}>
+            In Studio Membership
+        </Text>
         <CustomTextInput
           style={styles.price}
           containerStyle={styles.priceContainer}
-          // placeholder="Enter price..."
           value={priceStudio}
           onChangeText={text => {
             if (text.length <= 1) setPriceStudio("$")
@@ -98,16 +99,15 @@ export default function PartnerUpdateMemberships(props) {
             setPriceStudio(text)
           }}
         />  
-       
       </View>
+
       <View style={styles.row}>
-      <Text style={styles.label}>
-          Online Membership
-                </Text>
+        <Text style={styles.label}>
+            Online Membership
+        </Text>
         <CustomTextInput
           style={styles.price}
           containerStyle={styles.priceContainer}
-          // placeholder="Enter price..."
           value={priceUnlimited}
           onChangeText={text => {
             if (text.length <= 1) setPriceUnlimited("$")
@@ -119,18 +119,6 @@ export default function PartnerUpdateMemberships(props) {
           }}
         />
       </View>
-      {/* <View style={styles.row}>
-                <CustomText containerStyle={styles.label}>
-                    Single Class
-                </CustomText>
-                <CustomTextInput
-                    style={styles.price}
-                    containerStyle={styles.priceContainer}
-                    placeholder="Enter price..."
-                    value={priceSingle}
-                    onChangeText={text => setPriceSingle(text)}
-                />
-            </View> */}
 
       <CustomButton
         title="Save"
@@ -138,12 +126,14 @@ export default function PartnerUpdateMemberships(props) {
           setErrorMsg("")
 
           try {
-            let membership_price = validateInput(priceUnlimited)
+            let membership_price_online = validateInput(priceUnlimited)
+            let membership_price_instudio = validateInput(priceStudio)
 
             const gymObj = new Gym()
             await gymObj.initByUid(gym.id)
             gymObj.mergeItems({
-              membership_price,
+              membership_price_online,
+              membership_price_instudio,
             })
             await gymObj.push()
 

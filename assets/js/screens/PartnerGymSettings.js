@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
-import CustomTextInput from "../components/CustomTextInput"
+import CustomTextInputV2 from '../components/CustomTextInputV2'
 import CustomButton from "../components/CustomButton"
 import Icon from '../components/Icon'
 import Gym from '../backend/storage/Gym'
@@ -80,26 +80,30 @@ export default function PartnerGymSettings(props) {
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
-      <CustomTextInput
+      <CustomTextInputV2
+        containerStyle={styles.input}
+        red={redFields.includes('name')}
         placeholder="Gym Name"
         value={name}
         onChangeText={setName}
       />
-      <CustomTextInput
-        containerStyle={{
-          height: 200,
-        }}
+      <CustomTextInputV2
+        containerStyle={styles.input}
+        red={redFields.includes('description')}
         placeholder="Gym Description"
         value={description}
         onChangeText={setDescription}
       />
-      <CustomTextInput
+      <CustomTextInputV2
+        containerStyle={styles.input}
+        red={redFields.includes('address')}
         placeholder="Gym Address"
         value={address}
         onChangeText={setAddress}
       />
 
       <CustomButton
+        style={{ marginTop: 20 }}
         title='Save'
         onPress={async () => {
           setRedFields([])
@@ -124,6 +128,7 @@ export default function PartnerGymSettings(props) {
             if (!res) setErrorMsg('Provided address was not an address for a premise.')
             else setSuccessMsg('Information updated.')
           } catch(err) {
+            if (config.DEBUG) console.error(err.message)
             if (!errorMsg) {
               setErrorMsg('Something prevented the action.')
               return
@@ -176,4 +181,8 @@ export default function PartnerGymSettings(props) {
   )
 }
 
-const styles = StyleSheet.create({})
+const styles = StyleSheet.create({
+  input: {
+    marginTop: 20,
+  },
+})
