@@ -460,8 +460,9 @@ export default class User extends DataObject {
 
       let { paymentMethodId, classId, timeId } = details
 
+
       // Charge user
-      const makePurchase = functions().httpsCallable('purchaseClassWithPaymentMethod')
+      const makePurchase = functions().httpsCallable('purchaseClassWithPaymentMethod')  
       await makePurchase({ paymentMethodId, classId, timeId })
 
       // After successful charge, register it for user in their doc

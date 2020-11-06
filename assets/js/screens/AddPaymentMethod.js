@@ -100,7 +100,6 @@ export default function AddPaymentMethod(props) {
       <CustomTextInput
         placeholder="MM-YY"
         multiline={true}
-        keyboardType='number-pad'
         value={expireDateText}
         onChangeText={(text) => setExpireDateText(text)}
       />
