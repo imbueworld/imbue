@@ -9,7 +9,6 @@ import { colors } from '../contexts/Colors'
 import { getRandomId } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
-import config from '../../../App.config'
 
 
 
