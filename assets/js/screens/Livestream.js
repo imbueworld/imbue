@@ -47,7 +47,7 @@ export default function Livestream(props) {
     />
 
     {   playbackLink
-      ? <Video
+      ? <Video 
         style={styles.video}
         source={{ uri: playbackLink }}
         onBuffer={() => { console.log("Buffering video...") }}

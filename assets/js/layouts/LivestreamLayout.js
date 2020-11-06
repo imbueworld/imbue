@@ -15,8 +15,12 @@ import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge'
 import cache from '../backend/storage/cache'
 import GoLiveButton from '../components/buttons/GoLiveButton'
 import GoBackButton from '../components/buttons/GoBackButton'
-import config from '../../../App.config'
+import config from '../../../App.config' 
 import User from '../backend/storage/User'
+import { simpleShadow } from '../contexts/Colors'
+import Icon from '../components/Icon'
+import { TouchableHighlight } from 'react-native-gesture-handler'
+
 
 
 const layoutOptions = {
@@ -32,7 +36,7 @@ const buttonOptions = {
   goLive: {
     show: false,
     state: "idle" || "streaming",
-    onLongPress: () => {},
+    onPress: () => {},
   },
   leaveLivestream: {
     show: true,
@@ -65,6 +69,14 @@ export default function LivestreamLayout(props) {
   let navigation = useNavigation()
 
   const [r, refresh] = useState(0)
+
+  const {
+    containerStyle={},
+    imageContainerStyle={},
+    imageStyle={},
+    //
+    onPress=() => navigation.navigate("PartnerDashboard"),
+  } = props
 
   // Apply props.buttonOptions to buttonOptions
   useEffect(() => {
@@ -122,7 +134,8 @@ export default function LivestreamLayout(props) {
       //     cache("livestream/chat").set(messages)
       //   }
       // })
-
+      console.log("gymId: " + gymId)
+      console.log("chatNode: " + chatNodeRef)
       chatNodeRef.limitToLast(1).on('child_added', snap => {
         const message = snap.val()
 
@@ -154,7 +167,10 @@ export default function LivestreamLayout(props) {
       })
     }
     init()
-    return () => chatNodeRef.off()
+    // if (chatNodeRef) {
+    //   return () => chatNodeRef.off()
+    // }
+    
   }, [])
 
 
@@ -336,7 +352,35 @@ export default function LivestreamLayout(props) {
           position: "absolute",
           top: 10,
           left: 10,
-        }}>
+            }}>
+              
+              {/* Custom backbutton - sends back to Partner Dash */}
+              {/* <View style={{
+                backgroundColor: "white",
+                borderRadius: 999,
+                zIndex: 110,
+                ...simpleShadow,
+                ...containerStyle,
+              }}>
+                <TouchableHighlight
+                  style={{
+                    borderRadius: 999,
+                  }}
+                  underlayColor="#00000020"
+                  onPress={onPress}
+                >
+                  <Icon
+                    containerStyle={{
+                      width: 50,
+                      height: 50,
+                      ...imageContainerStyle,
+                    }}
+                    imageStyle={imageStyle}
+                    source={require("../components/img/png/back-button-4.png")}
+                  />
+                </TouchableHighlight>
+              </View> */}
+
             <GoBackButton />
           </View>
         : null }
@@ -404,7 +448,7 @@ export default function LivestreamLayout(props) {
           { buttonOptions.goLive.show
           ? <GoLiveButton
               title={buttonOptions.goLive.state === "streaming" ? "End Livestream" : "Go Live"}
-              onLongPress={() => {
+              onPress={() => {
                 switch(buttonOptions.goLive.state) {
                   case "streaming":
                     buttonOptions.goLive.state = "idle"
@@ -417,7 +461,7 @@ export default function LivestreamLayout(props) {
                 }
                 refresh(r => r + 1)
                 
-                buttonOptions.goLive.onLongPress()
+                buttonOptions.goLive.onPress()
               }}
             />
           : null }

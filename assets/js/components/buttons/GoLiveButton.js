@@ -43,8 +43,8 @@ export default function GoLiveButton(props) {
                     ...props.containerStyle,
                 }}
                 underlayColor="#00000012"
-                onPress={() => helpUser(true)}
-                onLongPress={props.onLongPress || undefined}
+                // onPress={() => helpUser(true)}
+                onPress={props.onPress || undefined}
             >
                 <Text style={{
                     ...FONTS.body,

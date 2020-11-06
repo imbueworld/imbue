@@ -11,7 +11,7 @@ import { CreateMarkers, CreateBadge } from './ImbueMap.backend'
 
 
 export default function ImbueMap(props) {
-  const {
+  const { 
     style={},
     //
     initialRegion={
@@ -44,10 +44,10 @@ export default function ImbueMap(props) {
 
   return (
     <>
-    <RetryButton
+    {/* <RetryButton
       containerStyle={styles.RetryButton}
       onPress={() => refreshMap(c => c + 1)}
-    />
+    /> */}
     { GymBadge }
     <MapView
       style={[styles.map, style]}

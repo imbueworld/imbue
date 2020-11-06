@@ -26,8 +26,8 @@ const { Reports } = require('./src/Reports');
 
 
 
-const MUX_TOKEN_ID = '45fba3d3-8c60-48c6-a767-e87270351be8'
-const MUX_TOKEN_SECRET = 'XRuq11za83MwMYHgbhYYKwktVG7v0bkmHajeB2YglnRZhzPyN85XL5C3oKAog2oGUS3yzo9i9EP'
+const MUX_TOKEN_ID = '641ecb55-0d8f-47fd-97d1-e22a6e2f6b25'
+const MUX_TOKEN_SECRET = 'jiO44jx6kUr7b9oKuDJyhZiDjt8GcMe+zoR+rAA34ELJ/ASwUcOIUWWk+1hEMMLEgcVxPzq/rVN'
 
 const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 

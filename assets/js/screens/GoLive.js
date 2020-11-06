@@ -39,7 +39,7 @@ async function checkPermissionsiOS() {
       }
     })
     .catch((error) => {
-      console.error(err)
+      console.error(err) 
       return false
     });
 }
@@ -164,11 +164,10 @@ export default function GoLive(props) {
           },
           goLive: {
             show: true,
-            onLongPress: toggleStream,
+            onPress: toggleStream,
           },
         }}
       />
-
       <View style={{
         width: "100%",
         height: "100%",
