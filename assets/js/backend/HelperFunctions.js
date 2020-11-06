@@ -299,6 +299,7 @@ export function classType(type) {
     case "online":
       return "Online"
     case "in_studio":
+    case "studio":
       return "In Studio"
   }
 }
