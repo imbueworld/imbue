@@ -38,11 +38,10 @@ async function coreCalculatePayouts(mode) {
   let gym_docs_done = 0
   const GYM_REVENUES = {} // product, final goal
   // DEBUG VARIABLES
-  const reports = new Reports(DATE_STRING, '_payouts', 5)
+  const reports = new Reports(DATE_STRING, '_payouts')
   await reports.deleteLogs()
   const DEBUG = {
     MEMBERSHIP_INSTANCES_READ: 0,
-    TOTAL_IMBUE_REVENUE: 0,
   }
 
   // DEBUG
@@ -65,14 +64,33 @@ async function coreCalculatePayouts(mode) {
     ).docs
   }
 
-  async function getBatchOfGyms(userId) {
-    return (await membership_instances
+  // async function getBatchOfGyms(userId) {
+  //   return (await membership_instances
+  //     .doc(userId)
+  //     .collection('visits')
+  //     .doc(DATE_STRING)
+  //     .collection('gyms')
+  //     .get()
+  //   ).docs
+  // }
+
+  const getBatchOfGymsOnlineUsage = async (userId) => {
+    return await membership_instances
       .doc(userId)
       .collection('visits')
       .doc(DATE_STRING)
-      .collection('gyms')
+      .collection('gyms_visited_online')
       .get()
-    ).docs
+      .then(snap => snap.docs)
+  }
+  const getBatchOfGymsInstudioUsage = async (userId) => {
+    return await membership_instances
+      .doc(userId)
+      .collection('visits')
+      .doc(DATE_STRING)
+      .collection('gyms_visited_instudio')
+      .get()
+      .then(snap => snap.docs)
   }
 
   while(true/* && DOC_LIMIT_TOTAL > gym_docs_done*/) {
@@ -80,110 +98,121 @@ async function coreCalculatePayouts(mode) {
     if (!userDocs.length) break
     lastFirebaseDoc = userDocs[ userDocs.length - 1 ]
 
-    usersLoop: for (let userDoc of userDocs) {
+    /*usersLoop: */for (let userDoc of userDocs) {
       // DEBUG VARIABLES
-      const USER_DEBUG = {
-        // At the end of code execution for that user,
-        // this should become exactly how much Imbue gets for each user.
-        USER_MONEY_INPUT: IMBUE_UNIVERSAL_PRICE,
-      }
+      const USER_DEBUG = {}
 
-      const gymDocs = await getBatchOfGyms(userDoc.id)
-
-      // Determine total visits by the user to all gyms combined
-      const TOTAL_VISITS = gymDocs.reduce((totalVisits, gymDoc) => {
-        return totalVisits + gymDoc.data().times_visited
-      }, 0)
-
-      // DEBUG
-      USER_DEBUG['TOTAL_VISITS'] = TOTAL_VISITS
-      if (TOTAL_VISITS <= 0) {
-        USER_DEBUG['__message'] = 'Total visits cannot be 0 or negative.'
-        await reports.log(userDoc.id, USER_DEBUG)
-        continue usersLoop
-      }
-
-
-      // If total visits are less than 8, divide by 8,
-      // else divide by total visits
-      const timesVisitedDivisor =
-        TOTAL_VISITS < 8
-        ? 8 : TOTAL_VISITS
-      // If total visits are over days in the month, divide by total visits,
-      // else divide by days in the month
-      const daysInMonthDivisor =
-        TOTAL_VISITS > DAYS_IN_MONTH
-        ? TOTAL_VISITS : DAYS_IN_MONTH
-
-
-      // Determine gross compensation for each gym
-      const GROSS_COMPENSATIONS = {}
-      for (let gymDoc of gymDocs) {
-        // DEBUG VAR
-        const USER_GYM_DEBUG = {}
-
-        const id = gymDoc.id
-        const {
-          times_visited: timesVisited,
-          membership_price_paid: membershipPrice,
-        } = gymDoc.data()
-
-        // DEBUG
-        USER_GYM_DEBUG['gymId'] = gymDoc.id
-        USER_GYM_DEBUG['times_visited'] = timesVisited
-        USER_GYM_DEBUG['membership_price_paid'] = membershipPrice
-        if (membershipPrice <= 0) {
-          USER_GYM_DEBUG['__message'] = 'Membership price paid cannot be 0 or negative.'
-          await reports.log(userDoc.id, USER_GYM_DEBUG)
-          continue usersLoop
-        }
-        if (timesVisited < 0) {
-          USER_GYM_DEBUG['__message'] = 'Times visited cannot be a negative number.'
-          await reports.log(userDoc.id, USER_GYM_DEBUG)
-          continue usersLoop
-        }
-
-        GROSS_COMPENSATIONS[ id ] =
-          timesVisited / timesVisitedDivisor * membershipPrice
-      }
-      
-      // DEBUG
-      USER_DEBUG['GROSS_COMPENSATIONS'] = GROSS_COMPENSATIONS
-      
-      const gymReduction = Object.values(GROSS_COMPENSATIONS)
-        .reduce((acc, compVal) => {
-          return acc + compVal
+      const coreGymDocAnalyzer = async (gymDocs) => {
+        // Determine total visits by the user to all gyms combined
+        const TOTAL_VISITS = gymDocs.reduce((totalVisits, gymDoc) => {
+          return totalVisits + gymDoc.data().times_visited
         }, 0)
 
-      const unallocatedFunds =
-        (IMBUE_UNIVERSAL_PRICE * 0.9)
-        - gymReduction
-      
-      // DEBUG
-      USER_DEBUG['unallocatedFunds'] = unallocatedFunds
+        // DEBUG
+        USER_DEBUG['TOTAL_VISITS'] = TOTAL_VISITS
+        if (TOTAL_VISITS <= 0) {
+          USER_DEBUG['__message'] = 'Total visits cannot be 0 or negative.'
+          await reports.log(userDoc.id, USER_DEBUG)
+          // continue usersLoop
+          return
+        }
 
-      // Calculate final gym compensation values, i.e. revenue,
-      // Allocate that to the product document
-      gymDocs.forEach(gymDoc => {
-        const id = gymDoc.id
-        const { times_visited } = gymDoc.data()
 
-        const fundsMultiplier = times_visited / daysInMonthDivisor
+        // If total visits are less than 8, divide by 8,
+        // else divide by total visits
+        const timesVisitedDivisor =
+          TOTAL_VISITS < 8
+          ? 8 : TOTAL_VISITS
+        // If total visits are over days in the month, divide by total visits,
+        // else divide by days in the month
+        const daysInMonthDivisor =
+          TOTAL_VISITS > DAYS_IN_MONTH
+          ? TOTAL_VISITS : DAYS_IN_MONTH
 
-        GYM_REVENUES[ id ] = Math.round(
-          (GYM_REVENUES[ id ] || 0)
-          + GROSS_COMPENSATIONS[ id ] // + gym gross compensation
-          + fundsMultiplier * unallocatedFunds // handling of unallocated funds
-        )
+
+        // Determine gross compensation for each gym
+        const GROSS_COMPENSATIONS = {}
+        for (let gymDoc of gymDocs) {
+          // DEBUG VAR
+          const USER_GYM_DEBUG = {}
+
+          const id = gymDoc.id
+          const {
+            times_visited: timesVisited,
+            membership_price_paid: membershipPrice,
+          } = gymDoc.data()
+
+          // DEBUG
+          USER_GYM_DEBUG['gymId'] = gymDoc.id
+          USER_GYM_DEBUG['times_visited'] = timesVisited
+          USER_GYM_DEBUG['membership_price_paid'] = membershipPrice
+          if (membershipPrice <= 0) {
+            USER_GYM_DEBUG['__message'] = 'Membership price paid cannot be 0 or negative.'
+            await reports.log(userDoc.id, USER_GYM_DEBUG)
+            // continue usersLoop
+            return
+          }
+          if (timesVisited < 0) {
+            USER_GYM_DEBUG['__message'] = 'Times visited cannot be a negative number.'
+            await reports.log(userDoc.id, USER_GYM_DEBUG)
+            // continue usersLoop
+            return
+          }
+
+          GROSS_COMPENSATIONS[ id ] =
+            timesVisited / timesVisitedDivisor * membershipPrice
+        }
+        
+        // DEBUG
+        USER_DEBUG['GROSS_COMPENSATIONS'] = GROSS_COMPENSATIONS
+        
+        const gymReduction = Object.values(GROSS_COMPENSATIONS)
+          .reduce((acc, compVal) => {
+            return acc + compVal
+          }, 0)
+
+        const unallocatedFunds =
+          (IMBUE_UNIVERSAL_PRICE * 0.9)
+          - gymReduction
+        
+        // DEBUG
+        USER_DEBUG['unallocatedFunds'] = unallocatedFunds
+
+        // Calculate final gym compensation values, i.e. revenue,
+        // Allocate that to the product document
+        gymDocs.forEach(gymDoc => {
+          const id = gymDoc.id
+          const { times_visited } = gymDoc.data()
+
+          const fundsMultiplier = times_visited / daysInMonthDivisor
+
+          GYM_REVENUES[ id ] = Math.round(
+            (GYM_REVENUES[ id ] || 0)
+            + GROSS_COMPENSATIONS[ id ] // + gym gross compensation
+            + fundsMultiplier * unallocatedFunds // handling of unallocated funds
+          )
+
+          // DEBUG
+          gym_docs_done++
+        })
 
         // DEBUG
-        USER_DEBUG['USER_MONEY_INPUT'] -= Math.round(GROSS_COMPENSATIONS[ id ] + fundsMultiplier * unallocatedFunds)
-        gym_docs_done++
-      })
+        DEBUG['MEMBERSHIP_INSTANCES_READ']++
+      }
 
-      // DEBUG
-      DEBUG['MEMBERSHIP_INSTANCES_READ']++
-      DEBUG['TOTAL_IMBUE_REVENUE'] += USER_DEBUG['USER_MONEY_INPUT']
+      // const gymDocs = await getBatchOfGyms(userDoc.id)
+      const [
+        gymDocsOnline,
+        gymDocsInstudio,
+      ] = await Promise.all([
+        getBatchOfGymsOnlineUsage(userDoc.id),
+        getBatchOfGymsInstudioUsage(userDoc.id),
+      ])
+
+      // Must be sequential (awaited one after the other)
+      await coreGymDocAnalyzer(gymDocsOnline)
+      if (mode == 'inspect') DEBUG['GYM_REVENUS (1st half)'] = {...GYM_REVENUES}
+      await coreGymDocAnalyzer(gymDocsInstudio)
     }
 
     // DEBUG
@@ -193,7 +222,7 @@ async function coreCalculatePayouts(mode) {
 
   // DEBUG
   DEBUG['TOTAL_GYMS_REVENUE'] = Object.values(GYM_REVENUES).reduce((total, val) => total + val, 0)
-  // DEBUG['GYM_REVENUES'] = GYM_REVENUES
+  if (mode == 'inspect') DEBUG['GYM_REVENUES'] = GYM_REVENUES
   // p('GYM_REVENUES', GYM_REVENUES)
   // p('DEBUG', DEBUG)
 
