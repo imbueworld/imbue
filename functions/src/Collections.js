@@ -7,7 +7,6 @@ exports.gyms = admin.firestore().collection('gyms')
 //
 exports.membership_instances = admin.firestore().collection('membership_instances')
 exports.stripe_customers = admin.firestore().collection('stripe_customers')
-// exports.stripe_transfers = admin.firestore().collection('stripe_transfers')
 exports.stripe_products = admin.firestore().collection('stripe_products')
 exports.stripe_prices = admin.firestore().collection('stripe_prices')
 //
