@@ -66,6 +66,17 @@ export default function PartnerGymSettings(props) {
     }
   }
 
+  // Edit Gym photo
+  const editGymPhoto = async () => {
+    setErrorMsg('')
+    const user = new User()
+    try {
+      await user.changeGymPhoto(gym)
+      refresh(r => r + 1)
+    } catch (errorMsg) { setErrorMsg(errorMsg) }
+    setSuccessMsg('Gym photo updated')
+  }
+
 
 
   if (!user || !gym) return <View />
@@ -76,10 +87,7 @@ export default function PartnerGymSettings(props) {
         paddingBottom: 10,
       }}
     >
-      {errorMsg
-        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-        : <Text style={{ color: "green" }}>{successMsg}</Text>}
-
+     
       <CustomTextInputV2
         containerStyle={styles.input}
         red={redFields.includes('name')}
@@ -137,6 +145,15 @@ export default function PartnerGymSettings(props) {
           }
         }}
       />
+
+      {/* {errorMsg
+        ? null
+        : <Text style={{ color: "green", flex: 1 }}>{successMsg}</Text>}  */}
+
+      <CustomButton
+        title="Edit Gym Photo"
+        onPress={editGymPhoto}
+      />    
 
       <CustomButton
         icon={

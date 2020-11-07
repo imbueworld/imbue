@@ -6,7 +6,7 @@ export const getPlaidLinkToken = async () => {
   const getPlaidLinkToken = functions().httpsCallable('getPlaidLinkToken')
   return ( await getPlaidLinkToken() ).data
 }
-
+ 
 /**
  * @see https://plaid.com/docs/link/react-native/#onsuccess
  */
