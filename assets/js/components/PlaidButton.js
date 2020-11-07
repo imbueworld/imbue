@@ -25,6 +25,7 @@ export default function PlaidButton(props) {
     }; init()
   }, [])
 
+  console.log("linkToken: " + linkToken)
 
 
   if (!linkToken) return <View />

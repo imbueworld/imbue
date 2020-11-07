@@ -46,7 +46,7 @@ const STRUCTURE = {
     membership_price_online: Number,
     membership_price_instudio: Number,
     coordinates: Object,
-    icon_uri: String,
+    image_uri: String,
     image_uris: Array,
     // Core fields
     partner_id: String,
