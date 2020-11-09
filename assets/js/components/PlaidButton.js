@@ -20,9 +20,10 @@ export default function PlaidButton(props) {
 
   // Init
   useEffect(() => {
+    console.log("yoooooo")
     const init = async () => {
       setLinkToken(await getPlaidLinkToken())
-    }; init()
+    }; init() 
   }, [])
 
   console.log("linkToken: " + linkToken)
