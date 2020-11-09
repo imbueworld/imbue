@@ -16,8 +16,8 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
 const plaidLib = require('plaid')
 const plaid = new plaidLib.Client({
   clientID: PLAID_CLIENT_ID,
-  secret: PLAID_SECRET_SANDBOX,
-  env: plaidLib.environments.sandbox,
+  secret: PLAID_SECRET_DEVELOPMENT,
+  env: plaidLib.environments.development,
 })
 const {
   partners,
