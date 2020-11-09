@@ -97,16 +97,10 @@ exports.connectPlaidAccountToStripeSeller = functions.https.onCall(async (data, 
     plaid_account_id,
   } = data
 
-  console.log("before")
-
   // Retrieve partner's Stripe Connect Account ID
   const { stripe_account_id } = ( await partners.doc(uid).get() ).data()
   // Exchange the received public token for an access token
   const { access_token } = await plaid.exchangePublicToken(public_token)
-
-  console.log("stripe_account_id: " + stripe_account_id)
-  console.log("access_token: " + access_token)
-  console.log("plaid_account_id: " + plaid_account_id)
 
   // Generate a Stripe btok (bank token)
   const {
