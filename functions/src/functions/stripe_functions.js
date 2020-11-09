@@ -6,6 +6,7 @@ const {
   PLAID_CLIENT_ID,
   PLAID_SECRET_SANDBOX,
   PLAID_SECRET_DEVELOPMENT,
+  PLAID_ENV,
   APP_NAME,
 } = require('../CONFIG')
 const admin = require('firebase-admin')
@@ -16,8 +17,8 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
 const plaidLib = require('plaid')
 const plaid = new plaidLib.Client({
   clientID: PLAID_CLIENT_ID,
-  secret: PLAID_SECRET_SANDBOX,
-  env: plaidLib.environments.sandbox,
+  secret: PLAID_SECRET_DEVELOPMENT,
+  env: PLAID_ENV,
 })
 const {
   partners,
@@ -74,16 +75,20 @@ exports.linkBankAccountToStripeAccount = functions.https.onCall(async (data, con
 exports.getPlaidLinkToken = functions.https.onCall(async (data, context) => {
   const { auth: { uid } } = context
 
+  console.log("hi")
+
   const tokenResponse = await plaid.createLinkToken({
     user: {
       client_user_id: uid,
     },
     client_name: APP_NAME,
-    products: ['auth'], // 'transactions' might be needed, but might also not
+    products: ['auth', 'transactions'], // 'transactions' might be needed, but might also not
     country_codes: ['US'],
     language: 'en',
   })
+  console.log("bye")
 
+  console.log("this: " + tokenResponse.link_token)
   return tokenResponse.link_token
 })
 
