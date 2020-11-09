@@ -72,10 +72,10 @@ export default function PartnerRevenueInfo(props) {
 
       { !hasBankAccountAdded ? <>
         <BankAccountFormWithButtonEntry
-          onError={setErrorMsg}
+          onError={setErrorMsg} 
           onSuccess={() => refresh(r => r + 1)}
         />
-        <PlaidButton onError={setErrorMsg} />
+        <PlaidButton onError={setErrorMsg} onSuccess={() => refresh(r => r + 1)}/> 
       </> : <>
         <Text style={styles.confirmation}>Your bank account has been linked.</Text>
       </>}
