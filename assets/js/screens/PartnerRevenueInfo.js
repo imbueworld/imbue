@@ -32,6 +32,9 @@ export default function PartnerRevenueInfo(props) {
       setUser(userDoc)
       setGym(gym)
       setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
+
+      console.log("userDoc.stripe_bank_account_id: " + userDoc.stripe_bank_account_id)
+
     }; init()
   }, [r])
 
@@ -75,11 +78,11 @@ export default function PartnerRevenueInfo(props) {
           onError={setErrorMsg}
           onSuccess={() => refresh(r => r + 1)}
         />
-        <PlaidButton onError={setErrorMsg} />
+        <PlaidButton onError={setErrorMsg} onSuccess={() => refresh(r => r + 1)}/>
       </> : <>
         <Text style={styles.confirmation}>Your bank account has been linked.</Text>
       </>}
-
+{/* onSuccess={setHasBankAccountAdded} */}
       <Text style={styles.miniText}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
 
     </ProfileLayout>

@@ -23,7 +23,7 @@ export default function PartnerHome(props) {
     }
 
     function login() {
-        props.navigation.navigate("Login")
+        props.navigation.navigate("LoginPartner")
     }
 
     return (
