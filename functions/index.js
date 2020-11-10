@@ -224,6 +224,7 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     },
   })
   
+  p("newStripeAccount success")
   const { id: stripe_account_id } = newStripeAccount
 
   // Create a Stripe Person, linking it to the Custom Account
@@ -246,6 +247,7 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     }
   )
 
+  p("newStripePerson success")
   const { id: stripe_person_id } = newStripePerson
   
   // Update the Custom Account, telling that person has been successfully created
@@ -453,8 +455,10 @@ exports.createGymProduct = functions.https.onCall(async (data, context) => {
       .get()
   ).data()
 
+  p('gymName', gymName)
+  p('membership_price', unit_amount)
   if (!unit_amount) {
-    e('membership_price not in gym doc.')
+    console.error('membership_price not in gym doc.')
     return
   }
 
@@ -537,6 +541,8 @@ exports.addPaymentMethod = functions.https.onCall(async (data, context) => {
  * Used to charge a known (added) user's credit card.
  */
 exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, context) => {
+  const p = console.log
+
   const { auth: { uid } } = context
   const {
     paymentMethodId,
@@ -569,6 +575,9 @@ exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, con
       .get()
   ).data()
 
+  p('source', source)
+  p('customer', customer)
+
   const {
     price: amount,
     name: className,
@@ -579,14 +588,21 @@ exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, con
       .get()
   ).data()
 
+  p('price', amount)
+  p('className', className)
+  p('partner_id', partnerId)
+
   const { stripe_account_id: destination } = (
     await partners
       .doc(partnerId)
       .get()
   ).data()
+
+  p('stripe_account_id', destination)
   
   // variable is INCOMPLETE
   const application_fee_amount = Math.floor(IMBUE_PERCENTAGE_CUT * amount)
+  p('application_fee_amount', application_fee_amount)
 
   if (
     !amount || !customer || !source
@@ -653,12 +669,18 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
     ])
   )
 
+  p('partnerId', partnerId)
+
   const { stripe_account_id: destination } = (
     await partners
       .doc(partnerId)
       .get()
   ).data()
 
+  p('customer_id', customer)
+  p('default_source_id', default_source)
+  p('price_id', price)
+  p('destination', destination)
   if (!customer) e('customer_id not found.')
   if (!default_source) e('default_source_id not found.')
   if (!price) e('price_id not found.')
@@ -876,8 +898,6 @@ exports.completeClassSignUp = functions.firestore
       const {
         gym_id: gymId,
         active_times=[],
-        type: classType,
-        mindbody_integration,
       } = ( await classes.doc(class_id).get() ).data()
       const {
         membership_price: membership_price_paid,
@@ -887,20 +907,19 @@ exports.completeClassSignUp = functions.firestore
 
       SCHED_CLASS_DEBUG['gymId'] = gymId
       SCHED_CLASS_DEBUG['membership_price_paid'] = membership_price_paid
-      SCHED_CLASS_DEBUG['classType'] = classType
+      p('gymId', gymId)
+      p('membership_price_paid', membership_price_paid)
 
       const { begin_time, end_time } = active_times.filter(it => it.time_id == time_id)[0]
       const CLASS_END_DATE_STRING = getEndDateStringOfTimestamp(end_time)
-      const trackingCollection = classType == 'studio'
-        ? 'gyms_visited_instudio'
-        : 'gyms_visited_online'
 
       SCHED_CLASS_DEBUG['class_id'] = class_id
       SCHED_CLASS_DEBUG['time_id'] = time_id
       SCHED_CLASS_DEBUG['begin_time'] = begin_time
       SCHED_CLASS_DEBUG['end_time'] = end_time
       SCHED_CLASS_DEBUG['CLASS_END_DATE_STRING'] = CLASS_END_DATE_STRING
-      SCHED_CLASS_DEBUG['trackingCollection'] = trackingCollection
+      p('end_time', end_time)
+      p('CLASS_END_DATE_STRING', CLASS_END_DATE_STRING)
       // This if-statement is currently the only thing that
       // validates begin_time & end_time
       if (!CLASS_END_DATE_STRING) {
@@ -913,16 +932,6 @@ exports.completeClassSignUp = functions.firestore
         SCHED_CLASS_DEBUG['__message'] = `Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`
         await reports.log(userId, SCHED_CLASS_DEBUG)
         w(`Class with class_id ${class_id} and time_id ${time_id} was skipped, due to being in the past.`)
-        continue
-      }
-
-      // If class type was not either 'online' or 'studio',
-      // except for mindbody classes,
-      // log and skip
-      if (classType != 'online' && classType != 'studio' && !mindbody_integration) {
-        SCHED_CLASS_DEBUG['__message'] = `Class with class_id ${class_id} was skipped, due to 'type' property not being 'online' | 'studio' (was '${classType}').`
-        await reports.log(class_id, SCHED_CLASS_DEBUG)
-        w(`Class with class_id ${class_id} was skipped, due to 'type' property not being 'online' | 'studio' (was '${classType}').`)
         continue
       }
 
@@ -948,10 +957,10 @@ exports.completeClassSignUp = functions.firestore
           .doc(userId)
           .collection('visits')
           .doc(CLASS_END_DATE_STRING)
-          .collection(trackingCollection)
+          .collection('gyms')
           .doc(gymId),
         {
-          membership_price_paid, // overwrites every time, thus telling to use the most recent value
+          membership_price_paid,
           times_visited: admin.firestore.FieldValue.increment(1),
         },
         { merge: true }
@@ -999,23 +1008,20 @@ exports.completeClassUnschedule = functions.firestore
     const {
       gym_id: gymId,
       active_times=[],
-      type: classType,
     } = ( await classes.doc(class_id).get() ).data()
     //
     const UNDID_CLASSES_DEBUG = {}
 
     const { begin_time, end_time } = active_times.filter(it => it.time_id == time_id)[0]
     const CLASS_END_DATE_STRING = getEndDateStringOfTimestamp(end_time)
-    const trackingCollection = classType == 'studio'
-      ? 'gyms_visited_instudio'
-      : 'gyms_visited_online'
 
     UNDID_CLASSES_DEBUG['class_id'] = class_id
     UNDID_CLASSES_DEBUG['time_id'] = time_id
     UNDID_CLASSES_DEBUG['begin_time'] = begin_time
     UNDID_CLASSES_DEBUG['end_time'] = end_time
     UNDID_CLASSES_DEBUG['CLASS_END_DATE_STRING'] = CLASS_END_DATE_STRING
-    UNDID_CLASSES_DEBUG['classType'] = classType
+    p('end_time', end_time)
+    p('CLASS_END_DATE_STRING', CLASS_END_DATE_STRING)
     // This if statement with throw is currently the only thing that
     // validates begin_time & end_time
     if (!CLASS_END_DATE_STRING) {
@@ -1044,7 +1050,7 @@ exports.completeClassUnschedule = functions.firestore
         .doc(userId)
         .collection('visits')
         .doc(CLASS_END_DATE_STRING)
-        .collection(trackingCollection)
+        .collection('gyms')
         .doc(gymId),
       {
         times_visited: admin.firestore.FieldValue.increment(-1),
