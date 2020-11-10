@@ -3,6 +3,8 @@
 const algoliasearch = require('algoliasearch')
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 const functions = require('firebase-functions')
+// import * as firebase from 'firebase';
+// import 'firebase/firestore';
 const admin = require('firebase-admin')
 admin.initializeApp()
 // const { Logging } = require('@google-cloud/logging');
@@ -36,7 +38,6 @@ const ALGOLIA_ADMIN_KEY = '11abb122276b5eed15a3a0119b53622a'
 
 const ALGOLIA_GYM_INDEX = 'gyms'
 const algoliaClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
-
 
 
 const users = admin.firestore().collection('users')
@@ -159,7 +160,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
   await admin.firestore().collection('stripe_customers').doc(user.uid).set({
     customer_id: customer.id,
-  });
+  }); 
 
   const defaultIcon = "default-icon.png"
 

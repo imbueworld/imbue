@@ -6,7 +6,7 @@ import {
   initOnPlaidLinkExit,
 } from './PlaidButton.backend'
 import PlaidLink from 'react-native-plaid-link-sdk'
-import CustomButton from './CustomButton'
+import CustomButton from './CustomButton' 
   
 
 
@@ -40,7 +40,8 @@ export default function PlaidButton(props) {
         title: 'Add Plaid Account',
       }}
       token={linkToken}
-      onSuccess={onSuccess}
+      // onSuccess={onSuccess} 
+      onSuccess={data => console.log('success: ', data)}
       onExit={onExit}
     />
   )

@@ -3,12 +3,13 @@
   "description": "Imbue Firebase Functions",
   "dependencies": {
     "@google-cloud/logging": "^7.2.3",
-    "algoliasearch": "^4.5.1",
+    "algoliasearch": "^4.6.0",
     "express": "^4.17.1",
-    "firebase-admin": "~8.9.2",
+    "firebase": "^8.0.1",
+    "firebase-admin": "^8.13.0",
     "firebase-functions": "^3.11.0",
     "plaid": "^8.0.0",
-    "stripe": "^8.56.0",
+    "stripe": "^8.121.0",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
