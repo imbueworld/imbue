@@ -67,21 +67,7 @@ export default function LoginPartner(props) {
             />
       </TouchableHighlight>
       <CustomCapsule containerStyle={styles.container}>
-        <SocialLogin
-          containerStyle={{
-            marginTop: 20,
-            marginBottom: 10,
-            marginHorizontal: 20,
-          }}
-          onAuthChange={() => {
-            const pushAction = StackActions.push("Boot")
-            props.navigation.dispatch(pushAction)
-          }}
-          // onError={err => {
-          //   // setErrorMsg(err.message)
-          //   setErrorMsg(`${err.code}  |  ${err.message}`)
-          // }}
-        />
+
 
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>
