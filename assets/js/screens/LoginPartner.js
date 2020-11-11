@@ -67,7 +67,6 @@ export default function LoginPartner(props) {
             />
       </TouchableHighlight>
       <CustomCapsule containerStyle={styles.container}>
-        
 
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>

@@ -718,82 +718,93 @@ export default class User extends DataObject {
     })
   }
 
-  changeGymPhoto(gym) { 
-    return new Promise(async (resolve, reject) => {
+  // changeClassPhoto(gym) { 
+  //   return new Promise(async (resolve, reject) => {
 
-      // Ascertain that all permissions have been granted
-      if (Platform == "android") {
-        const unfulfilledPerms = await requestPermissions([
-          'CAMERA',
-          'READ_EXTERNAL_STORAGE',
-        ])
-        if (unfulfilledPerms) reject(
-          'Missing permissions: '
-          + unfulfilledPerms.join(', ')
-        )
-      }
+  //     // Ascertain that all permissions have been granted
+  //     if (Platform == "android") {
+  //       const unfulfilledPerms = await requestPermissions([
+  //         'CAMERA',
+  //         'READ_EXTERNAL_STORAGE',
+  //       ])
+  //       if (unfulfilledPerms) reject(
+  //         'Missing permissions: '
+  //         + unfulfilledPerms.join(', ')
+  //       )
+  //     }
 
-      // Do the image stuff
-      ImagePicker.showImagePicker({}, async res => {
-        if (res.didCancel) {
-          // ...
-          if (config.DEBUG) console.log('Photo selection canceled:', res.didCancel)
-        }
+  //     // Do the image stuff
+  //     ImagePicker.showImagePicker({}, async res => {
+  //       if (res.didCancel) {
+  //         // ...
+  //         if (config.DEBUG) console.log('Photo selection canceled:', res.didCancel)
+  //       }
 
-        if (res.error) {
-          if (config.DEBUG) console.error(res.error)
-          reject('Something prevented the action.')
-        }
+  //       if (res.error) {
+  //         if (config.DEBUG) console.error(res.error)
+  //         reject('Something prevented the action.')
+  //       }
 
-        // Main portion
+  //       // Main portion
 
-        // const {
-        //   path: filePath,
-        //   fileSize,
-        // } = res
+  //       // const {
+  //       //   path: filePath,
+  //       //   fileSize,
+  //       // } = res
 
-        const source = { uri: res.uri }; 
+  //       const source = { uri: res.uri }; 
 
-        // console.log("uri: " + source)
+  //       // console.log("uri: " + source)
 
-        const id = gym.id
-        const img = source.uri
+  //       const id = gym.id
+  //       const img = source.uri
  
-        // 8MB of file size limit
-        // if (fileSize > 8 * 1024 * 1024) {
-        //   reject('Image file size must not exceed 8MB.')
-        // }
+  //       const id = Math.random().toString(36).substring(7);
+  //       const img = source.uri
 
-        try {
-          const fileRef = storage().ref(id)
-          // await fileRef.putFile(filePath)
-          await fileRef.putFile(source.uri)
+  //       // 8MB of file size limit
+  //       // if (fileSize > 8 * 1024 * 1024) {
+  //       //   reject('Image file size must not exceed 8MB.')
+  //       // }
 
-          const url = await (await storage().ref(id).getDownloadURL()).toString()
+  //       // 
+
+  //       try {
+  //         const fileRef = storage().ref(id)
+  //         // await fileRef.putFile(filePath)
+  //         await fileRef.putFile(source.uri)
+
+  //         const url = await (await storage().ref(id).getDownloadURL()).toString()
         
-          firestore()
-            .collection('gyms').doc(id)
-            .set({
-              image_uri: url,
-            }, { merge: true })
+
+  //         console.log("imgUser: " + url)
+
+  //         return url;
+
+  //         firestore()
+  //           .collection('gyms').doc(id)
+  //           .set({
+  //             image_uri: url,
+  //           }, { merge: true })
 
           
-          // this.mergeItems({
-          //   image_uris: id,
-          // })
 
-          // await this.push()
+  //         // this.mergeItems({
+  //         //   image_uris: id,
+  //         // })
+
+  //         // await this.push()
 
       
-        } catch (err) {
-          if (config.DEBUG) console.error(err)
-          reject('Something prevented upload.')
-          console.error(err)
-        }
+  //       } catch (err) {
+  //         if (config.DEBUG) console.error(err)
+  //         reject('Something prevented upload.')
+  //         console.error(err)
+  //       }
 
-      })
-    })
-  }
+  //     })
+  //   })
+  // }
 
   async sendPasswordResetEmail(email) {
     try {

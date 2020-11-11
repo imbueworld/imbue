@@ -154,6 +154,7 @@ export default class Class extends DataObject {
     let {
       instructor,
       name,
+      img,
       description,
       genres,
       type,

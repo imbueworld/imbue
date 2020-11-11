@@ -90,7 +90,11 @@ exports.getPlaidLinkToken = functions.https.onCall(async (data, context) => {
 /**
  * Connects based on currently logged in partner.
  */
+<<<<<<< HEAD
 exports.connectPlaidAccountToStripeSeller = functions.https.onCall(async (data, context) => { 
+=======
+exports.connectPlaidAccountToStripeSeller = functions.https.onCall(async (data, context) => {
+>>>>>>> tmp
   const { auth: { uid } } = context
   let {
     public_token,

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, Platform } from 'react-native'
 import CustomTextInput from './CustomTextInput'
 import CustomButton from './CustomButton'
 import CustomSelectButton from './CustomSelectButton'
@@ -11,6 +11,9 @@ import { zeroDecimalFromCurrency } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
 
+import ImagePicker from 'react-native-image-picker'
+import firestore from '@react-native-firebase/firestore'
+import storage from '@react-native-firebase/storage'
 
 
 export default function NewClassForm(props) {
@@ -25,17 +28,19 @@ export default function NewClassForm(props) {
   const [gym_id, setGymId] = useState(null)
   const [instructor, setInstructor] = useState(null)
   const [name, setName] = useState(null)
+  const [img, setImg] = useState(null)
   const [description, setDescription] = useState(null)
   const [genres, setGenres] = useState(null)
   const [type, setType] = useState(null)
   const [price, setPrice] = useState("$0.00")
 
   useEffect(() => {
-    const init = async () => {
+    const init = async () => { 
       const newClassForm = snatchNewClassForm()
 
       setInstructor(newClassForm.instructor)
       setName(newClassForm.name)
+      setImg(newClassForm.img)
       setDescription(newClassForm.description)
       setGenres(newClassForm.genres || [])
       setType(newClassForm.type || "studio")
@@ -60,8 +65,9 @@ export default function NewClassForm(props) {
     const form = snatchNewClassForm()
     form.instructor = instructor
     form.name = name
+    form.img = img
     form.description = description
-  }, [instructor, name, description])
+  }, [instructor, name, img, description])
   useEffect(() => {
     const form = snatchNewClassForm()
     form.gym_id = gym_id
@@ -75,7 +81,8 @@ export default function NewClassForm(props) {
   function validate() {
     let redFields = []
     if (!gym_id) redFields.push("gym_id")
-    if (!instructor) redFields.push("instructor")
+    // if (!instructor) redFields.push("instructor")
+    if (!img) redFields.push("img")
     if (!name) redFields.push("name")
     if (!description) redFields.push("description")
     if (!genres) redFields.push("genres")
@@ -87,10 +94,10 @@ export default function NewClassForm(props) {
       throw new Error("Required fields must be filled.")
     }
 
-    if (instructor.length < 3 || instructor.length > 50) {
-      setRedFields(["instructor"])
-      throw new Error("Instructor's name must be between 3 and 50 characters long.")
-    }
+    // if (instructor.length < 3 || instructor.length > 50) {
+    //   setRedFields(["instructor"])
+    //   throw new Error("Instructor's name must be between 3 and 50 characters long.")
+    // }
     if (name.length < 3 || name.length > 120) {
       setRedFields(["name"])
       throw new Error("Class name must be between 3 and 120 characters long.")
@@ -142,6 +149,81 @@ export default function NewClassForm(props) {
     }
   }
 
+  function changeClassPhoto(gym) { 
+    return new Promise(async (resolve, reject) => {
+      // Ascertain that all permissions have been granted
+      if (Platform == "android") {
+        const unfulfilledPerms = await requestPermissions([
+          'CAMERA',
+          'READ_EXTERNAL_STORAGE',
+        ])
+        if (unfulfilledPerms) reject(
+          'Missing permissions: '
+          + unfulfilledPerms.join(', ')
+        )
+      }
+
+      // Do the image stuff
+      ImagePicker.showImagePicker({}, async res => {
+        if (res.didCancel) {
+          // ...
+          if (config.DEBUG) console.log('Photo selection canceled:', res.didCancel)
+        }
+        if (res.error) {
+          if (config.DEBUG) console.error(res.error)
+          reject('Something prevented the action.')
+        }
+
+        // Main portion
+        // const {
+        //   path: filePath,
+        //   fileSize,
+        // } = res
+
+        const source = { uri: res.uri }; 
+        const id = Math.random().toString(36).substring(7);
+        const img = source.uri
+
+        // 8MB of file size limit
+        // if (fileSize > 8 * 1024 * 1024) {
+        //   reject('Image file size must not exceed 8MB.')
+        // }
+
+        try {
+          const fileRef = storage().ref(id)
+          // await fileRef.putFile(filePath)
+          await fileRef.putFile(source.uri)
+
+          const url = await (await storage().ref(id).getDownloadURL()).toString()
+
+          console.log("imgUser: " + url)
+
+          setImg(url)
+
+          console.log("img: " + img)
+
+          setSuccessMsg('Gym photo updated')
+
+          // await this.push()
+        } catch (err) {
+          if (config.DEBUG) console.error(err)
+          reject('Something prevented upload.')
+          console.error(err)
+        }
+
+      })
+    })
+  }
+
+  // Add Class photo
+  const editClassPhoto = async () => {
+    setErrorMsg('')
+    const user = new User()
+    try {
+      await changeClassPhoto()
+      // refresh(r => r + 1)
+    } catch (errorMsg) { setErrorMsg(errorMsg) }
+  }
 
   return (
     <View style={styles.container}>
@@ -166,14 +248,19 @@ export default function NewClassForm(props) {
         onChangeItem={({ value }) => setGymId(value)}
       />
 
-      <CustomTextInput
+      {/* <CustomTextInput
         containerStyle={{
           borderColor: redFields.includes("instructor") ? "red" : undefined,
         }}
         placeholder="Instructor's Name"
         value={instructor}
         onChangeText={setInstructor}
-      />
+      /> */}
+
+      <CustomButton
+        title="Add Photo"
+        onPress={editClassPhoto}
+      /> 
       <CustomTextInput
         containerStyle={{
           borderColor: redFields.includes("name") ? "red" : undefined,
@@ -257,18 +344,22 @@ export default function NewClassForm(props) {
 
       <CustomButton
         title="Create Class"
+
         onPress={async () => {
           setRedFields([])
           setErrorMsg("")
           setSuccessMsg("")
 
+          console.log("img down here: " + img)
+
+
           try {
             validate()
 
-            let form = format({ instructor, name, description, genres, type, gym_id, price })
+            let form = format({ instructor, name, img, description, genres, type, gym_id, price })
 
             const classObj = new Class()
-            classObj.create(form)
+            classObj.create(form)  
 
             setSuccessMsg("Successfully created class.")
           } catch (err) {

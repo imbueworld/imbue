@@ -26,6 +26,8 @@ export default function PartnerUpdateClasses(props) {
 
       setUser(userDoc)
       setClasses(classes)
+      console.log("classDoc: " + JSON.stringify(classDoc))
+
     }; init()
   }, [])
 
@@ -51,6 +53,7 @@ export default function PartnerUpdateClasses(props) {
     </View>
   )
 
+ 
   let PageContent
   switch (page) {
     case "overview":
@@ -84,7 +87,7 @@ export default function PartnerUpdateClasses(props) {
         </>
       break
   }
-
+ 
   return (
     <ProfileLayout
       innerContainerStyle={{

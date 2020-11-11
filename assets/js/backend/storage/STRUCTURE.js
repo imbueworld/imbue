@@ -59,6 +59,7 @@ const STRUCTURE = {
     description: String,
     instructor: String,
     name: String,
+    img: String,
     genres: Array,
     type: String,
     price: Number,
