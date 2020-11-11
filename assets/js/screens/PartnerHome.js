@@ -52,7 +52,7 @@ export default function PartnerHome(props) {
                         color: colors.gray,
                         textAlign: "center",
                         fontSize: 18,
-                 }}>partner</Text>
+                 }}>influencer/partner</Text>
                 <CustomButton
                     style={{
                         marginTop: 20,

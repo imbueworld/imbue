@@ -33,10 +33,6 @@ export default function PartnerRevenueInfo(props) {
       setGym(gym)
       setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
       // setHasBankAccountAdded(true)
-      console.log(
-          "userdoc: " + JSON.stringify(userDoc)
-      )
-      console.log("stripe_bank_account_id: " + user.stripe_bank_account_id)
     }; init()
   }, [r])
 
@@ -86,7 +82,7 @@ export default function PartnerRevenueInfo(props) {
         </>
       }
 
-      <Text style={styles.miniText}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
+     <Text style={styles.miniText}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
 
     </ProfileLayout>
   )

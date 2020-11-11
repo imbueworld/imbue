@@ -33,11 +33,11 @@ export default function PartnerGymSettings(props) {
       setUser(userDoc)
 
       const {
-        associated_gyms=[],
+        associated_gyms = [],
       } = userDoc
 
       const gym = new Gym()
-      const gymDoc = await gym.retrieveGym(associated_gyms[ 0 ]) || {}
+      const gymDoc = await gym.retrieveGym(associated_gyms[0]) || {}
       setGym(gymDoc)
 
       const {
@@ -65,18 +65,6 @@ export default function PartnerGymSettings(props) {
       return "Required fields need to be filled."
     }
   }
-
-  // Edit Gym photo
-  const editGymPhoto = async () => {
-    setErrorMsg('')
-    const user = new User()
-    try {
-      await user.changeGymPhoto(gym)
-      refresh(r => r + 1)
-    } catch (errorMsg) { setErrorMsg(errorMsg) }
-    setSuccessMsg('Gym photo updated')
-  }
-
 
 
   if (!user || !gym) return <View />
@@ -149,12 +137,6 @@ export default function PartnerGymSettings(props) {
       {/* {errorMsg
         ? null
         : <Text style={{ color: "green", flex: 1 }}>{successMsg}</Text>}  */}
-
-      <CustomButton
-        title="Edit Gym Photo"
-        onPress={editGymPhoto}
-      />    
-
       <CustomButton
         icon={
           <Icon
