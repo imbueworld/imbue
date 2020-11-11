@@ -200,7 +200,8 @@ export default function GymDescription(props) {
                   />
                 }
               />
-              <CustomButton
+              
+             {/* <CustomButton
                 style={{
                   marginBottom: 0,
                 }}
@@ -214,7 +215,7 @@ export default function GymDescription(props) {
                     source={require("../components/img/png/membership-2.png")}
                   />
                 }
-              />
+              /> */}
               </>}
           </>}
 
