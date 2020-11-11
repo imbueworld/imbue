@@ -66,8 +66,6 @@ export default function PartnerGymSettings(props) {
     }
   }
 
-
-
   if (!user || !gym) return <View />
 
   return (
@@ -132,7 +130,7 @@ export default function PartnerGymSettings(props) {
           }
         }}
       />
-
+      
       <CustomButton
         icon={
           <Icon
