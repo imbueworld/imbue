@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, ScrollView, View } from 'react-native'
+import {
+  StyleSheet, ScrollView, View, Image
+} from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 import CustomCapsule from '../components/CustomCapsule'
@@ -21,7 +23,7 @@ import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarBu
  * .data -- gym data
  * .containerStyle
  * .innerContainerStyle
- * .children
+ * .children 
  */
 export default function GymLayout(props) {
   let gym = props.data
@@ -97,6 +99,8 @@ export default function GymLayout(props) {
     }
   }
 
+  console.log("gym.image_uri: " + gym.image_uri)
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
@@ -114,13 +118,23 @@ export default function GymLayout(props) {
         />
       : null}
 
-      <ImageSlideshow
+      {/* <ImageSlideshow
         containerStyle={{
           zIndex: -100,
         }}
         imageStyle={styles.image}
         imageInterval={5000}
-        data={gym.image_uris}
+        data={gym.image_uri}
+        
+      /> */}
+
+
+      <Image
+        // containerStyle={{
+        //   zIndex: -100,
+        // }}
+        imageStyle={styles.image}
+        source={{uri: gym.image_uri}}
       />
 
       {/* Back Button */}
