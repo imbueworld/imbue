@@ -5,18 +5,11 @@
     "@google-cloud/logging": "^7.2.3",
     "algoliasearch": "^4.6.0",
     "express": "^4.17.1",
-<<<<<<< HEAD
     "firebase": "^8.0.1",
     "firebase-admin": "^8.13.0",
     "firebase-functions": "^3.11.0",
     "plaid": "^8.0.0",
     "stripe": "^8.121.0",
-=======
-    "firebase-admin": "~8.9.2",
-    "firebase-functions": "^3.3.0",
-    "plaid": "^8.0.0",
-    "stripe": "^8.56.0",
->>>>>>> tmp
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {
