@@ -38,11 +38,7 @@ async function coreCalculatePayouts(mode) {
   let gym_docs_done = 0
   const GYM_REVENUES = {} // product, final goal
   // DEBUG VARIABLES
-<<<<<<< HEAD
   const reports = new Reports(DATE_STRING, '_payouts', 5)
-=======
-  const reports = new Reports(DATE_STRING, '_payouts')
->>>>>>> tmp
   await reports.deleteLogs()
   const DEBUG = {
     MEMBERSHIP_INSTANCES_READ: 0,
@@ -83,11 +79,7 @@ async function coreCalculatePayouts(mode) {
       .doc(userId)
       .collection('visits')
       .doc(DATE_STRING)
-<<<<<<< HEAD
-      .collection('gyms')
-=======
       .collection('gyms_visited_online')
->>>>>>> tmp
       .get()
       .then(snap => snap.docs)
   }
@@ -230,11 +222,8 @@ async function coreCalculatePayouts(mode) {
 
   // DEBUG
   DEBUG['TOTAL_GYMS_REVENUE'] = Object.values(GYM_REVENUES).reduce((total, val) => total + val, 0)
-<<<<<<< HEAD
   // DEBUG['GYM_REVENUES'] = GYM_REVENUES
-=======
   if (mode == 'inspect') DEBUG['GYM_REVENUES'] = GYM_REVENUES
->>>>>>> tmp
   // p('GYM_REVENUES', GYM_REVENUES)
   // p('DEBUG', DEBUG)
 

@@ -27,8 +27,8 @@ const { Reports } = require('./src/Reports');
 
 
 
-const MUX_TOKEN_ID = '45fba3d3-8c60-48c6-a767-e87270351be8'
-const MUX_TOKEN_SECRET = 'XRuq11za83MwMYHgbhYYKwktVG7v0bkmHajeB2YglnRZhzPyN85XL5C3oKAog2oGUS3yzo9i9EP'
+const MUX_TOKEN_ID = '8b5f439c-8af3-474d-be34-c3abb998a61d'
+const MUX_TOKEN_SECRET = 'dqQMXZj4QVR/KgextSw/ALpJXmAd/kNEmKzEENhjy82mDsC6vAPgAeOfgbsCQcKydZK8u1YXJHd'
 
 const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 
@@ -142,7 +142,7 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
       "https://api.mux.com/video/v1/live-streams",
       true, MUX_TOKEN_ID, MUX_TOKEN_SECRET)
     xhr.setRequestHeader("Content-Type", "application/json")
-    xhr.send(JSON.stringify({
+    xhr.send(JSON.stringify({ 
       "playback_policy": ["public"],
       "new_asset_settings": {
         "playback_policy": ["public"]
