@@ -20,7 +20,7 @@ export default function SchedulePopulate(props) {
   if (!user) return <View />
 
   return (
-    <ProfileLayout
+    <ProfileLayout 
       innerContainerStyle={{
         paddingHorizontal: 0,
         paddingBottom: 10,

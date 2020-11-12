@@ -18,7 +18,7 @@ import storage from '@react-native-firebase/storage'
 
 export default function NewClassForm(props) {
   const [initialized, setInitialized] = useState(false)
-  const [dropDown, setDropDown] = useState(false)
+  // const [dropDown, setDropDown] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
   const [redFields, setRedFields] = useState([])
@@ -30,7 +30,7 @@ export default function NewClassForm(props) {
   const [name, setName] = useState(null)
   const [img, setImg] = useState(null)
   const [description, setDescription] = useState(null)
-  const [genres, setGenres] = useState(null)
+  // const [genres, setGenres] = useState(null)
   const [type, setType] = useState(null)
   const [price, setPrice] = useState("$0.00")
 
@@ -42,7 +42,7 @@ export default function NewClassForm(props) {
       setName(newClassForm.name)
       setImg(newClassForm.img)
       setDescription(newClassForm.description)
-      setGenres(newClassForm.genres || [])
+      // setGenres(newClassForm.genres || [])
       setType(newClassForm.type || "studio")
       setGymId(newClassForm.gym_id || null)
 
@@ -71,9 +71,9 @@ export default function NewClassForm(props) {
   useEffect(() => {
     const form = snatchNewClassForm()
     form.gym_id = gym_id
-    form.genres = genres
+    // form.genres = genres
     form.type = type
-  }, [gym_id, genres, type])
+  }, [gym_id, type])
 
   // if (!instructor || !name || !description || !gym_id ||
   //     !genres || !type) return <View />
@@ -85,7 +85,7 @@ export default function NewClassForm(props) {
     if (!img) redFields.push("img")
     if (!name) redFields.push("name")
     if (!description) redFields.push("description")
-    if (!genres) redFields.push("genres")
+    // if (!genres) redFields.push("genres")
     if (!type) redFields.push("type")
     if (!price) redFields.push("price")
 
@@ -106,10 +106,10 @@ export default function NewClassForm(props) {
       setRedFields(["description"])
       throw new Error("Description of the class must be between 3 and 500 characters long.")
     }
-    if (genres.length < 2 || genres.length > 5) {
-      setRedFields(["genres"])
-      throw new Error("Must have selected between 2 and 5 genres.")
-    }
+    // if (genres.length < 2 || genres.length > 5) {
+    //   setRedFields(["genres"])
+    //   throw new Error("Must have selected between 2 and 5 genres.")
+    // }
 
     let priceError = false
     let signs = price.match(/[$]/g)
@@ -289,7 +289,7 @@ export default function NewClassForm(props) {
         onChangeText={setDescription}
       />
 
-      <DropDownPicker
+      {/* <DropDownPicker
         style={[styles.picker, {
           borderColor: redFields.includes("genres") ? "red" : undefined,
         }]}
@@ -307,11 +307,11 @@ export default function NewClassForm(props) {
         onChangeItem={array => setGenres(array)}
         onOpen={() => setDropDown(true)}
         onClose={() => setDropDown(false)}
-      />
+      /> */}
 
       {/* in order to give some space for the drop down menu */}
       <View style={{
-        height: dropDown ? 150 : 0,
+        // height: dropDown ? 150 : 0,
       }} />
 
       <CustomSelectButton
@@ -350,13 +350,11 @@ export default function NewClassForm(props) {
           setErrorMsg("")
           setSuccessMsg("")
 
-          console.log("img down here: " + img)
-
 
           try {
-            validate()
+            // validate()
 
-            let form = format({ instructor, name, img, description, genres, type, gym_id, price })
+            let form = format({ name, img, description, type, gym_id, price })
 
             const classObj = new Class()
             classObj.create(form)  

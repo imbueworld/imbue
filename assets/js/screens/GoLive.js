@@ -130,6 +130,7 @@ export default function GoLive(props) {
   const base = "rtmp://global-live.mux.com:5222/app/"
 
   const toggleStream = async () => {
+    console.log("pressed")
     const stream = cache("streamRef").get()
     const isStreaming = cache("isStreaming").get()
 
@@ -137,22 +138,24 @@ export default function GoLive(props) {
       stream.stop()
       cache("isStreaming").set(false)
       return
-    }
+    } 
 
-    const partnerObj = new User()
+    const partnerObj = new User() 
     await partnerObj.createLivestream({ gymId }) // Will not create livestream, if it already has been
     const { stream_key } = await partnerObj.retrieveUser()
+    console.log("stream_key: " + stream_key)
     setStreamKey(stream_key)
 
     stream.start()
     cache("isStreaming").set(true)
+
   }
 
-
+  console.log("link: " + `${base}${streamKey}`)
 
   return (
     <>
-      <LivestreamLayout
+      <LivestreamLayout 
         user={user}
         gymId={gymId}
         buttonOptions={{
@@ -175,7 +178,7 @@ export default function GoLive(props) {
         zIndex: -100,
       }}>
         {
-        (hasAllPermissions || hasAllPermissionsiOS) &&
+          (hasAllPermissions || hasAllPermissionsiOS) &&
           <NodeCameraView
             style={{
               width: "100%",

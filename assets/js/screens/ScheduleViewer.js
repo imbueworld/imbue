@@ -46,6 +46,8 @@ export default function ScheduleViewer(props) {
 
       const classes = new ClassesCollection()
 
+      console.log("classes: ", JSON.stringify(classes))
+
       // Determine which classes to display:
       // based on the provided gymId or classIds
       let classData
@@ -66,9 +68,13 @@ export default function ScheduleViewer(props) {
           name,
         } = await gym.retrieveGym(gymId)
 
+        console.log("gymId: ", gymId)
+
         classData = (await classes
           .retrieveWhere('gym_id', 'in', [ gymId ])
         ).map(it => it.getFormatted())
+
+        console.log("classData: ", classData)
 
         setTitle(name)
         setSubtitle('Schedule')
@@ -156,7 +162,7 @@ export default function ScheduleViewer(props) {
             width: "100%",
             ...FONTS.body,
             textAlign: "center",
-            fontSize: 30,
+            fontSize: 18,
           }}>{subtitle}</Text> : null}
           </View>
 
