@@ -27,8 +27,8 @@ const { Reports } = require('./src/Reports');
 
 
 
-const MUX_TOKEN_ID = '8b5f439c-8af3-474d-be34-c3abb998a61d'
-const MUX_TOKEN_SECRET = 'dqQMXZj4QVR/KgextSw/ALpJXmAd/kNEmKzEENhjy82mDsC6vAPgAeOfgbsCQcKydZK8u1YXJHd'
+const MUX_TOKEN_ID = '801aa96e-5814-4c01-a0e8-94119fdf59df'
+const MUX_TOKEN_SECRET = 'VAMH9mVP7GKlcqo+YHgym3gXoUu2w8043RHNpQSFDWMIfU8RtaZ2l9RNOLAjkPo400Y5WklQbJ9'
 
 const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 
@@ -140,7 +140,7 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
     xhr.open(
       "POST",
       "https://api.mux.com/video/v1/live-streams",
-      true, MUX_TOKEN_ID, MUX_TOKEN_SECRET)
+      true, MUX_TOKEN_ID, MUX_TOKEN_SECRET) 
     xhr.setRequestHeader("Content-Type", "application/json")
     xhr.send(JSON.stringify({ 
       "playback_policy": ["public"],
@@ -158,13 +158,13 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
  */
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
-  await admin.firestore().collection('stripe_customers').doc(user.uid).set({
+  await admin.firestore().collection('stripe_customers').doc(user.uid).set({ 
     customer_id: customer.id,
   }); 
 
   const defaultIcon = "default-icon.png"
 
-  await admin
+  await admin 
     .firestore("users")
     .doc(user.uid)
     .set({
@@ -490,8 +490,6 @@ exports.createGymProduct = functions.https.onCall(async (data, context) => {
 exports.addPaymentMethod = functions.https.onCall(async (data, context) => {
   // Authentication / user information is automatically added to the request.
   const uid = context.auth.uid
-
-  console.log("Form data: ", data)
 
   const customerData =
     (await admin

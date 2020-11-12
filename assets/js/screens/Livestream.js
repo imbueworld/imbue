@@ -9,10 +9,8 @@ import config from '../../../App.config'
 
 
 function getPlaybackLink(playbackId) {
-  return `https://stream.mux.com/${playbackId}.m3u8`
+  return `https://stream.mux.com/${playbackId}.m3u8` 
 }
-
-
 
 // (m3u8, webm, mp4) are guarantted to work with <Video />
 export default function Livestream(props) {
@@ -21,23 +19,26 @@ export default function Livestream(props) {
   const [user, setUser] = useState(null)
   const [playbackLink, setPlaybackLink] = useState(null)
 
-  if (config.DEBUG) console.log('playbackLink', playbackLink) // DEBUG
-
   useEffect(() => {
     const init = async () => {
       const user = new User()
 
       const gym = new Gym()
+
       const { playback_id } = await gym.retrieveGym(gymId)
 
       setUser(await user.retrieveUser())
       setPlaybackLink(getPlaybackLink(playback_id))
+      console.log('playbackLink: ', playbackLink) // DEBUG
+
+
     }; init()
   }, [])
 
 
 
   if (!user) return <View />
+
 
   return (
     <>
@@ -47,14 +48,14 @@ export default function Livestream(props) {
     />
 
     {   playbackLink
-      ? <Video 
-        style={styles.video}
-        source={{ uri: playbackLink }}
-        onBuffer={() => { console.log("Buffering video...") }}
-        onError={() => { console.log("Error on video!") }}
-        paused={false}
-        resizeMode={"contain"}
-        // repeat={true}
+      ? <Video   
+          style={styles.video} 
+          source={{ uri: playbackLink }} 
+          onBuffer={() => { console.log("Buffering video...") }}
+          onError={() => { console.log("Error on video!") }}
+          paused={false}
+          resizeMode={"contain"}
+          // repeat={true}
       />
       : null}
     </>

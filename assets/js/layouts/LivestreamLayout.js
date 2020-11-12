@@ -22,7 +22,6 @@ import Icon from '../components/Icon'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
-
 const layoutOptions = {
   viewerCount: {
     show: true,
@@ -134,8 +133,7 @@ export default function LivestreamLayout(props) {
       //     cache("livestream/chat").set(messages)
       //   }
       // })
-      console.log("gymId: " + gymId)
-      console.log("chatNode: " + chatNodeRef)
+
       chatNodeRef.limitToLast(1).on('child_added', snap => {
         const message = snap.val()
 
@@ -441,22 +439,24 @@ export default function LivestreamLayout(props) {
           {buttonOptions.leaveLivestream.show
           ? <CancelButton
               title="Leave Workout"
-              onLongPress={() => navigation.goBack()}
+              onLongPress={() => navigation.goBack()} 
             />
           : null}
 
           { buttonOptions.goLive.show
           ? <GoLiveButton
               title={buttonOptions.goLive.state === "streaming" ? "End Livestream" : "Go Live"}
-              onPress={() => {
+                onPress={() => {
                 switch(buttonOptions.goLive.state) {
                   case "streaming":
                     buttonOptions.goLive.state = "idle"
                     buttonOptions.goBack.show = true
+                    console.log("streaming")
                     break
                   case "idle":
                     buttonOptions.goLive.state = "streaming"
                     buttonOptions.goBack.show = false
+                    console.log("idle")
                     break
                 }
                 refresh(r => r + 1)

@@ -326,7 +326,7 @@ export default function ClassDescription(props) {
                       time_id: timeId,
                     } = classDoc
 
-                    const user = new User()
+                    const user = new User() 
                     await user.purchaseClass({
                       paymentMethodId,
                       classId,

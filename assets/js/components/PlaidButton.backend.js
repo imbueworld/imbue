@@ -3,7 +3,7 @@ import functions from '@react-native-firebase/functions'
 
 
 export const getPlaidLinkToken = async () => {
-  const getPlaidLinkToken = functions().httpsCallable('getPlaidLinkToken')
+  const getPlaidLinkToken = functions().httpsCallable('getPlaidLinkToken') 
   return ( await getPlaidLinkToken() ).data
 }
  
@@ -11,6 +11,7 @@ export const getPlaidLinkToken = async () => {
  * @see https://plaid.com/docs/link/react-native/#onsuccess
  */
 export const initOnPlaidLinkSuccess = (onError) => {
+  console.log("hiiiii")
   const onSuccess = async ({ public_token, metadata }) => {
     let { accounts } = metadata || {}
     let { id: plaid_account_id } = accounts[ 0 ] // Gets first account
