@@ -126,7 +126,7 @@ export default function PartnerGymSettings(props) {
           } catch(err) {
             if (config.DEBUG) console.error(err.message)
             if (!errorMsg) {
-              setErrorMsg('Something prevented the action.')
+              setErrorMsg('Something prevented the action.') 
               return
             }
             setErrorMsg(errorMsg)
@@ -137,7 +137,7 @@ export default function PartnerGymSettings(props) {
       {/* {errorMsg
         ? null
         : <Text style={{ color: "green", flex: 1 }}>{successMsg}</Text>}  */}
-      <CustomButton
+      {/* <CustomButton
         icon={
           <Icon
             source={require("../components/img/png/my-classes-2.png")}
@@ -147,7 +147,7 @@ export default function PartnerGymSettings(props) {
         onPress={() => props.navigation.navigate(
           "PartnerUpdateClasses"
         )}
-      />
+      /> */}
       <CustomButton
         icon={
           <Icon
@@ -169,13 +169,13 @@ export default function PartnerGymSettings(props) {
           "PartnerRevenueInfo"
         )}
       />
-      <CustomButton
+      {/* <CustomButton
         title='Mindbody Integration'
         onPress={() => {
           const pushAction = StackActions.push('MindbodyActivation')
           navigation.dispatch(pushAction)
         }}
-      />
+      /> */}
     </ProfileLayout>
   )
 }

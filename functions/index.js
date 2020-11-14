@@ -3,8 +3,6 @@
 const algoliasearch = require('algoliasearch')
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 const functions = require('firebase-functions')
-// import * as firebase from 'firebase';
-// import 'firebase/firestore';
 const admin = require('firebase-admin')
 admin.initializeApp()
 // const { Logging } = require('@google-cloud/logging');
@@ -27,8 +25,8 @@ const { Reports } = require('./src/Reports');
 
 
 
-const MUX_TOKEN_ID = '801aa96e-5814-4c01-a0e8-94119fdf59df'
-const MUX_TOKEN_SECRET = 'VAMH9mVP7GKlcqo+YHgym3gXoUu2w8043RHNpQSFDWMIfU8RtaZ2l9RNOLAjkPo400Y5WklQbJ9'
+const MUX_TOKEN_ID = '05740547-eebb-4dbb-8700-992348a991d7'
+const MUX_TOKEN_SECRET = 's+OyrbAFv79Nv1pYSzKyHXIZDr/v8PTjLblxb35PDcJk2ktaX3ZHVlwTetWwZUcB76q3bHUtzqe'
 
 const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 
@@ -36,8 +34,9 @@ const ALGOLIA_ID = 'O50JZXNYWV'
 const ALGOLIA_SEARCH_KEY = '2300b356761715188aa0242530b512d9'
 const ALGOLIA_ADMIN_KEY = '11abb122276b5eed15a3a0119b53622a'
 
-const ALGOLIA_GYM_INDEX = 'gyms'
+const ALGOLIA_GYM_INDEX = 'partners'
 const algoliaClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
+
 
 
 const users = admin.firestore().collection('users')
@@ -140,9 +139,9 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
     xhr.open(
       "POST",
       "https://api.mux.com/video/v1/live-streams",
-      true, MUX_TOKEN_ID, MUX_TOKEN_SECRET) 
+      true, MUX_TOKEN_ID, MUX_TOKEN_SECRET)
     xhr.setRequestHeader("Content-Type", "application/json")
-    xhr.send(JSON.stringify({ 
+    xhr.send(JSON.stringify({
       "playback_policy": ["public"],
       "new_asset_settings": {
         "playback_policy": ["public"]
@@ -158,13 +157,13 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
  */
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
-  await admin.firestore().collection('stripe_customers').doc(user.uid).set({ 
+  await admin.firestore().collection('stripe_customers').doc(user.uid).set({
     customer_id: customer.id,
-  }); 
+  });
 
   const defaultIcon = "default-icon.png"
 
-  await admin 
+  await admin
     .firestore("users")
     .doc(user.uid)
     .set({
@@ -312,29 +311,30 @@ exports.retrieveStripeAccount = functions.https.onCall(async (data, context) => 
 /**
  * Sets the [id] field inside of the document to that of doc's actual id, for ease of access
  */
-exports.populateGym = functions.firestore
+
+  exports.populateGym = functions.firestore
   .document('gyms/{gymId}')
   .onCreate(async (snap, context) => {
     snap.ref.set({ id: snap.id }, { merge: true })
 
     // Enabling Algolia-provided search service
-    const gym = snap.data()
-    gym.id = snap.id
-    gym.objectID = snap.id
+    // const gym = snap.data()
+    // gym.id = snap.id
+    // gym.objectID = snap.id
 
-    // Saving index
-    const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
-    return index.saveObject(gym)
+    // // Saving index
+    // const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
+    // return index.saveObject(gym)
   })
 
-exports.cleanUpAfterGym = functions.firestore
+  exports.cleanUpAfterGym = functions.firestore
   .document('gyms/{gymId}')
   .onDelete(async (snap, context) => {
     const { id: gymId } = snap
 
     // Delete Algolia search index
-    const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
-    return index.deleteObject(gymId)
+    // const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
+    // return index.deleteObject(gymId)
   })
 
 exports.updateGym = functions.firestore
@@ -343,13 +343,13 @@ exports.updateGym = functions.firestore
     const { id: gymId } = snap.after
 
     // Update Algolia search index
-    const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
-    return index.partialUpdateObject({
-      ...snap.after.data(),
-      objectID: gymId,
-    }, {
-      createIfNotExists: true,
-    })
+    // const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
+    // return index.partialUpdateObject({
+    //   ...snap.after.data(),
+    //   objectID: gymId,
+    // }, {
+    //   createIfNotExists: true,
+    // })
   })
 
 /**
@@ -377,6 +377,14 @@ exports.populatePartners = functions.firestore
   .document('partners/{partnerId}')
   .onCreate(async (snap, context) => {
     snap.ref.set({ id: snap.id }, { merge: true })
+    // Enabling Algolia-provided search service
+    const partner = snap.data()
+    partner.id = snap.id
+    partner.objectID = snap.id
+
+    // // Saving index
+    const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)
+    return index.saveObject(partner)
   })
 
 /**
@@ -491,6 +499,8 @@ exports.addPaymentMethod = functions.https.onCall(async (data, context) => {
   // Authentication / user information is automatically added to the request.
   const uid = context.auth.uid
 
+  console.log("Form data: ", data)
+
   const customerData =
     (await admin
       .firestore()
@@ -534,7 +544,7 @@ exports.addPaymentMethod = functions.https.onCall(async (data, context) => {
  * One Time Class Purchase
  * Used to charge a known (added) user's credit card.
  */
-exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, context) => {
+exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, context) => { 
   const { auth: { uid } } = context
   const {
     paymentMethodId,

@@ -82,7 +82,7 @@ export default function PartnerUpdateMemberships(props) {
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
-      <View style={styles.row}>
+      {/* <View style={styles.row}>
         <Text style={styles.label}>
             In Studio Membership
         </Text>
@@ -99,7 +99,7 @@ export default function PartnerUpdateMemberships(props) {
             setPriceStudio(text)
           }}
         />  
-      </View>
+      </View> */}
 
       <View style={styles.row}>
         <Text style={styles.label}>

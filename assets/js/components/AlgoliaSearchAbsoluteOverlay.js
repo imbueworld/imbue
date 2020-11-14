@@ -23,7 +23,7 @@ export default function AlgoliaSearchAbsoluteOverlay(props) {
       ...containerStyle,
     }}>
       <View style={{  }}>
-        <AlgoliaSearchBar
+        <AlgoliaSearchBar 
           containerStyle={{
             marginHorizontal: 10,
             marginVertical: 5,
@@ -38,7 +38,7 @@ export default function AlgoliaSearchAbsoluteOverlay(props) {
         />
       </View>
 
-      <AlgoliaSearchResultsTab
+      <AlgoliaSearchResultsTab 
         open={resultPanelIsOpen}
         containerStyle={{ margin: 10 }}
         cardContainerStyle={{ margin: 10 }}

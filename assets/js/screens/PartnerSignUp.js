@@ -118,6 +118,22 @@ export default function PartnerSignUp(props) {
           : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
         <View>
+        <SocialLogin
+          containerStyle={{
+            marginTop: 20,
+            marginBottom: 10,
+            marginHorizontal: 20,
+          }}
+          onAuthChange={() => {
+            const pushAction = StackActions.push("Boot")
+            props.navigation.dispatch(pushAction)
+          }}
+          onError={err => {
+            // setErrorMsg(err.message)
+            // setErrorMsg(`${err.code}  |  ${err.message}`)
+            setErrorMsg('Something prevented the action.')
+          }}
+        />
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("first") ? "red" : undefined,

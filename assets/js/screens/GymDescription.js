@@ -118,7 +118,7 @@ export default function GymDescription(props) {
         style={{
           marginBottom: 0,
         }}
-        title="Visit Classes"
+        title="Classes"
         onPress={openClassesSchedule}
         Icon={
           <Icon

@@ -9,7 +9,7 @@ import algoliasearch from 'algoliasearch'
 
 const ALGOLIA_ID = 'O50JZXNYWV'
 const ALGOLIA_SEARCH_KEY = '2300b356761715188aa0242530b512d9'
-const ALGOLIA_GYM_INDEX = 'gyms' 
+const ALGOLIA_GYM_INDEX = 'partners' 
 
 
 
@@ -132,12 +132,12 @@ export async function publicStorage(fileName, forcePull=false) {
 
 
 /**
- * Searches gyms with Algolia search service.
+ * Searches partners with Algolia search service.
  * 
  * @param {String} query
  */
 export async function algoliaSearch(query) {
   const client = algoliasearch(ALGOLIA_ID, ALGOLIA_SEARCH_KEY)
-  const index = client.initIndex(ALGOLIA_GYM_INDEX)
+  const index = client.initIndex(ALGOLIA_GYM_INDEX) 
   return await index.search(query)
 }

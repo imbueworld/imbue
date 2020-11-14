@@ -17,12 +17,12 @@ export default function AlgoliaSearchResultsCard(props) {
   } = props
 
   const {
-    icon_uri: gymIconUri,
-    genres,
-    formatted_address,
-    description,
-    name,
-    id: gymId,
+    icon_uri: partnerIconUri,
+    // genres,
+    // formatted_address,
+    // description,
+    first,
+    id: partnerId,
   } = props.data
 
   const {
@@ -38,14 +38,14 @@ export default function AlgoliaSearchResultsCard(props) {
     const init = async () => {
       let promises = []
 
-      promises.push(publicStorage(gymIconUri))
+      promises.push(publicStorage(partnerIconUri))
 
       const res = await Promise.all(promises)
       setIconUri(res[ 0 ])
     }; init()
   }, [])
 
-
+  console.log("iconUri: " + iconUri)
 
   return (
     <View style={{
@@ -58,7 +58,7 @@ export default function AlgoliaSearchResultsCard(props) {
       <TouchableHighlight
         underlayColor='#00000012'
         style={{ height: '100%' }}
-        onPress={() => navigation.navigate('GymDescription', { gymId })}
+        onPress={() => navigation.navigate('GymDescription', { partnerId })}
       >
         <>
 
@@ -81,17 +81,17 @@ export default function AlgoliaSearchResultsCard(props) {
               padding: 5,
             }}>
               <Text numberOfLines={1} style={styles.title}>{ name }</Text>
-              <GymGenres data={genres} />
-              <Text numberOfLines={1} style={styles.body}>{ formatted_address }</Text>
+              {/* <GymGenres data={genres} /> */}
+              {/* <Text numberOfLines={1} style={styles.body}>{ formatted_address }</Text> */}
             </View>
           </View>
 
           <View>
-            <Text numberOfLines={2} style={{
+            {/* <Text numberOfLines={2} style={{
               paddingHorizontal: 15,
               paddingVertical: 5,
               ...styles.body,
-            }}>{ description }</Text>
+            }}>{ description }</Text> */}
           </View>
 
         </>
