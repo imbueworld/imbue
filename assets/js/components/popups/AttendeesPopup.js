@@ -49,9 +49,9 @@ s
       attendees.forEach(client => {
         promises.push(publicStorage(client.icon_uri))
       })
-      // Last icon will always be default-icon.png,
+      // Last icon will always be default-icon.jpg,
       // for use with the placeholder / "Your future client" below
-      promises.push(publicStorage("default-icon.png"))
+      promises.push(publicStorage("default-icon.jpg"))
       let iconUris = await Promise.all(promises)
       setIconUris(iconUris)
       const processedAttendees = attendees.map((client, idx) => {

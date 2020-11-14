@@ -179,7 +179,7 @@ export default function SignUp(props) {
               })
 
 
-              await user.addToWaitlist(email, referrerToken)
+              // await user.addToWaitlist(email, referrerToken)
 
               setSuccessMsg("You've been signed up!")
 

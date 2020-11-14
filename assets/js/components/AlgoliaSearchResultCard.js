@@ -49,7 +49,7 @@ export default function AlgoliaSearchResultsCard(props) {
 
   return (
     <View style={{
-      height: cardIconLength * 1.5,
+      height: cardIconLength * 1,
       backgroundColor: colors.bg,
       borderRadius: 15,
       overflow: 'hidden',
@@ -70,7 +70,8 @@ export default function AlgoliaSearchResultsCard(props) {
               containerStyle={{
                 width: cardIconLength,
                 height: cardIconLength,
-                borderRadius: 15,
+                borderRadius: 15
+                ,
                 overflow: 'hidden',
               }}
               source={{ uri: iconUri }}
@@ -81,18 +82,23 @@ export default function AlgoliaSearchResultsCard(props) {
               padding: 5,
             }}>
               <Text numberOfLines={1} style={styles.title}>{ name }</Text>
-              <GymGenres data={genres} />
-              <Text numberOfLines={1} style={styles.body}>{ formatted_address }</Text>
+              {/* <GymGenres data={genres} /> */}
+              <Text numberOfLines={2} style={{
+              paddingHorizontal: 15,
+              paddingVertical: 5,
+              ...styles.body,
+            }}>{ description }</Text>
+              {/* <Text numberOfLines={1} style={styles.body}>{ formatted_address }</Text> */}
             </View>
           </View>
 
-          <View>
+          {/* <View>
             <Text numberOfLines={2} style={{
               paddingHorizontal: 15,
               paddingVertical: 5,
               ...styles.body,
             }}>{ description }</Text>
-          </View>
+          </View> */}
 
         </>
       </TouchableHighlight>
@@ -105,6 +111,7 @@ const styles = StyleSheet.create({
     ...FONTS.title,
     fontSize: 20,
     marginBottom: 5,
+    marginLeft: 15,
   },
   body: {
     ...FONTS.body,

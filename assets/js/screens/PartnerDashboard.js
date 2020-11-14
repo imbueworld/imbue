@@ -35,7 +35,7 @@ export default function PartnerDashboard(props) {
         },
       }}
     >
-      <CustomButton
+      <CustomButton 
         icon={
           <Icon
             source={require("../components/img/png/livestream.png")}
@@ -86,7 +86,7 @@ export default function PartnerDashboard(props) {
         onPress={() => props.navigation.navigate(
           "ProfileSettings")}
       />
-      <CustomButton
+      {/* <CustomButton
         icon={
           <Icon
             source={require("../components/img/png/gym-settings.png")}
@@ -97,7 +97,7 @@ export default function PartnerDashboard(props) {
           props.navigation.navigate(
             "PartnerGymSettings")
         }}
-      />
+      /> */}
 
     </ProfileLayout>
   )
