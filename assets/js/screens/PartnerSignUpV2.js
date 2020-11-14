@@ -9,6 +9,8 @@ import functions from '@react-native-firebase/functions'
 import { useNavigation } from '@react-navigation/native'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
+import SocialLogin from '../components/SocialLogin'
+
 
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from '../components/AppBackground'
@@ -188,7 +190,9 @@ export default function PartnerSignUpV2(props) {
         }
       </FormStatusMessage>
 
+
       <View>
+    
         {/* Personal details */}
         <CustomTextInputV2
           containerStyle={styles.inputField}

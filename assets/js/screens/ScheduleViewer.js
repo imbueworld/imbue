@@ -5,6 +5,7 @@ import AppBackground from "../components/AppBackground"
 
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
+import Icon from '../components/Icon'
 
 import {
   dateStringFromTimestamp,
@@ -12,10 +13,11 @@ import {
 import {
   filterUserClasses,
 } from '../backend/HelperFunctions'
-import { FONTS } from '../contexts/Styles'
-import { colors } from '../contexts/Colors'
+import { FONTS } from '../contexts/Styles' 
+import { colors, simpleShadow } from '../contexts/Colors'
 import CustomCapsule from '../components/CustomCapsule'
 import GoBackButton from '../components/buttons/GoBackButton'
+import CustomButton from "../components/CustomButton"
 import PlusButton from '../components/buttons/PlusButton'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
@@ -31,6 +33,9 @@ export default function ScheduleViewer(props) {
 
   const [calendarData, setCalendarData] = useState(null)
   const [dataIsFormatted, setDataIsFormatted] = useState(false)
+
+  const [openDropdown, setOpenDropdown] = useState(false)
+  const [btnSelection, setBtnSelection] = useState("createClass")
 
   const [slctdDate, setSlctdDate] = useState(dateStringFromTimestamp(Date.now()))
 
@@ -109,7 +114,6 @@ export default function ScheduleViewer(props) {
   }, [calendarData])
 
 
-
   if (!user || !dataIsFormatted) return <View />
 
   return (
@@ -123,7 +127,7 @@ export default function ScheduleViewer(props) {
           borderTopRightRadius: 0,
           paddingTop: 0,
           marginTop: 40,
-          marginBottom: 20,
+          marginBottom: 0,
         }}
         innerContainerStyle={{
           paddingHorizontal: 0,
@@ -147,7 +151,6 @@ export default function ScheduleViewer(props) {
               height: 48,
             }}
           />
-
           <View style={{
             position: "absolute",
           }}>
@@ -165,22 +168,54 @@ export default function ScheduleViewer(props) {
             fontSize: 18,
           }}>{subtitle}</Text> : null}
           </View>
-
+        {/*           
           {user.account_type === "partner" ?
-          <PlusButton
-            containerStyle={{
-              position: "absolute",
-              right: 15,
-            }}
-            imageContainerStyle={{
-              width: 48,
-              height: 48,
-            }}
-            onPress={() => props.navigation.navigate(
-              "SchedulePopulate")}
-          /> : null}
+            // {/* 
+            //   <PlusButton
+            //       containerStyle={{
+            //         position: "absolute",
+            //         right: 15,
+            //       }}
+            //       imageContainerStyle={{
+            //         width: 48,
+            //         height: 48,
+            //       }}
+            //       onPress={() => props.navigation.navigate(
+            //         "SchedulePopulate")} 
+            //   >
+           : null} */}
         </View>
       </CustomCapsule>
+
+      {user.account_type === "partner" ?
+        <View style={styles.capsule }>
+              <CustomButton
+                icon={
+                  <Icon
+                    source={require("../components/img/png/my-classes-2.png")}
+                  />
+                }
+                style = {{marginBottom: 0}}
+                title="Create Class"
+                onPress={() => props.navigation.navigate(
+                  "PartnerUpdateClasses"
+                )}
+              />
+              <CustomButton
+                icon={
+                  <Icon
+                    source={require("../components/img/png/my-classes-2.png")}
+                  />
+                }
+                title="Schedule Class"
+                onPress={() => props.navigation.navigate(
+                  "SchedulePopulate"
+                )}
+              />
+            </View>
+          : null}
+      
+
 
       <View style={styles.capsule}>
         <View style={styles.innerCapsule}>
@@ -200,7 +235,6 @@ export default function ScheduleViewer(props) {
             data={calendarData}
             dateString={slctdDate}
           />
-
         </View>
       </View>
 
@@ -211,6 +245,10 @@ export default function ScheduleViewer(props) {
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
+  },
+  capsule: {
+    paddingRight: 10,
+    paddingLeft: 10
   },
   innerCapsule: {
     width: "100%",
@@ -229,4 +267,33 @@ const styles = StyleSheet.create({
   classListContainer: {
     marginTop: 10,
   },
+  picker: {
+    width: 110,
+    height: 72,
+    marginVertical: 10,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    // borderColor: colors.gray,
+    borderColor: colors.buttonFill,
+    backgroundColor: "#333",
+    color: "#f9f9f9"
+
+  },
+  pickerDropDown: {
+    ...simpleShadow,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+
+  },
+  pickerItem: {
+    paddingHorizontal: 20,
+
+  },
+  pickerLabel: {
+    textAlign: "center",
+    color: "#f9f9f9"
+
+  }
 })

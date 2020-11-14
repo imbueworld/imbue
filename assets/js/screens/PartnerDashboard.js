@@ -47,6 +47,17 @@ export default function PartnerDashboard(props) {
             "GoLive")
         }}
       />
+       <CustomButton
+        icon={
+          <Icon
+            source={require("../components/img/png/my-classes-2.png")}
+          />
+        }
+        title="Create Class"
+        onPress={() => props.navigation.navigate(
+          "PartnerUpdateClasses"
+        )}
+      />
       {/* <CustomButton
         title="Livestream Settings"
         onPress={() => {props.navigation.navigate(
