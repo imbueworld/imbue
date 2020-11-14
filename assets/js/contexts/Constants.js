@@ -1,9 +1,9 @@
 export const DEFAULT_ICON_URLS = [
-    "https://storage.googleapis.com/spring-ranger-281214.appspot.com/default-icon.png",
+    "https://storage.googleapis.com/spring-ranger-281214.appspot.com/default-icon.jpg",
 ]
 
 export const DEFAULT_ICONS = [
-    "default-icon.png",
+    "default-icon.jpg",
 ]
 
 export const STORAGE = {

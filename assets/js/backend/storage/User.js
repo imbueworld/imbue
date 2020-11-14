@@ -84,7 +84,7 @@ export default class User extends DataObject {
     const {
       first = '',
       last = '',
-      icon_uri='default-icon.png',
+      icon_uri='default-icon.jpg',
       icon_uri_foreign='',
       // For user:  These three should always be present as Arrays
       active_classes=[],
@@ -153,12 +153,12 @@ export default class User extends DataObject {
       let account_type, uid, icon_uri_foreign
   
       if (!options) {
-        // Manual sign up
+        // Manual sign up 
         account_type = type
         
         let user
         try {
-          user = await auth().createUserWithEmailAndPassword(email, password)
+          user = await auth().createUserWithEmailAndPassword(email, password) 
         } catch {
           return 'Email is taken.'
         }
@@ -181,7 +181,7 @@ export default class User extends DataObject {
           email = user.email
           icon_uri_foreign = user.photoURL
         } else {
-          let names = ['No', 'Name']
+          let names = ['Example', 'Name']
           first = names[ 0 ]
           last = names.slice(1).join(' ')
           email = user.email
@@ -213,7 +213,7 @@ export default class User extends DataObject {
         first,
         last,
         email,
-        icon_uri: 'default-icon.png',
+        icon_uri: 'default-icon.jpg',
         icon_uri_foreign,
       })
   

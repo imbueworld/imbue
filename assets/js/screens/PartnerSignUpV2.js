@@ -121,19 +121,21 @@ export default function PartnerSignUpV2(props) {
       ...USER
     } = form
 
-    console.log("name: " + form.first + form.last)
 
     // Create user
     const partner = new User()
     let errMsg = await partner.create({
-      ...USER,
+      ...USER, 
+      first: form.first,
+      last: form.last,
+      name: form.first + " " + form.last,
       password,
-      type: 'partner',
+      type: 'partner', 
     })
 
 
     if (errMsg) {
-      setSubmitError(errMsg)
+      setSubmitError(errMsg) 
       return
     }
 
@@ -154,12 +156,12 @@ export default function PartnerSignUpV2(props) {
     // Create gym
     const gym = new Gym
     await gym.create({
+      // name: form.company_name,
       name: form.first + " " + form.last,
       description: gym_description,
       partner_id: partner.uid,
     })
 
-    console.log('The new gym:', gym.uid)
 
     partner.mergeItems({
       associated_gyms: [gym.uid],

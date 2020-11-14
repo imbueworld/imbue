@@ -162,7 +162,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
     customer_id: customer.id,
   }); 
 
-  const defaultIcon = "default-icon.png"
+  const defaultIcon = "default-icon.jpg"
 
   await admin 
     .firestore("users")
@@ -320,7 +320,7 @@ exports.populateGym = functions.firestore
     // Enabling Algolia-provided search service
     const gym = snap.data()
     gym.id = snap.id
-    gym.objectID = snap.id
+    gym.objectID = snap.id 
 
     // Saving index
     const index = algoliaClient.initIndex(ALGOLIA_GYM_INDEX)

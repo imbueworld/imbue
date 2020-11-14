@@ -106,7 +106,7 @@ export default function UserDashboard(props) {
     <>
     <AlgoliaSearchAbsoluteOverlay style={{ position: 'absolute', top: 300 }}/>
 
-    <ImbueMap style={styles.map} />
+    {/* <ImbueMap style={styles.map} /> */}
 
     {
     !user ? null :

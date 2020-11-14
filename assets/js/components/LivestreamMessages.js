@@ -149,7 +149,7 @@ export default function LivestreamMessages(props) {
     )
   }
 
-  const Messages = sortedChat.map(({ name = "Anonymous", message, uid, timestamp, icon_uri = "default-icon.png" }) =>
+  const Messages = sortedChat.map(({ name = "Anonymous", message, uid, timestamp, icon_uri = "default-icon.jpg" }) =>
     <Message
       containerStyle={
         uid === user.id

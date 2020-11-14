@@ -29,34 +29,34 @@ export default function Boot(props) {
     const { account_type } = await user.retrieveUser()
     
 
-    // Waitlist stuff:
-    // Determine whether to let in or not
-    switch (account_type) {
-      case "user":
-        const { waitlist_threshhold, current_priority } = await user.retrieveWaitlistStatus()
+    // // Waitlist stuff:
+    // // Determine whether to let in or not
+    // switch (account_type) {
+    //   case "user":
+    //     const { waitlist_threshhold, current_priority } = await user.retrieveWaitlistStatus()
 
-        // If user's waitlist current priority falls below the cutoff,
-        // Redirect to a screen that tells them that they're still gonna have to wait
-        if (current_priority > waitlist_threshhold) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: 'Waitlist' }],
-          })
-          return // Do not continue
-        }
-      case "partner":
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "PartnerDashboard" }],
-        })
-        break
-      default:
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Landing' }],
-        })
-        break
-    }
+    //     // If user's waitlist current priority falls below the cutoff,
+    //     // Redirect to a screen that tells them that they're still gonna have to wait
+    //     if (current_priority > waitlist_threshhold) {
+    //       navigation.reset({
+    //         index: 0,
+    //         routes: [{ name: 'Waitlist' }],
+    //       })
+    //       return // Do not continue
+    //     }
+    //   case "partner":
+    //     navigation.reset({
+    //       index: 0,
+    //       routes: [{ name: "PartnerDashboard" }],
+    //     })
+    //     break
+    //   default:
+    //     navigation.reset({
+    //       index: 0,
+    //       routes: [{ name: 'Landing' }],
+    //     })
+    //     break
+    // }
     
 
     switch (account_type) {
@@ -110,7 +110,7 @@ export default function Boot(props) {
     height: "100%",
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: colors.bgIcon,
+    backgroundColor: colors.bg,
   }}/>
 
   return (

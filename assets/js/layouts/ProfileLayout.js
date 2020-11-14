@@ -33,6 +33,7 @@ export default function ProfileLayout(props) {
     const init = async () => {
       const user = new User() 
       setUser(await user.retrieveUser())
+      console.log("user: ", user.name)
     }; init()
   }, [])
 
@@ -204,8 +205,8 @@ export default function ProfileLayout(props) {
           <Text
             style={styles.profileName}
             numberOfLines={1}
-          >
-            {user.name}
+            >
+            {user.name} 
           </Text>
 
           {props.children}
