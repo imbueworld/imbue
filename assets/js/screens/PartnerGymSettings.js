@@ -74,9 +74,9 @@ export default function PartnerGymSettings(props) {
       innerContainerStyle={{
         paddingBottom: 10,
       }}
-    >
+    > 
      
-      <CustomTextInputV2
+       {/* <CustomTextInputV2
         containerStyle={styles.input}
         red={redFields.includes('name')}
         placeholder="Gym Name"
@@ -132,7 +132,7 @@ export default function PartnerGymSettings(props) {
             setErrorMsg(errorMsg)
           }
         }}
-      />
+      /> */}
 
       {/* {errorMsg
         ? null
@@ -148,6 +148,7 @@ export default function PartnerGymSettings(props) {
           "PartnerUpdateClasses"
         )}
       /> */}
+        
       <CustomButton
         icon={
           <Icon

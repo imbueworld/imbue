@@ -109,14 +109,19 @@ export default function PartnerSignUpV2(props) {
 
     setSubmitError('')
 
+
     // Separate between core user data and other type of data,
     // and data that is to be adjusted/formatted in a sec
     let {
+      first,
+      last,
       password,
       confirm_password,
       gym_description,
       ...USER
     } = form
+
+    console.log("name: " + form.first + form.last)
 
     // Create user
     const partner = new User()
@@ -125,6 +130,7 @@ export default function PartnerSignUpV2(props) {
       password,
       type: 'partner',
     })
+
 
     if (errMsg) {
       setSubmitError(errMsg)
@@ -148,12 +154,12 @@ export default function PartnerSignUpV2(props) {
     // Create gym
     const gym = new Gym
     await gym.create({
-      name: form.company_name,
+      name: form.first + " " + form.last,
       description: gym_description,
       partner_id: partner.uid,
     })
 
-    if (config.DEBUG) console.log('The new gym:', gym.uid)
+    console.log('The new gym:', gym.uid)
 
     partner.mergeItems({
       associated_gyms: [gym.uid],
@@ -245,7 +251,7 @@ export default function PartnerSignUpV2(props) {
         {/* ================ */}
         <CustomButton
           style={styles.signUpButton}
-          title='Sign Up'
+          title='Sign Up' 
           onPress={handleSubmit(onSubmit)}
         />
       </View>

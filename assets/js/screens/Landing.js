@@ -71,7 +71,7 @@ export default function Landing(props) {
                         marginTop: 20,
                         marginBottom: 0,
                     }}
-                    title="influencer/trainer"
+                    title="influencer"
                     onPress={partnerHome}
                 />
             </CustomCapsule>
