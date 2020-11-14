@@ -10,23 +10,24 @@ export default function AlgoliaSearchResultsTab(props) {
   const {
     containerStyle={},
     cardContainerStyle={},
-    data: partners,
+    data: gyms,
     open=true,
   } = props
   const { window: { height } } = useDimensions()
 
 
+
   if (!open) return <View />
 
-  const ResultCards = partners.map(partner => {
-    // if (partner.hidden_on_map) return
-    // Skip ones that don't have certain fields
-    // if (!partner.first || !partner.formatted_address) return
+  const ResultCards = gyms.map(gym => {
+    // if (gym.hidden_on_map) return
+    // // Skip ones that don't have certain fields
+    // if (!gym.name || !gym.formatted_address) return
 
     return (
       <AlgoliaSearchResultsCard
-        key={partner.id}
-        data={partners}
+        key={gym.id}
+        data={gym}
         containerStyle={cardContainerStyle}
       />
     )

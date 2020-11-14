@@ -9,7 +9,7 @@ import algoliasearch from 'algoliasearch'
 
 const ALGOLIA_ID = 'O50JZXNYWV'
 const ALGOLIA_SEARCH_KEY = '2300b356761715188aa0242530b512d9'
-const ALGOLIA_GYM_INDEX = 'partners' 
+const ALGOLIA_GYM_INDEX = 'gyms' 
 
 
 
