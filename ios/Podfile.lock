@@ -443,7 +443,7 @@ PODS:
   - OpenSSL-Universal/Static (1.0.2.20)
   - Permission-Camera (2.2.2):
     - RNPermissions
-  - Plaid (2.0.5)
+  - Plaid (2.0.6)
   - PromisesObjC (1.2.11)
   - RCTRequired (0.63.3)
   - RCTTypeSafety (0.63.3):
@@ -642,8 +642,8 @@ PODS:
   - react-native-nodemediaclient/RCTNodeMediaClient (0.2.13):
     - NodeMediaClient (= 2.8.7)
     - React
-  - react-native-plaid-link-sdk (6.0.3-rc2):
-    - Plaid (~> 2.0.5)
+  - react-native-plaid-link-sdk (6.0.3):
+    - Plaid (~> 2.0.6)
     - React
   - react-native-safe-area-context (3.1.8):
     - React-Core
@@ -718,26 +718,26 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.10):
     - React
-  - RNFBApp (8.4.6):
+  - RNFBApp (8.4.7):
     - Firebase/CoreOnly (~> 6.34.0)
     - React-Core
-  - RNFBAuth (9.3.1):
+  - RNFBAuth (9.3.2):
     - Firebase/Auth (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBDatabase (7.5.12):
+  - RNFBDatabase (7.5.13):
     - Firebase/Database (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBFirestore (7.8.7):
+  - RNFBFirestore (7.9.1):
     - Firebase/Firestore (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBFunctions (7.4.9):
+  - RNFBFunctions (7.4.10):
     - Firebase/Functions (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (7.4.10):
+  - RNFBStorage (7.4.11):
     - Firebase/Storage (~> 6.34.0)
     - React-Core
     - RNFBApp
@@ -1031,7 +1031,7 @@ SPEC CHECKSUMS:
   NodeMediaClient: c52ef6564764c364b5032d1d8d1f255d5e4aadb0
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   Permission-Camera: 375576c57ea625c88137d2cc52ba6dfeb21db036
-  Plaid: 717e2d5beebb461da2e4cc0e3eb8bcc81c1c3477
+  Plaid: 38b4f18a23a6038146c10bc210e767c4379d622a
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047
   RCTTypeSafety: edf4b618033c2f1c5b7bc3d90d8e085ed95ba2ab
@@ -1049,7 +1049,7 @@ SPEC CHECKSUMS:
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-network-info: d1290ffc0bd0709e11436f5b8d7f605dcc5c4530
   react-native-nodemediaclient: 824e5b6b0e46325e97e08bdb5058ae0f72e575fa
-  react-native-plaid-link-sdk: 1d1e2fc2f65716f0bb99c3f3a8f05f0b1545f8aa
+  react-native-plaid-link-sdk: f0d53ac8b2969fda2578e6cca58da34d11f714b3
   react-native-safe-area-context: 01158a92c300895d79dee447e980672dc3fb85a6
   react-native-video: aa527b0acb37f94c4491e70df0274cb26979405d
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
@@ -1065,12 +1065,12 @@ SPEC CHECKSUMS:
   RNAppleAuthentication: 46cbc67739bae83ca229497f9b0038f3f5431443
   RNCAsyncStorage: cb9a623793918c6699586281f0b51cbc38f046f9
   RNCMaskedView: f5c7d14d6847b7b44853f7acb6284c1da30a3459
-  RNFBApp: 7eacc7da7ab19f96c05e434017d44a9f09410da8
-  RNFBAuth: 552aa1fe908c433e12a59ed167a7c2695efa19e7
-  RNFBDatabase: 48efe9b32cbaa6f18d958112c842cd1601527f8f
-  RNFBFirestore: 09a65d56413b9e11ab550f5f7e27106312c5fb7e
-  RNFBFunctions: 20074a771ec269cbf0b0170265087bb1f78d4e30
-  RNFBStorage: 02246c1b6d3ea79fad3e91d278c094dc9c61662c
+  RNFBApp: 804b98033f45c3a3e35b56de8c894f85ef5e4388
+  RNFBAuth: 4cfe4dabd91775346ee41f0bde60262e827033c5
+  RNFBDatabase: 3da203db04cb0b16664d1e6102fe3169d6a2fe44
+  RNFBFirestore: 3fe90c352fdbbff5a822c43f571cf8d9fdf38029
+  RNFBFunctions: e6338d738828fb03f0c33242fc69ea6e584ed1c1
+  RNFBStorage: 70f4fd4eaf43de4563498fc97c8479cb12ffdf60
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNGoogleSignin: ccf71ee4b6cfd324fd788a41e457e2043838c0d9
   RNPermissions: 067727df624665d4a6c8e2cffcc172ba608b96ed
@@ -1083,4 +1083,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: dbd9e7376e72e2fbb60f940a5269d409367b1315
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0
