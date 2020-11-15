@@ -17,7 +17,7 @@ export default function AlgoliaSearchResultsCard(props) {
   } = props
 
   const {
-    icon_uri: gymIconUri,
+    image_uri: gymIconUri, 
     genres,
     formatted_address,
     description,
@@ -46,6 +46,7 @@ export default function AlgoliaSearchResultsCard(props) {
   }, [])
 
 
+  console.log("iconUri: " + iconUri)
 
   return (
     <View style={{

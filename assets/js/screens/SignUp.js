@@ -144,13 +144,13 @@ export default function SignUp(props) {
           value={passwordConfirm}
           onChangeText={setPasswordConfirm}
         />
-
+{/* 
         <CustomTextInputV2
           containerStyle={styles.input}
           placeholder='Referral Token (optional)'
           value={referrerToken}
           onChangeText={setReferrerToken}
-        />
+        /> */}
 
         <CustomButton
           style={{
