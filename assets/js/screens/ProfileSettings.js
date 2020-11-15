@@ -30,8 +30,10 @@ export default function ProfileSettings(props) {
   useEffect(() => {
     const init = async () => {
       const user = new User()
-      const userDoc = await user.retrieveUser()
+      const userDoc = await user.retrieveUser() 
       setUser(userDoc)
+      // console.log("user (this): " + JSON.stringify(user))
+      console.log("user.account_type: " + user.account_type)
       setIsForeignUser( userDoc.icon_uri_foreign ? true : false )
     }; init()
   }, [])
@@ -65,7 +67,8 @@ export default function ProfileSettings(props) {
   const [emailField, setEmailField] = useState("")
   const [passwordField, setPasswordField] = useState("")
   //
-  const [dob, setDob] = useState('')
+  const [dob, setDob] = useState("")
+  console.log("dob (state): ", dob)
 
   const { register, handleSubmit, setValue, errors } = useForm()
 
@@ -120,7 +123,7 @@ export default function ProfileSettings(props) {
           || 'SSN last 4 should only consist of numbers.'
       },
     })
-    register('password', rules)
+    // register('password', rules)
   }, [register])
 
   // Personal type of data, for partner accounts
@@ -167,15 +170,18 @@ export default function ProfileSettings(props) {
 
     let redFields = []
 
-    let {
-      dob,
-    } = reactNativeForm
+    // let {
+    //   dob,
+    // } = reactNativeForm
+    console.log("dob (this below): ", dob)
+
 
     if (firstNameField.length === 0) redFields.push("first")
     if (lastNameField.length === 0) redFields.push("last")
     if (emailField.length === 0) redFields.push("email")
-    if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
+    // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
     if (dob.split('-').length != 3) redFields.push('dob')
+
 
     if (redFields.length) {
       setRedFields(redFields)
@@ -186,7 +192,7 @@ export default function ProfileSettings(props) {
     const DateMoment = moment(dob, 'MM-DD-YYYY')
 
     try {
-      if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
+      // if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
       let updatables = {
         dob: {
           day: DateMoment.date(),
@@ -251,6 +257,7 @@ export default function ProfileSettings(props) {
       tax_id,
       ssn_last_4,
     } = reactNativeForm
+
 
     if (firstNameField.length === 0) redFields.push("first")
     if (lastNameField.length === 0) redFields.push("last")
@@ -402,6 +409,12 @@ export default function ProfileSettings(props) {
     }
   }
 
+  const handleDOB = () => {
+    {user.account_type == 'partner'
+          ? updateSafeInfoForPartner() 
+          : updateSafeInfoForUser()
+        }
+  }
 
 
   if (!user || isForeignUser === undefined) return <View />
@@ -417,8 +430,6 @@ export default function ProfileSettings(props) {
         },
       }}
     >
-        
-
       {changing === "safeInfo"
         ? <CustomButton
           style={styles.button}
@@ -473,7 +484,8 @@ export default function ProfileSettings(props) {
             // keyboardType='numeric'
             placeholder='Date of Birth (MM-DD-YYYY)'
             value={dob}
-            onChangeText={setDob}
+            // onChangeText={(text) => console.log("text: ", text)}
+            onChangeText={setDob} 
           />
 
           {user.account_type == 'partner' && <>
@@ -562,7 +574,7 @@ export default function ProfileSettings(props) {
           </>
         : null}
 
-      {changing === "password"
+      {/* {changing === "password"
         ? <>
           
           <CustomTextInput
@@ -584,10 +596,10 @@ export default function ProfileSettings(props) {
             onChangeText={setChangePasswordFieldConfirm}
           />
         </>
-        : null}
+        : null} */}
 
 
-      {!isForeignUser &&
+      {/* {!isForeignUser &&
       <CustomTextInput
         containerStyle={{
           borderColor: redFields.includes("main_password")
@@ -600,7 +612,7 @@ export default function ProfileSettings(props) {
           setPasswordField(text)
           setValue('password', text)
         }}
-      />}
+      />} */}
       {/* <CustomTextInput
         placeholder="Confirm Password"
         value={confPasswordField}
@@ -610,12 +622,18 @@ export default function ProfileSettings(props) {
       <CustomButton
         style={styles.button}
         title="Save"
+        onPress={handleDOB}
+      />
+
+    {/* <CustomButton
+        style={styles.button}
+        title="Save"
         onPress={changing == 'safeInfo'
           ? user.account_type == 'partner'
               ? handleSubmit(updateSafeInfoForPartner)
               : handleSubmit(updateSafeInfoForUser)
           : () => updatePassword()}
-      />
+      /> */}
     </ProfileLayout>
   )
 }
