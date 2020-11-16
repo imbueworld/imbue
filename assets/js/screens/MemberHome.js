@@ -48,7 +48,8 @@ export default function MemberHome(props) {
                         color: colors.gray,
                         textAlign: "center",
                         fontSize: 18,
-                 }}>member</Text>
+                        ...FONTS.body
+                 }}>Member</Text>
                 <CustomButton
                     style={{
                         marginTop: 20,

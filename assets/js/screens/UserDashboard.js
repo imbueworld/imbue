@@ -1,5 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, View, Animated, TouchableHighlight, BackHandler } from 'react-native'
+import React, { useState, useEffect, useRef, Component } from 'react'
+import { StyleSheet, View, Animated, TouchableHighlight, BackHandler, Text } from 'react-native'
 
 import { useDimensions } from '@react-native-community/hooks'
 
@@ -18,7 +18,7 @@ import User from '../backend/storage/User'
 import cache from '../backend/storage/cache'
 import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay'
 import config from '../../../App.config'
-import ImbueMap from '../components/ImbueMap'
+// import ImbueMap from '../components/ImbueMap'
 
 
 
@@ -232,16 +232,16 @@ const styles = StyleSheet.create({
     position: "absolute",
     zIndex: 100,
   },
-  map: {
-    position:'absolute',
-    // top:0,
-    // left:0,
-    // right:0,
-    // bottom:0,
-    width: '100%',
-    height: '100%',
-    zIndex: -100,
-  },
+  // map: {
+  //   position:'absolute',
+  //   // top:0,
+  //   // left:0,
+  //   // right:0,
+  //   // bottom:0,
+  //   width: '100%',
+  //   height: '100%',
+  //   zIndex: -100,
+  // },
   badgeContainer: {
     width: "100%",
     marginBottom: 40,
