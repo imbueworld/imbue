@@ -8,7 +8,6 @@ import CustomButton from "../components/CustomButton"
 
 import auth from "@react-native-firebase/auth"
 import firestore from '@react-native-firebase/firestore'
-import Icon from '../components/Icon'
 import moment from 'moment'
 import { handleAuthError } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
@@ -417,8 +416,6 @@ export default function ProfileSettings(props) {
         },
       }}
     >
-        
-
       {changing === "safeInfo"
         ? <CustomButton
           style={styles.button}
@@ -477,27 +474,6 @@ export default function ProfileSettings(props) {
           />
 
           {user.account_type == 'partner' && <>
-          <CustomButton
-              icon={
-                <Icon
-                  source={require("../components/img/png/user-memberships.png")}
-                />
-              }
-              title="Update Memberships"
-              onPress={() => props.navigation.navigate(
-                "PartnerUpdateMemberships")}
-          />
-          <CustomButton
-              icon={
-                <Icon
-                  source={require("../components/img/png/ellipsis.png")}
-                /> 
-              }
-              title='Revenue Information'
-              onPress={() => props.navigation.navigate(
-                "PartnerRevenueInfo"
-              )}
-            />
           <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('address')}
@@ -564,7 +540,6 @@ export default function ProfileSettings(props) {
 
       {changing === "password"
         ? <>
-          
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("change_password")
