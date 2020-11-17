@@ -31,7 +31,7 @@ const config = {
       ...FONTS.body,
       color: colors.accent,
       fontSize: 16,
-    },
+    }
   },
 }
 

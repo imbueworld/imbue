@@ -28,7 +28,7 @@ export default function AlgoliaSearchAbsoluteOverlay(props) {
             marginHorizontal: 10,
             marginVertical: 5,
             backgroundColor: colors.bg,
-            marginTop: 160,
+            marginTop: 140,
           }}
           onX={() => setResultPanelIsOpen(false)}
           onSearchResult={({ hits }) => {
