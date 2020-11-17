@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { StyleSheet, View, Animated, TouchableHighlight, BackHandler } from 'react-native'
-
+import { SafeAreaView, StyleSheet, View, Animated, TouchableHighlight, BackHandler, FlatList, TouchableOpacity, Text, Image } from 'react-native'
+import firestore from '@react-native-firebase/firestore';
+import { publicStorage } from '../backend/BackendFunctions'
 import { useDimensions } from '@react-native-community/hooks'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 
@@ -19,7 +21,9 @@ import cache from '../backend/storage/cache'
 import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay'
 import config from '../../../App.config'
 import ImbueMap from '../components/ImbueMap'
-
+import { create } from 'react-test-renderer';
+import { FONTS } from "../contexts/Styles"
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 export default function UserDashboard(props) {
@@ -29,18 +33,55 @@ export default function UserDashboard(props) {
 
   const { width, height } = useDimensions().window
   const slidingAnim = useRef(new Animated.Value(-1 * width - 25)).current
+  const cardIconLength = width / 4
 
   const [user, setUser] = useState(null)
+  const [featuredPartners, setFeaturedPartners] = useState([])
+  const [partners, setPartners] = useState([])
+  const [gyms, setGyms] = useState([])
+  const [classes, setClasses] = useState([])
 
   useEffect(() => {
     const init = async () => {
-      const user = new User()
+        const user = new User()
       setUser(await user.retrieveUser())
-
       // This acts as a prefetch for when user eventually navs to ScheduleViewer
-      user.retrieveClasses()
+      user.retrieveClasses() 
+      console.log("user.retrieveClasses(): " + JSON.stringify(user.retrieveClasses()))
+
+      // retrieving all partners
+      const partnersCollection = firestore()
+        .collection('partners')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            // converting icon_uris to download urls
+            perfectFeaturedPartnersList(documentSnapshot.data())
+          });
+        });
+      
+      // retrieving all gyms
+      const gymsCollection = firestore()
+        .collection('gyms')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+              setGyms(prevArray => [...prevArray, documentSnapshot.data()])
+          });
+        });
+
     }; init()
   }, [])
+
+  // Reset states
+  useEffect(() => {
+    const init = async () => {
+      setFeaturedPartners([])
+      setGyms([])
+      setPartners([])
+    }; init()
+  }, [])
+
 
   /**
    * Some logic to control Native Back Button
@@ -78,6 +119,21 @@ export default function UserDashboard(props) {
     BackHandler.addEventListener('hardwareBackPress', onBack)
   }, [expanded])
 
+  // does all asyncronous work on list so Flatlist can load data directly
+  const perfectFeaturedPartnersList = async(data) => {
+    let promises = []
+    promises.push(publicStorage(data.icon_uri))
+    const res =  await Promise.all(promises)
+    var profileImg = res[0]
+    data.icon_uri = profileImg
+
+    //splitting partners into featured 
+    if (data.featured === true) {
+      setFeaturedPartners(prevArray => [...prevArray, data])
+    } 
+    setPartners(prevArray => [...prevArray, data])
+  }
+
   function sidePanelSlideIn() {
     Animated.timing(slidingAnim, {
       toValue: -1 * width - 25, // -25 to hide the added side in <ProfileLayout /> as well
@@ -100,19 +156,111 @@ export default function UserDashboard(props) {
     else sidePanelSlideIn()
   }, [expanded])
 
+  // render each card
+  const Item = ({ description, item, onPress }) => (
+    <TouchableOpacity onPress={onPress} style={{ flex:1, backgroundColor: "#242429", borderRadius: 20, padding: 10, marginLeft: 5, marginRight: 5}}>
+        <Icon
+            containerStyle={{
+              width: cardIconLength,
+              height: cardIconLength,
+              borderRadius: 50,
+              overflow: 'hidden',
+            }}
+            source={{ uri: item.icon_uri }}
+          />
+      <Text style={{ color: "#F9F9F9", textAlign: "center", ...FONTS.cardTitle, paddingTop: 5  }}>{item.first}</Text>
+      <Text style={{ color: "#F9F9F9", textAlign: "center", ...FONTS.cardBody, paddingTop: 5 }}>{description}</Text>
+    </TouchableOpacity>
+  );
+
+
+  const renderItem = ({ item }) => {
+    const gymId = item.associated_gyms
+    var description = ""
+    var img = ""
+    gyms.map((data) => {
+      {
+        data.id === gymId[0] ?
+        description = data.description
+        : (null)
+      }
+    })
+    return (
+      <Item
+        // img={img}
+        description={description}
+        item={item}
+        onPress={(item) => navigation.navigate('GymDescription', gymId)}
+        style={{ backgroundColor: "#333", borderRadius: 30 }}
+      />
+    );
+  };
 
 
   return (
-    <>
-    <AlgoliaSearchAbsoluteOverlay style={{ position: 'absolute', top: 300 }}/>
+    <SafeAreaView style={{flex: 1}}>
+    <KeyboardAwareScrollView
+      showsVerticalScrollIndicator={false}
+      contentContainerStyle={styles.scrollView}
+      keyboardShouldPersistTaps='handled'
+        // alwaysBounceVertical={false} 
+    >
+    <AlgoliaSearchAbsoluteOverlay style={{ position: 'absolute', top: 200 }}/>
 
     {/* <ImbueMap style={styles.map} /> */}
+
+        {/* upcoming classes */}
+        {classes.length ?
+        (<View style={styles.cardContainer}>
+          <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>upcoming classes</Text>
+          <FlatList
+            horizontal
+            data={partners}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            style={{}}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+        ) : (
+          <View style={{ top: 200, height: 80, marginLeft: 10, marginRight: 10, marginTop: 30, marginBottom: 30 }}>
+              <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>upcoming classes</Text>
+              <Text style={{ ...FONTS.subtitle, textAlign: "center" }}>you have no upcoming classes. Book some now</Text>
+          </View>
+          )}
+        
+
+      {/* featured partners */}
+      <View style={styles.cardContainer}>
+        <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>featured</Text>
+        <FlatList
+          horizontal
+          data={featuredPartners}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          style={{}}
+          showsHorizontalScrollIndicator={false}
+          />
+      </View>
+
+      {/* all partners */}
+      <View style={styles.cardContainer}>
+        <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>all influencers</Text>
+        <FlatList
+          horizontal
+          data={partners}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          style={{}}
+          showsHorizontalScrollIndicator={false}
+          />
+      </View>
 
     {
     !user ? null :
     expanded ? null :
       <View style={{
-        marginTop: 50,
+        marginTop: 30,
         marginLeft: 15,
         position: "absolute",
         zIndex: 0,
@@ -211,13 +359,15 @@ export default function UserDashboard(props) {
 
       </ProfileLayout>
           </Animated.View>}
-      </>
-     
+      </KeyboardAwareScrollView>
+      </SafeAreaView>
   )
-    
 }
 
 const styles = StyleSheet.create({
+  scrollView: {
+    height: "120%",
+  },
   container: {
     // minHeight: "100%", // This breaks sidePanel within <Anmimated.View>; minHeight does not synergize well with child position: "absolute" 's ? ; Unless it's used for ScrollView containerStyle?
     // flex: 1,
@@ -247,4 +397,7 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     bottom: 0,
   },
+  cardContainer: {
+    top: 200, height: 220, marginLeft: 10, marginRight: 10, marginTop: 30
+  }
 })

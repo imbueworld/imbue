@@ -31,4 +31,17 @@ export const FONTS = {
     fontFamily: 'PlayfairDisplay-Regular',
     fontWeight: '400',
   },
+  heading: {
+    fontFamily: 'PlayfairDisplay-Regular',
+    fontWeight: '900',
+    fontSize: 20,
+  },
+  cardTitle: {
+    fontFamily: 'PlayfairDisplay-Black',
+    fontSize: 12,
+  },
+  cardBody: {
+    fontFamily: 'PlayfairDisplay-Regular',
+    fontSize: 10,
+  },
 }

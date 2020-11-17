@@ -102,11 +102,6 @@ exports.connectPlaidAccountToStripeSeller = functions.https.onCall(async (data, 
     plaid_account_id,
   } = data
 
-  console.log("yoooooooooooo")
-  console.log("yoooooooooooo")
-  console.log("yoooooooooooo")
-  console.log("yoooooooooooo")
-
 
   // Retrieve partner's Stripe Connect Account ID
   const { stripe_account_id } = ( await partners.doc(uid).get() ).data()
