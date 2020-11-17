@@ -7,7 +7,6 @@ import Gym from '../backend/storage/Gym'
 import config from '../../../App.config'
 
 
-
 function getPlaybackLink(playbackId) {
   return `https://stream.mux.com/${playbackId}.m3u8` 
 }
@@ -18,6 +17,8 @@ export default function Livestream(props) {
 
   const [user, setUser] = useState(null)
   const [playbackLink, setPlaybackLink] = useState(null)
+
+  if (config.DEBUG) console.log('playbackLink', playbackLink)
 
   useEffect(() => {
     const init = async () => {
@@ -55,7 +56,7 @@ export default function Livestream(props) {
           onError={() => { console.log("Error on video!") }}
           paused={false}
           resizeMode={"contain"}
-          // repeat={true}
+          repeat={true}
       />
       : null}
     </>

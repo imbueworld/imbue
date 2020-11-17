@@ -5,13 +5,13 @@ import AppBackground from '../components/AppBackground'
 
 
 
-export default function Waitlist(props) {
-  return (
-    <KeyboardAwareScrollView
-      keyboardShouldPersistTaps='handled'
-      contentContainerStyle={{ minHeight: '100%' }}
-    >
-      <AppBackground />
-    </KeyboardAwareScrollView>
-  )
-}
+// export default function Waitlist(props) {
+//   return (
+//     <KeyboardAwareScrollView
+//       keyboardShouldPersistTaps='handled'
+//       contentContainerStyle={{ minHeight: '100%' }}
+//     >
+//       <AppBackground />
+//     </KeyboardAwareScrollView>
+//   )
+// }

@@ -68,7 +68,7 @@ const payout_functions = require('./src/functions/payout_functions')
 forward_exports(payout_functions)
 
 // waitlist_functions.js
-forward_exports(require('./src/functions/waitlist_functions'))
+// forward_exports(require('./src/functions/waitlist_functions'))
 
 // stripe_functions.js
 forward_exports(require('./src/functions/stripe_functions'))
