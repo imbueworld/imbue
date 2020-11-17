@@ -266,40 +266,40 @@ export default class User extends DataObject {
    * Signs the user up for waitlist, or returns relevant infomration
    * about their position in it.
    */
-  async addToWaitlist(email, referrerToken) {
-    await this.init()
-    const add = functions().httpsCallable('addUserToWaitlist')
-    const res = ( await add({ email, referrerToken }) ).data
-    // delete res.total_waiters_currently // Since this information is being saved, this field would soon become irrelevant/inaccurate
-    // await this._getWaitlistDbRef().set({
-    //   ...res,
-    //   referral_token: res.referral_link.split('=')[ 1 ],
-    // })
-    res.referral_token = res.referral_link.split('=')[ 1 ]
-    this._getCacheObj().ref('waitlist').set(res)
-    return res
-  }
+  // async addToWaitlist(email, referrerToken) {
+  //   await this.init()
+  //   const add = functions().httpsCallable('addUserToWaitlist')
+  //   const res = ( await add({ email, referrerToken }) ).data
+  //   // delete res.total_waiters_currently // Since this information is being saved, this field would soon become irrelevant/inaccurate
+  //   // await this._getWaitlistDbRef().set({
+  //   //   ...res,
+  //   //   referral_token: res.referral_link.split('=')[ 1 ],
+  //   // })
+  //   res.referral_token = res.referral_link.split('=')[ 1 ]
+  //   this._getCacheObj().ref('waitlist').set(res)
+  //   return res
+  // }
 
-  async retrieveWaitlistStatus() {
-    await this.init()
-    const retrieveStatus = functions().httpsCallable('addUserToWaitlist') // Works also as a status retrieval function/endpoint
-    let userStatus = this._getCacheObj().ref('waitlist').get()
+  // async retrieveWaitlistStatus() {
+  //   await this.init()
+  //   const retrieveStatus = functions().httpsCallable('addUserToWaitlist') // Works also as a status retrieval function/endpoint
+  //   let userStatus = this._getCacheObj().ref('waitlist').get()
 
-    if (!userStatus) {
-      const { email } = this.getAll()
+  //   if (!userStatus) {
+  //     const { email } = this.getAll()
 
-      userStatus = ( await retrieveStatus({ email }) ).data
-      userStatus.referral_token = userStatus.referral_link.split('=')[ 1 ]
-      userStatus.waitlist_threshhold = (
-        await firestore().collection('waitlist').doc('__GENERAL').get()
-      ).data().waitlist_threshhold
+  //     userStatus = ( await retrieveStatus({ email }) ).data
+  //     userStatus.referral_token = userStatus.referral_link.split('=')[ 1 ]
+  //     userStatus.waitlist_threshhold = (
+  //       await firestore().collection('waitlist').doc('__GENERAL').get()
+  //     ).data().waitlist_threshhold
       
-      // Cache it
-      this._getCacheObj().ref('waitlist').set(userStatus)
-    }
+  //     // Cache it
+  //     this._getCacheObj().ref('waitlist').set(userStatus)
+  //   }
 
-    return userStatus
-  }
+  //   return userStatus
+  // }
 
   /**
    * Main user data retrieval function
@@ -451,7 +451,7 @@ export default class User extends DataObject {
     cacheObj.set([...data, paymentMethod])
   }
 
-  /**
+    /**
    * One Time Class Purchase
    */
   async purchaseClass(details) {
@@ -936,9 +936,9 @@ export default class User extends DataObject {
       .collection('subscriptions')
   }
 
-  _getWaitlistDbRef() {
-    return firestore()
-      .collection('waitlist')
-      .doc(this.uid)
-  }
+  // _getWaitlistDbRef() {
+  //   return firestore()
+  //     .collection('waitlist')
+  //     .doc(this.uid)
+  // }
 }

@@ -31,7 +31,7 @@ import ClassDescription from './assets/js/screens/ClassDescription'
 import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
 import PasswordReset from './assets/js/screens/PasswordReset'
 import MindbodyActivation from './assets/js/screens/MindbodyActivation'
-import Waitlist from './assets/js/screens/Waitlist'
+// import Waitlist from './assets/js/screens/Waitlist'
 
 const Stack = createStackNavigator()
 
@@ -192,11 +192,11 @@ export default function App() {
           component={MindbodyActivation}
           initialParams={{}}
         />
-        <Stack.Screen
+        {/* <Stack.Screen
           name='Waitlist'
           component={Waitlist}
           initialParams={{}}
-        />
+        /> */}
         {/*
         <Stack.Screen
           name=''

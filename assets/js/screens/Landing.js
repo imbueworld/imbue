@@ -54,6 +54,7 @@ export default function Landing(props) {
                         color: colors.gray,
                         textAlign: "center",
                         fontSize: 18,
+                        ...FONTS.body
                         
             }}>I'm a:</Text>
 
