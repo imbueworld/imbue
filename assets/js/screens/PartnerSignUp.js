@@ -118,7 +118,7 @@ export default function PartnerSignUp(props) {
           : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
         <View>
-        <SocialLogin
+        {/* <SocialLogin
           containerStyle={{
             marginTop: 20,
             marginBottom: 10,
@@ -133,7 +133,7 @@ export default function PartnerSignUp(props) {
             // setErrorMsg(`${err.code}  |  ${err.message}`)
             setErrorMsg('Something prevented the action.')
           }}
-        />
+        /> */}
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("first") ? "red" : undefined,

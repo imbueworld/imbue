@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, TouchableHighlight } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from "../components/AppBackground"
 import CompanyLogo from "../components/CompanyLogo"
@@ -37,6 +37,7 @@ export default function LoginPartner(props) {
   }
      
   return (
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
     <KeyboardAwareScrollView
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"
@@ -110,7 +111,7 @@ export default function LoginPartner(props) {
         />
         <CustomButton
           style={{
-            marginBottom: 20,
+            marginBottom: 5,
           }}
           title="Login"
           onPress={async () => {
@@ -156,7 +157,8 @@ export default function LoginPartner(props) {
           }]}>Forgot Password</Text>
         </TouchableWithoutFeedback>
       </CustomCapsule>
-      </KeyboardAwareScrollView>
+     </KeyboardAwareScrollView> 
+      </SafeAreaView>
   )
 }
 const styles = StyleSheet.create({
@@ -169,10 +171,11 @@ const styles = StyleSheet.create({
     marginBottom: 30,
     alignSelf: "center",
     backgroundColor: "#F9F9F9",
+    marginTop: 60
   },
   sidePanelButtonContainer: {
     backgroundColor: "white",
-    marginTop: 40,
+    marginTop: 0,
     marginLeft: 10,
     position: "absolute",
     justifyContent: "center",

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
@@ -104,6 +104,8 @@ export default function GymDescription(props) {
   if (!gym) return <View />
 
   return (
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
+
     <GymLayout
       innerContainerStyle={{
         paddingBottom: 10,
@@ -235,6 +237,8 @@ export default function GymDescription(props) {
           data={gym}
         /> : null}
       </GymLayout>
+    </SafeAreaView>
+
   )
 }
 

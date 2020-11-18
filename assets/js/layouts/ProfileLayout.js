@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TouchableHighlight } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useNavigation } from '@react-navigation/native'
 import { FONTS } from '../contexts/Styles'
 
 import CustomCapsule from "../components/CustomCapsule"
-import { simpleShadow } from '../contexts/Colors'
+import { colors, simpleShadow } from '../contexts/Colors'
 import BackButton from '../components/BackButton' 
 import LogOutButton from '../components/buttons/LogOutButton'
 import AppBackground from '../components/AppBackground'
@@ -102,24 +102,15 @@ export default function ProfileLayout(props) {
 
   return (
     <>
-    <View style={{
-      width: "100%",
-      height: "100%",
-      position: "absolute",
-      left: 25,
-      backgroundColor: "#F9F9F9",
-      borderRadius: 40,
-    }}/>
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.scrollView}
-      keyboardShouldPersistTaps='handled'
-        // alwaysBounceVertical={false} 
+        contentContainerStyle={styles.scrollView}
+        keyboardShouldPersistTaps='handled'
     >
       <AppBackground />
 
       <View style={{
-        marginVertical: 50,
       }}>
         <Icon
           containerStyle={{
@@ -214,7 +205,8 @@ export default function ProfileLayout(props) {
         </CustomCapsule>
 
       </View>
-      </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
+        </SafeAreaView>
     </>
   )
 }
@@ -222,6 +214,7 @@ export default function ProfileLayout(props) {
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
+    backgroundColor: "#F9F9F9"
   },
   profileName: {
     // marginTop: 15,

@@ -788,7 +788,7 @@ DEPENDENCIES:
   - Google-Maps-iOS-Utils
   - GoogleMaps
   - Permission-Camera (from `../node_modules/react-native-permissions/ios/Camera.podspec`)
-  - Plaid (~> 2.0.1)
+  - Plaid (~> 2.0.6)
   - RCTRequired (from `../node_modules/react-native/Libraries/RCTRequired`)
   - RCTTypeSafety (from `../node_modules/react-native/Libraries/TypeSafety`)
   - React (from `../node_modules/react-native/`)
@@ -1081,6 +1081,6 @@ SPEC CHECKSUMS:
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: dbd9e7376e72e2fbb60f940a5269d409367b1315
+PODFILE CHECKSUM: 4ab00741881957f757ffb104d59af434ac763af9
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.9.3
