@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import {
-  StyleSheet, ScrollView, View, Image
+  StyleSheet, ScrollView, View, Image, SafeAreaView
 } from 'react-native'
 
+import { colors } from '../contexts/Colors'
 import AppBackground from "../components/AppBackground"
 import CustomCapsule from '../components/CustomCapsule'
 import GoToCalendarButton from '../components/buttons/GoToCalendarButton'
@@ -100,6 +101,8 @@ export default function GymLayout(props) {
   }
 
   return (
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
+
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
 
@@ -228,7 +231,9 @@ export default function GymLayout(props) {
       }}>
         {props.children}
       </View>
-    </ScrollView>
+      </ScrollView>
+      </SafeAreaView>
+
   )
 }
 
@@ -239,7 +244,7 @@ const styles = StyleSheet.create({
   },
   container: {
     width: "94%",
-    marginVertical: 30,
+    marginVertical: 10,
     alignSelf: "center",
   },
   innerContainer: {

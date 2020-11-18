@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import { useForm } from 'react-hook-form'
 import { FONTS } from '../contexts/Styles'
 import { colors } from '../contexts/Colors'
@@ -179,6 +179,7 @@ export default function PartnerSignUpV2(props) {
 
 
   return (
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
     <KeyboardAwareScrollView>
       <AppBackground />
       <CompanyLogo />
@@ -258,7 +259,9 @@ export default function PartnerSignUpV2(props) {
           onPress={handleSubmit(onSubmit)}
         />
       </View>
-    </KeyboardAwareScrollView>
+      </KeyboardAwareScrollView>
+    </SafeAreaView>
+
   )
 }
 
@@ -282,5 +285,6 @@ const styles = StyleSheet.create({
   },
   GoBackButton: {
     ...config.styles.GoBackButton_screenDefault,
+    top: 10
   },
 }) 

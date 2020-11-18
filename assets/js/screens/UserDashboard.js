@@ -23,6 +23,7 @@ import config from '../../../App.config'
 import ImbueMap from '../components/ImbueMap'
 import { create } from 'react-test-renderer';
 import { FONTS } from "../contexts/Styles"
+import { colors } from "../contexts/Colors"
 import { ScrollView } from 'react-native-gesture-handler';
 
 
@@ -43,11 +44,10 @@ export default function UserDashboard(props) {
 
   useEffect(() => {
     const init = async () => {
-        const user = new User()
+      const user = new User()
       setUser(await user.retrieveUser())
       // This acts as a prefetch for when user eventually navs to ScheduleViewer
-      user.retrieveClasses() 
-      console.log("user.retrieveClasses(): " + JSON.stringify(user.retrieveClasses()))
+      user.retrieveClasses()
 
       // retrieving all partners
       const partnersCollection = firestore()
@@ -66,7 +66,7 @@ export default function UserDashboard(props) {
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(documentSnapshot => {
-              setGyms(prevArray => [...prevArray, documentSnapshot.data()])
+            setGyms(prevArray => [...prevArray, documentSnapshot.data()])
           });
         });
 
@@ -120,17 +120,17 @@ export default function UserDashboard(props) {
   }, [expanded])
 
   // does all asyncronous work on list so Flatlist can load data directly
-  const perfectFeaturedPartnersList = async(data) => {
+  const perfectFeaturedPartnersList = async (data) => {
     let promises = []
     promises.push(publicStorage(data.icon_uri))
-    const res =  await Promise.all(promises)
+    const res = await Promise.all(promises)
     var profileImg = res[0]
     data.icon_uri = profileImg
 
     //splitting partners into featured 
     if (data.featured === true) {
       setFeaturedPartners(prevArray => [...prevArray, data])
-    } 
+    }
     setPartners(prevArray => [...prevArray, data])
   }
 
@@ -158,17 +158,17 @@ export default function UserDashboard(props) {
 
   // render each card
   const Item = ({ description, item, onPress }) => (
-    <TouchableOpacity onPress={onPress} style={{ flex:1, backgroundColor: "#242429", borderRadius: 20, padding: 10, marginLeft: 5, marginRight: 5}}>
-        <Icon
-            containerStyle={{
-              width: cardIconLength,
-              height: cardIconLength,
-              borderRadius: 50,
-              overflow: 'hidden',
-            }}
-            source={{ uri: item.icon_uri }}
-          />
-      <Text style={{ color: "#F9F9F9", textAlign: "center", ...FONTS.cardTitle, paddingTop: 5  }}>{item.first}</Text>
+    <TouchableOpacity onPress={onPress} style={{ flex: 1, backgroundColor: "#242429", borderRadius: 20, padding: 10, marginLeft: 5, marginRight: 5 }}>
+      <Icon
+        containerStyle={{
+          width: cardIconLength,
+          height: cardIconLength,
+          borderRadius: 50,
+          overflow: 'hidden',
+        }}
+        source={{ uri: item.icon_uri }}
+      />
+      <Text style={{ color: "#F9F9F9", textAlign: "center", ...FONTS.cardTitle, paddingTop: 5 }}>{item.first}</Text>
       <Text style={{ color: "#F9F9F9", textAlign: "center", ...FONTS.cardBody, paddingTop: 5 }}>{description}</Text>
     </TouchableOpacity>
   );
@@ -181,8 +181,8 @@ export default function UserDashboard(props) {
     gyms.map((data) => {
       {
         data.id === gymId[0] ?
-        description = data.description
-        : (null)
+          description = data.description
+          : (null)
       }
     })
     return (
@@ -198,7 +198,7 @@ export default function UserDashboard(props) {
 
 
   return (
-    <SafeAreaView style={{flex: 1}}>
+   <SafeAreaView  style={ (expanded==true) ? styles.sa2 : styles.sa1}>
     <KeyboardAwareScrollView
       showsVerticalScrollIndicator={false}
       contentContainerStyle={styles.scrollView}
@@ -368,6 +368,12 @@ const styles = StyleSheet.create({
   scrollView: {
     height: "120%",
   },
+  sa1: {
+    flex: 1
+  },
+  sa2: {
+    flex: 1, backgroundColor: colors.bg
+  },
   container: {
     // minHeight: "100%", // This breaks sidePanel within <Anmimated.View>; minHeight does not synergize well with child position: "absolute" 's ? ; Unless it's used for ScrollView containerStyle?
     // flex: 1,
@@ -381,6 +387,7 @@ const styles = StyleSheet.create({
     // minHeight: "100%",
     position: "absolute",
     zIndex: 100,
+    backgroundColor: "#F9F9F9"
   },
   // map: {
   //   position:'absolute',

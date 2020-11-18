@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native'
+import {SafeAreaView,  StyleSheet, ScrollView, Text, TouchableOpacity } from 'react-native'
 
 import { colors } from "../contexts/Colors"
 
@@ -81,7 +81,6 @@ const styles = StyleSheet.create({
     },
     GoBackButton: {
         ...config.styles.GoBackButton_screenDefault,
-
     },
     container: {
         width: "80%",

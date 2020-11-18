@@ -5,7 +5,7 @@ export const colors = {
 
     // bg: "#F9F9F9",
     bg: "#F9F9F9", // because the icon bg is this -- a slight adjustment
-    bgIcon: "#F7F7F7",
+    bgIcon: "#F7F7F7", 
     buttonFill: "#242426",
     buttonAccent: "#F9F9F9",
     darkButtonText: "#242426",

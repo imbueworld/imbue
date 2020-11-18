@@ -32,7 +32,7 @@ export default function PartnerHome(props) {
             <AppBackground />
             <CompanyLogo
                 containerStyle={{
-                    top: 0, 
+                    top: 10, 
                     position: "absolute",
                     alignSelf: "center",
                 }}
@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
     },
     GoBackButton: {
         ...config.styles.GoBackButton_screenDefault,
-
+        marginTop: 10
     },
     container: {
         width: "80%",
