@@ -4,6 +4,7 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import CustomButton from "../components/CustomButton"
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
+import firestore from '@react-native-firebase/firestore';
 
 import { colors } from '../contexts/Colors'
 import GymLayout from '../layouts/GymLayout'
@@ -17,13 +18,17 @@ import config from '../../../App.config'
 
 
 export default function GymDescription(props) {
-  const { gymId } = props.route.params
+  const gym  = props.route.params
+
+  const [gymId, setGymId] = useState('')
 
   const [r, refresh] = useState(0)
   const [errorMsg, setErrorMsg] = useState(null)
   const [successMsg, setSuccessMsg] = useState(null)
 
-  const [gym, setGym] = useState(null)
+  // const [gym, setGym] = useState('')
+  const [partnerInfo, setPartnerInfo] = useState(null)
+
   const [user, setUser] = useState(null)
 
   const [Genres, GenresCreate] = useState(null)
@@ -34,21 +39,31 @@ export default function GymDescription(props) {
 
   const [hasMembership, setHasMembership] = useState(null)
 
-  useEffect(() => {
-    const init = async () => {
-      const user = new User()
-      setUser(await user.retrieveUser())
+  // useEffect(() => {
+  //   const init = async () => {
+  //     const user = new User()
+  //     setUser(await user.retrieveUser())
+     
+  //     const gym = new Gym()
+  //     setGym(await gym.retrieveGym(gymId))
+  //     console.log("gym (description): ", gym)
+  //   }; init()
+  // }, [popup])
 
-      const gym = new Gym()
-      setGym(await gym.retrieveGym(gymId))
+  useEffect(() => {
+    console.log("gym.Id (useeffect): ", gym.id)
+    console.log("gym (useeffect): ", gym)
+    setGymId(gym.id)
+    const init = async () => {
+      const thisUser = new User()
+      setUser(await thisUser.retrieveUser())
     }; init()
-  }, [popup])
+  }, [])
 
   useEffect(() => {
-    if (!gym) return
-    if (!user) return
-
     const init = async () => {
+      if (!gym) return
+      if (!user) return
       const imbue = new Gym()
 
       const {
@@ -64,7 +79,9 @@ export default function GymDescription(props) {
       
       setHasMembership(hasMembership)
     }; init()
-  }, [gym, popup])
+  }, [user])
+
+
 
   useEffect(() => {
     if (!gym) return
@@ -93,28 +110,27 @@ export default function GymDescription(props) {
       </View>
     )
   }, [gym])
-
+ 
   function openClassesSchedule() {
+    console.log("gymId (gymDescription): ", gymId)
     props.navigation.navigate(
       "ScheduleViewer", { gymId })
   }
 
-
-
-  if (!gym) return <View />
+  // if (!gym) return <View />
 
   return (
     <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
 
     <GymLayout
       innerContainerStyle={{
-        paddingBottom: 10,
+        paddingBottom: 10
       }}
       data={gym}
     >
       {Name}
       {Genres}
-      {Desc}
+      {Desc} 
 
       <CustomButton
         style={{
@@ -127,7 +143,9 @@ export default function GymDescription(props) {
             source={require("../components/img/png/calendar.png")}
           />
         }
-      />
+        />
+        
+        
 
       {errorMsg
       ? <Text style={{ color: "red" }}>{errorMsg}</Text>
@@ -299,16 +317,18 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
   descContainer: {
-    marginTop: 10,
+    marginTop: 0,
+    textAlign: "center",
     paddingHorizontal: 15,
     paddingVertical: 10,
     borderRadius: 30,
-    borderWidth: 1,
-    borderColor: colors.gray,
+    marginBottom: 10
+    // borderWidth: 1,
+    // borderColor: colors.gray,
   },
   descText: {
     ...FONTS.body,
     fontSize: 16,
-    textAlign: "justify",
+    textAlign: "center",
   },
 })
