@@ -92,14 +92,14 @@ export default function Boot(props) {
       // Let the logo show for at least 200ms
       await new Promise(r => setTimeout(r, 200))
 
-      if (auth().currentUser) {
-        await bootWithUser()
-      } else {
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Landing' }],
-        })
-      }
+      // if (auth().currentUser) {
+      //   await bootWithUser()
+      // } else {
+      //   navigation.reset({
+      //     index: 0,
+      //     routes: [{ name: 'Landing' }],
+      //   })
+      // }
     }; init()
   }, [])
 
@@ -126,7 +126,7 @@ export default function Boot(props) {
             } else {
               navigation.reset({
                 index: 0,
-                routes: [{ name: " v" }]
+                routes: [{ name: "Landing" }]
               })
             }
           }}
@@ -143,9 +143,9 @@ export default function Boot(props) {
 
         <View style={{ height: 50 }} />
         <Button
-          title="Livestream (wUGdlSqTzNiaAR7VtkUy)" // wUGdlSqTzNiaAR7VtkUy // D4iONGuVmdWwx4zGk4BI
+          title="Livestream (h3Gj4YYpDhmlbXfRScm4)" // wUGdlSqTzNiaAR7VtkUy // D4iONGuVmdWwx4zGk4BI
           onPress={() => {
-            props.navigation.navigate("Livestream", { gymId: "wUGdlSqTzNiaAR7VtkUy" })
+            props.navigation.navigate("Livestream", { gymId: "h3Gj4YYpDhmlbXfRScm4" })
           }}
         />
 
