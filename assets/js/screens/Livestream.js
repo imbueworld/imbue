@@ -18,20 +18,17 @@ export default function Livestream(props) {
   const [user, setUser] = useState(null)
   const [playbackLink, setPlaybackLink] = useState(null)
 
-  if (config.DEBUG) console.log('playbackLink', playbackLink)
-
   useEffect(() => {
     const init = async () => {
       const user = new User()
 
+      setUser(await user.retrieveUser())
       const gym = new Gym()
 
       const { playback_id } = await gym.retrieveGym(gymId)
 
-      setUser(await user.retrieveUser())
       setPlaybackLink(getPlaybackLink(playback_id))
       console.log('playbackLink: ', playbackLink) // DEBUG
-
 
     }; init()
   }, [])
@@ -49,7 +46,8 @@ export default function Livestream(props) {
     />
 
     {   playbackLink
-      ? <Video   
+        ?
+        <Video   
           style={styles.video} 
           source={{ uri: playbackLink }} 
           onBuffer={() => { console.log("Buffering video...") }}
