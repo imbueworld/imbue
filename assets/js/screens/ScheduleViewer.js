@@ -45,6 +45,7 @@ export default function ScheduleViewer(props) {
   const [subtitle, setSubtitle] = useState("")
 
   useEffect(() => {
+    console.log("props.route.params ", props.route.params[0])
     const init = async () => {
       const user = new User()
       setUser(await user.retrieveUser())
@@ -113,6 +114,8 @@ export default function ScheduleViewer(props) {
     setDataIsFormatted(true)
   }, [calendarData])
 
+  console.log("gymId: (scheduleViewer): ", gymId)
+    console.log("classIds: (scheduleViewer): ", classIds)
 
   if (!user || !dataIsFormatted) return <View />
 

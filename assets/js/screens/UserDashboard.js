@@ -175,22 +175,23 @@ export default function UserDashboard(props) {
 
 
   const renderItem = ({ item }) => {
-    const gymId = item.associated_gyms
+    var gymId = item.associated_gyms
     var description = ""
-    var img = ""
+    var thisGym 
     gyms.map((data) => {
       {
         data.id === gymId[0] ?
-          description = data.description
+          (description = data.description,
+            thisGym = data)
           : (null)
       }
     })
     return (
-      <Item
+      <Item 
         // img={img}
         description={description}
         item={item}
-        onPress={(item) => navigation.navigate('GymDescription', gymId)}
+        onPress={() => navigation.navigate('GymDescription', thisGym)}
         style={{ backgroundColor: "#333", borderRadius: 30 }}
       />
     );

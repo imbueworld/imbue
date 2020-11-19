@@ -16,7 +16,7 @@ import GoToLivestreamButton from '../components/buttons/GoToLivestreamButton'
 import AttendeesPopup from '../components/popups/AttendeesPopup'
 import CustomButton from '../components/CustomButton'
 import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarButton'
-
+import { publicStorage } from '../backend/BackendFunctions'
 
 
 /**
@@ -27,11 +27,19 @@ import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarBu
  * .children 
  */
 export default function GymLayout(props) {
-  let gym = props.data
+  const gym = props.data
   let navigation = useNavigation()
 
   // const [buttonOptions, setButtonOptions] = useState(null)
   const [customState, setCustomState] = useState({}) // Used only internally, during the lifetime of this component
+  const [gymImage, setGymImage] = useState('')
+  
+
+  useEffect(() => {
+    const init = async () => {
+      getGymImage(gym)
+    }; init()
+  }, [])
 
   // useEffect(() => {
   const buttonOptions = {
@@ -100,6 +108,17 @@ export default function GymLayout(props) {
     }
   }
 
+  // Get image download url
+  const getGymImage = async (data) => {
+    let promises = []
+    promises.push(publicStorage(data.image_uri))
+    const res = await Promise.all(promises)
+    var profileImg = res[0]
+    setGymImage(profileImg) 
+  }
+
+  // console.log("gym.image_uri: ", getGymImage(gym.image_uri))
+
   return (
     <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
 
@@ -119,9 +138,9 @@ export default function GymLayout(props) {
         />
         : null}
       
-      <Image
-        style={styles.image}
-        source={{ uri: gym.image_uri }}>
+        <Image
+          style={styles.image}
+          source={{ uri: gymImage }}>
         </Image>
 
       {/* <ImageSlideshow
@@ -131,21 +150,13 @@ export default function GymLayout(props) {
         imageStyle={styles.image}
         imageInterval={5000}
         data={gym.image_uri}
-      /> */}
-        
+      />  */}
 
-      <Image
-        // containerStyle={{
-        //   zIndex: -100,
-        // }}
-        imageStyle={styles.image}
-        source={{uri: gym.image_uri}}
-      />
 
       {/* Back Button */}
       <View style={{
         position: "absolute",
-        top: 50,
+        top: 10,
         left: 15,
       }}>
         {buttonOptions.goBackButton.show
@@ -163,7 +174,7 @@ export default function GymLayout(props) {
         position: "absolute",
         // top: 7,
         // right: 7,
-        top: 50,
+        top: 0,
         right: 15,
         flexDirection: "row",
       }}>
@@ -251,9 +262,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   image: {
-    width: "100%",
     height: "100%",
+    marginLeft: 50,
+    marginRight: 50,
     height: 450,
+    resizeMode: 'contain'
     // borderRadius: 30,
     // borderBottomLeftRadius: 0,
     // borderBottomRightRadius: 0,
