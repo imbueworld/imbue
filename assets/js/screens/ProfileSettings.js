@@ -9,6 +9,7 @@ import CustomButton from "../components/CustomButton"
 import auth from "@react-native-firebase/auth"
 import firestore from '@react-native-firebase/firestore'
 import moment from 'moment'
+import { useNavigation } from '@react-navigation/native'
 import { handleAuthError } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
@@ -23,6 +24,7 @@ const p = console.log
 export default function ProfileSettings(props) {
   const [user, setUser] = useState(null)
   const [isForeignUser, setIsForeignUser] = useState()
+  const navigation = useNavigation()
 
   // p(auth().currentUser)
 
@@ -417,7 +419,7 @@ export default function ProfileSettings(props) {
 
 
   if (!user || isForeignUser === undefined) return <View />
-
+ 
   return (
     <ProfileLayout
       innerContainerStyle={{
@@ -442,6 +444,15 @@ export default function ProfileSettings(props) {
           title="Change profile data"
           onPress={() => change("safeInfo")}
         />}
+
+      {user.account_type == 'partner' &&
+        <CustomButton
+          style={styles.button}
+          textStyle={styles.buttonText}
+          title="Memberships"
+          onPress={() => navigation.navigate('PartnerUpdateMemberships')}
+        />
+      }
 
       {errorMsg
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>

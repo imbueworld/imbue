@@ -12,7 +12,7 @@ admin.initializeApp()
 //   projectId: process.env.GCLOUD_PROJECT,
 // })
 const stripe = require('stripe')(functions.config().stripe.secret, {
-  apiVersion: '2020-03-02',
+  apiVersion: '2020-08-27',
 })
 
 
