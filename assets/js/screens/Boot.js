@@ -25,9 +25,11 @@ export default function Boot(props) {
   const navigation = useNavigation()
 
   const bootWithUser = async () => {
-    const user = new User()
-    const { account_type } = await user.retrieveUser()
-    
+    const user = new User() 
+    console.log("user: ", user)
+    // console.log("await user.retrieveUser(): ", await user.retrieveUser())
+    const { account_type } = await user.retrieveUser()  
+    console.log("account_type: ", account_type)
 
     // // Waitlist stuff:
     // // Determine whether to let in or not
@@ -95,6 +97,7 @@ export default function Boot(props) {
       if (auth().currentUser) {
         await bootWithUser()
       } else {
+        console.log("else")
         navigation.reset({
           index: 0,
           routes: [{ name: 'Landing' }],
@@ -122,7 +125,7 @@ export default function Boot(props) {
           title="Normal Boot"
           onPress={() => {
             if (auth().currentUser) {
-              bootWithUser()
+              bootWithUser()  
             } else {
               navigation.reset({
                 index: 0,

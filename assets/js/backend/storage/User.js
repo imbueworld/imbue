@@ -158,7 +158,7 @@ export default class User extends DataObject {
         
         let user
         try {
-          user = await auth().createUserWithEmailAndPassword(email, password) 
+          user = await auth().createUserWithEmailAndPassword(email, password)  
         } catch {
           return 'Email is taken.'
         }
@@ -306,6 +306,7 @@ export default class User extends DataObject {
    */
   async retrieveUser() {
     await this.init()
+    console.log("this.getAll(): ", this.getAll())
     return this.getAll()
   }
 

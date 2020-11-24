@@ -66,9 +66,12 @@ export default function UserDashboard(props) {
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(documentSnapshot => {
+            console.log("gym")
             setGyms(prevArray => [...prevArray, documentSnapshot.data()])
           });
         });
+      
+      console.log("gyms: ", gyms)
 
     }; init()
   }, [])
@@ -76,9 +79,9 @@ export default function UserDashboard(props) {
   // Reset states
   useEffect(() => {
     const init = async () => {
-      setFeaturedPartners([])
-      setGyms([])
-      setPartners([])
+      // setFeaturedPartners([])
+      // setGyms([])
+      // setPartners([])
     }; init()
   }, [])
 

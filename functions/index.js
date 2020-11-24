@@ -184,8 +184,8 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     tax_id,
 
     // Person details
-    first: first_name,
-    last: last_name,
+    first,
+    last,
     email,
     phone,
     dob,
@@ -203,13 +203,14 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     type: 'custom',
     country: 'us',
     email,
-    business_type: 'company',
-    company: {
-      name: company_name,
-      address: company_address,
-      phone,
-      tax_id,
-    },
+    business_type: 'individual',
+    name: first,
+    // company: {
+    //   // name: company_name,
+    //   address: company_address,
+    //   phone,
+    //   tax_id,
+    // },
     requested_capabilities: [
       'card_payments',
       'transfers',
@@ -227,26 +228,26 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
   const { id: stripe_account_id } = newStripeAccount
 
   // Create a Stripe Person, linking it to the Custom Account
-  const newStripePerson = await stripe.accounts.createPerson(
-    stripe_account_id,
-    {
-      address,
-      first_name,
-      last_name,
-      email,
-      phone,
-      dob,
-      ssn_last_4,
-      relationship: {
-        title: 'Owner',
-        owner: true,
-        representative: true,
-        executive: true,
-      },
-    }
-  )
+  // const newStripePerson = await stripe.accounts.createPerson(
+  //   stripe_account_id,
+  //   {
+  //     address,
+  //     first_name,
+  //     last_name,
+  //     email,
+  //     phone,
+  //     dob,
+  //     ssn_last_4,
+  //     relationship: {
+  //       title: 'Owner',
+  //       owner: true,
+  //       representative: true,
+  //       executive: true,
+  //     },
+  //   }
+  // )
 
-  const { id: stripe_person_id } = newStripePerson
+  // const { id: stripe_person_id } = newStripePerson
   
   // Update the Custom Account, telling that person has been successfully created
   await stripe.accounts.update(
@@ -262,7 +263,7 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
   // Save seller stripe account id to their doc
   await partners.doc(uid).set({
     stripe_account_id,
-    stripe_person_id,
+    // stripe_person_id,
   }, { merge: true })
 })
 
@@ -298,10 +299,12 @@ exports.updateStripePerson = functions.https.onCall(async (data, context) => {
   // Retrieve stripe person id, based on uid of the caller
   const {
     stripe_account_id,
-    stripe_person_id,
+    // stripe_person_id,
   } = ( await partners.doc(uid).get() ).data()
 
-  await stripe.accounts.updatePerson(stripe_account_id, stripe_person_id, data)
+  // await stripe.accounts.updatePerson(stripe_account_id, stripe_person_id, data)
+  await stripe.accounts.updatePerson(stripe_account_id, data)
+
 })
 
 exports.retrieveStripeAccount = functions.https.onCall(async (data, context) => {

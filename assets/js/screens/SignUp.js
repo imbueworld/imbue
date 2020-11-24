@@ -151,7 +151,7 @@
                 errorMsg = invalidate()
                 if (errorMsg) throw new Error(errorMsg)
                 const user = new User()
-                await user.create({
+                await user.create({   
                   first,
                   last,
                   email,
