@@ -28,7 +28,7 @@ export default function AlgoliaSearchResultsCard(props) {
   const {
     window: { width, height },
   } = useDimensions()
-  const cardIconLength = width / 4
+  const cardIconLength = width / 3.75
   const navigation = useNavigation()
 
   const [iconUri, setIconUri] = useState('')
@@ -51,13 +51,13 @@ export default function AlgoliaSearchResultsCard(props) {
   return (
     <View style={{
       height: cardIconLength * 1,
-      backgroundColor: colors.bg,
-      borderRadius: 15,
+      backgroundColor: colors.buttonFill,
+      borderRadius: 25,
       overflow: 'hidden',
       ...containerStyle,
     }}>
       <TouchableHighlight
-        underlayColor='#00000012'
+        underlayColor='#F9F9F9'
         style={{ height: '100%' }}
         onPress={() => navigation.navigate('GymDescription', { gymId })}
       >
@@ -69,10 +69,11 @@ export default function AlgoliaSearchResultsCard(props) {
           }}>
             <Icon
               containerStyle={{
-                width: cardIconLength,
-                height: cardIconLength,
-                borderRadius: 15
-                ,
+                width: cardIconLength * .85,
+                height: cardIconLength * .85,
+                marginTop: 7,
+                marginLeft: 5,
+                borderRadius: 25,
                 overflow: 'hidden',
               }}
               source={{ uri: iconUri }}
@@ -113,8 +114,10 @@ const styles = StyleSheet.create({
     fontSize: 20,
     marginBottom: 5,
     marginLeft: 15,
+    color: "#F9F9F9"
   },
   body: {
     ...FONTS.body,
+    color: "#F9F9F9"
   },
 })

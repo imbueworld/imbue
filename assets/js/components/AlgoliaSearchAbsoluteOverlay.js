@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { View } from 'react-native'
+import { back } from 'react-native/Libraries/Animated/src/Easing'
 import { colors } from '../contexts/Colors'
 import AlgoliaSearchBar from './AlgoliaSearchBar'
 import AlgoliaSearchResultsTab from './AlgoliaSearchResultsTab'
@@ -42,7 +43,8 @@ export default function AlgoliaSearchAbsoluteOverlay(props) {
         open={resultPanelIsOpen}
         containerStyle={{ margin: 10 }}
         cardContainerStyle={{ margin: 10 }}
-        data={searchResults}
+        data={searchResults} 
+        backgroundColor={ colors.bg}
       />
     </View>
   )
