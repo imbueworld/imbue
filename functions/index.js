@@ -286,13 +286,6 @@ exports.updateStripeAccount = functions.https.onCall(async (data, context) => {
     phone
   } = data
 
-  console.log("dob (here): ", dob)
-  console.log("address (here): ", address)
-  console.log("ssn_last_4 (here): ", ssn_last_4)
-  console.log("email (here): ", email)
-  console.log("phone (here): ", phone)
-
-
   // Retrieve stripe account id, based on uid of the caller
   const {
     stripe_account_id,

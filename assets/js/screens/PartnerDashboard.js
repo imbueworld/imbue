@@ -47,7 +47,7 @@ export default function PartnerDashboard(props) {
             "GoLive")
         }}
       />
-       <CustomButton
+       {/* <CustomButton
         icon={
           <Icon
             source={require("../components/img/png/my-classes-2.png")}
@@ -57,7 +57,7 @@ export default function PartnerDashboard(props) {
         onPress={() => props.navigation.navigate(
           "PartnerUpdateClasses"
         )}
-      />
+      /> */}
       {/* <CustomButton
         title="Livestream Settings"
         onPress={() => {props.navigation.navigate(
@@ -76,6 +76,12 @@ export default function PartnerDashboard(props) {
             { gymId: user.associated_gyms[0] })
         }}
       />
+        <CustomButton
+        title='Revenue 💰'
+        onPress={() => props.navigation.navigate(
+          "PartnerRevenueInfo"
+        )}
+        />
       <CustomButton
         icon={
           <Icon

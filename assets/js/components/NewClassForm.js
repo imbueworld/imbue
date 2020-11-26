@@ -31,7 +31,7 @@ export default function NewClassForm(props) {
   const [img, setImg] = useState(null)
   const [description, setDescription] = useState(null)
   // const [genres, setGenres] = useState(null)
-  const [type, setType] = useState(null)
+  const [type, setType] = useState("online")
   const [price, setPrice] = useState("$0.00")
 
   useEffect(() => {
@@ -43,7 +43,7 @@ export default function NewClassForm(props) {
       setImg(newClassForm.img)
       setDescription(newClassForm.description)
       // setGenres(newClassForm.genres || [])
-      setType(newClassForm.type || "studio")
+      // setType(newClassForm.type || "studio")
       setGymId(newClassForm.gym_id || null)
 
       const user = new User()
@@ -67,7 +67,7 @@ export default function NewClassForm(props) {
     form.name = name
     form.img = img
     form.description = description
-  }, [instructor, name, img, description])
+  }, [instructor, name, description])
   useEffect(() => {
     const form = snatchNewClassForm()
     form.gym_id = gym_id
@@ -88,6 +88,8 @@ export default function NewClassForm(props) {
     // if (!genres) redFields.push("genres")
     if (!type) redFields.push("type")
     if (!price) redFields.push("price")
+
+    console.log("type: ", type)
 
     if (redFields.length) {
       setRedFields(redFields)
@@ -182,7 +184,7 @@ export default function NewClassForm(props) {
 
         const source = { uri: res.uri }; 
         const id = Math.random().toString(36).substring(7);
-        const img = source.uri
+        // const img = source.uri
 
         // 8MB of file size limit
         // if (fileSize > 8 * 1024 * 1024) {
@@ -216,14 +218,14 @@ export default function NewClassForm(props) {
   }
 
   // Add Class photo
-  const editClassPhoto = async () => {
-    setErrorMsg('')
-    const user = new User()
-    try {
-      await changeClassPhoto()
-      // refresh(r => r + 1)
-    } catch (errorMsg) { setErrorMsg(errorMsg) }
-  }
+  // const editClassPhoto = async () => {
+  //   setErrorMsg('')
+  //   const user = new User()
+  //   try {
+  //     await changeClassPhoto()
+  //     // refresh(r => r + 1)
+  //   } catch (errorMsg) { setErrorMsg(errorMsg) }
+  // }
 
   return (
     <View style={styles.container}>
@@ -257,10 +259,10 @@ export default function NewClassForm(props) {
         onChangeText={setInstructor}
       /> */}
 
-      <CustomButton
+      {/* <CustomButton
         title="Add Photo"
         onPress={editClassPhoto}
-      /> 
+      />  */}
       <CustomTextInput
         containerStyle={{
           borderColor: redFields.includes("name") ? "red" : undefined,
@@ -314,7 +316,7 @@ export default function NewClassForm(props) {
         // height: dropDown ? 150 : 0,
       }} />
 
-      <CustomSelectButton
+      {/* <CustomSelectButton
         containerStyle={{
           // Should never happen, unless code bugged
           backgroundBorder: redFields.includes("type") ? "red" : undefined,
@@ -322,7 +324,7 @@ export default function NewClassForm(props) {
         options={{ studio: "In Studio", online: "Online" }}
         value={type}
         onChange={type => setType(type)}
-      />
+      /> */}
 
       <CustomTextInput
         containerStyle={{
@@ -354,7 +356,7 @@ export default function NewClassForm(props) {
           try {
             // validate()
 
-            let form = format({ name, img, description, type, gym_id, price })
+            let form = format({ name, description, type, gym_id, price })
 
             const classObj = new Class()
             classObj.create(form)  
