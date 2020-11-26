@@ -80,7 +80,7 @@
               />
         </TouchableHighlight>
         <CustomCapsule style={styles.container}>
-          <SocialLogin
+          <SocialLogin 
             containerStyle={{
               marginTop: 20,
               marginBottom: 10,
@@ -152,12 +152,13 @@
                 if (errorMsg) throw new Error(errorMsg)
                 const user = new User()
                 await user.create({   
-                  first,
+                  first, 
                   last,
                   email,
                   password,
                   type,
                 })
+
                 setSuccessMsg("You've been signed up!")
                 // Navigate
                 const pushAction = StackActions.push("Boot")

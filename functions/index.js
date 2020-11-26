@@ -204,13 +204,13 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
     country: 'us',
     email,
     business_type: 'individual',
-    name: first,
-    // company: {
-    //   // name: company_name,
-    //   address: company_address,
-    //   phone,
-    //   tax_id,
-    // },
+    individual: {
+      first_name: first,
+      last_name: last,
+      // address: 'address test',
+      // phone,
+      // dob,
+    },
     requested_capabilities: [
       'card_payments',
       'transfers',
@@ -250,15 +250,15 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
   // const { id: stripe_person_id } = newStripePerson
   
   // Update the Custom Account, telling that person has been successfully created
-  await stripe.accounts.update(
-    stripe_account_id,
-    {
-      company: {
-        owners_provided: true,
-        executives_provided: true,
-      },
-    }
-  )
+  // await stripe.accounts.update(
+  //   stripe_account_id,
+  //   {
+  //     individual: {
+  //       owners_provided: true,
+  //       executives_provided: true,
+  //     },
+  //   }
+  // )
 
   // Save seller stripe account id to their doc
   await partners.doc(uid).set({
@@ -277,13 +277,42 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
 exports.updateStripeAccount = functions.https.onCall(async (data, context) => {
   const { auth: { uid } } = context
 
+  const {
+    dob,
+    address,
+    formatted_address,
+    ssn_last_4,
+    email,
+    phone
+  } = data
+
+  console.log("dob (here): ", dob)
+  console.log("address (here): ", address)
+  console.log("ssn_last_4 (here): ", ssn_last_4)
+  console.log("email (here): ", email)
+  console.log("phone (here): ", phone)
+
+
   // Retrieve stripe account id, based on uid of the caller
   const {
     stripe_account_id,
   } = ( await partners.doc(uid).get() ).data()
 
   // Update stripe with provided information
-  await stripe.accounts.update(stripe_account_id, data)
+  // await stripe.accounts.update(stripe_account_id, data)
+  await stripe.accounts.update(
+    stripe_account_id,
+    {
+      individual: {
+        dob: dob,
+        address: address,
+        ssn_last_4: ssn_last_4,
+        email: email,
+        phone: phone
+      }
+    }
+  )
+
 })
 
 /**
@@ -304,7 +333,6 @@ exports.updateStripePerson = functions.https.onCall(async (data, context) => {
 
   // await stripe.accounts.updatePerson(stripe_account_id, stripe_person_id, data)
   await stripe.accounts.updatePerson(stripe_account_id, data)
-
 })
 
 exports.retrieveStripeAccount = functions.https.onCall(async (data, context) => {

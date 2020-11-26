@@ -72,11 +72,6 @@ exports.linkBankAccountToStripeAccount = functions.https.onCall(async (data, con
  * @see https://plaid.com/docs/api/tokens/#linktokencreate
  */
 exports.getPlaidLinkToken = functions.https.onCall(async (data, context) => {
-  console.log("getPlaidToken!!!!!!!!!!")
-  console.log("getPlaidToken!!!!!!!!!!")
-  console.log("getPlaidToken!!!!!!!!!!")
-  console.log("getPlaidToken!!!!!!!!!!")
-
   const { auth: { uid } } = context
 
   const tokenResponse = await plaid.createLinkToken({ 

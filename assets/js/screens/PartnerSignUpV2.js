@@ -112,6 +112,8 @@ export default function PartnerSignUpV2(props) {
 
     // Separate between core user data and other type of data,
     // and data that is to be adjusted/formatted in a sec
+    console.log("firsttop: ", first)
+
     let {
       first,
       last,
@@ -139,11 +141,16 @@ export default function PartnerSignUpV2(props) {
       return
     }
 
+    console.log("first: ", first)
+    console.log("last: ", last)
+
     try {
       // Attempt to create a Stripe account
       const createStripeSeller = functions().httpsCallable('createStripeSeller')
       await createStripeSeller({
         ...USER,
+        first,
+        last,
         product_description: gym_description,
         ip, // for TOS agreement
       })

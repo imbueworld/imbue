@@ -12,8 +12,11 @@ export async function GoogleLogin(accountType, onAuthChange=(() => {}), onError=
     return
   }
 
+  console.log("we made it!")
+
   // Get the users ID token
-  const { idToken } = await GoogleSignin.signIn();
+  const { idToken } = await GoogleSignin.signIn(); 
+
 
   // Create a Google credential with the token
   const googleCredential = auth.GoogleAuthProvider.credential(idToken);
@@ -22,17 +25,21 @@ export async function GoogleLogin(accountType, onAuthChange=(() => {}), onError=
   const { user } = await auth().signInWithCredential(googleCredential);
 
   if (user) {
+    console.log("above")
     if (user.displayName.substring(0, 5) === "user_") {
+      console.log("below if")
       // console.log("Recognized user account.")
     } else if (user.displayName.substring(0, 8) === "partner_") {
+      console.log("else if")
       // console.log("Recognized partner account.")
     } else {
+      console.log("bottom else")
       let options = {
         user,
         accountType,
       }
       const userObj = new User()
-      await userObj.create({}, options)
+      await userObj.create({}, options) 
     }
 
     onAuthChange(user)

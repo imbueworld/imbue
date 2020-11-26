@@ -22,6 +22,7 @@ import ImagePicker from 'react-native-image-picker'
 import Class from './Class'
 import config from '../../../../App.config'
 import Gym from './Gym'
+import { add } from 'react-native-reanimated';
 const p = console.log
  
 
@@ -139,10 +140,10 @@ export default class User extends DataObject {
         type,
         // for partner, specifically
         // company
-        company_address,
-        company_name,
+        // company_address,
+        // company_name,
         gym_description,
-        tax_id,
+        // tax_id,
         // individual
         phone,
         dob,
@@ -227,10 +228,10 @@ export default class User extends DataObject {
           playback_id: null,
           // below: primarily for stripe account creation purpose
           // company
-          company_address,
-          company_name,
+          // company_address,
+          // company_name,
           gym_description,
-          tax_id,
+          // tax_id,
           // individual
           phone,
           dob,
@@ -306,7 +307,6 @@ export default class User extends DataObject {
    */
   async retrieveUser() {
     await this.init()
-    console.log("this.getAll(): ", this.getAll())
     return this.getAll()
   }
 
@@ -848,45 +848,47 @@ export default class User extends DataObject {
     await this.init()
     let {
       dob,
-      address: individualAddressText,
+      email,
+      address,
+      formatted_address,
       phone,
       ssn_last_4,
-      company_address: companyAddressText,
-      company_name,
-      tax_id,
+      // company_address: companyAddressText,
+      // company_name,
+      // tax_id,
       // .. more can be incorporated
     } = details
 
     let {
       pfGeocodeAddress,
-      pfGeocodeCompanyAddress,
+      // pfGeocodeCompanyAddress,
     } = prefetchedData
 
     let updateAccount, updatePerson // If these become true, update according one, or both, ofc
     const accountFinalDocument = {
-      company: {},
+      individual: {},
     }
     const personFinalDocument = {}
 
     // Transform descriptive address strings into geolocation components
     //
-    if (companyAddressText) {
-      const {
-        address: company_address,
-      } = pfGeocodeCompanyAddress || await geocodeAddress(companyAddressText) || {}
-      if (config.DEBUG) p('company_address', company_address)
-      // Do not continue, if provided address is invalid.
-      if (!company_address)
-        throw 'Provided company\'s address was not specific enough.'
+    // if (companyAddressText) {
+    //   const {
+    //     address: company_address,
+    //   } = pfGeocodeCompanyAddress || await geocodeAddress(companyAddressText) || {}
+    //   if (config.DEBUG) p('company_address', company_address)
+    //   // Do not continue, if provided address is invalid.
+    //   if (!company_address)
+    //     throw 'Provided company\'s address was not specific enough.'
       
-      updateAccount = true
-      accountFinalDocument.company.address = company_address
-    }
+    //   updateAccount = true
+    //   accountFinalDocument.company.address = company_address
+    // }
     //
-    if (individualAddressText) {
+    if (formatted_address) {
       const {
         address,
-      } = pfGeocodeAddress || await geocodeAddress(individualAddressText) || {}
+      } = pfGeocodeAddress || await geocodeAddress(formatted_address) || {}
       if (config.DEBUG) p('address', address)
       // Do not continue, if provided address is invalid.
       if (!address)
@@ -896,23 +898,30 @@ export default class User extends DataObject {
       personFinalDocument.address = address
     }
 
-    accountFinalDocument.company.name = company_name
-    accountFinalDocument.company.tax_id = tax_id
-    accountFinalDocument.company.phone = phone
-    if (company_name || tax_id || phone) updateAccount = true
+    // accountFinalDocument.company.name = company_name
+    // accountFinalDocument.company.tax_id = tax_id
+    // accountFinalDocument.company.phone = phone
+    // if (company_name || tax_id || phone) updateAccount = true
+    // if ( dob || address || phone) updateAccount = true
 
-    personFinalDocument.dob = dob
-    personFinalDocument.phone = phone
-    personFinalDocument.ssn_last_4 = ssn_last_4
-    if (dob || ssn_last_4 || phone) updatePerson = true
-    
+    accountFinalDocument.dob = dob
+    accountFinalDocument.phone = phone
+    accountFinalDocument.ssn_last_4 = ssn_last_4
+    accountFinalDocument.email = email
+    accountFinalDocument.address = address
+    accountFinalDocument.formatted_address = formatted_address
+    console.log("accountFinalDocument (yeet): ", accountFinalDocument)
+
+    if (dob || ssn_last_4 || phone) updateAccount = true
+
+
     if (updateAccount) {
       const updateAccount = functions().httpsCallable('updateStripeAccount')
       await updateAccount(accountFinalDocument)
     }
     if (updatePerson) {
-      const updatePerson = functions().httpsCallable('updateStripePerson')
-      await updatePerson(personFinalDocument)
+      // const updatePerson = functions().httpsCallable('updateStripePerson')
+      // await updatePerson(personFinalDocument)
     }
   }
 
