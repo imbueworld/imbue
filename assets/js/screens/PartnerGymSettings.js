@@ -75,6 +75,17 @@ export default function PartnerGymSettings(props) {
         paddingBottom: 10,
       }}
     > 
+          <CustomButton
+        icon={
+          <Icon
+            source={require("../components/img/png/ellipsis.png")}
+          /> 
+        }
+        title='Revenue Information'
+        onPress={() => props.navigation.navigate(
+          "PartnerRevenueInfo"
+        )}
+      />
      
        {/* <CustomTextInputV2
         containerStyle={styles.input}

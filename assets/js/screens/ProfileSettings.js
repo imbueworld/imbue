@@ -447,12 +447,28 @@ export default function ProfileSettings(props) {
         />}
 
       {user.account_type == 'partner' &&
-        <CustomButton
+         <>
+         <CustomButton
           style={styles.button}
           textStyle={styles.buttonText}
           title="Memberships"
           onPress={() => navigation.navigate('PartnerUpdateMemberships')}
         />
+                
+        <CustomButton
+        // icon={
+        //   <Icon
+        //     source={require("../components/img/png/ellipsis.png")}
+        //   /> 
+        // }
+        style={styles.button}
+        textStyle={styles.buttonText}
+        title='Revenue 💰'
+        onPress={() => props.navigation.navigate(
+          "PartnerRevenueInfo"
+        )}
+      />
+      </>
       }
 
       {errorMsg
