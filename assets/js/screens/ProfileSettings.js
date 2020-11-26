@@ -15,7 +15,7 @@ import User from '../backend/storage/User'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
 import config from '../../../App.config'
 import { useForm } from 'react-hook-form'
-import { geocodeAddress } from '../backend/BackendFunctions'
+import { geocodeAddress } from '../backend/BackendFunctions' 
 import Gym from '../backend/storage/Gym'
 const p = console.log
  
@@ -53,9 +53,9 @@ export default function ProfileSettings(props) {
     setAddress(user.formatted_address)
     setPhone(user.phone)
     setSSNLast4(user.ssn_last_4)
-    setCompanyAddress(user.formatted_company_address)
-    setCompanyName(user.company_name)
-    setTaxId(user.tax_id)
+    // setCompanyAddress(user.formatted_company_address)
+    // setCompanyName(user.company_name)
+    // setTaxId(user.tax_id)
   }, [user])
 
   const [redFields, setRedFields] = useState([])
@@ -66,11 +66,9 @@ export default function ProfileSettings(props) {
   const [firstNameField, setFirstNameField] = useState("")
   const [lastNameField, setLastNameField] = useState("")
   const [emailField, setEmailField] = useState("")
-  const [passwordField, setPasswordField] = useState("")
+  // const [passwordField, setPasswordField] = useState("")
   //
   const [dob, setDob] = useState("")
-  console.log("dob (state): ", dob)
-
   const { register, handleSubmit, setValue, errors } = useForm()
 
   useEffect(() => {
@@ -78,9 +76,9 @@ export default function ProfileSettings(props) {
       required: 'Required fields must be filled.',
     }
     
-    register('company_address', rules)
-    register('company_name', rules)
-    register('tax_id', rules)
+    // register('company_address', rules)
+    // register('company_name', rules)
+    // register('tax_id', rules)
     register('phone', {
       ...rules,
       validate: text =>
@@ -132,9 +130,9 @@ export default function ProfileSettings(props) {
   const [phone, setPhone] = useState('')
   const [ssn_last_4, setSSNLast4] = useState('')
   // Company type of data, for partner accounts
-  const [company_address, setCompanyAddress] = useState('')
-  const [company_name, setCompanyName] = useState('')
-  const [tax_id, setTaxId] = useState('')
+  // const [company_address, setCompanyAddress] = useState('')
+  // const [company_name, setCompanyName] = useState('')
+  // const [tax_id, setTaxId] = useState('')
 
   const [changePasswordField, setChangePasswordField] = useState("")
   const [changePasswordFieldConfirm, setChangePasswordFieldConfirm] = useState("")
@@ -151,20 +149,20 @@ export default function ProfileSettings(props) {
   useEffect(() => {
     if (!config.DEBUG) return
 
-    setValue('company_address', '1111 S Figueroa St, Los Angeles, CA 90015')
-    setValue('company_name', 'CompanyName')
-    setValue('tax_id', '000000000')
+    // setValue('company_address', '1111 S Figueroa St, Los Angeles, CA 90015')
+    // setValue('company_name', 'CompanyName')
+    // setValue('tax_id', '000000000')
     setValue('phone', '888 867 5309')
     setValue('dob', '7-6-1998')
     setValue('address', '1111 S Figueroa St, Los Angeles, CA 90015')
     setValue('ssn_last_4', '0000')
 
-    setValue('password', 'asdfg')
+    // setValue('password', 'asdfg')
   }, [])
 
 
 
-  const updateSafeInfoForUser = async reactNativeForm => {
+  const updateSafeInfoForUser = async() => {
     setRedFields([])
     setErrorMsg('')
     setSuccessMsg('')
@@ -229,7 +227,7 @@ export default function ProfileSettings(props) {
       await userObj.push()
 
       setSuccessMsg('Successfully updated profile information.')
-      setPasswordField('')
+      // setPasswordField('')
       Keyboard.dismiss()
     } catch (err) {
       if (config.DEBUG) console.error(err)
@@ -239,7 +237,11 @@ export default function ProfileSettings(props) {
     }
   }
 
-  const updateSafeInfoForPartner = async reactNativeForm => {
+  const updateSafeInfoForPartner = async () => {
+    let addressText = address
+    console.log("address (below): ", address)
+    let phoneText = phone
+
     const gym = new Gym
     await gym.retrievePartnerGym() // Loads (or instantly accesses cached) data, finishes instantiation
     setRedFields([])
@@ -249,29 +251,28 @@ export default function ProfileSettings(props) {
     let redFields = []
     const auditField = (field, tag) => !field.length ? redFields.push(tag) : null
 
-    let {
-      dob,
-      address: addressText,
-      phone: phoneText,
-      company_name,
-      company_address: companyAddressText,
-      tax_id,
-      ssn_last_4,
-    } = reactNativeForm
-
+    // let {
+    //   // dob,
+    //   address,
+    //   phone: phoneText,
+    //   // company_name,
+    //   // company_address: companyAddressText,
+    //   // tax_id,
+    //   ssn_last_4,
+    // } = reactNativeForm
 
     if (firstNameField.length === 0) redFields.push("first")
     if (lastNameField.length === 0) redFields.push("last")
     if (emailField.length === 0) redFields.push("email")
-    if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
+    // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
     //
     if (dob.split('-').length != 3) redFields.push('dob')
     auditField(addressText, 'address')
     auditField(phoneText, 'phone')
     auditField(ssn_last_4, 'ssn_last_4')
-    auditField(company_name, 'company_name')
-    auditField(companyAddressText, 'company_address')
-    auditField(tax_id, 'tax_id')
+    // auditField(company_name, 'company_name')
+    // auditField(companyAddressText, 'company_address')
+    // auditField(tax_id, 'tax_id')
 
     if (redFields.length) {
       setRedFields(redFields)
@@ -282,7 +283,7 @@ export default function ProfileSettings(props) {
     const DateMoment = moment(dob, 'MM-DD-YYYY')
 
     try {
-      if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
+      // if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
       let updatables = {
         dob: {
           day: DateMoment.date(),
@@ -294,47 +295,53 @@ export default function ProfileSettings(props) {
       if (firstNameField !== user.first) updatables.first = firstNameField
       if (lastNameField !== user.last) updatables.last = lastNameField
       if (emailField !== user.email) {
-        updatables.email = emailField
+        // updatables.email = emailField
         await auth().currentUser.updateEmail(emailField)
       }
+      updatables.email = emailField // here to ensure it pushes to Stripe on update
+
 
       // pf -- "prefetch", passed in .updateStripeAccount()
-      let pfGeocodeAddress, pfGeocodeCompanyAddress
+      // let pfGeocodeAddress, pfGeocodeCompanyAddress
+      let pfGeocodeAddress
       if (addressText) pfGeocodeAddress = await geocodeAddress(addressText)
-      if (companyAddressText) pfGeocodeCompanyAddress = await geocodeAddress(companyAddressText)
-
+      // if (companyAddressText) pfGeocodeCompanyAddress = await geocodeAddress(companyAddressText)
+      console.log("pfGeocodeAddress ($$$): ", pfGeocodeAddress)
       if (pfGeocodeAddress) {
         const {
           address,
           formatted_address,
         } = pfGeocodeAddress
 
+        console.log("pfGeocodeAddress ($$$): ", address)
+        console.log("formatted_address ($$$): ", formatted_address)
+
         updatables.address = address
         updatables.formatted_address = formatted_address
       }
 
-      if (pfGeocodeCompanyAddress) {
-        const {
-          address,
-          formatted_address,
-          location,
-        } = pfGeocodeCompanyAddress
+      // if (pfGeocodeCompanyAddress) {
+      //   const {
+      //     address,
+      //     formatted_address,
+      //     location,
+      //   } = pfGeocodeCompanyAddress
 
-        updatables.company_address = address
-        updatables.formatted_company_address = formatted_address
+      //   // updatables.company_address = address
+      //   // updatables.formatted_company_address = formatted_address
 
-        // Since company address and gym address are synced together,
-        // update the gym as well
-        await gym.updateCoordinates(location)
-        gym.mergeItems({
-          address,
-          formatted_address,
-        })
-      }
+      //   // Since company address and gym address are synced together,
+      //   // update the gym as well
+      //   await gym.updateCoordinates(location)
+      //   gym.mergeItems({
+      //     address,
+      //     formatted_address,
+      //   })
+      // }
 
       if (phoneText) updatables.phone = phoneText.replaceAll(/[^0-9]/g, '')
-      if (company_name) updatables.company_name = company_name
-      if (tax_id) updatables.tax_id = tax_id
+      // if (company_name) updatables.company_name = company_name
+      // if (tax_id) updatables.tax_id = tax_id
       if (ssn_last_4) updatables.ssn_last_4 = ssn_last_4
 
       // Return if no fields to update.
@@ -343,11 +350,12 @@ export default function ProfileSettings(props) {
         return
       }
 
-      if (config.DEBUG) p('updatables', updatables)
-
       const userObj = new User()
-      await userObj.init()
+      await userObj.init() 
       userObj.mergeItems(updatables)
+
+      console.log("updatables2: ", updatables)
+      console.log("address (RAW): ", address)
 
 
       await Promise.all([
@@ -359,11 +367,13 @@ export default function ProfileSettings(props) {
         //
         // note: Currently only minimum required fields are updated in stripe
         // (ones that weren't added during Partner Sign Up).
-        userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }),
+        
+        // userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }), 
+           userObj.updateStripeAccount(updatables, {pfGeocodeAddress} ) 
       ])
 
       setSuccessMsg('Successfully updated profile information.')
-      setPasswordField('')
+      // setPasswordField('')
       Keyboard.dismiss()
     } catch (err) {
       if (config.DEBUG) console.error(err)
@@ -381,7 +391,7 @@ export default function ProfileSettings(props) {
 
     if (changePasswordField.length === 0) redFields.push("change_password")
     if (changePasswordFieldConfirm.length === 0) redFields.push("change_password_confirm")
-    if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
+    // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
 
     if (redFields.length) {
       setErrorMsg("Required fields need to be filled.")
@@ -401,7 +411,7 @@ export default function ProfileSettings(props) {
       setSuccessMsg("Successfully changed password.")
       setChangePasswordField("")
       setChangePasswordFieldConfirm("")
-      setPasswordField("")
+      // setPasswordField("")
       Keyboard.dismiss()
     } catch (err) {
       let [errorMsg, redFields] = handleAuthError(err)
@@ -411,10 +421,11 @@ export default function ProfileSettings(props) {
   }
 
   const handleDOB = () => {
+    console.log("address (handDOB): ", address)
     {user.account_type == 'partner'
           ? updateSafeInfoForPartner() 
           : updateSafeInfoForUser()
-        }
+        } 
   }
 
 
@@ -436,7 +447,7 @@ export default function ProfileSettings(props) {
           style={styles.button}
           textStyle={styles.buttonText}
           title="Change password"
-          onPress={() => change("password")} 
+          onPress={() => change("password")}  
         />
         : <CustomButton
           style={styles.button}
@@ -506,7 +517,7 @@ export default function ProfileSettings(props) {
             value={address}
             onChangeText={text => {
               setValue('address', text)
-              setAddress(text)
+              setAddress(text) 
             }}
           />
           <CustomTextInputV2
@@ -519,7 +530,7 @@ export default function ProfileSettings(props) {
               setPhone(text)
             }}
           />
-          <CustomTextInputV2
+          {/* <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('company_name')}
             placeholder='Company Name'
@@ -528,8 +539,8 @@ export default function ProfileSettings(props) {
               setValue('company_name', text)
               setCompanyName(text)
             }}
-          />
-          <CustomTextInputV2
+          /> */}
+          {/* <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('company_address')}
             placeholder='Company Address'
@@ -538,8 +549,8 @@ export default function ProfileSettings(props) {
               setValue('company_address', text)
               setCompanyAddress(text)
             }}
-          />
-          <CustomTextInputV2
+          /> */}
+          {/* <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('tax_id')}
             placeholder='Tax ID'
@@ -548,7 +559,7 @@ export default function ProfileSettings(props) {
               setValue('tax_id', text)
               setTaxId(text)
             }}
-          />
+          /> */}
           <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('ssn_last_4')}
@@ -563,7 +574,7 @@ export default function ProfileSettings(props) {
           </>
         : null}
 
-      {/* {changing === "password"
+      {changing === "password"
         ? <>
           <CustomTextInput
             containerStyle={{
@@ -584,7 +595,7 @@ export default function ProfileSettings(props) {
             onChangeText={setChangePasswordFieldConfirm}
           />
         </>
-        : null} */}
+        : null}
 
 
       {/* {!isForeignUser &&

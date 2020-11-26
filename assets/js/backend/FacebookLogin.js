@@ -26,7 +26,6 @@ export async function FacebookLogin(accountType, onAuthChange) {
   // Sign-in the user with the credential
   const { user } = await auth().signInWithCredential(facebookCredential);
 
-  console.log("user: " +  JSON.stringify(user))
   
 
   if (user) {
