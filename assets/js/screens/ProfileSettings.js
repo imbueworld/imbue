@@ -109,6 +109,7 @@ export default function ProfileSettings(props) {
           || 'Date of Birth is invalid.',
       },
     })
+
     register('address', rules)
     register('ssn_last_4', {
       ...rules,

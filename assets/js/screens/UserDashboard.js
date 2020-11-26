@@ -209,8 +209,6 @@ export default function UserDashboard(props) {
       keyboardShouldPersistTaps='handled'
         // alwaysBounceVertical={false} 
     >
-    <AlgoliaSearchAbsoluteOverlay style={{ position: 'absolute', top: 200 }}/>
-
     {/* <ImbueMap style={styles.map} /> */}
 
         {/* upcoming classes */}
@@ -259,6 +257,11 @@ export default function UserDashboard(props) {
           showsHorizontalScrollIndicator={false}
           />
       </View>
+      <AlgoliaSearchAbsoluteOverlay 
+    style={{ 
+      position: 'absolute', 
+      top: 200, }}
+      />
 
     {
     !user ? null :
