@@ -27,7 +27,6 @@ export default function PlaidButton(props) {
 
   console.log("linkToken: " + linkToken)
 
-
   if (!linkToken) return <View />
 
   const onSuccess = initOnPlaidLinkSuccess(onError)
@@ -36,7 +35,7 @@ export default function PlaidButton(props) {
   return (
     <PlaidLink 
       component={component || CustomButton}
-      componentProps={componentProps || {
+      componentProps={componentProps || { 
         title: 'Add Plaid Account',
       }}
       token={linkToken} 

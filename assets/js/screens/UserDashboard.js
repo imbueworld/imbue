@@ -206,10 +206,40 @@ export default function UserDashboard(props) {
       keyboardShouldPersistTaps='handled'
         // alwaysBounceVertical={false} 
     >
-    {/* <ImbueMap style={styles.map} /> */}
+        {/* <ImbueMap style={styles.map} /> */}
+        
+        {/* <View style={{ top: 220, marginLeft: 50, marginRight: 50 }}>
+         <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>my classes</Text>
+          <CustomButton
+            icon={
+              <Icon
+                source={require("../components/img/png/my-classes.png")}
+              />
+            }
+            title="My Classes"
+            onPress={() => {
+              props.navigation.navigate("ScheduleViewer")
+            }}
+          />
+        </View> */}
+
+        <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
+          <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>my classes</Text>
+          <CustomButton
+              icon={
+                <Icon
+                  source={require("../components/img/png/my-classes.png")}
+                />
+              }
+              title="My Classes"
+              onPress={() => {
+                props.navigation.navigate("ScheduleViewer")
+              }}
+            />
+        </View>
 
         {/* upcoming classes */}
-        {classes.length ?
+        {/* {classes.length ?
         (<View style={styles.cardContainer}>
           <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>upcoming classes</Text>
           <FlatList
@@ -227,7 +257,7 @@ export default function UserDashboard(props) {
               <Text style={{ ...FONTS.subtitle, textAlign: "center" }}>you have no upcoming classes. Book some now</Text>
           </View>
           )}
-        
+         */}
 
       {/* featured partners */}
       <View style={styles.cardContainer}>

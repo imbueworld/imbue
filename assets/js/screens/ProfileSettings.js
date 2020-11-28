@@ -459,12 +459,12 @@ export default function ProfileSettings(props) {
 
       {user.account_type == 'partner' &&
          <>
-         <CustomButton
+         {/* <CustomButton
           style={styles.button}
           textStyle={styles.buttonText}
           title="Memberships"
           onPress={() => navigation.navigate('PartnerUpdateMemberships')}
-        />
+        /> */}
                 
         <CustomButton
         // icon={

@@ -475,11 +475,11 @@ exports.cleanUpAfterPartner = functions.firestore
  * Must ONLY be called when membership_price has been set in gym doc.
  */
 exports.createGymProduct = functions.https.onCall(async (data, context) => {
-  const { gymId } = data
+  const { gymId } = data 
 
   const {
     name: gymName,
-    membership_price: unit_amount,
+    membership_price_online: unit_amount,
   } = (
     await gyms
       .doc(gymId)
@@ -686,6 +686,15 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
     ])
   )
 
+  // const { membership_price_online: price } = (
+  //   await gyms
+  //     .doc(gymId)
+  //     .get()
+  // ).data()
+  
+  console.log("price: ", price)
+  console.log("gymId (cloud): ", gymId)
+
   const { stripe_account_id: destination } = (
     await partners
       .doc(partnerId)
@@ -706,7 +715,7 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
     transfer_data: {
       destination,
     },
-    application_fee_percent: 5,
+    application_fee_percent: 15,
   })
 
   await Promise.all([
