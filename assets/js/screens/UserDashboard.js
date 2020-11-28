@@ -71,8 +71,6 @@ export default function UserDashboard(props) {
           });
         });
       
-      console.log("gyms: ", gyms)
-
     }; init()
   }, [])
 
@@ -183,7 +181,7 @@ export default function UserDashboard(props) {
     var thisGym 
     gyms.map((data) => {
       {
-        data.id === gymId[0] ?
+        data.id === gymId[0] ? 
           (description = data.description,
             thisGym = data)
           : (null)
@@ -191,10 +189,9 @@ export default function UserDashboard(props) {
     })
     return (
       <Item 
-        // img={img}
         description={description}
-        item={item}
-        onPress={() => navigation.navigate('GymDescription', thisGym)}
+        item={item} 
+        onPress={() => navigation.navigate('GymDescription', thisGym)} 
         style={{ backgroundColor: "#333", borderRadius: 30 }}
       />
     );

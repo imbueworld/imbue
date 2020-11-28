@@ -34,14 +34,13 @@ export default function PlaidButton(props) {
   const onExit = initOnPlaidLinkExit(onError)
 
   return (
-    <PlaidLink
+    <PlaidLink 
       component={component || CustomButton}
       componentProps={componentProps || {
         title: 'Add Plaid Account',
       }}
-      token={linkToken}
-      // onSuccess={onSuccess} 
-      onSuccess={data => console.log('success: ', data)}
+      token={linkToken} 
+      onSuccess={onSuccess} 
       onExit={onExit}
     />
   )

@@ -158,6 +158,7 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
  */
 exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
   const customer = await stripe.customers.create({ email: user.email });
+  console.log("customer.id: ", customer.id)
   await admin.firestore().collection('stripe_customers').doc(user.uid).set({ 
     customer_id: customer.id,
   }); 
@@ -215,6 +216,14 @@ exports.createStripeSeller = functions.https.onCall(async (data, context) => {
       'card_payments',
       'transfers',
     ],
+    // capabilities: {
+    //       card_payments: {
+    //         requested: true,
+    //       },
+    //       transfers: {
+    //         requested: true,
+    //       },
+    // },
     business_profile: {
       mcc: '7941', // stands for "Sports Clubs/Fields"
       product_description,
@@ -563,9 +572,9 @@ exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, con
   const {
     paymentMethodId,
     classId,
-    timeId,
+    timeId, 
   } = data
-  const IMBUE_PERCENTAGE_CUT = 0.05
+  const IMBUE_PERCENTAGE_CUT = 0.15
 
   // Do not continue if insufficient parameters
   if (!paymentMethodId || !classId || !timeId)
@@ -600,6 +609,8 @@ exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, con
       .doc(classId)
       .get()
   ).data()
+
+  console.log("partnerId: ", partnerId)
 
   const { stripe_account_id: destination } = (
     await partners

@@ -12,6 +12,8 @@ import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
 export default function AlgoliaSearchResultsCard(props) {
+
+  console.log("props: ", props.data)
   const { 
     containerStyle={},
   } = props
@@ -25,6 +27,7 @@ export default function AlgoliaSearchResultsCard(props) {
     id: gymId,
   } = props.data
 
+
   const {
     window: { width, height },
   } = useDimensions()
@@ -37,16 +40,14 @@ export default function AlgoliaSearchResultsCard(props) {
   useEffect(() => {
     const init = async () => {
       let promises = []
-
       promises.push(publicStorage(gymIconUri))
-
       const res = await Promise.all(promises)
       setIconUri(res[ 0 ])
     }; init()
   }, [])
 
 
-  console.log("iconUri: " + iconUri)
+  console.log("gymId: " + gymId)
 
   return (
     <View style={{
@@ -59,7 +60,7 @@ export default function AlgoliaSearchResultsCard(props) {
       <TouchableHighlight
         underlayColor='#F9F9F9'
         style={{ height: '100%' }}
-        onPress={() => navigation.navigate('GymDescription', { gymId })}
+        onPress={() => navigation.navigate('GymDescription', props.data )}
       >
         <>
 
@@ -76,7 +77,7 @@ export default function AlgoliaSearchResultsCard(props) {
                 borderRadius: 25,
                 overflow: 'hidden',
               }}
-              source={{ uri: iconUri }}
+              source={{ uri: iconUri }} 
             />
 
             <View style={{

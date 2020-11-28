@@ -7,15 +7,19 @@ export const getPlaidLinkToken = async () => {
   return ( await getPlaidLinkToken() ).data
 }
  
-/**
+/** 
  * @see https://plaid.com/docs/link/react-native/#onsuccess
  */
 export const initOnPlaidLinkSuccess = (onError) => {
-  console.log("hiiiii")
+  console.log("hi from initOnPlaidLinkSuccess") 
+  console.log("onError: ", onError)
   const onSuccess = async ({ public_token, metadata }) => {
+    console.log("onSuccessCalled")
     let { accounts } = metadata || {}
-    let { id: plaid_account_id } = accounts[ 0 ] // Gets first account
+    let { id: plaid_account_id } = accounts[0] // Gets first account
+
     try {
+      console.log("try backend")
       const connectPlaid = functions().httpsCallable('connectPlaidAccountToStripeSeller')
       await connectPlaid({ public_token, plaid_account_id })
     } catch(err) {
