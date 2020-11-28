@@ -10,6 +10,7 @@ import { colors } from '../contexts/Colors'
 import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
+import functions from '@react-native-firebase/functions'
 
 
 
@@ -113,7 +114,7 @@ export default function PartnerUpdateMemberships(props) {
             if (text.length <= 1) setPriceUnlimited("$")
             if (!text.includes("$")) return
             if (text.match(/[A-Za-z]/g)) return
-            let dots = text.match(/[.]/g)
+            let dots = text.match(/[.]/g) 
             if (dots) if (dots.length > 1) return
             setPriceUnlimited(text)
           }}
@@ -136,6 +137,14 @@ export default function PartnerUpdateMemberships(props) {
               membership_price_instudio,
             })
             await gymObj.push()
+
+            console.log("gym.id: ", gym.id)
+
+            let gymId = gym.id
+
+             // Create product in Stripe
+            const createGymProduct = functions().httpsCallable('createGymProduct')
+            await createGymProduct({gymId})
 
             setSuccessMsg("Membership updated.")
           } catch (err) {

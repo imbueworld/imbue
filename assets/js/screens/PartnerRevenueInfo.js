@@ -11,6 +11,7 @@ import User from '../backend/storage/User'
 import PlaidButton from '../components/PlaidButton'
 import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry'
 import config from '../../../App.config'
+import { useNavigation } from '@react-navigation/native'
 
 
 
@@ -19,6 +20,8 @@ export default function PartnerRevenueInfo(props) {
   const [gym, setGym] = useState(null)
   const [hasBankAccountAdded, setHasBankAccountAdded] = useState()
   const [errorMsg, setErrorMsg] = useState('')
+  const navigation = useNavigation()
+
 
   const [r, refresh] = useState(0)
 
@@ -30,7 +33,7 @@ export default function PartnerRevenueInfo(props) {
         await user.retrievePartnerGyms()
       ).map(it => it.getAll())[ 0 ]
       setUser(userDoc)
-      setGym(gym)
+      setGym(gym) 
       setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
       // setHasBankAccountAdded(true)
     }; init()
@@ -61,17 +64,24 @@ export default function PartnerRevenueInfo(props) {
         ?
       </CustomText> */}
 
+      <CustomButton
+        style={styles.button}
+        textStyle={styles.buttonText}
+        title="Memberships"
+        onPress={() => navigation.navigate('PartnerUpdateMemberships')}
+      />
+
       <Text style={{
         paddingTop: 15,
-        paddingBottom: 10,
+        paddingBottom: 10, 
         ...FONTS.subtitle,
         textAlign: "center",
         fontSize: 22,
       }}>Payouts</Text>
 
       <Text style={styles.error}>{ errorMsg }</Text>
-
-      { !hasBankAccountAdded ? <>
+ 
+      { !hasBankAccountAdded ? <> 
         <BankAccountFormWithButtonEntry
           onError={setErrorMsg} 
           onSuccess={() => refresh(r => r + 1)}
