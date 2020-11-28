@@ -51,9 +51,11 @@ export default function GymDescription(props) {
   // }, [popup])
 
   useEffect(() => {
-    console.log("gym.Id (useeffect): ", gym.id)
-    console.log("gym (useeffect): ", gym)
-    setGymId(gym.id)
+    const {
+      id
+    } = gym
+    console.log("gym (GymDescription): ", gym)
+    setGymId(id)
     const init = async () => {
       const thisUser = new User()
       setUser(await thisUser.retrieveUser())
@@ -131,6 +133,7 @@ export default function GymDescription(props) {
       {Name}
       {Genres}
       {Desc} 
+      
 
       <CustomButton
         style={{

@@ -71,7 +71,7 @@ exports.linkBankAccountToStripeAccount = functions.https.onCall(async (data, con
 /**
  * @see https://plaid.com/docs/api/tokens/#linktokencreate
  */
-exports.getPlaidLinkToken = functions.https.onCall(async (data, context) => {
+exports.getPlaidLinkToken = functions.https.onCall(async (data, context) => { 
   const { auth: { uid } } = context
 
   const tokenResponse = await plaid.createLinkToken({ 
@@ -97,18 +97,25 @@ exports.connectPlaidAccountToStripeSeller = functions.https.onCall(async (data, 
     plaid_account_id,
   } = data
 
+  console.log("public_token: ", public_token)
+  console.log("plaid_account_id: ", plaid_account_id)
+
 
   // Retrieve partner's Stripe Connect Account ID
   const { stripe_account_id } = ( await partners.doc(uid).get() ).data()
   // Exchange the received public token for an access token
   const { access_token } = await plaid.exchangePublicToken(public_token)
+  console.log("access_token: ", access_token)
 
   // Generate a Stripe btok (bank token)
   const {
     stripe_bank_account_token: external_account,
   } = await plaid.createStripeToken( 
+    access_token,
     plaid_account_id,
   )
+  
+  console.log("stripe_account_id: ", stripe_account_id)
 
   // Link the btok (bank token) to partner's Stripe Connect Account
   const bankAccount = await stripe.accounts.createExternalAccount(

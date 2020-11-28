@@ -18,10 +18,10 @@ export default function AlgoliaSearchResultsTab(props) {
   const { window: { height } } = useDimensions()
 
 
-
+ 
   if (!open) return <View />
 
-  console.log("gyms: ", gyms)
+  console.log("gyms (AlgoliaSearchResultsTab): ", gyms)
 
   const ResultCards = gyms.map(gym => {
     // if (gym.hidden_on_map) return
