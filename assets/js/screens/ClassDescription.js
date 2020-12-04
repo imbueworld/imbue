@@ -220,12 +220,12 @@ export default function ClassDescription(props) {
   }
 
   return (
-    <GymLayout
+    <GymLayout 
       containerStyle={styles.container}
       innerContainerStyle={styles.innerContainerStyle}
       data={gym}
       buttonOptions={{
-        goToLivestream: getGoToLivestreamButton(),
+        // goToLivestream: getGoToLivestreamButton(), 
         addToCalendar: {
           show: hasMembership && user.account_type == 'user' && !classHasPassed,
           state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
@@ -360,22 +360,35 @@ export default function ClassDescription(props) {
                   setPopup("buy")
                 }}
               />}
-            </>}
+              </>}
 
-        {hasMembership !== "imbue" ? null :
+          {hasMembership !== "imbue" ? null :
         <MembershipApprovalBadgeImbue
           containerStyle={{
             marginTop: 10,
-          }}
+          }} 
           data={gym}
         />}
-        {hasMembership !== "gym" ? null :
+          {hasMembership !== "gym" ? null :
+            <>
+            <CustomButton
+            style={{
+              marginBottom: 0,
+            }}
+            title="Join"
+                onPress={() => {
+                  const pushAction = StackActions.push("Livestream", { gymId: gym.id })
+                  navigation.dispatch(pushAction)
+              // getGoToLivestreamButton()
+            }}
+          />
         <MembershipApprovalBadge
           containerStyle={{
             marginTop: 10,
           }}
           data={gym}
-        />}
+              />
+        </>}
         {hasMembership !== "class" ? null :
         <ClassApprovalBadge
           containerStyle={{
