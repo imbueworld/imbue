@@ -187,7 +187,8 @@ export default function GymDescription(props) {
                     }
 
                     const user = new User()
-                    await user.purchaseGymMembership({
+                    await user.purchaseGymMembership({ 
+                      user,
                       paymentMethodId,
                       gymId,
                     })

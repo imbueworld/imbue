@@ -12,7 +12,7 @@ import PlaidButton from '../components/PlaidButton'
 import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry'
 import config from '../../../App.config'
 import { useNavigation } from '@react-navigation/native'
-
+import functions from '@react-native-firebase/functions'
 
 
 export default function PartnerRevenueInfo(props) {
@@ -36,13 +36,19 @@ export default function PartnerRevenueInfo(props) {
       setGym(gym) 
       setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
       // setHasBankAccountAdded(true)
+      // update Stripe balance revenue
+      if (gym) {
+        const updateStripeAccountRevenue = functions().httpsCallable('updateStripeAccountRevenue')
+        await updateStripeAccountRevenue(gym.id)
+      }
+      
     }; init()
   }, [r])
 
 
 
   if (!user || !gym || hasBankAccountAdded === undefined) return <View />
-  
+   
   return (
     <ProfileLayout
       innerContainerStyle={{
@@ -53,7 +59,7 @@ export default function PartnerRevenueInfo(props) {
         style={styles.text}
         containerStyle={styles.textContainer}
         label='Revenue of the ongoing month'
-      >
+      > 
         {`$${currencyFromZeroDecimal(user.revenue)}`}
       </CustomText>
       {/* <CustomText

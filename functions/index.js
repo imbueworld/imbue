@@ -17,6 +17,7 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
 
 
 
+
 const {
   p, w, e,
   _extractOnlyData,
@@ -342,6 +343,51 @@ exports.retrieveStripeAccount = functions.https.onCall(async (data, context) => 
   return await stripe.accounts.retrieve(stripe_account_id)
 })
 
+
+
+exports.updateStripeAccountRevenue = functions.https.onCall(async (data) => {
+  const gymId = data
+  const {
+    partner_id,
+    // stripe_person_id,
+  } = (await gyms.doc(gymId).get()).data()
+  console.log("partner_id: ", partner_id)
+
+  const {
+    stripe_account_id,
+    // stripe_person_id,
+  } = (await partners.doc(partner_id).get()).data()
+  console.log("stripe_account_id: ", stripe_account_id)
+
+  const balance = await stripe.balance.retrieve({
+    stripeAccount: stripe_account_id
+  });
+
+  console.log("balance: ", JSON.stringify(balance))
+  console.log("balance.available[0].amount: ", balance.available[0].amount)
+  console.log("balance.pending[0].amount: ", balance.pending[0].amount)
+  // console.log("balance.connect_reserved[0].amount: ", balance.connect_reserved[0].amount)
+
+  const payouts = await stripe.payouts.list({
+    stripeAccount: stripe_account_id,
+  });
+
+  console.log("payouts: ", JSON.stringify(payouts))
+  const stringified_payouts = JSON.stringify(payouts)
+
+  // payouts.map(function (data, idx) {
+  //   console.log("amount: ", data.amount)
+  // })
+
+  payouts.data.map((data) => {
+    console.log("amount: ", data.amount)
+  });
+})
+
+
+
+
+
 /**
  * Sets the [id] field inside of the document to that of doc's actual id, for ease of access
  */
@@ -576,6 +622,8 @@ exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, con
   } = data
   const IMBUE_PERCENTAGE_CUT = 0.15
 
+  console.log("paymentMethodId, classId, timeId: ", paymentMethodId, classId, timeId)
+
   // Do not continue if insufficient parameters
   if (!paymentMethodId || !classId || !timeId)
     throw 'Insufficient params.'
@@ -663,7 +711,9 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
 
   // Do not continue if, for whatever reason, membership is already owned.
   active_memberships.forEach(gym_id => {
-    if (gym_id == gymId) throw `Membership already owned. (user_id: ${uid}, gym_id: ${gymId})`
+    if (gym_id == gymId) {
+      throw `Membership already owned. (user_id: ${uid}, gym_id: ${gymId})`
+    } 
   })
 
   const [
@@ -684,17 +734,8 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
         .doc(gymId)
         .get(),
     ])
-  )
-
-  // const { membership_price_online: price } = (
-  //   await gyms
-  //     .doc(gymId)
-  //     .get()
-  // ).data()
+    )
   
-  console.log("price: ", price)
-  console.log("gymId (cloud): ", gymId)
-
   const { stripe_account_id: destination } = (
     await partners
       .doc(partnerId)
@@ -717,6 +758,8 @@ exports.purchaseMembership = functions.https.onCall(async (data, context) => {
     },
     application_fee_percent: 15,
   })
+  
+
 
   await Promise.all([
     stripe_customers
