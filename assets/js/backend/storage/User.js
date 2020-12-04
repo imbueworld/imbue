@@ -557,9 +557,11 @@ export default class User extends DataObject {
    */
   async purchaseGymMembership(details) {
     return await this._BusyErrorWrapper('purchaseGymMembership', async () => {
-      await this.init()
+      await this.init()  
 
-      let { paymentMethodId, gymId } = details
+      let { user, paymentMethodId, gymId } = details
+
+      console.log("user: ", user)
 
       // Charge user
       const makePurchase = functions().httpsCallable('purchaseMembership')

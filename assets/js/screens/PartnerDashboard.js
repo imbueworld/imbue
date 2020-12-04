@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
 import ProfileLayout from "../layouts/ProfileLayout"
 import CustomButton from "../components/CustomButton"

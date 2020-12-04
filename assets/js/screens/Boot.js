@@ -21,15 +21,14 @@ export default function Boot(props) {
   // LoginManager.logOut()
   // auth().signOut()
 
-
   const navigation = useNavigation()
 
   const bootWithUser = async () => {
     const user = new User() 
-    console.log("user: ", user)
     // console.log("await user.retrieveUser(): ", await user.retrieveUser())
     const { account_type } = await user.retrieveUser()  
-    console.log("account_type: ", account_type)
+    console.log("accounttype: ", account_type)
+
 
     // // Waitlist stuff:
     // // Determine whether to let in or not
