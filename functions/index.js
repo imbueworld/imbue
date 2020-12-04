@@ -518,7 +518,7 @@ exports.cleanUpAfterPartner = functions.firestore
   })
 
 /**
- * Must ONLY be called when membership_price has been set in gym doc.
+ * Must ONLY be called when membership_price has been set in gym doc. Calls on create and on update pricing
  */
 exports.createGymProduct = functions.https.onCall(async (data, context) => {
   const { gymId } = data 
@@ -537,30 +537,63 @@ exports.createGymProduct = functions.https.onCall(async (data, context) => {
     return
   }
 
-  const product = await stripe.products.create({
-    id: gymId,
-    name: `Imbue, Gym Online Membership — ${gymName}`,
-    description: `Grants access to all online content that ${gymName} provide.`,
-  })
-
-  const recurringPrice = await stripe.prices.create({
-    product: gymId,
-    currency: 'usd',
-    unit_amount,
-    recurring: {
-      interval: 'month',
-    },
-    nickname: `Monthly price — ${gymName}`, // Dev-side info
-  })
-
-  await Promise.all([
-    stripe_products
+  const {
+    id: priceId,
+  } = (
+    await stripe_prices
       .doc(gymId)
-      .set(product),
-    stripe_prices
-      .doc(gymId)
-      .set(recurringPrice),
-  ])
+      .get()
+  ).data()
+
+
+  // Check if price exists, if so update price
+  if (priceId) {
+    console.log("update price")
+    const recurringPrice = await stripe.prices.create({
+      product: gymId,
+      currency: 'usd',
+      unit_amount,
+      recurring: {
+        interval: 'month',
+      },
+      nickname: `Monthly price — ${gymName}`, // Dev-side info
+    })
+    // const updated_price = await stripe.prices.update(
+    //   priceId,
+    //   {unit_amount: unit_amount}
+    // );
+    await Promise.all([
+      stripe_prices
+        .doc(gymId)
+        .set(recurringPrice),
+    ])
+  } else {
+    console.log("create product/price")
+    const product = await stripe.products.create({
+      id: gymId,
+      name: `Imbue, Gym Online Membership — ${gymName}`,
+      description: `Grants access to all online content that ${gymName} provide.`,
+    })
+
+    const recurringPrice = await stripe.prices.create({
+      product: gymId,
+      currency: 'usd',
+      unit_amount,
+      recurring: {
+        interval: 'month',
+      },
+      nickname: `Monthly price — ${gymName}`, // Dev-side info
+    })
+
+    await Promise.all([
+      stripe_products
+        .doc(gymId)
+        .set(product),
+      stripe_prices
+        .doc(gymId)
+        .set(recurringPrice),
+    ])
+  }
 })
 
 /**
