@@ -366,7 +366,7 @@ export default function UserDashboard(props) {
               source={require("../components/img/png/user-memberships.png")}
             />
           }
-          title="Manage Memberships"
+          title="Memberships"
           onPress={() => props.navigation.navigate(
             "UserMemberships")}
         />
