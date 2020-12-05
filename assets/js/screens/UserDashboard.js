@@ -224,7 +224,7 @@ export default function UserDashboard(props) {
         </View> */}
 
         <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
-          <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>my classes</Text>
+          <Text style={{flex: 1, textAlign: "center", ...FONTS.luloClean }}>my classes</Text>
           <CustomButton
               icon={
                 <Icon
@@ -261,7 +261,7 @@ export default function UserDashboard(props) {
 
       {/* featured partners */}
       <View style={styles.cardContainer}>
-        <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>featured</Text>
+        <Text style={{flex: 1, textAlign: "center", ...FONTS.luloClean }}>featured</Text>
         <FlatList
           horizontal
           data={featuredPartners}
@@ -274,7 +274,7 @@ export default function UserDashboard(props) {
 
       {/* all partners */}
       <View style={styles.cardContainer}>
-        <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>all influencers</Text>
+        <Text style={{flex: 1, textAlign: "center", ...FONTS.luloClean }}>all influencers</Text>
         <FlatList
           horizontal
           data={partners}
