@@ -41,6 +41,7 @@ export default function UserMemberships(props) {
 
       setUser(userDoc)
       setMemberships(gymDocs)
+      console.log("memberships: ", memberships)
     }; init()
   }, [successMsg])
 
@@ -49,17 +50,23 @@ export default function UserMemberships(props) {
 
     // console.log("memberships", memberships) // DEBUG
 
+
     MembershipsCreate(memberships.map(membership =>
-      <TouchableMenu
+      <TouchableMenu 
         key={membership.name}
+        name={membership.description}
         containerStyle={{
           marginBottom: 15,
+          height: 70,
+          marginTop: 20,
+          marginBottom: 40
         }}
         style={{
           borderRadius: 30,
+
         }}
-        confirmColor='red'
-        confirmText='Remove'
+        confirmColor='black'
+        confirmText='X'
         onProceed={async () => {
           setErrorMsg('')
           setSuccessMsg('')
@@ -130,7 +137,11 @@ export default function UserMemberships(props) {
           ? <Text style={{ color: "green" }}>{successMsg}</Text>
           : null}
 
-        { Memberships }
+        {/* Membership list */}
+        <View style={{marginTop: 40, marginBottom: 20}}>
+          <Text style={{ flex: 1, textAlign: "center", fontSize: 16, color: "black", ...FONTS.luloClean, }}>Memberships: </Text>
+          { Memberships }
+        </View>
 
         <CustomButton
           style={styles.button}

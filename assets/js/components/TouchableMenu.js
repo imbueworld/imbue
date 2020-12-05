@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
@@ -10,11 +10,22 @@ export default function TouchableMenu(props) {
     const [active, setActive] = useState(false)
     let shadow = active ? highShadow : {}
 
+    useEffect(() => {
+        const init = async () => {
+            console.log("props: ", props)
+
+            setActive(true)
+        }; init()
+      }, [])
+    
+
     return (
         <View style={{
-            borderRadius: 10,
+            borderRadius: 30,
+            borderWidth: 1.5,
+            borderColor: "black",
             ...props.containerStyle,
-            ...shadow,
+            // ...shadow,
         }}>
             {active ?
             <>
@@ -28,33 +39,37 @@ export default function TouchableMenu(props) {
                     zIndex: -100,
                     ...props.style,
                 }}
-            />
+                    />
+                    
             <View style={{
                 width: "100%",
                 height: "100%",
                 position: "absolute",
                 flexDirection: "row",
-                alignItems: "center",
-                backgroundColor: "#00000030", //"#00000060",
+                        alignItems: "center",
+                        padding: 10,
+                paddingLeft: 30,
+                        backgroundColor: "#fff", //"#00000060",
                 zIndex: 110,
                 ...props.style,
-            }}>
-                <View style={{ flex: 1, marginHorizontal: "10%", }}>
-                    <TouchableHighlight
-                        style={{
-                            borderRadius: 30,
-                        }}
-                        underlayColor="#00000012"
-                        onPress={props.onProceed || undefined}
-                    >
-                        <Text style={{
-                            ...styles.button,
-                            backgroundColor: props.confirmColor || "#68cc75",
-                            fontWeight: "bold",
-                        }}>{props.confirmText || "Confirm"}</Text>
-                    </TouchableHighlight>
-                </View>
-                <View style={{ flex: 1, marginHorizontal: "10%", }}>
+                    }}>
+                <Text style={{ flex: 1, fontSize: 12, color: "black", ...FONTS.luloClean, }}>{props.name}</Text>
+                <View style={{ flex: 0, marginHorizontal: "10%", }}>
+                        <TouchableHighlight
+                            style={{
+                                    borderRadius: 50,
+                            }}
+                            underlayColor="#00000012"
+                            onPress={props.onProceed || undefined}
+                        >
+                            <Text style={{
+                                        ...styles.button,
+                                backgroundColor: "white",
+                                fontWeight: "bold",
+                            }}>{props.confirmText || "Confirm"}</Text>
+                        </TouchableHighlight>
+                    </View>
+                {/* <View style={{ flex: 1, marginHorizontal: "10%", }}>
                     <TouchableHighlight
                         style={{
                             borderRadius: 30,
@@ -64,7 +79,7 @@ export default function TouchableMenu(props) {
                     >
                         <Text style={styles.button}>Cancel</Text>
                     </TouchableHighlight>
-                </View>
+                </View> */}
             </View>
             </> : null}
 
@@ -85,9 +100,11 @@ export default function TouchableMenu(props) {
 const styles = StyleSheet.create({
     button: {
         padding: 10,
-        backgroundColor: "white",
+        backgroundColor: "#333",
         borderRadius: 999,
         ...FONTS.body,
         textAlign: "center",
+        color: 'red',
+        fontSize: 20
     },
 })
