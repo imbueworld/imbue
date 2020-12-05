@@ -159,7 +159,7 @@ export default function UserDashboard(props) {
 
   // render each card
   const Item = ({ description, item, onPress }) => (
-    <TouchableOpacity onPress={onPress} style={{ flex: 1, backgroundColor: "#242429", borderRadius: 20, padding: 10, marginLeft: 5, marginRight: 5 }}>
+    <TouchableOpacity onPress={onPress} style={{ flex: 1, backgroundColor: "#242429", borderRadius: 20, padding: 10, marginLeft: 5, marginRight: 5, width: 115 }}>
       <Icon
         containerStyle={{
           width: cardIconLength,
