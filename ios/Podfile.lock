@@ -443,7 +443,7 @@ PODS:
   - OpenSSL-Universal/Static (1.0.2.20)
   - Permission-Camera (2.2.2):
     - RNPermissions
-  - Plaid (2.0.6)
+  - Plaid (2.0.8)
   - PromisesObjC (1.2.11)
   - RCTRequired (0.63.3)
   - RCTTypeSafety (0.63.3):
@@ -1031,7 +1031,7 @@ SPEC CHECKSUMS:
   NodeMediaClient: c52ef6564764c364b5032d1d8d1f255d5e4aadb0
   OpenSSL-Universal: ff34003318d5e1163e9529b08470708e389ffcdd
   Permission-Camera: 375576c57ea625c88137d2cc52ba6dfeb21db036
-  Plaid: 38b4f18a23a6038146c10bc210e767c4379d622a
+  Plaid: 8fe2386304cc3d19b04bdbf32f0228e80678839a
   PromisesObjC: 8c196f5a328c2cba3e74624585467a557dcb482f
   RCTRequired: 48884c74035a0b5b76dbb7a998bd93bcfc5f2047
   RCTTypeSafety: edf4b618033c2f1c5b7bc3d90d8e085ed95ba2ab
@@ -1083,4 +1083,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 4ab00741881957f757ffb104d59af434ac763af9
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.0
