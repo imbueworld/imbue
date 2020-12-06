@@ -261,7 +261,7 @@ export default function UserDashboard(props) {
 
       {/* featured partners */}
       <View style={styles.cardContainer}>
-        <Text style={{flex: 1, textAlign: "center", ...FONTS.luloClean }}>featured</Text>
+        <Text style={{flex: 1, textAlign: "center", ...FONTS.title }}>featured</Text>
         <FlatList
           horizontal
           data={featuredPartners}

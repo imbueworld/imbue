@@ -60,7 +60,7 @@ export default function AlgoliaSearchBar(props) {
           style={{
             color: "#000",
             flex: 1,
-            ...FONTS.luloClean,
+            ...FONTS.body,
             fontSize: 8,
             ...textStyle,
             color: "#000",
