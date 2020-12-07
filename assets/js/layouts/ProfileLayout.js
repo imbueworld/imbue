@@ -219,8 +219,8 @@ const styles = StyleSheet.create({
     // marginTop: 15,
     marginBottom: 10,
     alignSelf: "center",
-    ...FONTS.title,
-    fontSize: 22,
+    ...FONTS.luloClean,
+    fontSize: 16,
   },
   sidePanelButtonContainer: {
     ...simpleShadow,

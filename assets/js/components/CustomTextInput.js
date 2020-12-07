@@ -90,7 +90,7 @@ const styles = StyleSheet.create({
   input: {
     ...FONTS.subtitle,
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 12,
     // backgroundColor: 'red', // DEBUG
   },
 })
