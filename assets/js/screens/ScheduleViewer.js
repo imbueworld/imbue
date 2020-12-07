@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -120,6 +120,7 @@ export default function ScheduleViewer(props) {
   if (!user || !dataIsFormatted) return <View />
 
   return (
+    <SafeAreaView>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
 
       <AppBackground />
@@ -155,11 +156,12 @@ export default function ScheduleViewer(props) {
             }}
           />
           <View style={{
-            position: "absolute",
+            position: "absolute"
           }}>
           <Text style={{
             width: "100%",
             textAlign: "center",
+            marginBottom: 15,
             ...FONTS.body,
             fontSize: 30,
           }}>{title}</Text>
@@ -169,6 +171,7 @@ export default function ScheduleViewer(props) {
             ...FONTS.body,
             textAlign: "center",
             fontSize: 18,
+            marginBottom: 50
           }}>{subtitle}</Text> : null}
           </View>
         {/*           
@@ -242,6 +245,7 @@ export default function ScheduleViewer(props) {
       </View>
 
       </ScrollView>
+    </SafeAreaView>
   )
 }
 
