@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import {
   StyleSheet, ScrollView, View, Image, SafeAreaView
 } from 'react-native'
+import { useDimensions } from '@react-native-community/hooks'
 
 import { colors } from '../contexts/Colors'
 import AppBackground from "../components/AppBackground"
@@ -17,9 +18,10 @@ import AttendeesPopup from '../components/popups/AttendeesPopup'
 import CustomButton from '../components/CustomButton'
 import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarButton'
 import { publicStorage } from '../backend/BackendFunctions'
+import Icon from '../components/Icon'
 
 
-/**
+/** 
  * props
  * .data -- gym data
  * .containerStyle
@@ -33,12 +35,18 @@ export default function GymLayout(props) {
   // const [buttonOptions, setButtonOptions] = useState(null)
   const [customState, setCustomState] = useState({}) // Used only internally, during the lifetime of this component
   const [gymImage, setGymImage] = useState('')
+  const { width, height } = useDimensions().window
+
   
 
   useEffect(() => {
     const init = async () => {
+      console.log("gym.image_uri")
       getGymImage(gym)
+      console.log("gymImage: ", gymImage)
     }; init()
+
+
   }, [])
 
   // useEffect(() => {
@@ -111,13 +119,14 @@ export default function GymLayout(props) {
   // Get image download url
   const getGymImage = async (data) => {
     let promises = []
+    console.log("data.image_uri: ", data.image_uri)
     promises.push(publicStorage(data.image_uri))
     const res = await Promise.all(promises)
     var profileImg = res[0]
+    console.log("profileImg: ", profileImg)
     setGymImage(profileImg) 
   }
 
-  // console.log("gym.image_uri: ", getGymImage(gym.image_uri))
 
   return (
     <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
@@ -140,8 +149,18 @@ export default function GymLayout(props) {
       
         <Image
           style={styles.image}
-          source={{ uri: gymImage }}>
-        </Image>
+          source={{ uri: gymImage}}
+        /> 
+{/* 
+      <Icon
+        containerStyle={{
+            height: width,
+            width: 300,
+            borderRadius: 0,
+            overflow: 'hidden', 
+        }}
+        source={{ uri: gym.image_uri }}
+      /> */}
 
       {/* <ImageSlideshow
         containerStyle={{
@@ -263,10 +282,10 @@ const styles = StyleSheet.create({
   },
   image: {
     height: "100%",
-    marginLeft: 50,
-    marginRight: 50,
-    height: 450,
-    resizeMode: 'contain'
+    marginLeft: 0,
+    marginRight: 0,
+    height: 360,
+    resizeMode: 'cover'
     // borderRadius: 30,
     // borderBottomLeftRadius: 0,
     // borderBottomRightRadius: 0,
