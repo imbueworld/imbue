@@ -709,6 +709,24 @@ export default class User extends DataObject {
             icon_uri_full: await publicStorage(userId, true),
           })
 
+
+        // get gymId
+        const userDocumentSnapshot = await firestore()
+          .collection('partners')
+          .doc(userId)
+          .get()
+        const gymId = userDocumentSnapshot.data().associated_gyms[0]
+        console.log("gymId: ", gymId)
+
+        // update game image_uri
+        await firestore()
+          .collection('gyms')
+          .doc(gymId)
+          .update({
+            image_uri: userId,
+          })
+
+
           await this.push()
           resolve('Success.')
 

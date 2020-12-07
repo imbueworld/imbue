@@ -12,7 +12,7 @@ import CustomTextInput from "../components/CustomTextInput"
 
 import auth from "@react-native-firebase/auth"
 import Icon from '../components/Icon'
-import { simpleShadow } from '../contexts/Colors'
+import { simpleShadow } from '../contexts/Colors' 
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
 import { useNavigation } from '@react-navigation/native'
@@ -165,7 +165,7 @@ export default function UserDashboard(props) {
           width: cardIconLength,
           height: cardIconLength,
           borderRadius: 50,
-          overflow: 'hidden',
+          overflow: 'hidden', 
         }}
         source={{ uri: item.icon_uri }}
       />
@@ -179,6 +179,7 @@ export default function UserDashboard(props) {
     var gymId = item.associated_gyms
     var description = ""
     var thisGym 
+    console.log("item.icon_uri: ", item.icon_uri)
     gyms.map((data) => {
       {
         data.id === gymId[0] ? 
