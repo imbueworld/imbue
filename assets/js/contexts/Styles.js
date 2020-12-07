@@ -21,19 +21,15 @@ export const FONTS = {
   }),
   title: {
     fontFamily: 'LuloCleanW01-OneBold',
-    fontWeight: '900',
   },
   subtitle: {
     fontFamily: 'LuloCleanW01-One',
-    fontWeight: '500',
   },
   body: {
     fontFamily: 'LuloCleanW01-One',
-    fontWeight: '400',
   },
   heading: {
     fontFamily: 'LuloCleanW01-OneBold',
-    fontWeight: '900',
     fontSize: 20,
   },
   cardTitle: {

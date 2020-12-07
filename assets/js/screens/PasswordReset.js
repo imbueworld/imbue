@@ -123,6 +123,7 @@ const styles = StyleSheet.create({
   },
   field: {
     marginBottom: 10,
+    fontSize: 12
   },
   backButton: {
     position: 'absolute',

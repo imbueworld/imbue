@@ -134,6 +134,15 @@ export default function GymDescription(props) {
       {Genres}
       {Desc} 
       
+      <CustomButton
+        style={{
+          marginBottom: 0,
+        }}
+          title="Join Livestream for Free"
+          onPress={() => {
+            props.navigation.navigate("Livestream", { gymId: "DG1flzmTDHE5BuAOAu9r" })
+          }}
+        />
 
       <CustomButton
         style={{
