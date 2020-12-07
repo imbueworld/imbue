@@ -20,28 +20,28 @@ export const FONTS = {
     },
   }),
   title: {
-    fontFamily: 'PlayfairDisplay-Black',
+    fontFamily: 'LuloCleanW01-OneBold',
     fontWeight: '900',
   },
   subtitle: {
-    fontFamily: 'PlayfairDisplay-Medium',
+    fontFamily: 'LuloCleanW01-One',
     fontWeight: '500',
   },
   body: {
-    fontFamily: 'PlayfairDisplay-Regular',
+    fontFamily: 'LuloCleanW01-One',
     fontWeight: '400',
   },
   heading: {
-    fontFamily: 'PlayfairDisplay-Regular',
+    fontFamily: 'LuloCleanW01-OneBold',
     fontWeight: '900',
     fontSize: 20,
   },
   cardTitle: {
-    fontFamily: 'PlayfairDisplay-Black',
+    fontFamily: 'LuloCleanW01-OneBold',
     fontSize: 12,
   },
   cardBody: {
-    fontFamily: 'PlayfairDisplay-Regular',
-    fontSize: 10,
+    fontFamily: 'LuloCleanW01-One',
+    fontSize: 7,
   },
 }
