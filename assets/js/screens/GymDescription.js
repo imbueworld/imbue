@@ -140,7 +140,7 @@ export default function GymDescription(props) {
         }}
           title="Join Livestream for Free"
           onPress={() => {
-            props.navigation.navigate("Livestream", { gymId: "DG1flzmTDHE5BuAOAu9r" })
+            props.navigation.navigate("Livestream", { gymId })
           }}
         />
 
