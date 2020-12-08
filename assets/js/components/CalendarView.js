@@ -54,6 +54,20 @@ export default function CalendarView(props) {
         onDayPress={day => {
           props.setSlctdDate(day.dateString)
         }}
+        theme={{
+          textSectionTitleColor: '#242429',
+          dayTextColor: '#242429',
+          textSectionTitleDisabledColor: '#242429',
+          selectedDayBackgroundColor: '#242429',
+          dotColor: '#242429',
+          selectedDotColor: '#f9f9f9',
+          arrowColor: '#242429',
+          monthTextColor: '#242429',
+          indicatorColor: '#242429',
+          textDayFontFamily: 'LuloCleanW01-One',
+          textMonthFontFamily: 'LuloCleanW01-One',
+          textDayHeaderFontFamily: 'LuloCleanW01-One',
+        }}
         // [v DEBUG ONLY v]
         onDayLongPress={config.DEBUG ? day => {
           props.setSlctdDate(day.dateString)
@@ -75,5 +89,6 @@ const styles = StyleSheet.create({
 })
 
 const calendarStyle = {
-  // <Calendar /> can be styled following react-native-calendars properties
+
 }
+  // <Calendar /> can be styled following react-native-calendars properties
