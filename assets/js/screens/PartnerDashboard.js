@@ -23,6 +23,28 @@ export default function PartnerDashboard(props) {
 
   if (!user) return <View />
 
+  const toggleStream = async () => {
+    console.log("pressed")
+    const stream = cache("streamRef").get()
+    const isStreaming = cache("isStreaming").get()
+
+    if (isStreaming) {
+      stream.stop()
+      cache("isStreaming").set(false)
+      return
+    } 
+
+    const partnerObj = new User() 
+    await partnerObj.createLivestream({ gymId }) // Will not create livestream, if it already has been
+    const { stream_key } = await partnerObj.retrieveUser()
+    console.log("stream_key: " + stream_key)
+    setStreamKey(stream_key)
+
+    stream.start()
+    cache("isStreaming").set(true)
+
+  }
+
   return (
     <ProfileLayout
       innerContainerStyle={{
@@ -43,8 +65,10 @@ export default function PartnerDashboard(props) {
         }
         title="Go Live"
         onPress={() => {
+          toggleStream,
           props.navigation.navigate(
-            "GoLive")
+            "GoLive",
+          )
         }}
       />
        {/* <CustomButton

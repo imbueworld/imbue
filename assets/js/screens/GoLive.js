@@ -45,7 +45,6 @@ async function checkPermissionsiOS() {
 }
 
 
-
 export default function GoLive(props) {
   const [user, setUser] = useState(null)
   const [gymId, setGymId] = useState(null)
