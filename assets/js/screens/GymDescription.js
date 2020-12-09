@@ -134,7 +134,7 @@ export default function GymDescription(props) {
       {Genres}
       {Desc} 
       
-      <CustomButton
+      {/* <CustomButton
         style={{
           marginBottom: 0,
         }}
@@ -142,7 +142,7 @@ export default function GymDescription(props) {
           onPress={() => {
             props.navigation.navigate("Livestream", { gymId })
           }}
-        />
+        /> */}
 
       <CustomButton
         style={{
