@@ -32,6 +32,8 @@ export default function NewClassForm(props) {
   const [description, setDescription] = useState(null)
   // const [genres, setGenres] = useState(null)
   const [type, setType] = useState("online")
+  const [priceType, setPriceType] = useState("paid")
+
   const [price, setPrice] = useState("$0.00")
 
   useEffect(() => {
@@ -42,6 +44,7 @@ export default function NewClassForm(props) {
       setName(newClassForm.name)
       setImg(newClassForm.img)
       setDescription(newClassForm.description)
+      setPriceType(newClassForm.priceType)
       // setGenres(newClassForm.genres || [])
       // setType(newClassForm.type || "studio")
       setGymId(newClassForm.gym_id || null)
@@ -67,6 +70,7 @@ export default function NewClassForm(props) {
     form.name = name
     form.img = img
     form.description = description
+    form.priceType = priceType
   }, [instructor, name, description])
   useEffect(() => {
     const form = snatchNewClassForm()
@@ -129,9 +133,12 @@ export default function NewClassForm(props) {
 
   function format(form) {
     let zeroDecimalPrice = zeroDecimalFromCurrency(price.slice(1))
-    if (!zeroDecimalPrice) {
+    console.log("zeroDecimalPrice: ", zeroDecimalPrice)
+
+    // minimum price of $1.00
+    if (zeroDecimalPrice < 100 && priceType !== "free") {
       setRedFields(["price"])
-      throw new Error("Price must follow format: $xx.xx")
+      throw new Error("minimum class price is $1.00.")
     }
 
     form.price = zeroDecimalPrice
@@ -326,24 +333,39 @@ export default function NewClassForm(props) {
         onChange={type => setType(type)}
       /> */}
 
-      <CustomTextInput
+      {/* Paid or Free Class */}
+      <CustomSelectButton
         containerStyle={{
-          borderColor: redFields.includes("price") ? "red" : undefined,
+          // Should never happen, unless code bugged
+          backgroundBorder: redFields.includes("priceType") ? "red" : undefined,
         }}
-        placeholder="Price"
-        value={price}
-        onChangeText={text => {
-          let newText = text
-          let signs = text.match(/[$]/g)
-          let commas = text.match(/[.]/g)
-          let letters = text.match(/[A-Za-z]/g)
-          if (signs && signs.length !== 1) newText = price
-          if (commas && commas.length > 1) newText = price
-          if (letters) newText = price
-          setPrice(newText)
-        }}
-      />
+        options={{ free: "free", paid: "paid" }}
+        value={priceType}
+        onChange={priceType => setPriceType(priceType)}
+      />    
 
+      {priceType == "paid" ?
+        ( <CustomTextInput
+          containerStyle={{
+            borderColor: redFields.includes("price") ? "red" : undefined,
+          }}
+          placeholder="Price"
+          value={price}
+          onChangeText={text => {
+            let newText = text
+            let signs = text.match(/[$]/g)
+            let commas = text.match(/[.]/g)
+            let letters = text.match(/[A-Za-z]/g)
+            if (signs && signs.length !== 1) newText = price
+            if (commas && commas.length > 1) newText = price
+            if (letters) newText = price
+            setPrice(newText)
+          }}
+        /> 
+        ):
+        (null)
+      }
+     
       <CustomButton
         title="Create Class"
 
@@ -356,10 +378,10 @@ export default function NewClassForm(props) {
           try {
             // validate()
 
-            let form = format({ name, description, type, gym_id, price })
-
+            let form = format({ name, description, type, gym_id, price, priceType })
+ 
             const classObj = new Class()
-            classObj.create(form)  
+            classObj.create(form)   
 
             setSuccessMsg("Successfully created class.")
           } catch (err) {
