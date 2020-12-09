@@ -161,7 +161,7 @@ export default function ScheduleViewer(props) {
           <Text style={{
             width: "100%",
             textAlign: "center",
-            marginBottom: 15,
+            marginBottom: 70,
             ...FONTS.body,
             fontSize: 30,
           }}>{title}</Text>
@@ -171,7 +171,7 @@ export default function ScheduleViewer(props) {
             ...FONTS.body,
             textAlign: "center",
             fontSize: 18,
-            marginBottom: 50
+            marginBottom: -10
           }}>{subtitle}</Text> : null}
           </View>
         {/*           

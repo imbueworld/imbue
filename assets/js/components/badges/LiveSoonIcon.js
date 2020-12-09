@@ -25,14 +25,16 @@ export default function LiveSoonIcon(props) {
         source={require("../img/png/live-inactive.png")}
       />
       <Text style={{
+        flex: 1,
         paddingHorizontal: 5,
         position: "absolute",
         bottom: 0,
         backgroundColor: "#00000030",
         ...FONTS.body,
-        color: "white",
+        color: "black",
         textAlign: "center",
         textDecorationLine: "underline",
+        fontSize: 9
       }}>in {props.value}min</Text>
     </View>
   )
