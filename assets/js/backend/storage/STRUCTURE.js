@@ -64,6 +64,7 @@ const STRUCTURE = {
     genres: Array,
     type: String,
     price: Number,
+    priceType: String,
     // Core fields
     gym_id: String,
     partner_id: String,

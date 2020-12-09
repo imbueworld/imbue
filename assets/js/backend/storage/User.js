@@ -452,7 +452,7 @@ export default class User extends DataObject {
     cacheObj.set([...data, paymentMethod])
   }
 
-    /**
+  /**
    * One Time Class Purchase
    */
   async purchaseClass(details) {
@@ -475,6 +475,24 @@ export default class User extends DataObject {
       })
       await this.push()
     })
+  }
+
+  /**
+   * Free Class – Add to Calender
+   */
+  async addClassToCalender(details) {
+      await this.init()
+    
+      let { classId, timeId } = details
+
+      // After successful charge, register it for user in their doc
+      const { active_classes=[], scheduled_classes=[] } = this.getAll()
+      let newEntry = { class_id: classId, time_id: timeId }
+      this.mergeItems({
+        active_classes: [...active_classes, newEntry],
+        scheduled_classes: [...scheduled_classes, newEntry],
+      })
+      await this.push()
   }
 
   /**

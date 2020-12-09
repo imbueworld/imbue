@@ -42,6 +42,8 @@ export default function ClassDescription(props) {
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
   const [classDoc, setClassDoc] = useState(null)
+  const [priceType, setPriceType] = useState(null)
+
 
   useEffect(() => {
     const init = async () => {
@@ -67,7 +69,8 @@ export default function ClassDescription(props) {
       setGym(await gym.retrieveGym(classGymId))
     }; init()
   }, [r])
-  
+
+
   let activeClassesCount = user
     ? user.active_classes
         ? user.active_classes.length
@@ -81,6 +84,8 @@ export default function ClassDescription(props) {
       setHasMembership(true)
       return
     }
+
+    setPriceType(classDoc.priceType)
 
     const init = async () => {
       const imbue = new Gym()
@@ -225,60 +230,60 @@ export default function ClassDescription(props) {
       innerContainerStyle={styles.innerContainerStyle}
       data={gym}
       buttonOptions={{
-        // goToLivestream: getGoToLivestreamButton(), 
-        addToCalendar: {
-          show: hasMembership && user.account_type == 'user' && !classHasPassed,
-          state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
-          onPress: async () => {
-            const {
-              id: classId,
-              time_id: timeId,
-            } = classDoc
+        goToLivestream: getGoToLivestreamButton(), 
+        // addToCalendar: {
+        //   show: hasMembership && user.account_type == 'user' && !classHasPassed,
+        //   state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
+        //   onPress: async () => {
+        //     const {
+        //       id: classId,
+        //       time_id: timeId,
+        //     } = classDoc
 
-            const user = new User()
-            try {
-              await user.scheduleClass({ classId, timeId })
-            } catch(error) {
-              if (config.DEBUG) console.error(error)
-              if (error.code == 'insufficient_fields') {
-                let additionalFields = error.context
-                  .map(representDatabaseField).join(', ')
-                Alert.alert(
-                  'Information Request',
-                  `At the request of the owner of this class, you must be`
-                  + `providing additional information: ${additionalFields}.`,
-                  [
-                    {
-                      text: 'Add Now',
-                      onPress: () => {
-                        navigation.dispatch(StackActions.push('ProfileSettings'))
-                      },
-                    },
-                    {
-                      text: 'Cancel',
-                      style: 'cancel',
-                    },
-                  ],
-                  { cancelable: true },
-                )
-              } else {
-                Alert.alert('Action was not possible at this time.')
-              }
-            }
+        //     const user = new User()
+        //     try {
+        //       await user.scheduleClass({ classId, timeId })
+        //     } catch(error) {
+        //       if (config.DEBUG) console.error(error)
+        //       if (error.code == 'insufficient_fields') {
+        //         let additionalFields = error.context
+        //           .map(representDatabaseField).join(', ')
+        //         Alert.alert(
+        //           'Information Request',
+        //           `At the request of the owner of this class, you must be`
+        //           + `providing additional information: ${additionalFields}.`,
+        //           [
+        //             {
+        //               text: 'Add Now',
+        //               onPress: () => {
+        //                 navigation.dispatch(StackActions.push('ProfileSettings'))
+        //               },
+        //             },
+        //             {
+        //               text: 'Cancel',
+        //               style: 'cancel',
+        //             },
+        //           ],
+        //           { cancelable: true },
+        //         )
+        //       } else {
+        //         Alert.alert('Action was not possible at this time.')
+        //       }
+        //     }
 
-            refresh(r + 1)
-          }
-        },
-        removeFromCalendar: {
-          onPress: async () => {
-            const { id: classId, time_id: timeId } = classDoc
+        //     refresh(r + 1)
+        //   }
+        // },
+        // removeFromCalendar: {
+        //   onPress: async () => {
+        //     const { id: classId, time_id: timeId } = classDoc
             
-            const user = new User()
-            await user.unscheduleClass({ classId, timeId })
+        //     const user = new User()
+        //     await user.unscheduleClass({ classId, timeId })
 
-            refresh(r + 1)
-          },
-        },
+        //     refresh(r + 1)
+        //   },
+        // },
         viewAttendees: {
           show: user.account_type === "partner" ? true : false,
           data: {
@@ -286,7 +291,7 @@ export default function ClassDescription(props) {
             timeId: timeId,
           },
         },
-        goToCalendar: { show: true },
+        goToCalendar: { show: false },
       }}
     >
       { Content }
@@ -327,7 +332,7 @@ export default function ClassDescription(props) {
                     } = classDoc
 
                     const user = new User() 
-                    await user.purchaseClass({
+                    await user.purchaseClass({ 
                       paymentMethodId,
                       classId,
                       timeId,
@@ -351,15 +356,62 @@ export default function ClassDescription(props) {
                   }
                 }}
               />
-            : <CustomButton
-                style={{
-                  marginBottom: 0,
-                }}
-                title="Book"
-                onPress={() => {
-                  setPopup("buy")
-                }}
-              />}
+                  :
+                  (priceType === "paid"
+                      ? ( <CustomButton
+                            style={{ 
+                              marginBottom: 0,
+                            }}
+                            title="Book"
+                            onPress={() => { 
+                              setPopup("buy") 
+                            }}
+                          />
+                      ) : (
+                        <CustomButton
+                        style={{
+                          marginBottom: 0,
+                        }}
+                        title="Add to Calender"
+                        onPress={async () => {
+                                  
+                          try {
+                            setErrorMsg('')
+                            setSuccessMsg('')
+            
+                            const {
+                              id: classId,
+                              time_id: timeId,
+                            } = classDoc
+
+                            const user = new User()
+                            await user.addClassToCalender({
+                              classId,
+                              timeId,
+                            })
+            
+                            refresh(r + 1)
+            
+                          } catch (err) {
+                            switch (err.code) {
+                              case "busy":
+                                setErrorMsg(err.message)
+                                break
+                              case "class-already-added":
+                                setSuccessMsg(err.message)
+                                break
+                              default:
+                                setErrorMsg("Something prevented the action.")
+                                break
+                            }
+                            // Adds to calender. Called when priceType == free. Bypasses purchaing
+  
+                          }
+                        }}
+                      />
+                    )
+                  ) 
+                  }
               </>}
 
           {hasMembership !== "imbue" ? null :
