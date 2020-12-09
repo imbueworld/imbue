@@ -41,7 +41,6 @@ export default function ProfileSettings(props) {
 
   useEffect(() => {
     if (!user) return
-    console.log("user.account_type3: " + user.account_type)
     setFirstNameField(user.first)
     setLastNameField(user.last)
     setEmailField(user.email)

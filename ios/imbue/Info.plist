@@ -46,7 +46,7 @@
 	<key>FacebookDispayName</key>
 	<string>Imbue</string>
 	<key>LSApplicationCategoryType</key>
-	<string/>
+	<string></string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
 		<string>fbauth2</string>
