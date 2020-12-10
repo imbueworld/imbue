@@ -173,6 +173,6 @@ const styles = StyleSheet.create({
     ...FONTS.body,
     color: colors.buttonAccent,
     // textAlign: 'justify',
-    fontSize: 8.75
+    fontSize: 12
   },
 })
