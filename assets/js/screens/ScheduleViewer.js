@@ -50,7 +50,7 @@ export default function ScheduleViewer(props) {
       const user = new User()
       setUser(await user.retrieveUser())
 
-      const classes = new ClassesCollection()
+      const classes = new ClassesCollection() 
 
       console.log("classes: ", JSON.stringify(classes))
 

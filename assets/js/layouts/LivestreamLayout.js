@@ -7,6 +7,8 @@ import ChatButton from '../components/ChatButton'
 import CancelButton from '../components/CancelButton'
 import ListButton from '../components/ListButton'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
+import { useDimensions } from '@react-native-community/hooks'
+
 import { useNavigation } from '@react-navigation/native'
 import { registerParticipant, sendMessage } from '../backend/LivestreamFunctions'
 import ParticipantList from '../components/ParticipantList'
@@ -60,12 +62,20 @@ const buttonOptions = {
 export default function LivestreamLayout(props) {
   // const [gymId, setGymId] = useState(null)
   // const [user, setUser] = useState(null)
+  
 
   const gymId = props.gymId
   const user = props.user
+  const isLive = props.isLive
+  const gymImage = props.gymImageUri
+  const gymName = props.gymName
+  const { width, height } = useDimensions().window
+  const cardIconLength = width / 4
   if (!gymId) throw new Error("prop gymId must be provided")
   if (!user) throw new Error("prop user must be provided")
   let navigation = useNavigation()
+
+  
 
   const [r, refresh] = useState(0)
 
@@ -322,7 +332,41 @@ export default function LivestreamLayout(props) {
       width: "100%",
       height: "100%",
       zIndex: -110,
-    }} />
+      }} />
+      
+      {/* Show waiting screen if influencer isn't live */}
+    { isLive === false
+        ?  
+        <View style={{
+          height: 100,
+          width: 300,
+          marginTop: height / 2 - 70,
+          marginLeft: width * .0,
+
+          // flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+          <Icon
+            containerStyle={{
+              width: cardIconLength,
+              height: cardIconLength,
+              borderRadius: 50,
+              overflow: 'hidden', 
+            }}
+            source={{ uri: gymImage}}
+          />
+          <Text style={{
+            color: "#fff",
+            marginTop: 20
+            // justifyContent: 'center',
+            // alignItems: 'center',
+          }}>
+            {gymName} will be going live shortly...
+          </Text>
+         </View>
+        :  null
+      }
 
     {buttonOptions.viewButtonPanel.show
     ? <TouchableWithoutFeedback
@@ -438,8 +482,8 @@ export default function LivestreamLayout(props) {
 
           {buttonOptions.leaveLivestream.show
           ? <CancelButton
-              title="Leave Workout"
-              onLongPress={() => navigation.goBack()} 
+              title="Leave"
+              onPress={() => navigation.goBack()} 
             />
           : null}
 
