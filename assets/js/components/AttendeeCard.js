@@ -47,8 +47,9 @@ export default function AttendeeCard({ icon_uri, first, last }) {
                 flexShrink: 1,
                 ...FONTS.body,
                 color: colors.buttonAccent,
-                textAlign: "center",
-                fontSize: 18,
+                textAlign: "right",
+                paddingRight: 25,
+                fontSize: 14,
             }}>{`${first || ""}${last ? " " : ""}${last || ""}`}</Text>
         </View>
     )
