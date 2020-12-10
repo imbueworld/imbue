@@ -429,7 +429,7 @@ export default function ClassDescription(props) {
             }}
             title="Join"
                 onPress={() => {
-                  const pushAction = StackActions.push("Livestream", { gymId: gym.id })
+                  const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
                   navigation.dispatch(pushAction)
               // getGoToLivestreamButton()
             }}
@@ -441,12 +441,25 @@ export default function ClassDescription(props) {
           data={gym}
               />
         </>}
-        {hasMembership !== "class" ? null :
-        <ClassApprovalBadge
-          containerStyle={{
-            marginTop: 10,
-          }}
-        />}
+          {hasMembership !== "class" ? null :
+            <View>
+              <CustomButton
+              style={{
+                marginBottom: 0,
+              }}
+              title="Join"
+                  onPress={() => {
+                    const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
+                    navigation.dispatch(pushAction)
+                // getGoToLivestreamButton()
+              }}
+            />
+            <ClassApprovalBadge
+              containerStyle={{
+                marginTop: 10,
+              }}
+                  />
+        </View>}
       </View>}
     </GymLayout>
   )

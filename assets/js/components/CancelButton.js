@@ -18,7 +18,7 @@ export default function CancelButton(props) {
             borderColor: colors.buttonFill,
             borderRadius: 999,
         }}>
-            {holdToExit
+            {/* {holdToExit
             ?   <View style={{
                     width: "100%",
                     height: "100%",
@@ -34,7 +34,7 @@ export default function CancelButton(props) {
                         fontSize: 14,
                     }}>Hold to Exit</Text>
                 </View>
-            :   null}
+            :   null} */}
             <TouchableHighlight
                 style={{
                     height: 50,
@@ -44,8 +44,9 @@ export default function CancelButton(props) {
                     ...props.containerStyle,
                 }}
                 underlayColor="#00000012"
-                onPress={() => helpUser(true)}
-                onLongPress={props.onLongPress || undefined}
+                // onPress={() => helpUser(true)}
+                onPress={props.onPress || undefined}
+                // onLongPress={props.onLongPress || undefined}
             >
                 <Text style={{
                     color: "white",
