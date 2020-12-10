@@ -35,11 +35,11 @@ export default function Landing(props) {
             <AppBackground />
             <CompanyLogo
                 containerStyle={{
-                    top: 0, 
+                    top: 0,
                     position: "absolute",
                     alignSelf: "center",
                 }}
-            /> 
+            />
 
             <CustomCapsule
                 containerStyle={{
@@ -48,33 +48,53 @@ export default function Landing(props) {
                     marginBottom: 50,
                 }}
             >
-                 <Text style={{
-                        marginTop: 0,
-                        marginBottom: 0,
-                        color: colors.gray,
-                        textAlign: "center",
-                        fontSize: 18,
-                        ...FONTS.body
-                        
-            }}>I'm a:</Text>
+                <Text style={{
+                    marginTop: 0,
+                    marginBottom: 0,
+                    color: colors.gray,
+                    textAlign: "center",
+                    fontSize: 18,
+                    ...FONTS.body
+
+                }}>I'm:</Text>
+         
 
                 <CustomButton
                     style={{
-                        marginTop: 20,
+                        marginTop: 10,
                         marginBottom: 0,
                     }}
                     onPress={memberHome}
                     title="member"
                 />
+                       <Text style={{
+                    marginTop: 5,
+                    marginBottom: 0,
+                    color: colors.gray,
+                    textAlign: "center",
+                    fontSize: 12,
+                    ...FONTS.body
+
+                }}>someone who loves taking fitness classes</Text>
+
                 <CustomButton
                     styleIsInverted
                     style={{
-                        marginTop: 20,
+                        marginTop: 10,
                         marginBottom: 0,
                     }}
                     title="influencer"
                     onPress={partnerHome}
                 />
+                                <Text style={{
+                    marginTop: 5,
+                    marginBottom: 0,
+                    color: colors.gray,
+                    textAlign: "center",
+                    fontSize: 12,
+                    ...FONTS.body
+
+                }}>someone who loves creating fitness content</Text>
             </CustomCapsule>
 
         </ScrollView>

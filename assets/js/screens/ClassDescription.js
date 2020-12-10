@@ -427,7 +427,7 @@ export default function ClassDescription(props) {
             style={{
               marginBottom: 0,
             }}
-            title="Join"
+            title="Join Class"
                 onPress={() => {
                   const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
                   navigation.dispatch(pushAction)

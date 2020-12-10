@@ -111,7 +111,7 @@ export default function PartnerSignUp(props) {
           alignSelf: "center",
           fontSize: 25,
           color: colors.gray,
-        }}>Partner Sign Up</Text>
+        }}>Influencer Sign Up</Text>
 
         {errorMsg
           ? <Text style={{ color: "red" }}>{errorMsg}</Text>

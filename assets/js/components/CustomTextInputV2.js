@@ -12,12 +12,12 @@ import { FONTS } from '../contexts/Styles'
  */
 export default function CustomTextInputV2(props) {
   const {
-    style={},
-    containerStyle={},
+    style = {},
+    containerStyle = {},
     //
-    red=false,
+    red = false,
     secureTextEntry,
-    onBlur=() => {},
+    onBlur = () => { },
   } = props
 
   const ref = useRef()
@@ -50,12 +50,12 @@ export default function CustomTextInputV2(props) {
         // with regards to what `{...props}` overrides, and not
         placeholderTextColor={colors.textInputPlaceholder}
         multiline={secureTextEntry ? false : true} // multiline can never be
-                                                   // enabled if there is a desire
-                                                   // to use secureTextEntry
+        // enabled if there is a desire
+        // to use secureTextEntry
         {...props}
         style={{
           ...FONTS.subtitle,
-          fontSize: 20,
+          fontSize: 12,
           textAlign: 'center',
           ...style,
           // backgroundColor: 'red', // DEBUG

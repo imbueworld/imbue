@@ -31,6 +31,8 @@ import ClassDescription from './assets/js/screens/ClassDescription'
 import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
 import PasswordReset from './assets/js/screens/PasswordReset'
 import MindbodyActivation from './assets/js/screens/MindbodyActivation'
+import customRTMP from './assets/js/screens/customRTMP'
+
 // import Waitlist from './assets/js/screens/Waitlist'
 
 const Stack = createStackNavigator()
@@ -43,8 +45,8 @@ const Stack = createStackNavigator()
  */
 export default function App() {
 
-  
-  
+
+
   return (
     <NavigationContainer>
       <Stack.Navigator
@@ -192,6 +194,12 @@ export default function App() {
           component={MindbodyActivation}
           initialParams={{}}
         />
+        <Stack.Screen
+          name='customRTMP'
+          component={customRTMP}
+          initialParams={{}}
+        />
+
         {/* <Stack.Screen
           name='Waitlist'
           component={Waitlist}
@@ -205,6 +213,6 @@ export default function App() {
         />
         */}
       </Stack.Navigator>
-      </NavigationContainer>
+    </NavigationContainer>
   )
 }
