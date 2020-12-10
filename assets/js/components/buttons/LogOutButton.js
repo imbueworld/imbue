@@ -59,7 +59,7 @@ export default function LogOutButton(props) {
             padding: 11,
             left: 2,
           }}
-          source={require("../img/png/sign-out-7.png")}
+          source={require("../img/png/sign-out-4.png")}
         />
         </>
       </TouchableHighlight>
