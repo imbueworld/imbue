@@ -34,14 +34,13 @@ export default function ProfileSettings(props) {
       const userDoc = await user.retrieveUser() 
       setUser(userDoc)
       // console.log("user (this): " + JSON.stringify(user))
-      console.log("user.account_type: " + user.account_type)
+      console.log("user.account_type1: " + user.account_type)
       setIsForeignUser( userDoc.icon_uri_foreign ? true : false )
     }; init()
   }, [])
 
   useEffect(() => {
     if (!user) return
-
     setFirstNameField(user.first)
     setLastNameField(user.last)
     setEmailField(user.email)
@@ -474,9 +473,9 @@ export default function ProfileSettings(props) {
         // }
         style={styles.button}
         textStyle={styles.buttonText}
-        title='Revenue 💰'
+        title='Custom Brodcasting'
         onPress={() => props.navigation.navigate(
-          "PartnerRevenueInfo"
+          "customRTMP"
         )}
       />
       </>

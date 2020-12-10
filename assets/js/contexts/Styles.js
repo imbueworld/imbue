@@ -21,6 +21,7 @@ export const FONTS = {
   }),
   title: {
     fontFamily: 'LuloCleanW01-OneBold',
+
   },
   subtitle: {
     fontFamily: 'LuloCleanW01-One',

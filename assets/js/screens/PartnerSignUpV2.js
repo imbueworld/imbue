@@ -192,7 +192,7 @@ export default function PartnerSignUpV2(props) {
       <CompanyLogo />
       <GoBackButton containerStyle={styles.GoBackButton} />
 
-      <Text style={styles.sectionTitle}>Partner Sign Up</Text>
+      <Text style={styles.sectionTitle}>Influencer Sign Up</Text>
 
       <FormStatusMessage type='error' containerStyle={{
         alignSelf: 'center',
@@ -239,7 +239,7 @@ export default function PartnerSignUpV2(props) {
         <CustomTextInputV2
           containerStyle={styles.inputField}
           red={Boolean(errors.gym_description)}
-          placeholder='Gym Description'
+          placeholder='Describe your workouts'
           onChangeText={text => setValue('gym_description', text)}
         />
 
@@ -277,13 +277,17 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     ...FONTS.title,
     alignSelf: 'center',
+    textAlign: 'center',
+    marginStart: 10,
+    marginEnd: 10,
     fontSize: 25,
     color: colors.accent,
   },
   inputField: {
     marginBottom: 20,
     marginRight: 30,
-    marginLeft: 30
+    marginLeft: 30,
+    fontSize: 6
   },
   signUpButton: {
     marginBottom: 20,

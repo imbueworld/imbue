@@ -127,7 +127,9 @@ export default function ClassList(props) {
               /> */}
 
               <View style={{
-                alignItems: "center",
+                alignItems: "flex-end",
+                marginEnd: 10,
+                marginTop: 10,
               }}>
                 <Text style={styles.text}>{formattedDate}</Text>
                 <Text style={styles.text}>{formattedTime}</Text>
@@ -170,5 +172,7 @@ const styles = StyleSheet.create({
   text: {
     ...FONTS.body,
     color: colors.buttonAccent,
+    // textAlign: 'justify',
+    fontSize: 12
   },
 })
