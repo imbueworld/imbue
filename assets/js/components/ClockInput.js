@@ -155,6 +155,7 @@ export default function ClockInput(props) {
                     <View style={{
                         flex: 28,
                         height: "100%",
+                        backgroundColor: '#242429'
                     }}>
                         <TouchableHighlight
                             style={{ height: "100%" }}
@@ -162,14 +163,16 @@ export default function ClockInput(props) {
                                 setPopup(false)
                                 if (props.onChange) props.onChange(h, m)
                             }}
-                            underlayColor="#0000000C"
+                            underlayColor="#242429"
+                            backgroundColor= "#f9f9f9"
                         >
                             <Text style={{
                                 height: "100%",
-                                backgroundColor: "#00000009",
+                                color: '#f9f9f9',
                                 textAlign: "center",
                                 textAlignVertical: "center",
                                 fontSize: 25,
+                                marginTop:75
                             }}>Ok</Text>
                         </TouchableHighlight>
                     </View>
