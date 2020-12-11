@@ -41,9 +41,7 @@ export default function GymLayout(props) {
 
   useEffect(() => {
     const init = async () => {
-      console.log("gym.image_uri")
       getGymImage(gym)
-      console.log("gymImage: ", gymImage)
     }; init()
 
 
@@ -119,7 +117,6 @@ export default function GymLayout(props) {
   // Get image download url
   const getGymImage = async (data) => {
     let promises = []
-    console.log("data.image_uri: ", data.image_uri)
     promises.push(publicStorage(data.image_uri))
     const res = await Promise.all(promises)
     var profileImg = res[0]

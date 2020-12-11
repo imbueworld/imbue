@@ -47,7 +47,7 @@ export default function UserDashboard(props) {
       const user = new User()
       setUser(await user.retrieveUser())
       // This acts as a prefetch for when user eventually navs to ScheduleViewer
-      user.retrieveClasses()
+      user.retrieveClasses() 
 
       // retrieving all partners
       const partnersCollection = firestore()
@@ -179,7 +179,6 @@ export default function UserDashboard(props) {
     var gymId = item.associated_gyms
     var description = ""
     var thisGym 
-    console.log("item.icon_uri: ", item.icon_uri)
     gyms.map((data) => {
       {
         data.id === gymId[0] ? 
