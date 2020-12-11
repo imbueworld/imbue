@@ -1,6 +1,7 @@
 import React from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -26,6 +27,7 @@ export default function ClockInputPopupField(props) {
                 <Text style={{
                     fontSize: 24,
                     // paddingBottom: 3,
+                    ...FONTS.body,
                 }}>{props.children}</Text>
             </TouchableHighlight>
         </View>
