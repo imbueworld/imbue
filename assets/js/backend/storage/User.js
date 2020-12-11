@@ -143,6 +143,7 @@ export default class User extends DataObject {
         // company_address,
         // company_name,
         gym_description,
+        social_media,
         // tax_id,
         // individual
         phone,
@@ -231,6 +232,7 @@ export default class User extends DataObject {
           // company_address,
           // company_name,
           gym_description,
+          social_media,
           // tax_id,
           // individual
           phone,

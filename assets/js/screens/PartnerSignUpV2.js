@@ -174,6 +174,7 @@ export default function PartnerSignUpV2(props) {
       name: form.first + " " + form.last,
       description: gym_description,
       partner_id: partner.uid,
+      social_media: social_media
     })
 
 
