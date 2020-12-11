@@ -1,3 +1,5 @@
+
+
 import React, { useEffect } from 'react'
 import { StyleSheet, ScrollView, View, Button } from 'react-native'
 import config from '../../../App.config'
@@ -24,9 +26,9 @@ export default function Boot(props) {
   const navigation = useNavigation()
 
   const bootWithUser = async () => {
-    const user = new User() 
+    const user = new User()
     // console.log("await user.retrieveUser(): ", await user.retrieveUser())
-    const { account_type } = await user.retrieveUser()  
+    const { account_type } = await user.retrieveUser()
     console.log("accounttype: ", account_type)
 
 
@@ -58,7 +60,32 @@ export default function Boot(props) {
     //     })
     //     break
     // }
-    
+
+    // if (account_type = "user") {
+    //   return navigation.reset({
+    //     index: 0,
+    //     routes: [{ name: "UserDashboard" }],
+    //   })
+    // }
+    // else if (account_type = "partner", approved == true) {
+    //   return navigation.reset({
+    //     index: 0,
+    //     routes: [{ name: "PartnerDashboard" }],
+    //   })
+    // }
+    // else if (account_type = "partner", approved == false) {
+    //   return navigation.reset({
+    //     index: 0,
+    //     routes: [{ name: "PartnerDashboard" }],
+    //   })
+    // }
+    // else {
+    //   return navigation.reset({
+    //     index: 0,
+    //     routes: [{ name: "Landing" }],
+    //   })
+    // }
+
 
     switch (account_type) {
       case "user":
@@ -81,7 +108,7 @@ export default function Boot(props) {
         break
     }
   }
-  
+
   useEffect(() => {
     // Clear (session) cache no matter what, when entering this screen
     cache()._resetCache()
@@ -113,7 +140,7 @@ export default function Boot(props) {
     alignItems: "center",
     justifyContent: "center",
     backgroundColor: colors.bg,
-  }}/>
+  }} />
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
@@ -124,7 +151,7 @@ export default function Boot(props) {
           title="Normal Boot"
           onPress={() => {
             if (auth().currentUser) {
-              bootWithUser()  
+              bootWithUser()
             } else {
               navigation.reset({
                 index: 0,

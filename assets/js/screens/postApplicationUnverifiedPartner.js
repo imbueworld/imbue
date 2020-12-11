@@ -10,7 +10,6 @@ import GoBackButton from '../components/buttons/GoBackButton'
 
 import User from '../backend/storage/User'
 import { FONTS } from '../contexts/Styles'
-import { get } from 'react-native/Libraries/Utilities/PixelRatio'
 
 export default function PartnerDashboard(props) {
   const [user, setUser] = useState(null)

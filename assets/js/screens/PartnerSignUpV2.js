@@ -55,8 +55,8 @@ export default function PartnerSignUpV2(props) {
     // Company details
     register('gym_description', rules)
 
-        // Company social descriotion
-        register('social_media', rules)
+     // Company social descriotion
+    register('social_media', rules)
     
     // Personal details
     register('first', {
@@ -137,6 +137,7 @@ export default function PartnerSignUpV2(props) {
       last: form.last,
       name: form.first + " " + form.last,
       password,
+      social_media,
       type: 'partner', 
     })
 
@@ -249,7 +250,7 @@ export default function PartnerSignUpV2(props) {
         />
             <CustomTextInputV2
           containerStyle={styles.inputField}
-          red={Boolean(errors.gym_description)}
+          red={Boolean(errors.social_media)}
           placeholder='Where can we find you on social media?'
           onChangeText={text => setValue('social_media', text)}
         />
