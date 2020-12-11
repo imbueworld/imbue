@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { TouchableHighlight } from 'react-native-gesture-handler'
+import { FONTS } from '../contexts/Styles'
 import ClockInputPopup from './ClockInputPopup'
 import ClockInputPopupField from './ClockInputPopupField'
 
@@ -34,6 +35,7 @@ export default function ClockInput(props) {
                     height={width}
                     style={{
                         opacity: i === -1 || i === 24 ? 0 : 1,
+                        ...FONTS.body,
                     }}
                     key={`h${i}`}
                     // onPress={() => {
@@ -61,6 +63,7 @@ export default function ClockInput(props) {
                         // it is not perfectly centered otherwise
                         paddingBottom: 0.3 * i,
                         opacity: i === -1 || i === 61 ? 0 : 1,
+                        ...FONTS.body,
                     }}
                     key={`h${i}`}
                     // onPress={() => {
@@ -118,6 +121,7 @@ export default function ClockInput(props) {
                 >
                     <Text style={{
                         fontSize: 20,
+                        ...FONTS.body
                     }}>{h} : {formatTime(m)}</Text>
                 </TouchableHighlight> : null}
 
@@ -139,7 +143,7 @@ export default function ClockInput(props) {
                     >
                         {Hours}
                     </ClockInputPopup>
-                    <Text style={{ alignSelf: "center", fontSize: 45, paddingBottom: 5 }}>:</Text>
+                    <Text style={{ alignSelf: "center", fontSize: 45, paddingBottom: 5, ...FONTS.body }}>:</Text>
                     <ClockInputPopup
                         style={{ flex: 36 }}
                         // width={width}
@@ -172,7 +176,8 @@ export default function ClockInput(props) {
                                 textAlign: "center",
                                 textAlignVertical: "center",
                                 fontSize: 25,
-                                marginTop:75
+                                marginTop:75,
+                                ...FONTS.body
                             }}>Ok</Text>
                         </TouchableHighlight>
                     </View>
