@@ -93,13 +93,25 @@ export default function Boot(props) {
           index: 0,
           routes: [{ name: "UserDashboard" }],
         })
-        break
+        break;
+
       case "partner":
-        navigation.reset({
-          index: 0,
-          routes: [{ name: "PartnerDashboard" }],
-        })
-        break
+        if (user.approved) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "PartnerDashboard" }],
+          });
+          break
+        }
+        else if (!user.approved) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "postApplicationUnverifiedPartner" }],
+          });
+          break
+        }
+        else
+          break
       default:
         navigation.reset({
           index: 0,
@@ -141,6 +153,8 @@ export default function Boot(props) {
     justifyContent: "center",
     backgroundColor: colors.bg,
   }} />
+
+  if (!user) return <View />
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
