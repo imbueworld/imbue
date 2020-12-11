@@ -25,7 +25,7 @@ export default function BackButton(props) {
           height: 64,
           ...imageStyle,
         }}
-        source={require("./img/png/back-button-4.png")}
+        source={require("./img/png/back-button-3.png")}
       />
     </View>
   )

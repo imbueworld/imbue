@@ -44,14 +44,14 @@ export default function LogOutButton(props) {
         onLongPress={onLongPress}
       >
         <>
-        <Icon
+        {/* <Icon
           containerStyle={{
             position: "absolute",
             width: "100%",
             height: "100%",
           }}
           source={require("../img/png/circle.png")}
-        />
+        /> */}
         <Icon
           containerStyle={{
             width: "100%",
@@ -59,7 +59,7 @@ export default function LogOutButton(props) {
             padding: 11,
             left: 2,
           }}
-          source={require("../img/png/sign-out-8.png")}
+          source={require("../img/png/logout.png")}
         />
         </>
       </TouchableHighlight>

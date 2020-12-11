@@ -224,7 +224,7 @@ export default function UserDashboard(props) {
         </View> */}
 
         <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
-          <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>my classes</Text>
+          <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>view your classes</Text>
           <CustomButton
               icon={
                 <Icon

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
+import { FONTS } from '../contexts/Styles'
 
 
 
@@ -46,6 +47,7 @@ export default function ClockInputPopup(props) {
                 // ...simpleShadow,
                 zIndex: 110,
                 ...props.style,
+                ...FONTS.body
             }}
         >
             <ScrollView
@@ -55,7 +57,7 @@ export default function ClockInputPopup(props) {
                 fadingEdgeLength={200}
                 ref={scrollViewRef}
                 onScroll={onScroll}
-                
+                style={FONTS.body}
             >
                 {props.children}
             </ScrollView>
