@@ -60,7 +60,7 @@ export default function PartnerHome(props) {
                         marginBottom: 0,
                     }}
                     onPress={partnerSignUp}
-                    title="Sign Up"
+                    title="Apply"
                 />
                 <CustomButton
                     styleIsInverted
