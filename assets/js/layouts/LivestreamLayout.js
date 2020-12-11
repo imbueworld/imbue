@@ -22,6 +22,7 @@ import User from '../backend/storage/User'
 import { simpleShadow } from '../contexts/Colors'
 import Icon from '../components/Icon'
 import { TouchableHighlight } from 'react-native-gesture-handler'
+import { FONTS } from '../contexts/Styles'
 
 
 const layoutOptions = {
@@ -89,6 +90,7 @@ export default function LivestreamLayout(props) {
 
   // Apply props.buttonOptions to buttonOptions
   useEffect(() => {
+    console.log("isLive (livestreamlayout): ", isLive)
     if (props.buttonOptions) {
       Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
         Object.entries(instructions).forEach(([key, value]) => {
@@ -335,14 +337,13 @@ export default function LivestreamLayout(props) {
       }} />
       
       {/* Show waiting screen if influencer isn't live */}
-    { isLive === false
+      { isLive === false
         ?  
         <View style={{
           height: 100,
           width: 300,
           marginTop: height / 2 - 70,
-          marginLeft: width * .0,
-
+          marginLeft: width * .10,
           // flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
@@ -358,11 +359,14 @@ export default function LivestreamLayout(props) {
           />
           <Text style={{
             color: "#fff",
-            marginTop: 20
+            marginTop: 20,
+            ...FONTS.body,
+            textAlign: "center"
             // justifyContent: 'center',
             // alignItems: 'center',
           }}>
             {gymName} will be going live shortly...
+            Leave and come back in periodically to check
           </Text>
          </View>
         :  null

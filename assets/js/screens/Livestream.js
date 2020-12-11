@@ -24,39 +24,25 @@ export default function Livestream(props) {
   const [user, setUser] = useState(null)
   const [playbackLink, setPlaybackLink] = useState(null)
   const [playbackId, setPlaybackId] = useState(null)
-  const [isLive, setIsLive] = useState(true)
+  const [isLive, setIsLive] = useState(false)
   const [gymName, setGymName] = useState(null)
   const [gymImage, setGymImage] = useState(null)
   const [refreshing, setRefreshing] = React.useState(false);
+  const [classHasPassed, setClassHasPassed] = useState()
 
   const { width, height } = useDimensions().window
   const cardIconLength = width / 4
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
-
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
-  const wait = (timeout) => {
-    return new Promise(resolve => {
-      setTimeout(resolve, timeout);
-    });
-  }
+  const [pageWidth, setPageWidth] = useState(width)
 
   useEffect(() => {
     const init = async () => {
-      console.log("classDoc(useEffect): ", classDoc)
-
+      setPageWidth(width)
       const user = new User()
 
       setUser(await user.retrieveUser())
       const gym = new Gym()
-
-      console.log("user: ", user)
-      console.log("gym: ", gym)
-      // const { playback_id } = await gym.retrieveGym(gymId) 
-
+      
       const playback_id  =  firestore()
         .collection('gyms')
         .doc(gymId)
@@ -68,9 +54,29 @@ export default function Livestream(props) {
           // setPlaybackId(documentSnapshot.data().playback_id)
         });
       
-        console.log("gymImage: ", gymImage)
     }; init()
   }, [])
+
+
+// Refresh
+  const onRefresh = React.useCallback(async() => {
+    setRefreshing(true);
+
+    wait(2000).then(() => setRefreshing(false));
+  }, []);
+
+  const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
+  }
+
+
+  useEffect(() => {
+    const init = async () => {
+      console.log("isLive (useEffect): ", isLive)
+    }; init()
+  }, [isLive])
 
 
    // getsGymImage
@@ -79,12 +85,11 @@ export default function Livestream(props) {
       let promises = []
       promises.push(publicStorage(data))
       const res = await Promise.all(promises)
-     console.log("res: ", res)
       var profileImg = res[0] 
      setGymImage(profileImg)
-     console.log("profileImg: " , profileImg)
   }
 
+  console.log("isLive: ", isLive)
 
   if (!user) return <View />
 
@@ -92,10 +97,10 @@ export default function Livestream(props) {
     <>
        {/* <ScrollView
         contentContainerStyle={styles.scrollView}
+        showsVerticalScrollIndicator={false}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        showsVerticalScrollIndicator={false}
       > */}
         <LivestreamLayout 
           gymId={gymId} 
@@ -104,24 +109,25 @@ export default function Livestream(props) {
           gymImageUri={gymImage}
           gymName={gymName}
         />
-  
-      {   playbackLink && isLive === true
+
+      { playbackLink
           ?
           <Video   
             style={styles.video} 
             source={{ uri: playbackLink }} 
-            onBuffer={() => { console.log("Buffering video...") }}
-            // onError={() => {
-            //   console.log("Error on video!")
-            // }}
+            refreshing={refreshing}
+            onReadyForDisplay={() => {
+            // console.log("hiiiii onReadyForDisplay: ")
+              setIsLive(true)
+            }}
             onError={() => {
-              setIsLive(false)
+              console.log("hiiiii onError: ")
             }}
             paused={false}
-            resizeMode={"contain"}
+            resizeMode={"cover"}
             repeat={true}
         />
-          : null}
+       : null}  
         
        {/* </ScrollView> */}
     </>
@@ -130,7 +136,9 @@ export default function Livestream(props) {
 
 const styles = StyleSheet.create({
   scrollView: {
-    flex: 1,
+    width: "100%",
+    height: "100%",
+    zIndex: -999,
     backgroundColor: 'pink',
     alignItems: 'center',
     justifyContent: 'center',
