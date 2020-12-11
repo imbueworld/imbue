@@ -75,7 +75,7 @@ export default function ParticipantList(props) {
                 marginBottom: 10,
                 alignSelf: "center",
                 ...FONTS.body,
-                fontSize: 20,
+                fontSize: 16,
             }}>People Participating</Text>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <View style={{

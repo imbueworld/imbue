@@ -29,14 +29,14 @@ export default function EditButton(props) {
         onLongPress={props.onLongPress || undefined}
       >
         <>
-        <Icon
+        {/* <Icon
           containerStyle={{
             position: "absolute",
             width: "100%",
             height: "100%",
           }}
           source={require("../img/png/circle.png")}
-        />
+        /> */}
         <Icon
           containerStyle={{
             width: "100%",
