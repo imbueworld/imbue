@@ -34,6 +34,20 @@ export default function DateSelector(props) {
                     markedDates={dates}
                     onDayPress={processTapOnDay}
                     onDayLongPress={processTapOnDay}
+                    theme={{
+                        textSectionTitleColor: '#242429',
+                        dayTextColor: '#242429',
+                        textSectionTitleDisabledColor: '#242429',
+                        selectedDayBackgroundColor: '#242429',
+                        dotColor: '#242429',
+                        selectedDotColor: '#f9f9f9',
+                        arrowColor: '#242429',
+                        monthTextColor: '#242429',
+                        indicatorColor: '#242429',
+                        textDayFontFamily: 'LuloCleanW01-One',
+                        textMonthFontFamily: 'LuloCleanW01-One',
+                        textDayHeaderFontFamily: 'LuloCleanW01-One',
+                      }}
                 />
             </View>
         </View>

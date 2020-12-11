@@ -54,6 +54,9 @@ export default function PartnerSignUpV2(props) {
 
     // Company details
     register('gym_description', rules)
+
+        // Company social descriotion
+        register('social_media', rules)
     
     // Personal details
     register('first', {
@@ -94,6 +97,7 @@ export default function PartnerSignUpV2(props) {
     setValue('last', 'Last')
     setValue('email', '')
     setValue('gym_description', 'This is the product description.')
+    setValue('social_media', '')
 
     setValue('password', '')
     setValue('confirm_password', '')
@@ -120,6 +124,7 @@ export default function PartnerSignUpV2(props) {
       password,
       confirm_password,
       gym_description,
+      social_media,
       ...USER
     } = form
 
@@ -192,7 +197,7 @@ export default function PartnerSignUpV2(props) {
       <CompanyLogo />
       <GoBackButton containerStyle={styles.GoBackButton} />
 
-      <Text style={styles.sectionTitle}>Influencer Sign Up</Text>
+      <Text style={styles.sectionTitle}>Influencer Application</Text>
 
       <FormStatusMessage type='error' containerStyle={{
         alignSelf: 'center',
@@ -242,6 +247,12 @@ export default function PartnerSignUpV2(props) {
           placeholder='Describe your workouts'
           onChangeText={text => setValue('gym_description', text)}
         />
+            <CustomTextInputV2
+          containerStyle={styles.inputField}
+          red={Boolean(errors.gym_description)}
+          placeholder='Where can we find you on social media?'
+          onChangeText={text => setValue('social_media', text)}
+        />
 
         {/* Password */}
         <CustomTextInputV2
@@ -262,7 +273,7 @@ export default function PartnerSignUpV2(props) {
         {/* ================ */}
         <CustomButton
           style={styles.signUpButton}
-          title='Sign Up' 
+          title='Apply' 
           onPress={handleSubmit(onSubmit)}
         />
       </View>

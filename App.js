@@ -32,6 +32,7 @@ import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
 import PasswordReset from './assets/js/screens/PasswordReset'
 import MindbodyActivation from './assets/js/screens/MindbodyActivation'
 import customRTMP from './assets/js/screens/customRTMP'
+import postApplicationUnverifiedPartner from './assets/js/screens/postApplicationUnverifiedPartner'
 
 // import Waitlist from './assets/js/screens/Waitlist'
 
@@ -197,6 +198,11 @@ export default function App() {
         <Stack.Screen
           name='customRTMP'
           component={customRTMP}
+          initialParams={{}}
+        />
+                <Stack.Screen
+          name='postApplicationUnverifiedPartner'
+          component={postApplicationUnverifiedPartner}
           initialParams={{}}
         />
 

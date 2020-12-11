@@ -50,7 +50,7 @@ export default function CalendarView(props) {
       <Calendar
         markedDates={markedDates}
         markingType={"multi-dot"}
-        theme={calendarStyle}
+        // theme={calendarStyle}
         onDayPress={day => {
           props.setSlctdDate(day.dateString)
         }}
