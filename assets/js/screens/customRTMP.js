@@ -64,7 +64,9 @@ export default function PartnerDashboard(props) {
     cache("isStreaming").set(true)
 
   }
+  fetch 
 
+  if (!user) return <View/>
 
   return (
     <ProfileLayout
@@ -78,7 +80,7 @@ export default function PartnerDashboard(props) {
         },
       }}
     >
-      {/* {!user.stream_key ? */}
+      {!user.stream_key ?
         <>
           <Text style={{ ...FONTS.body, textAlign: 'center', marginTop: 25 }}>
             You must create your first live stream (click go live and start the live stream, then end it after about 10 seconds)
@@ -98,7 +100,7 @@ export default function PartnerDashboard(props) {
                 )
             }}
           />
-        {/* </> : <> */}
+        </> : <>
           <View>
             <Text style={{ ...FONTS.body, textAlign: 'center', marginTop: 50, marginBottom: 17 }}>
               Copy and Paste each of these into your prefered brodcasting software.
@@ -124,12 +126,12 @@ export default function PartnerDashboard(props) {
           <TouchableOpacity>
             <View>
               <Text selectable style={{ ...FONTS.body, textAlign: 'center', marginTop: 3, marginBottom: 17 }}>
-                {/* {user.stream_key} */}
+                {user.stream_key}
               </Text>
             </View>
           </TouchableOpacity>
           </>
-            {/* } */}
+         }
         </ProfileLayout>
   )
 
