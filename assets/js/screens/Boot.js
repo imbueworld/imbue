@@ -29,8 +29,8 @@ export default function Boot(props) {
     const user = new User()
     // console.log("await user.retrieveUser(): ", await user.retrieveUser())
     const { account_type } = await user.retrieveUser()
+    const { approved } = await user.retrieveUser()
     console.log("accounttype: ", account_type)
-
 
     // // Waitlist stuff:
     // // Determine whether to let in or not
@@ -61,31 +61,8 @@ export default function Boot(props) {
     //     break
     // }
 
-    // if (account_type = "user") {
-    //   return navigation.reset({
-    //     index: 0,
-    //     routes: [{ name: "UserDashboard" }],
-    //   })
-    // }
-    // else if (account_type = "partner", approved == true) {
-    //   return navigation.reset({
-    //     index: 0,
-    //     routes: [{ name: "PartnerDashboard" }],
-    //   })
-    // }
-    // else if (account_type = "partner", approved == false) {
-    //   return navigation.reset({
-    //     index: 0,
-    //     routes: [{ name: "PartnerDashboard" }],
-    //   })
-    // }
-    // else {
-    //   return navigation.reset({
-    //     index: 0,
-    //     routes: [{ name: "Landing" }],
-    //   })
-    // }
-
+console.log('user.approved: ', approved )
+console.log({user})
 
     switch (account_type) {
       case "user":
@@ -96,14 +73,14 @@ export default function Boot(props) {
         break;
 
       case "partner":
-        if (user.approved) {
+        if (approved) {
           navigation.reset({
             index: 0,
             routes: [{ name: "PartnerDashboard" }],
-          });
+          })
           break
         }
-        else if (!user.approved) {
+        else if (!approved) {
           navigation.reset({
             index: 0,
             routes: [{ name: "postApplicationUnverifiedPartner" }],
@@ -146,6 +123,7 @@ export default function Boot(props) {
 
 
 
+
   if (!config.DEBUG) return <CompanyLogo containerStyle={{
     width: "100%",
     height: "100%",
@@ -155,6 +133,16 @@ export default function Boot(props) {
   }} />
 
   if (!user) return <View />
+
+  // useEffect(() => {
+  //   new Promise(r => setTimeout(r, 3500))
+  //   const init = async () => {
+  //     const user = new User()
+  //     setUser(await user.retrieveUser())
+  //   }; init()
+  // }, [])
+
+
 
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>

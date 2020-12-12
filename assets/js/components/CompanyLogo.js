@@ -23,7 +23,7 @@ export default function CompanyLogo(props) {
                         image,
                         props.style,
                     ]}
-                    source={require("./img/imbue-logo.jpeg")}
+                    source={require("./img/imbueNewLogo.png")}
                 />
             </View>
         </View>
@@ -36,7 +36,7 @@ const styles = StyleSheet.create({
     },
     imageContainer: {},
     image: {
-        width: 500,
-        height: 500,
+        width: 200,
+        height: 200,
     },
 })

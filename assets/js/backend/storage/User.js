@@ -85,8 +85,9 @@ export default class User extends DataObject {
     const {
       first = '',
       last = '',
-      icon_uri='default-icon.jpg',
+      icon_uri='imbueProfileLogo.png',
       icon_uri_foreign='',
+      social_media='',
       // For user:  These three should always be present as Arrays
       active_classes=[],
       active_memberships=[],
@@ -117,6 +118,7 @@ export default class User extends DataObject {
       name: `${first} ${last}`,
       icon_uri,
       icon_uri_foreign,
+      social_media,
       icon_uri_full:
         await publicStorage(uid)
         || icon_uri_foreign
@@ -215,7 +217,7 @@ export default class User extends DataObject {
         first,
         last,
         email,
-        icon_uri: 'default-icon.jpg',
+        icon_uri: 'imbueProfileLogo.png',
         icon_uri_foreign,
       })
   
