@@ -36,12 +36,12 @@ export default function PartnerRevenueInfo(props) {
       setGym(gym) 
       setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
       // setHasBankAccountAdded(true)
+
       // update Stripe balance revenue
       if (gym) {
         const updateStripeAccountRevenue = functions().httpsCallable('updateStripeAccountRevenue')
         await updateStripeAccountRevenue(gym.id)
       }
-      
     }; init()
   }, [r])
 
@@ -55,12 +55,22 @@ export default function PartnerRevenueInfo(props) {
         paddingBottom: 10,
       }}
     >
+      {/* Current Balance */}
       <CustomText
         style={styles.text}
         containerStyle={styles.textContainer}
-        label='Revenue of the ongoing month'
+        label='Current Balance'
       > 
         {`$${currencyFromZeroDecimal(user.revenue)}`}
+      </CustomText>
+
+      {/* Total Earnings */}
+      <CustomText
+        style={styles.text}
+        containerStyle={styles.textContainer}
+        label='Total Earnings'
+      > 
+        {`$${currencyFromZeroDecimal(user.total_revenue)}`}
       </CustomText>
       {/* <CustomText
         style={styles.text}

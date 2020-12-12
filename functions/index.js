@@ -352,6 +352,7 @@ exports.updateStripeAccountRevenue = functions.https.onCall(async (data) => {
     // stripe_person_id,
   } = (await gyms.doc(gymId).get()).data()
   console.log("partner_id: ", partner_id)
+  console.log("gymId: ", gymId)
 
   const {
     stripe_account_id,
@@ -359,15 +360,23 @@ exports.updateStripeAccountRevenue = functions.https.onCall(async (data) => {
   } = (await partners.doc(partner_id).get()).data()
   console.log("stripe_account_id: ", stripe_account_id)
 
+  // Get Current Balance
   const balance = await stripe.balance.retrieve({
     stripeAccount: stripe_account_id
   });
+  // console.log("balance: ", JSON.stringify(balance))
+  // console.log("balance.available[0].amount: ", balance.available[0].amount)
+  // console.log("balance.pending[0].amount: ", balance.pending[0].amount)
+  // Update Rev (Current Balance)
+  await Promise.all([
+    partners
+      .doc(partner_id)
+      .update({
+        revenue: balance.available[0].amount,
+      })
+  ])
 
-  console.log("balance: ", JSON.stringify(balance))
-  console.log("balance.available[0].amount: ", balance.available[0].amount)
-  console.log("balance.pending[0].amount: ", balance.pending[0].amount)
-  // console.log("balance.connect_reserved[0].amount: ", balance.connect_reserved[0].amount)
-
+  // Get all payouts
   const payouts = await stripe.payouts.list({
     stripeAccount: stripe_account_id,
   });
@@ -375,13 +384,32 @@ exports.updateStripeAccountRevenue = functions.https.onCall(async (data) => {
   console.log("payouts: ", JSON.stringify(payouts))
   const stringified_payouts = JSON.stringify(payouts)
 
-  // payouts.map(function (data, idx) {
-  //   console.log("amount: ", data.amount)
-  // })
-
-  payouts.data.map((data) => {
-    console.log("amount: ", data.amount)
-  });
+  let totalEarnings = 0
+  // If user has payouts add them all up and update firesstore
+  if (payouts.data[0]) {
+    payouts.map(function (data, idx) {
+      totalEarnings += data.amount
+      // console.log("amount: ", data.amount)
+    })
+    await Promise.all([
+      partners
+        .doc(partner_id)
+        .update({
+          total_revenue: totalEarnings,
+        })
+    ])
+    // console.log('has data')
+  } else {
+    await Promise.all([
+      partners
+        .doc(partner_id)
+        .update({
+          total_revenue: 0,
+        })
+    ])
+    // console.log('no data')
+  }
+  
 })
 
 
