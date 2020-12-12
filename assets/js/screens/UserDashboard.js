@@ -56,7 +56,11 @@ export default function UserDashboard(props) {
         .then(querySnapshot => {
           querySnapshot.forEach(documentSnapshot => {
             // converting icon_uris to download urls
-            perfectFeaturedPartnersList(documentSnapshot.data())
+            // check if accepted
+            if(documentSnapshot.data().approved == true) {
+              perfectFeaturedPartnersList(documentSnapshot.data())
+
+            }
           });
         });
       
