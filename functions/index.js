@@ -164,7 +164,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
     customer_id: customer.id,
   }); 
 
-  const defaultIcon = "default-icon.jpg"
+  const defaultIcon = "imbueProfileLogo.png"
 
   await admin 
     .firestore("users")

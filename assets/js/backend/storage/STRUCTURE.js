@@ -25,6 +25,7 @@ const STRUCTURE = {
     icon_uri_foreign: String,
     revenue: Number,
     total_revenue: Number,
+    social_media: String,
     //
     company_address: Object,
     formatted_company_address: String,
