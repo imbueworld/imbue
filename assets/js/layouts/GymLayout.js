@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
-  StyleSheet, ScrollView, View, Image, SafeAreaView
+  StyleSheet, ScrollView, View, Image, SafeAreaView, Platform
 } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
 
@@ -126,7 +126,8 @@ export default function GymLayout(props) {
 
 
   return (
-    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg,
+      paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
 
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
