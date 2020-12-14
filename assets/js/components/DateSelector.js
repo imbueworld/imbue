@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text } from 'react-native'
 import { Calendar } from 'react-native-calendars'
-
+import { FONTS } from "../contexts/Styles"
 
 
 export default function DateSelector(props) {
@@ -44,9 +44,9 @@ export default function DateSelector(props) {
                         arrowColor: '#242429',
                         monthTextColor: '#242429',
                         indicatorColor: '#242429',
-                        textDayFontFamily: 'LuloCleanW01-One',
-                        textMonthFontFamily: 'LuloCleanW01-One',
-                        textDayHeaderFontFamily: 'LuloCleanW01-One',
+                        textDayFontFamily: FONTS.cardBody.fontFamily,
+                        textMonthFontFamily: FONTS.cardBody.fontFamily,
+                        textDayHeaderFontFamily: FONTS.cardBody.fontFamily,
                       }}
                 />
             </View>

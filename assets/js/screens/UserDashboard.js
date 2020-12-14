@@ -59,7 +59,6 @@ export default function UserDashboard(props) {
             // check if accepted
             if(documentSnapshot.data().approved == true) {
               perfectFeaturedPartnersList(documentSnapshot.data())
-
             }
           });
         });
@@ -404,13 +403,15 @@ export default function UserDashboard(props) {
 
 const styles = StyleSheet.create({
   scrollView: {
-    height: "120%",
+    height: "130%",
   },
   sa1: {
-    flex: 1
+    flex: 1,
+    paddingTop: Platform.OS === 'android' ? 25 : 0
   },
   sa2: {
-    flex: 1, backgroundColor: colors.bg
+    flex: 1, backgroundColor: colors.bg,
+    paddingTop: Platform.OS === 'android' ? 25 : 0
   },
   container: {
     // minHeight: "100%", // This breaks sidePanel within <Anmimated.View>; minHeight does not synergize well with child position: "absolute" 's ? ; Unless it's used for ScrollView containerStyle?
