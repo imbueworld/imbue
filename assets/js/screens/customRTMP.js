@@ -73,7 +73,7 @@ export default function PartnerDashboard(props) {
       innerContainerStyle={{
         padding: 10,
       }}
-      hideBackButton={true}
+      hideBackButton={false}
       buttonOptions={{
         logOut: {
           show: true,
