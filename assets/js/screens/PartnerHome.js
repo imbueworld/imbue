@@ -11,6 +11,7 @@ import CustomCapsule from '../components/CustomCapsule'
 import { FONTS } from '../contexts/Styles'
 import GoBackButton from '../components/buttons/GoBackButton'
 import config from '../../../App.config'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 export default function PartnerHome(props) {
@@ -43,7 +44,7 @@ export default function PartnerHome(props) {
                     width: "88%",
                     alignSelf: "center",
                     marginBottom: 50,
-                    marginTop: 560
+                    marginTop: hp('68%'),
                 }}
             >
                 <Text style={{

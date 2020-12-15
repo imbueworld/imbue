@@ -14,7 +14,7 @@ import Icon from '../components/Icon'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 import config from '../../../App.config'
-
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 export default function GymDescription(props) {
@@ -126,11 +126,11 @@ export default function GymDescription(props) {
 
     <GymLayout
       innerContainerStyle={{
-        paddingBottom: 10
-      }}
+        paddingBottom: 10 
+        }}
       data={gym}
     >
-      {Name}
+      {Name} 
       {Genres}
       {Desc} 
       
@@ -304,10 +304,11 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.gray,
     borderRadius: 30,
+    marginBottom: hp('5%')
   },
   nameContainer: {},
   nameText: {
-    marginTop: 20,
+    marginTop: hp('2%'),
     ...FONTS.title,
     textAlign: "center",
     fontSize: 27,
@@ -332,8 +333,8 @@ const styles = StyleSheet.create({
   descContainer: {
     marginTop: 0,
     textAlign: "center",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingHorizontal: hp('5%'),
+    paddingVertical: hp('1%'),
     borderRadius: 30,
     marginBottom: 10
     // borderWidth: 1,

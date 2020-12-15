@@ -364,17 +364,34 @@ exports.updateStripeAccountRevenue = functions.https.onCall(async (data) => {
   const balance = await stripe.balance.retrieve({
     stripeAccount: stripe_account_id
   });
-  // console.log("balance: ", JSON.stringify(balance))
-  // console.log("balance.available[0].amount: ", balance.available[0].amount)
-  // console.log("balance.pending[0].amount: ", balance.pending[0].amount)
+
+
+  console.log("balance: ", JSON.stringify(balance))
+  console.log("balance.available[0].amount: ", balance.available[0].amount)
+  console.log("balance.pending[0].amount: ", balance.pending[0].amount)
+  console.log("balance.instant_available[0].amount: ", balance.instant_available[0].amount)
+
   // Update Rev (Current Balance)
-  await Promise.all([
-    partners
-      .doc(partner_id)
-      .update({
-        revenue: balance.available[0].amount,
-      })
-  ])
+  // Instant Available shows up immediately, Balance Available takes a bit
+  // add
+  if (balance.pending[0].amount > 0) {
+    await Promise.all([
+      partners
+        .doc(partner_id)
+        .update({
+          revenue: balance.available[0].amount + balance.instant_available[0].amount,
+        })
+    ])
+  } else {
+    await Promise.all([
+      partners
+        .doc(partner_id)
+        .update({
+          revenue: balance.available[0].amount,
+        })
+    ])
+  }
+    
 
   // Get all payouts
   const payouts = await stripe.payouts.list({
@@ -387,10 +404,12 @@ exports.updateStripeAccountRevenue = functions.https.onCall(async (data) => {
   let totalEarnings = 0
   // If user has payouts add them all up and update firesstore
   if (payouts.data[0]) {
-    payouts.map(function (data, idx) {
+    payouts.data.map(function (data, idx) {
       totalEarnings += data.amount
-      // console.log("amount: ", data.amount)
+      console.log("totalEarnings: ", totalEarnings)
     })
+    // add current balance to total earnings
+    totalEarnings +=  balance.available[0].amount + balance.instant_available[0].amount
     await Promise.all([
       partners
         .doc(partner_id)
@@ -404,7 +423,7 @@ exports.updateStripeAccountRevenue = functions.https.onCall(async (data) => {
       partners
         .doc(partner_id)
         .update({
-          total_revenue: 0,
+          total_revenue: balance.available[0].amount + balance.instant_available[0].amount,
         })
     ])
     // console.log('no data')
