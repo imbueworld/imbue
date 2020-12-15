@@ -11,6 +11,7 @@ import CustomCapsule from '../components/CustomCapsule'
 import { FONTS } from '../contexts/Styles'
 import GoBackButton from '../components/buttons/GoBackButton'
 import config from '../../../App.config'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 export default function MemberHome(props) {
@@ -39,7 +40,7 @@ export default function MemberHome(props) {
                     width: "88%",
                     alignSelf: "center",
                     marginBottom: 50,
-                    marginTop: 560
+                    marginTop: hp('68%'),
                 }}
             >
                 <Text style={{
@@ -75,7 +76,8 @@ export default function MemberHome(props) {
 
 const styles = StyleSheet.create({
     scrollView: {
-        minHeight: "100%",
+        flex: 1,
+        // minHeight: "100%",
         backgroundColor: "#F9F9F9",
         // alignItems: "center",
     },

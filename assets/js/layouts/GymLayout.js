@@ -19,6 +19,7 @@ import CustomButton from '../components/CustomButton'
 import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarButton'
 import { publicStorage } from '../backend/BackendFunctions'
 import Icon from '../components/Icon'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 /** 
@@ -279,10 +280,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   image: {
-    height: "100%",
+    height: hp('50%'),
     marginLeft: 0,
     marginRight: 0,
-    height: 360,
     resizeMode: 'cover'
     // borderRadius: 30,
     // borderBottomLeftRadius: 0,
