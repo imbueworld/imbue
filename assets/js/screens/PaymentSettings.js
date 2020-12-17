@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, ScrollView, View } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-
+import { useFocusEffect } from '@react-navigation/native';
 
 import CustomButton from "../components/CustomButton"
 import CreditCardBadge from "../components/CreditCardBadge"
@@ -15,6 +15,21 @@ import cache from '../backend/storage/cache'
 export default function PaymentSettings(props) {
   const [creditCards, setCreditCards] = useState([])
   const [CreditCards, CreditCardsCreate] = useState(null)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      const init = async () => {
+        const user = new User()
+        const creditCards = await user.retrievePaymentMethods()
+        setCreditCards(creditCards)
+      }; init()
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
 
   useEffect(() => {
     const init = async () => {

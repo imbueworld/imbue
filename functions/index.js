@@ -570,7 +570,7 @@ exports.cleanUpAfterPartner = functions.firestore
 exports.createGymProduct = functions.https.onCall(async (data, context) => {
   const { gymId } = data 
 
-  const {
+  const { 
     name: gymName,
     membership_price_online: unit_amount,
   } = (
@@ -592,6 +592,7 @@ exports.createGymProduct = functions.https.onCall(async (data, context) => {
       .get()
   ).data()
 
+  console.log("priceId: ", priceId)
 
   // Check if price exists, if so update price
   if (priceId) {

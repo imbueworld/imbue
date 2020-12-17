@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { ScrollView, View, Text } from 'react-native'
 import { useNavigation } from '@react-navigation/native'
 import { selectCard } from './CreditCardSelectionV2.backend'
+import { useFocusEffect } from '@react-navigation/native';
 
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import CreditCardBadgeV2 from './CreditCardBadgeV2'
@@ -9,7 +10,7 @@ import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
 
 
-
+ 
 //  * .data -- creditCards ( [{}, {}, ..] )
 //  * .selectedCard
 //  * .selectCard -- callback
@@ -26,6 +27,22 @@ export default function CreditCardSelectionV2(props) {
   } = props
 
   const [cards, setCards] = useState(null)
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      const init = async () => {
+        const user = new User()
+        const cards = await user.retrievePaymentMethods()
+  
+        setCards(cards)
+      }; init()
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
 
   useEffect(() => {
     const init = async () => {

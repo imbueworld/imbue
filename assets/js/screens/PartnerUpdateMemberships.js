@@ -93,7 +93,7 @@ export default function PartnerUpdateMemberships(props) {
           value={priceStudio}
           onChangeText={text => {
             if (text.length <= 1) setPriceStudio("$")
-            if (!text.includes("$")) return
+            if (!text.includes("$")) return 
             if (text.match(/[A-Za-z]/g)) return
             let dots = text.match(/[.]/g)
             if (dots) if (dots.length > 1) return
