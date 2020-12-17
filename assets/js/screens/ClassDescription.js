@@ -414,7 +414,7 @@ export default function ClassDescription(props) {
 
                           <CustomButton
                             style={styles.button}
-                            title="Profile Settings"
+                            title="Enter Date of Birth"
                             onPress={() => navigation.navigate("ProfileSettings")}
                           />
 
