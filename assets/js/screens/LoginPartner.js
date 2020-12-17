@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View, Platform } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from "../components/AppBackground"
 import CompanyLogo from "../components/CompanyLogo"
@@ -37,7 +37,7 @@ export default function LoginPartner(props) {
   }
      
   return (
-    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
     <KeyboardAwareScrollView
       contentContainerStyle={styles.scrollView}
       keyboardShouldPersistTaps="handled"

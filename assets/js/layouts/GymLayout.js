@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import {
-  StyleSheet, ScrollView, View, Image, SafeAreaView
+  StyleSheet, ScrollView, View, Image, SafeAreaView, Platform
 } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
 
@@ -19,6 +19,7 @@ import CustomButton from '../components/CustomButton'
 import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarButton'
 import { publicStorage } from '../backend/BackendFunctions'
 import Icon from '../components/Icon'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 /** 
@@ -126,7 +127,8 @@ export default function GymLayout(props) {
 
 
   return (
-    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg,
+      paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
 
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
@@ -278,10 +280,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   image: {
-    height: "100%",
+    height: hp('50%'),
     marginLeft: 0,
     marginRight: 0,
-    height: 360,
     resizeMode: 'cover'
     // borderRadius: 30,
     // borderBottomLeftRadius: 0,
