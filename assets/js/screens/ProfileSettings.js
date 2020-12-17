@@ -33,8 +33,6 @@ export default function ProfileSettings(props) {
       const user = new User()
       const userDoc = await user.retrieveUser() 
       setUser(userDoc)
-      // console.log("user (this): " + JSON.stringify(user))
-      console.log("user.account_type1: " + user.account_type)
       setIsForeignUser( userDoc.icon_uri_foreign ? true : false )
     }; init()
   }, [])
@@ -172,8 +170,6 @@ export default function ProfileSettings(props) {
     // let {
     //   dob,
     // } = reactNativeForm
-    console.log("dob (this below): ", dob)
-
 
     if (firstNameField.length === 0) redFields.push("first")
     if (lastNameField.length === 0) redFields.push("last")
@@ -239,7 +235,6 @@ export default function ProfileSettings(props) {
 
   const updateSafeInfoForPartner = async () => {
     let addressText = address
-    console.log("address (below): ", address)
     let phoneText = phone
 
     const gym = new Gym
@@ -306,15 +301,12 @@ export default function ProfileSettings(props) {
       let pfGeocodeAddress
       if (addressText) pfGeocodeAddress = await geocodeAddress(addressText)
       // if (companyAddressText) pfGeocodeCompanyAddress = await geocodeAddress(companyAddressText)
-      console.log("pfGeocodeAddress ($$$): ", pfGeocodeAddress)
       if (pfGeocodeAddress) {
         const {
           address,
           formatted_address,
         } = pfGeocodeAddress
 
-        console.log("pfGeocodeAddress ($$$): ", address)
-        console.log("formatted_address ($$$): ", formatted_address)
 
         updatables.address = address
         updatables.formatted_address = formatted_address
@@ -353,10 +345,6 @@ export default function ProfileSettings(props) {
       const userObj = new User()
       await userObj.init() 
       userObj.mergeItems(updatables)
-
-      console.log("updatables2: ", updatables)
-      console.log("address (RAW): ", address)
-
 
       await Promise.all([
         userObj.push(),
@@ -421,7 +409,6 @@ export default function ProfileSettings(props) {
   }
 
   const handleDOB = () => {
-    console.log("address (handDOB): ", address)
     {user.account_type == 'partner'
           ? updateSafeInfoForPartner() 
           : updateSafeInfoForUser()

@@ -51,14 +51,11 @@ export default function ScheduleViewer(props) {
       console.log("focused")
 
       const init = async () => {
-        console.log("it worked!")
         const user = new User()
         setUser(await user.retrieveUser())
   
         const classes = new ClassesCollection() 
-  
-        console.log("classes: ", JSON.stringify(classes))
-  
+    
         // Determine which classes to display:
         // based on the provided gymId or classIds
         let classData
@@ -79,13 +76,11 @@ export default function ScheduleViewer(props) {
             name,
           } = await gym.retrieveGym(gymId)
   
-          console.log("gymId: ", gymId)
   
           classData = (await classes
             .retrieveWhere('gym_id', 'in', [ gymId ])
           ).map(it => it.getFormatted())
   
-          console.log("classData: ", classData)
   
           setTitle(name)
           setSubtitle('Schedule')
@@ -115,14 +110,11 @@ export default function ScheduleViewer(props) {
   );
 
   useEffect(() => {
-    console.log("props.route.params ", props.route.params[0])
     const init = async () => {
       const user = new User()
       setUser(await user.retrieveUser())
 
       const classes = new ClassesCollection() 
-
-      console.log("classes: ", JSON.stringify(classes))
 
       // Determine which classes to display:
       // based on the provided gymId or classIds
@@ -150,7 +142,7 @@ export default function ScheduleViewer(props) {
           .retrieveWhere('gym_id', 'in', [ gymId ])
         ).map(it => it.getFormatted())
 
-        console.log("classData: ", classData)
+        console.log("classData: ", classData) // DEBUG
 
         setTitle(name)
         setSubtitle('Schedule')
@@ -184,8 +176,6 @@ export default function ScheduleViewer(props) {
     setDataIsFormatted(true)
   }, [calendarData])
 
-  console.log("gymId: (scheduleViewer): ", gymId)
-    console.log("classIds: (scheduleViewer): ", classIds)
 
   if (!user || !dataIsFormatted) return <View />
 
