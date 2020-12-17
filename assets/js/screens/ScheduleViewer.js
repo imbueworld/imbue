@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, ScrollView, SafeAreaView } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, SafeAreaView, Platform } from 'react-native'
 
 import AppBackground from "../components/AppBackground"
 
@@ -120,7 +120,7 @@ export default function ScheduleViewer(props) {
   if (!user || !dataIsFormatted) return <View />
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{paddingTop: Platform.OS === 'android' ? 25 : 0}}>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
 
       <AppBackground />

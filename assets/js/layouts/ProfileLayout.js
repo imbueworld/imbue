@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, StyleSheet, Text, View, TouchableHighlight } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TouchableHighlight, Platform } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useNavigation } from '@react-navigation/native'
@@ -101,7 +101,7 @@ export default function ProfileLayout(props) {
 
   return (
     <>
-    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg }}>
+    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.scrollView}
