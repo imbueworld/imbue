@@ -38,22 +38,35 @@ export default function ClassDescription(props) {
 
   const [hasMembership, setHasMembership] = useState(null)
   const [classHasPassed, setClassHasPassed] = useState()
+  const [dob, setDob] = useState('')
 
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
   const [classDoc, setClassDoc] = useState(null)
   const [priceType, setPriceType] = useState(null)
 
+  const handleDOB = () => {
+    console.log("address (handDOB): ", address)
+    {
+      user.account_type == 'partner'
+      ? updateSafeInfoForPartner()
+      : updateSafeInfoForUser()
+    }
+  }
+
+
 
   useEffect(() => {
     const init = async () => {
       const classObj = new Class()
       const classDoc = await classObj.retrieveClass(classId)
-      const timeDoc = classDoc.active_times.filter(({ time_id }) => time_id == timeId)[ 0 ]
+      const timeDoc = classDoc.active_times.filter(({ time_id }) => time_id == timeId)[0]
       setClassDoc({
         ...classDoc,
         ...timeDoc,
       })
+
+
 
       // Determine whether the class has passed, and, if it has, the variable
       // is going to be used to not show scheduling button
@@ -71,10 +84,16 @@ export default function ClassDescription(props) {
   }, [r])
 
 
+  function invalidate() {
+    let redFields = []
+    if (dob.split('-').length != 3) redFields.push('dob')
+  }
+
+
   let activeClassesCount = user
     ? user.active_classes
-        ? user.active_classes.length
-        : null
+      ? user.active_classes.length
+      : null
     : null
   useEffect(() => {
     if (!gym) return
@@ -100,10 +119,10 @@ export default function ClassDescription(props) {
         user.active_memberships.includes(imbueId)
           ? 'imbue'
           : user.active_memberships.includes(gym.id)
-              ? 'gym'
-              : activeTimeIds.includes(timeId)
-                  ? 'class'
-                  : false
+            ? 'gym'
+            : activeTimeIds.includes(timeId)
+              ? 'class'
+              : false
 
       setHasMembership(hasMembership)
     }
@@ -120,7 +139,7 @@ export default function ClassDescription(props) {
       alignSelf: "center",
       borderBottomWidth: 1,
       borderColor: `${colors.gray}40`,
-    }}/>
+    }} />
 
     ContentCreate(
       <View style={styles.contentContainer}>
@@ -132,7 +151,7 @@ export default function ClassDescription(props) {
           {classDoc.instructor}
         </Text>
 
-        { Bar }
+        {Bar}
 
         <Text style={styles.timeText}>
           {classDoc.formattedDate}
@@ -142,7 +161,7 @@ export default function ClassDescription(props) {
           {classType(classDoc.type)}
         </Text>
 
-        { Bar }
+        {Bar}
 
         <View style={styles.descContainer}>
           <Text style={styles.descText}>
@@ -150,8 +169,8 @@ export default function ClassDescription(props) {
           </Text>
 
           {hasMembership
-          ? null
-          : <Text style={{
+            ? null
+            : <Text style={{
               ...styles.descText,
               alignSelf: "flex-end",
             }}>
@@ -161,7 +180,7 @@ export default function ClassDescription(props) {
 
       </View>
     )
-    
+
     // PopupCCNotFoundCreate(
     //   <CustomPopup
     //     containerStyle={{
@@ -204,11 +223,11 @@ export default function ClassDescription(props) {
   // helper variable
   const classIsAddedToCalendar =
     user.account_type == 'user'
-    ? user.scheduled_classes
+      ? user.scheduled_classes
         .map(it => it.time_id)
         .includes(timeId)
-    : null
-  
+      : null
+
   function getGoToLivestreamButton() {
     let options = {
       show: false,
@@ -225,12 +244,12 @@ export default function ClassDescription(props) {
   }
 
   return (
-    <GymLayout 
+    <GymLayout
       containerStyle={styles.container}
       innerContainerStyle={styles.innerContainerStyle}
       data={gym}
       buttonOptions={{
-        goToLivestream: getGoToLivestreamButton(), 
+        goToLivestream: getGoToLivestreamButton(),
         // addToCalendar: {
         //   show: hasMembership && user.account_type == 'user' && !classHasPassed,
         //   state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
@@ -277,7 +296,7 @@ export default function ClassDescription(props) {
         // removeFromCalendar: {
         //   onPress: async () => {
         //     const { id: classId, time_id: timeId } = classDoc
-            
+
         //     const user = new User()
         //     await user.unscheduleClass({ classId, timeId })
 
@@ -294,174 +313,208 @@ export default function ClassDescription(props) {
         goToCalendar: { show: false },
       }}
     >
-      { Content }
+      { Content}
 
       {errorMsg
-      ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-      : null}
+        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+        : null}
       {successMsg
-      ? <Text style={{ color: "green" }}>{successMsg}</Text>
-      : null}
+        ? <Text style={{ color: "green" }}>{successMsg}</Text>
+        : null}
 
       {user.account_type !== "user" ? null :
-      <View>
-        {/* if null, it means it hasn't been initialized yet. */}
-        {hasMembership === null ? <View /> :
-          hasMembership ? null :
-            <>
-            {popup === "buy"
-            ? <CreditCardSelectionV2
-                containerStyle={styles.cardSelectionContainer}
-                title={
-                  <Text>
-                    {`Confirm payment for ${gym.name}, ${classDoc.name} — `}
-                    <Text style={{
-                      textDecorationLine: "underline",
-                    }}>One Time Online Class</Text>
-                  </Text>
-                }
-                onX={() => setPopup(null)}
-                onCardSelect={async paymentMethodId => {
-                  try {
-                    setErrorMsg('')
-                    setSuccessMsg('')
+        <View>
+          {/* if null, it means it hasn't been initialized yet. */}
+          {hasMembership === null ? <View /> :
 
-                    const {
-                      id: classId,
-                      time_id: timeId,
-                    } = classDoc
-
-                    const user = new User() 
-                    await user.purchaseClass({ 
-                      paymentMethodId,
-                      classId,
-                      timeId,
-                    })
-
-                    refresh(r + 1)
-
-                  } catch(err) {
-                    if (config.DEBUG) console.error(err.message) // DEBUG
-                    switch (err.code) {
-                      case "busy":
-                        setErrorMsg(err.message)
-                        break
-                      case "class-already-bought":
-                        setSuccessMsg(err.message)
-                        break
-                      default:
-                        setErrorMsg("Something prevented the action.")
-                        break
+            hasMembership && user.dob ? null :
+              <>
+                {popup === "buy"
+                  ? <CreditCardSelectionV2
+                    containerStyle={styles.cardSelectionContainer}
+                    title={
+                      <Text>
+                        {`Confirm payment for ${gym.name}, ${classDoc.name} — `}
+                        <Text style={{
+                          textDecorationLine: "underline",
+                        }}>One Time Online Class</Text>
+                      </Text>
                     }
-                  }
-                }}
-              />
-                  :
-                  (priceType === "paid"
-                      ? ( <CustomButton
-                            style={{ 
-                              marginBottom: 0,
-                            }}
-                            title="Book"
-                            onPress={() => { 
-                              setPopup("buy") 
-                            }}
-                          />
-                      ) : (
-                        <CustomButton
-                        style={{
-                          marginBottom: 0,
-                        }}
-                        title="Add to Calender"
-                        onPress={async () => {
-                                  
-                          try {
-                            setErrorMsg('')
-                            setSuccessMsg('')
-            
-                            const {
-                              id: classId,
-                              time_id: timeId,
-                            } = classDoc
+                    onX={() => setPopup(null)}
+                    onCardSelect={async paymentMethodId => {
+                      try {
+                        setErrorMsg('')
+                        setSuccessMsg('')
 
-                            const user = new User()
-                            await user.addClassToCalender({
-                              classId,
-                              timeId,
-                            })
-            
-                            refresh(r + 1)
-            
-                          } catch (err) {
-                            switch (err.code) {
-                              case "busy":
-                                setErrorMsg(err.message)
-                                break
-                              case "class-already-added":
-                                setSuccessMsg(err.message)
-                                break
-                              default:
-                                setErrorMsg("Something prevented the action.")
-                                break
-                            }
-                            // Adds to calender. Called when priceType == free. Bypasses purchaing
-  
-                          }
-                        }}
-                      />
+                        const {
+                          id: classId,
+                          time_id: timeId,
+                        } = classDoc
+
+                        const user = new User()
+                        await user.purchaseClass({
+                          paymentMethodId,
+                          classId,
+                          timeId,
+                        })
+
+                        refresh(r + 1)
+
+                      } catch (err) {
+                        if (config.DEBUG) console.error(err.message) // DEBUG
+                        switch (err.code) {
+                          case "busy":
+                            setErrorMsg(err.message)
+                            break
+                          case "class-already-bought":
+                            setSuccessMsg(err.message)
+                            break
+                          default:
+                            setErrorMsg("Something prevented the action.")
+                            break
+                        }
+                      }
+                    }}
+                  /> 
+                  :
+                  ((priceType === "paid" && user.dob) ?
+                  <>
+                    <CustomButton
+                      style={{
+                        marginBottom: 0,
+                      }}
+                      title="Book"
+                      onPress={() => {
+                        setPopup("buy")
+                      }}
+                    />
+                    </>
+                    : (priceType === "paid" && !user.dob) ?
+
+                        <>
+                          <View>
+                            <Text
+                              style={{
+                                marginTop: 5,
+                                ...FONTS.body,
+                                fontSize: 12
+                              }}
+                            >
+                              You must enter your Date of birth before you can book a class
+                    </Text>
+                            <Text
+                              style={{
+                                ...FONTS.body,
+                                fontSize: 8
+                              }}
+                            >
+                              Your birhday is needed for stripe, our payment processor
+                    </Text>
+                          </View>
+
+                          <CustomButton
+                            style={styles.button}
+                            title="Profile Settings"
+                            onPress={() => navigation.navigate("ProfileSettings")}
+                          />
+
+                        </>
+                    
+                     : (
+                      <CustomButton
+                  style={{
+                    marginBottom: 0,
+                  }}
+                  title="Add to Calender"
+                  onPress={async () => {
+
+                    try {
+                      setErrorMsg('')
+                      setSuccessMsg('')
+
+                      const {
+                        id: classId,
+                        time_id: timeId,
+                      } = classDoc
+
+                      const user = new User()
+                      await user.addClassToCalender({
+                        classId,
+                        timeId,
+                      })
+
+                      refresh(r + 1)
+
+                    } catch (err) {
+                      switch (err.code) {
+                        case "busy":
+                          setErrorMsg(err.message)
+                          break
+                        case "class-already-added":
+                          setSuccessMsg(err.message)
+                          break
+                        default:
+                          setErrorMsg("Something prevented the action.")
+                          break
+                      }
+                      // Adds to calender. Called when priceType == free. Bypasses purchaing
+
+                    }
+                  }}
+                />
                     )
-                  ) 
-                  }
+                  )
+                }
               </>}
 
           {hasMembership !== "imbue" ? null :
-        <MembershipApprovalBadgeImbue
-          containerStyle={{
-            marginTop: 10,
-          }} 
-          data={gym}
-        />}
-          {hasMembership !== "gym" ? null :
-            <>
-            <CustomButton
-            style={{
-              marginBottom: 0,
-            }}
-            title="Join Class"
-                onPress={() => {
-                  const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
-                  navigation.dispatch(pushAction)
-              // getGoToLivestreamButton()
-            }}
-          />
-        <MembershipApprovalBadge
-          containerStyle={{
-            marginTop: 10,
-          }}
-          data={gym}
-              />
-        </>}
-          {hasMembership !== "class" ? null :
-            <View>
-              <CustomButton
-              style={{
-                marginBottom: 0,
-              }}
-              title="Join"
-                  onPress={() => {
-                    const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
-                    navigation.dispatch(pushAction)
-                // getGoToLivestreamButton()
-              }}
-            />
-            <ClassApprovalBadge
+            <MembershipApprovalBadgeImbue
               containerStyle={{
                 marginTop: 10,
               }}
-                  />
+              data={gym}
+            />}
+          {hasMembership !== "gym" ? null :
+            <>
+              <CustomButton
+                style={{
+                  marginBottom: 0,
+                }}
+                title="Join Class"
+                onPress={() => {
+                  const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
+                  navigation.dispatch(pushAction)
+                  // getGoToLivestreamButton()
+                }}
+              />
+              <MembershipApprovalBadge
+                containerStyle={{
+                  marginTop: 10,
+                }}
+                data={gym}
+              />
+            </>}
+          {hasMembership !== "class" ? null :
+            <View>
+              <CustomButton
+                style={{
+                  marginBottom: 0,
+                }}
+                title="Join"
+                onPress={() => {
+                  const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
+                  navigation.dispatch(pushAction)
+                  // getGoToLivestreamButton()
+                }}
+              />
+              <ClassApprovalBadge
+                containerStyle={{
+                  marginTop: 10,
+                }}
+              />
+            </View>}
         </View>}
-      </View>}
-    </GymLayout>
+    </GymLayout >
   )
 }
 
