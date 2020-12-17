@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, Platform } from 'react-native'
-
+import { useFocusEffect } from '@react-navigation/native';
 import AppBackground from "../components/AppBackground"
 
 import CalendarView from "../components/CalendarView"
@@ -43,6 +43,76 @@ export default function ScheduleViewer(props) {
 
   const [title, setTitle] = useState("")
   const [subtitle, setSubtitle] = useState("")
+
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      console.log("focused")
+
+      const init = async () => {
+        console.log("it worked!")
+        const user = new User()
+        setUser(await user.retrieveUser())
+  
+        const classes = new ClassesCollection() 
+  
+        console.log("classes: ", JSON.stringify(classes))
+  
+        // Determine which classes to display:
+        // based on the provided gymId or classIds
+        let classData
+        if (classIds) {
+          console.log(1111)
+  
+          classData = (await classes
+            .retrieveWhere('id', 'in', classIds)
+          ).map(it => it.getFormatted())
+  
+          setTitle('My Classes')
+        
+        } else if (gymId) {
+          console.log(2222)
+  
+          const gym = new Gym()
+          const {
+            name,
+          } = await gym.retrieveGym(gymId)
+  
+          console.log("gymId: ", gymId)
+  
+          classData = (await classes
+            .retrieveWhere('gym_id', 'in', [ gymId ])
+          ).map(it => it.getFormatted())
+  
+          console.log("classData: ", classData)
+  
+          setTitle(name)
+          setSubtitle('Schedule')
+        
+        } else {
+          console.log(3333)
+  
+          classData = ( await user.retrieveScheduledClasses() )
+            .map(it => it.getFormatted())
+          // if (user.accountType == 'user') classData = await filterUserClasses()
+  
+          console.log("classData", classData) // DEBUG
+  
+          setTitle('My Classes')
+        }
+  
+        setCalendarData(classData)
+      }; init()
+      
+
+      return () => {
+        console.log("blurred")
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
 
   useEffect(() => {
     console.log("props.route.params ", props.route.params[0])
@@ -120,7 +190,7 @@ export default function ScheduleViewer(props) {
   if (!user || !dataIsFormatted) return <View />
 
   return (
-    <SafeAreaView style={{paddingTop: Platform.OS === 'android' ? 25 : 0}}>
+    <SafeAreaView style={{paddingTop: Platform.OS === 'android' ? 25 : 0, flex: 1, backgroundColor: colors.bg}}>
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView} alwaysBounceVertical={false} >
 
       <AppBackground />

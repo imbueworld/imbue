@@ -219,7 +219,7 @@ export default function CalendarPopulateForm(props) {
                 activeTimes: active_times,
               })
 
-              setSuccessMsg("Successfully added class dates to the gym's official calendar.")
+              setSuccessMsg("Successfully scheduled class!")
             } catch(err) {
               setErrorMsg(err.message)
             }
