@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Platform } from 'react-native'
+import { StyleSheet, View, Text, Platform, Alert } from 'react-native'
 import CustomTextInput from './CustomTextInput'
 import CustomButton from './CustomButton'
 import CustomSelectButton from './CustomSelectButton'
@@ -19,6 +19,7 @@ import storage from '@react-native-firebase/storage'
 import config from '../../../App.config'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import { FONTS } from '../contexts/Styles' 
+import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
 export default function EditClassForm(props) {
@@ -178,6 +179,26 @@ export default function EditClassForm(props) {
       defaultGym = dropDownGyms[0].value
       setGymId(defaultGym)
     }
+  }
+
+
+  function removeClass() {
+    // remove from firebase
+    firestore()
+      .collection('classes')
+      .doc(classId)
+      .delete()
+      .then(() => {
+        console.log('class deleted!');
+      });
+
+    setSuccessMsg("Successfully removed class.")
+
+    // go back
+    setTimeout(
+      () => {  navigation.goBack() },
+      2000
+    )
   }
 
 
@@ -443,6 +464,33 @@ export default function EditClassForm(props) {
           }
         }}
       />
+      
+      {/* Delete Class */}
+      <TouchableHighlight onPress={() =>
+         Alert.alert(
+          "Are you sure you wish to delete this class",
+          "All instances of this class will be removed from your schedule",
+          [
+            {
+              text: "Cancel",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: "Yes", onPress: () => removeClass() }
+          ],
+          { cancelable: false }
+        )
+        }
+      >
+        <Text style={{
+                width: "100%",
+                textAlign: "center",
+                marginTop: hp('1%'),
+                color: 'red',
+                ...FONTS.body,
+                fontSize: 10,
+            }}>Remove</Text>
+      </TouchableHighlight>
       
     </View>
   )
