@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, TouchableHighlight } from 'react-native'
+import { StyleSheet, View, Text, TouchableHighlight, TouchableOpacity } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native';
 import firestore from '@react-native-firebase/firestore'
 
@@ -72,7 +72,7 @@ export default function PartnerEditClasses(props) {
 
   const Classes = classes.map((classDoc, idx) =>
     
-    <TouchableHighlight style={{ borderRadius: 30 }} onPress={() =>
+    <TouchableOpacity style={{ borderRadius: 30,  }} onPress={() =>
       props.navigation.navigate(
         "EditClassForm",
         { classDoc: classDoc })}
@@ -92,7 +92,7 @@ export default function PartnerEditClasses(props) {
           fontSize: 20,
           }}>{classDoc.name}</Text>
       </View>
-  </TouchableHighlight>
+  </TouchableOpacity>
 
   ) 
 
