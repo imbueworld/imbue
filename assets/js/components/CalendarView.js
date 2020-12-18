@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Platform } from 'react-native'
-import { Calendar } from "react-native-calendars"
+import { Calendar } from "react-native-calendars" 
 import config from '../../../App.config'
 import { FONTS } from "../contexts/Styles"
 
@@ -15,6 +15,7 @@ export default function CalendarView(props) {
   let calendarData = props.data
   if (!calendarData) return <View />
 
+
   useEffect(() => {
     calendarData.forEach(doc => {
       if (!(doc.active_times instanceof Array)) return
@@ -28,19 +29,23 @@ export default function CalendarView(props) {
         if (!markedDates[dateString]) markedDates[dateString] = { dots: [] }
         markedDates[dateString].dots.push(workout)
       })
-    })
+    }) 
 
     // Responsible for meshing together the options for current selected date
     markedDates[props.slctdDate] =
       markedDates[props.slctdDate]
         ? Object.assign(markedDates[props.slctdDate], { selected: "true" })
-        : { selected: "true" }
+      : { selected: "true" }
+    
+    // console.log("markedDates: ", JSON.stringify(markedDates.undefined))
+
 
     setMarkedDates(markedDates)
   }, [props.slctdDate])
 
   const [markedDates, setMarkedDates] = useState({})
-  const workout = { color: "lightgreen" }
+  const workout = { color: "#242426" }
+
 
   return (
     <View style={{

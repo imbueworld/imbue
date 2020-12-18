@@ -25,7 +25,7 @@ export default function CalendarPopulateForm(props) {
 
   const [beginClock, setBeginClock] = useState([0, 0])
   const [endClock, setEndClock] = useState([0, 0])
-  const [dateStringList, setDateStringList] = useState([])
+  const [dateStringList, setDateStringList] = useState([]) 
 
   const [class_id, setClassId] = useState(null)
   // const [active_times, setActiveTimes] = useState(null)
@@ -109,7 +109,8 @@ export default function CalendarPopulateForm(props) {
       activeTimes.push({
         time_id: getRandomId(),
         begin_time: dateTsLocal + bH + bM,
-        end_time: dateTsLocal + eH + eM
+        end_time: dateTsLocal + eH + eM, //initialize at 0
+        attendees: 0
       })
     })
     // setActiveTimes(activeTimes)
@@ -213,8 +214,8 @@ export default function CalendarPopulateForm(props) {
             
             try {
               validate()
-              let active_times = format()
-
+              let active_times = format() 
+ 
               await classObj.populate({
                 activeTimes: active_times,
               })

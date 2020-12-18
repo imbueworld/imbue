@@ -7,6 +7,7 @@ import { ScrollView } from 'react-native-gesture-handler'
 import AttendeeCard from '../AttendeeCard'
 import { colors } from '../../contexts/Colors'
 import Class from '../../backend/storage/Class'
+import firestore from '@react-native-firebase/firestore';
 
 
 
@@ -25,16 +26,41 @@ export default function AttendeesPopup(props) {
 
   const [ByPurchase, ByPurchaseCreate] = useState(null)
   const [BySchedule, ByScheduleCreate] = useState(null)
-s
+
   useEffect(() => {
     const init = async () => {
+      console.log("yo")
+      console.log("timeId: ", timeId)
       const classObj = new Class()
       await classObj.initByUid(classId)
-      const attendees = await classObj.retrieveAttendees(timeId)
+      console.log("classObj: ", classObj)
+
+      // get attendees
+      // const attendees = firestore()
+      //   .collection('users')
+      //   .get()
+      //   .then(querySnapshot => {
+      //     querySnapshot.forEach(documentSnapshot => {
+
+      //       // go through classes
+      //       documentSnapshot.data().active_classes.map((it) => {
+              
+      //       })
+      //     }
+            
+      //       if (documentSnapshot.data().)
+      //       console.log("gym")
+      //       setGyms(prevArray => [...prevArray, documentSnapshot.data()])
+      //     });
+      //   });
+
+      const attendees = await classObj.retrieveAttendees(timeId) 
+      console.log("hiii")
 
       console.log("attendees", attendees) // DEBUG
 
       setAttendees(attendees)
+    
     }; init()
   }, [])
 
@@ -43,7 +69,7 @@ s
   //   -  Those who scheduled it on the basis of having a membership
   useEffect(() => {
     if (!attendees) return
-
+    console.log("this shouldn't be called")
     const init = async () => {
       let promises = []
       attendees.forEach(client => {
@@ -81,7 +107,7 @@ s
   useEffect(() => {
     if (!byPurchase) return
     if (!bySchedule) return
-
+    console.log("shouldn't be called if no byPurchase or bySchedule")
     ByPurchaseCreate(
       byPurchase.map((attendeeDoc, idx) =>
         <View key={idx} style={{

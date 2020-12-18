@@ -114,7 +114,6 @@ export default function GymDescription(props) {
   }, [gym])
  
   function openClassesSchedule() {
-    console.log("gymId (gymDescription): ", gymId)
     props.navigation.navigate(
       "ScheduleViewer", { gymId })
   }
@@ -150,7 +149,7 @@ export default function GymDescription(props) {
         }}
         title="Classes"
         onPress={openClassesSchedule}
-        Icon={
+        Icon={ 
           <Icon
             source={require("../components/img/png/calendar.png")}
           />
