@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { SafeAreaView, StyleSheet, Text, View, TouchableHighlight, Platform } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
+import {useRoute} from '@react-navigation/native';
 
 import { useNavigation } from '@react-navigation/native'
 import { FONTS } from '../contexts/Styles'
@@ -12,6 +13,7 @@ import LogOutButton from '../components/buttons/LogOutButton'
 import AppBackground from '../components/AppBackground'
 import Icon from '../components/Icon'
 import EditButton from '../components/buttons/EditButton'
+import { useFocusEffect } from '@react-navigation/native';
 
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from '@react-native-community/google-signin'
@@ -19,7 +21,7 @@ import { LoginManager } from 'react-native-fbsdk'
 import User from '../backend/storage/User' 
 import config from '../../../App.config'
 
-
+ 
 
 export default function ProfileLayout(props) {
   const navigation = useNavigation() 
@@ -28,11 +30,32 @@ export default function ProfileLayout(props) {
   const [user, setUser] = useState()
   const [buttonOptions, setButtonOptions] = useState(null)
   const [r, refresh] = useState(0)
+  const [route, setRoute] = useState()
+
+  const thisRoute = useRoute();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      const init = async () => {
+        const user = new User() 
+        setUser(await user.retrieveUser())
+      }; init()
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
 
   useEffect(() => {
     const init = async () => {
       const user = new User() 
       setUser(await user.retrieveUser())
+
+      
+      setRoute(thisRoute.name)
+      console.log('route: ', route)
     }; init()
   }, [])
 
@@ -192,12 +215,16 @@ export default function ProfileLayout(props) {
             onLongPress={buttonOptions.logOut.onLongPress}
           /> : null}
 
-          <Text
+          {route === 'PartnerDashboard' ?
+            <Text
             style={styles.profileName}
             numberOfLines={1}
             >
             {user.name} 
-          </Text>
+            </Text>
+            : null
+          }
+         
 
           {props.children}
 

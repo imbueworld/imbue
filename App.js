@@ -28,7 +28,9 @@ import PurchaseUnlimited from './assets/js/screens/PurchaseUnlimited'
 import GymDescription from './assets/js/screens/GymDescription'
 import UserMemberships from './assets/js/screens/UserMemberships'
 import ClassDescription from './assets/js/screens/ClassDescription'
-import PartnerUpdateClasses from './assets/js/screens/PartnerUpdateClasses'
+import PartnerCreateClass from './assets/js/screens/PartnerCreateClass'
+import PartnerEditClasses from './assets/js/screens/PartnerEditClasses'
+import EditClassForm from './assets/js/components/EditClassForm'
 import PasswordReset from './assets/js/screens/PasswordReset'
 import MindbodyActivation from './assets/js/screens/MindbodyActivation'
 import customRTMP from './assets/js/screens/customRTMP'
@@ -171,8 +173,18 @@ export default function App() {
           initialParams={{}}
         />
         <Stack.Screen
-          name='PartnerUpdateClasses'
-          component={PartnerUpdateClasses}
+          name='PartnerCreateClass'
+          component={PartnerCreateClass}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='PartnerEditClasses'
+          component={PartnerEditClasses}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='EditClassForm'
+          component={EditClassForm}
           initialParams={{}}
         />
         <Stack.Screen

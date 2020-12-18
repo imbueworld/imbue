@@ -10,13 +10,21 @@ import { simpleShadow, colors } from '../contexts/Colors'
 import { zeroDecimalFromCurrency } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
+import GoBackButton from '../components/buttons/GoBackButton'
+import { useNavigation } from '@react-navigation/native'
 
 import ImagePicker from 'react-native-image-picker'
 import firestore from '@react-native-firebase/firestore'
 import storage from '@react-native-firebase/storage'
+import config from '../../../App.config'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import { FONTS } from '../contexts/Styles' 
 
 
-export default function NewClassForm(props) {
+export default function EditClassForm(props) {
+  console.log("props: ", props.route.params.classDoc)
+  const classParams = props.route.params.classDoc
+
   const [initialized, setInitialized] = useState(false)
   // const [dropDown, setDropDown] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
@@ -24,10 +32,14 @@ export default function NewClassForm(props) {
   const [redFields, setRedFields] = useState([])
 
   const [dropDownGyms, setDropDownGyms] = useState([])
+  const [classDoc, setClassDoc] = useState([])
+
 
   const [gym_id, setGymId] = useState(null)
   const [instructor, setInstructor] = useState(null)
   const [name, setName] = useState(null)
+  const [classId, setClassId] = useState(null)
+
   const [img, setImg] = useState(null)
   const [description, setDescription] = useState(null)
   // const [genres, setGenres] = useState(null)
@@ -35,32 +47,37 @@ export default function NewClassForm(props) {
   const [priceType, setPriceType] = useState("free")
 
   const [price, setPrice] = useState("$0.00")
+  let navigation = useNavigation()
+
+
 
   useEffect(() => {
     const init = async () => { 
-      const newClassForm = snatchNewClassForm()
+      // const newClassForm = snatchNewClassForm()
+      setClassDoc(classParams)
 
-      setInstructor(newClassForm.instructor)
-      setName(newClassForm.name)
-      setImg(newClassForm.img)
-      setDescription(newClassForm.description)
-      setPriceType(newClassForm.priceType)
+      setInstructor(classParams.name)
+      setName(classParams.name)
+      // setImg(newClassForm.img)
+      setDescription(classParams.description)
+      setPriceType(classParams.priceType)
+      setClassId(classParams.id)
+      console.log("setPriceType: ", classParams.priceType)
+
       // setGenres(newClassForm.genres || [])
       // setType(newClassForm.type || "studio")
-      setGymId(newClassForm.gym_id || null)
+      setGymId(classParams.gym_id || null)
 
       const user = new User()
       const gyms = (
         await user.retrievePartnerGyms()
       ).map(it => it.getAll())
 
-      console.log("gyms: ", gyms[0].id)
-
       // as of now each partner only has one associted gym. We automatically set this gymId
       setGymId(gyms[0].id)
 
-      let dropDownGyms = gyms.map(gym => ({ label: gym.description, value: gym.id }))
-      setDropDownGyms(dropDownGyms)
+      // let dropDownGyms = gyms.map(gym => ({ label: gym.description, value: gym.id }))
+      // setDropDownGyms(dropDownGyms)
 
       setInitialized(true)
     }
@@ -69,20 +86,20 @@ export default function NewClassForm(props) {
 
   // Updates, in the local session cache, the fields for the form,
   // in case of an accidental back button press or such.
-  useEffect(() => {
-    const form = snatchNewClassForm()
-    form.instructor = instructor
-    form.name = name
-    form.img = img
-    form.description = description
-    form.priceType = priceType
-  }, [instructor, name, description])
-  useEffect(() => {
-    const form = snatchNewClassForm()
-    form.gym_id = gym_id
-    // form.genres = genres
-    form.type = type
-  }, [gym_id, type])
+  // useEffect(() => {
+  //   const form = snatchNewClassForm()
+  //   form.instructor = instructor
+  //   form.name = name
+  //   form.img = img
+  //   form.description = description
+  //   form.priceType = priceType
+  // }, [instructor, name, description])
+  // useEffect(() => {
+  //   const form = snatchNewClassForm()
+  //   form.gym_id = gym_id
+  //   // form.genres = genres
+  //   form.type = type
+  // }, [gym_id, type])
 
   // if (!instructor || !name || !description || !gym_id ||
   //     !genres || !type) return <View />
@@ -163,6 +180,8 @@ export default function NewClassForm(props) {
     }
   }
 
+
+
   function changeClassPhoto(gym) { 
     return new Promise(async (resolve, reject) => {
       // Ascertain that all permissions have been granted
@@ -241,10 +260,19 @@ export default function NewClassForm(props) {
 
   return (
     <View style={styles.container}>
+      <View style={{flexDirection: 'row'}}>
+        <GoBackButton containerStyle={styles.GoBackButton} />
+        <Text style={{
+              width: "100%",
+              textAlign: "center",
+              marginTop: hp('5%'),
+              ...FONTS.body,
+              fontSize: 30,
+          }}>Edit</Text>
+      </View>
 
-      {errorMsg
-        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-        : <Text style={{ color: "green" }}>{successMsg}</Text>}
+
+      
 
       
       {/* <DropDownPicker
@@ -278,6 +306,7 @@ export default function NewClassForm(props) {
       <CustomTextInput
         containerStyle={{
           borderColor: redFields.includes("name") ? "red" : undefined,
+          marginTop: hp('10%')
         }}
         placeholder="Class Name"
         value={name}
@@ -370,9 +399,15 @@ export default function NewClassForm(props) {
         ):
         (null)
       }
-     
+
+     <View>
+        {errorMsg
+          ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+          : <Text style={{ color: "green" }}>{successMsg}</Text>} 
+      </View>
+
       <CustomButton
-        title="Create Class"
+        title="Save"
 
         onPress={async () => {
           setRedFields([])
@@ -383,26 +418,49 @@ export default function NewClassForm(props) {
           try {
             // validate()
 
-            let form = format({ name, description, type, gym_id, price, priceType })
- 
-            const classObj = new Class()
-            classObj.create(form)   
+            await firestore()
+              .collection('classes')
+              .doc(classId)
+              .update({
+                name: name,
+                description: description,
+                price: price,
+                priceType: priceType
+              })
+              .then(() => {
+                console.log('User updated!');
+              });
+              
+            setTimeout(
+              () => {  navigation.goBack() },
+              2000
+            )
+           
 
-            setSuccessMsg("Successfully created class.")
+            setSuccessMsg("Successfully updated class.")
           } catch (err) {
             setErrorMsg(err.message)
           }
         }}
       />
+      
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    marginTop: hp('0%')
+  },
   optionText: {
     color: "#1b1b19", // edited
     textAlign: "center",
     fontSize: 20,
+  },
+  GoBackButton: {
+    ...config.styles.GoBackButton_screenDefault,
   },
   picker: {
     height: 72,

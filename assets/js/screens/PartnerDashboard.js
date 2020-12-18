@@ -46,7 +46,7 @@ export default function PartnerDashboard(props) {
   }
 
   return (
-    <ProfileLayout
+    <ProfileLayout 
       innerContainerStyle={{
         padding: 10,
       }}
@@ -93,7 +93,7 @@ export default function PartnerDashboard(props) {
             source={require("../components/img/png/my-classes.png")}
           />
         }
-        title="Schedule"
+        title="Classes"
         onPress={() => {
           props.navigation.navigate(
             "ScheduleViewer",

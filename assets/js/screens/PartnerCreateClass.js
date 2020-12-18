@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, TouchableHighlight } from 'react-native'
 
 import ProfileLayout from '../layouts/ProfileLayout'
 import NewClassForm from '../components/NewClassForm'
@@ -10,7 +10,7 @@ import User from '../backend/storage/User'
 
 
 
-export default function PartnerUpdateClasses(props) {
+export default function PartnerCreateClass(props) {
   const [page, setPage] = useState("overview")
   const [user, setUser] = useState(null)
   const [classes, setClasses] = useState(null)
@@ -45,48 +45,58 @@ export default function PartnerUpdateClasses(props) {
       justifyContent: "center",
       alignItems: "center",
     }}>
-      <Text style={{
-        ...FONTS.body,
-        color: colors.buttonAccent,
-        fontSize: 20,
-      }}>{classDoc.name}</Text>
+      <TouchableHighlight onPress={ () => console.log("pressed") }>
+        <Text style={{
+          ...FONTS.body,
+          color: colors.buttonAccent,
+          fontSize: 20,
+          }}>{classDoc.name}</Text>
+        </TouchableHighlight>
     </View>
-  )
+  ) 
 
  
   let PageContent
-  switch (page) {
-    case "overview":
-      PageContent =
-        <>
-          <CustomSmallButton
-            title="Create New Class"
-            onPress={() => setPage("new_class")}
-          />
-          {/* <ClassList data={classes} /> */}
-          <View>
-            <Text style={{
-              marginTop: 5,
-              marginBottom: 20,
-              alignSelf: "center",
-              ...FONTS.subtitle,
-              fontSize: 20,
-            }}>List of Classes</Text>
-            {Classes}
-          </View>
-        </>
-      break
-    case "new_class":
-      PageContent =
-        <>
-          <CustomSmallButton
-            title="See Class List"
-            onPress={() => setPage("overview")}
-          />
-          <NewClassForm />
-        </>
-      break
-  }
+  PageContent = 
+    <>
+      {/* <CustomSmallButton
+        title="See Class List"
+        onPress={() => setPage("overview")}
+      /> */}
+      <NewClassForm />
+ </>
+  // switch (page) {
+  //   case "overview":
+  //     PageContent = 
+  //       <>
+  //         <CustomSmallButton
+  //           title="Create New Class"
+  //           onPress={() => setPage("new_class")}
+  //         />
+  //         {/* <ClassList data={classes} /> */}
+  //         <View>
+  //           <Text style={{
+  //             marginTop: 5,
+  //             marginBottom: 20,
+  //             alignSelf: "center", 
+  //             ...FONTS.subtitle,
+  //             fontSize: 20,
+  //           }}>List of Classes</Text>
+  //           {Classes}  
+  //         </View> 
+  //       </> 
+  //     break
+  //   case "new_class":
+  //     PageContent = 
+  //       <>
+  //         <CustomSmallButton
+  //           title="See Class List"
+  //           onPress={() => setPage("overview")}
+  //         />
+  //         <NewClassForm />
+  //       </>
+  //     break
+  // }
  
   return (
     <ProfileLayout
