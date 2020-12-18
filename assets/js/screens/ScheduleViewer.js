@@ -264,7 +264,19 @@ export default function ScheduleViewer(props) {
                 style = {{marginBottom: 0}}
                 title="Create Class"
                 onPress={() => props.navigation.navigate(
-                  "PartnerUpdateClasses"
+                  "PartnerCreateClass"
+                )} 
+            />
+            <CustomButton
+                icon={
+                  <Icon
+                    source={require("../components/img/png/my-classes-2.png")}
+                  />
+                }
+                style = {{marginBottom: 0}}
+                title="Edit Classes"
+                onPress={() => props.navigation.navigate(
+                  "PartnerEditClasses"
                 )}
               />
               <CustomButton

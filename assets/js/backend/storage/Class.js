@@ -6,6 +6,7 @@ import {
   shortDateFromTimestamp
 } from '../HelperFunctions'
 
+import firestore from '@react-native-firebase/firestore';
 
 
 export default class Class extends DataObject {
@@ -176,8 +177,55 @@ export default class Class extends DataObject {
       active_times: [],
     })
 
+
+
     // Push the new class
-    const { id: classId } = await this.push({ forceNew: true })
+    const { id: classId } = await this.push({ forceNew: true }) 
+
+    // Update partner's associated classes
+    partner.mergeItems({
+      associated_classes: [...associated_classes, classId],
+    })
+    await partner.push()
+  }
+
+  async update(form) {
+    let {
+      instructor,
+      name,
+      img,
+      description,
+      genres,
+      type,
+      price,
+      gym_id,
+    } = form
+    let pushables = []
+
+    const partner = new User()
+    await partner.init()
+    const {
+      id: partner_id,
+      associated_classes=[],
+    } = partner.getAll()
+
+    this.mergeItems({
+      ...form,
+      partner_id,
+      active_times: [],
+    })
+
+    console.log("classId: ", classId)
+
+    // firestore()
+    //   .collection('classes')
+    //   .doc(classId)
+    //   .update({
+    //     age: 31,
+    //   })
+
+    // Push the new class
+    const { id: classId } = await this.push({ forceNew: true }) 
 
     // Update partner's associated classes
     partner.mergeItems({
