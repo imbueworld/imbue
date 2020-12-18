@@ -122,11 +122,14 @@ export default class Class extends DataObject {
 
   async retrieveAttendees(timeId) {
     return await this._BusyErrorWrapper('retrieveAttendees', async () => {
-      const cacheObj = this._getCacheObj().ref('attendees')
+      const cacheObj = this._getCacheObj().ref('attendees') 
+      console.log("cacheObj: ", cacheObj.get() ) 
 
+      
       // If has been cached => return it
-      const data = cacheObj.get()
+      const data = cacheObj.get() 
       if (Object.keys(data).length) return data
+ 
 
       // Retrieve from database
       const attendees = (await this._getActiveTimesDbRef()
@@ -137,7 +140,6 @@ export default class Class extends DataObject {
 
       // Update cache
       cacheObj.set(attendees)
-
       return attendees
     })
   }

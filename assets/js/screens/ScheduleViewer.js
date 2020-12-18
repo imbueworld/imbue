@@ -2,14 +2,18 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, ScrollView, SafeAreaView, Platform } from 'react-native'
 import { useFocusEffect } from '@react-navigation/native';
 import AppBackground from "../components/AppBackground"
+import firestore from '@react-native-firebase/firestore';
+import {
+  clockFromTimestamp,
+  dateStringFromTimestamp,
+  shortDateFromTimestamp
+} from '../backend/HelperFunctions'
 
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
 import Icon from '../components/Icon'
 
-import {
-  dateStringFromTimestamp,
-} from "../backend/HelperFunctions"
+
 import {
   filterUserClasses,
 } from '../backend/HelperFunctions'
@@ -33,6 +37,8 @@ export default function ScheduleViewer(props) {
 
   const [calendarData, setCalendarData] = useState(null)
   const [dataIsFormatted, setDataIsFormatted] = useState(false)
+  const [gymClasses, setGymClasses] = useState([])
+  const [classData, setClassData] = useState([])
 
   const [openDropdown, setOpenDropdown] = useState(false)
   const [btnSelection, setBtnSelection] = useState("createClass")
@@ -43,14 +49,14 @@ export default function ScheduleViewer(props) {
 
   const [title, setTitle] = useState("")
   const [subtitle, setSubtitle] = useState("")
-
+ 
 
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
       console.log("focused")
 
-      const init = async () => {
+        const init = async () => {
         const user = new User()
         setUser(await user.retrieveUser())
   
@@ -58,46 +64,57 @@ export default function ScheduleViewer(props) {
     
         // Determine which classes to display:
         // based on the provided gymId or classIds
-        let classData
+        // let classData
         if (classIds) {
           console.log(1111)
   
-          classData = (await classes
+          classStuff = (await classes
             .retrieveWhere('id', 'in', classIds)
           ).map(it => it.getFormatted())
+          setCalendarData(classStuff)
   
           setTitle('My Classes')
         
         } else if (gymId) {
           console.log(2222)
-  
+
           const gym = new Gym()
           const {
             name,
           } = await gym.retrieveGym(gymId)
   
-  
-          classData = (await classes
-            .retrieveWhere('gym_id', 'in', [ gymId ])
-          ).map(it => it.getFormatted())
-  
-  
+          //  get Gym's classes
+          const getGymClasses = await firestore()
+            .collection('classes')
+            .get()
+            .then(querySnapshot => {
+              const classes = [];
+
+              querySnapshot.forEach(documentSnapshot => {
+                if (documentSnapshot.data().gym_id == gymId) {
+                  let formatted = getFormatted(documentSnapshot.data())
+                  classes.push({
+                    ...formatted
+                  });
+                }
+              });
+              setCalendarData(classes)
+            });
+
           setTitle(name)
           setSubtitle('Schedule')
         
         } else {
           console.log(3333)
   
-          classData = ( await user.retrieveScheduledClasses() )
+          classStuff = ( await user.retrieveScheduledClasses() )
             .map(it => it.getFormatted())
+            setCalendarData(classStuff)
           // if (user.accountType == 'user') classData = await filterUserClasses()
-  
-          console.log("classData", classData) // DEBUG
-  
+    
           setTitle('My Classes')
         }
-  
-        setCalendarData(classData)
+          // setCalendarData(classData)
       }; init()
       
 
@@ -109,63 +126,105 @@ export default function ScheduleViewer(props) {
     }, [])
   );
 
-  useEffect(() => {
-    const init = async () => {
-      const user = new User()
-      setUser(await user.retrieveUser())
+  // useEffect(() => {
+  //   const init = async () => {
+  //     const user = new User()
+  //     setUser(await user.retrieveUser())
 
-      const classes = new ClassesCollection() 
+  //     const classes = new ClassesCollection() 
 
-      // Determine which classes to display:
-      // based on the provided gymId or classIds
-      let classData
-      if (classIds) {
-        console.log(1111)
+  //     // Determine which classes to display:
+  //     // based on the provided gymId or classIds
+  //     let classData
+  //     if (classIds) {
+  //       console.log(1111)
 
-        classData = (await classes
-          .retrieveWhere('id', 'in', classIds)
-        ).map(it => it.getFormatted())
-
-        setTitle('My Classes')
+  //       classData = (await classes
+  //         .retrieveWhere('id', 'in', classIds)
+  //       ).map(it => it.getFormatted())
+ 
+  //       setTitle('My Classes')
       
-      } else if (gymId) {
-        console.log(2222)
+  //     } else if (gymId) {
+  //       console.log(2222)
 
-        const gym = new Gym()
-        const {
-          name,
-        } = await gym.retrieveGym(gymId)
+  //       const gym = new Gym()
+  //       const {
+  //         name,
+  //       } = await gym.retrieveGym(gymId)
 
-        console.log("gymId: ", gymId)
+  //       console.log("gymId: ", gymId)
 
-        classData = (await classes
-          .retrieveWhere('gym_id', 'in', [ gymId ])
-        ).map(it => it.getFormatted())
+  //       classData = (await classes
+  //         .retrieveWhere('gym_id', 'in', [ gymId ])
+  //       ).map(it => it.getFormatted())
 
-        console.log("classData: ", classData) // DEBUG
+  //       console.log("classData: ", classData) // DEBUG
 
-        setTitle(name)
-        setSubtitle('Schedule')
+  //       setTitle(name)
+  //       setSubtitle('Schedule')
       
-      } else {
-        console.log(3333)
+  //     } else {
+  //       console.log(3333)
 
-        classData = ( await user.retrieveScheduledClasses() )
-          .map(it => it.getFormatted())
-        // if (user.accountType == 'user') classData = await filterUserClasses()
+  //       classData = ( await user.retrieveScheduledClasses() )
+  //         .map(it => it.getFormatted())
+  //       // if (user.accountType == 'user') classData = await filterUserClasses()
 
-        console.log("classData", classData) // DEBUG
+  //       console.log("classData", classData) // DEBUG
 
-        setTitle('My Classes')
+  //       setTitle('My Classes')
+  //     }
+
+  //     setCalendarData(classData)
+  //   }; init()
+  // }, [])
+
+
+  function getFormatted(classItem) {
+    const processedClass = classItem // avoid affecting cache
+    processedClass.active_times = processedClass.active_times
+      .map(timeDoc => ({ ...timeDoc })) // avoid affecting cache
+    const { active_times } = processedClass
+    const currentTs = Date.now()
+    let additionalFields
+
+    active_times.forEach(timeDoc => {
+      const { begin_time, end_time } = timeDoc
+
+      // Add formatting to class,
+      // which is later used by <ScheduleViewer />, and potentially others.
+      additionalFields = {
+        dateString: dateStringFromTimestamp(begin_time),
+        formattedDate: shortDateFromTimestamp(begin_time),
+        formattedTime:
+          `${clockFromTimestamp(begin_time)} – `
+          + `${clockFromTimestamp(end_time)}`,
+      }; Object.assign(timeDoc, additionalFields)
+
+      // Add functionality, same reasons
+      // ... not here, most likely!
+
+      // Add state identifiers~
+      timeDoc.livestreamState = 'offline' // default
+      let timePassed = currentTs - begin_time // Positive if class has started or already ended
+
+      // If time for class has come, but class has not ended yet
+      if (timePassed > 0 && currentTs < end_time) {
+        timeDoc.livestreamState = 'live'
       }
 
-      setCalendarData(classData)
-    }; init()
-  }, [])
+      // If livestream is starting soon (30min before)
+      if (timePassed > -30 * 60 * 1000 && currentTs < begin_time) {
+        timeDoc.livestreamState = 'soon'
+      }
+    })
+
+    return processedClass
+  }
 
   useEffect(() => {
     if (!calendarData) return
-
     // calendarData.forEach(({ active_times }) => {
     //   addFormattingToClassData(active_times)
     // })
@@ -287,7 +346,7 @@ export default function ScheduleViewer(props) {
                 }
                 title="Schedule Class"
                 onPress={() => props.navigation.navigate(
-                  "SchedulePopulate"
+                  "SchedulePopulate" 
                 )}
               />
             </View>
@@ -301,17 +360,17 @@ export default function ScheduleViewer(props) {
           <CalendarView
             containerStyle={{
               borderWidth: 1,
-              borderColor: colors.gray,
+              borderColor: colors.gray, 
             }}
-            data={calendarData}
+            data={calendarData} 
             slctdDate={slctdDate}
             setSlctdDate={setSlctdDate}
           />
-
+ 
           <ClassList
             containerStyle={styles.classListContainer}
-            data={calendarData}
-            dateString={slctdDate}
+            data={calendarData} 
+            dateString={slctdDate} 
           />
         </View>
       </View>

@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native'
  */
 export default function ClassList(props) {
   const { data: calendarData } = props
-  const navigation = useNavigation()
+  const navigation = useNavigation() 
 
   const [Items, ItemsCreate] = useState(null)
   const [classes, setClasses] = useState(null)
@@ -26,6 +26,7 @@ export default function ClassList(props) {
 
   useEffect(() => {
     const init = async () => {
+      console.log("calendarData (ClassList): ", calendarData)
       // let iconUri = await publicStorage("workout.jpg") // To-Do
       // setIconUri(iconUri)
     }
@@ -76,12 +77,12 @@ export default function ClassList(props) {
               // borderColor: "lightgreen",
             }}
             // underlayColor="#83b02a"
-            underlayColor="#00000008"
+            underlayColor="#00000008" 
             key={timeId}
             onPress={() => {
               navigation.navigate('ClassDescription', {
                 classId,
-                timeId,
+                timeId, 
               })
             }}
           >

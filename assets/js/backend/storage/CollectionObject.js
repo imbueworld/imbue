@@ -70,6 +70,7 @@ export default class CollectionObject {
     //
     // Take all data and return DataObjects based on it.
     availableData = availableData.map(doc => ([doc.id, doc])) // This is unoptimal, and relatively unorganized, but necessary atm
+
     // console.log("availableData2", availableData) // DEBUG
     let allData = [...availableData, ...additionalData]
     const dataObjects = []
@@ -79,6 +80,7 @@ export default class CollectionObject {
       dataObject.fromEntry(entry)
       dataObjects.push(dataObject)
     })
+
 
     return dataObjects
   }

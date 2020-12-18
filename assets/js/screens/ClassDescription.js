@@ -6,6 +6,7 @@ import CustomButton from "../components/CustomButton"
 import MembershipApprovalBadge from '../components/MembershipApprovalBadge'
 import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue'
 import ClassApprovalBadge from '../components/ClassApprovalBadge'
+import { useFocusEffect } from '@react-navigation/native';
 
 import GymLayout from '../layouts/GymLayout'
 import { colors } from "../contexts/Colors"
@@ -17,7 +18,7 @@ import Gym from '../backend/storage/Gym'
 import Class from '../backend/storage/Class'
 import config from '../../../App.config'
 import { StackActions, useNavigation } from '@react-navigation/native'
-
+ 
 
 
 export default function ClassDescription(props) {
@@ -55,6 +56,38 @@ export default function ClassDescription(props) {
   }
 
 
+  useFocusEffect(
+    React.useCallback(() => {
+      // Do something when the screen is focused
+      const init = async () => {
+        const classObj = new Class()
+        const classDoc = await classObj.retrieveClass(classId)
+        const timeDoc = classDoc.active_times.filter(({ time_id }) => time_id == timeId)[0]
+        setClassDoc({
+          ...classDoc,
+          ...timeDoc,
+        })
+   
+        // Determine whether the class has passed, and, if it has, the variable
+        // is going to be used to not show scheduling button
+        const { begin_time } = timeDoc
+        setClassHasPassed(begin_time < Date.now())
+  
+        const { gym_id: classGymId } = classDoc
+  
+        const user = new User()
+        setUser(await user.retrieveUser())
+  
+        const gym = new Gym()
+        setGym(await gym.retrieveGym(classGymId))
+      }; init() 
+      return () => {
+        // Do something when the screen is unfocused
+        // Useful for cleanup functions
+      };
+    }, [])
+  );
+
 
   useEffect(() => {
     const init = async () => {
@@ -65,8 +98,6 @@ export default function ClassDescription(props) {
         ...classDoc,
         ...timeDoc,
       })
-
-
 
       // Determine whether the class has passed, and, if it has, the variable
       // is going to be used to not show scheduling button
@@ -248,7 +279,7 @@ export default function ClassDescription(props) {
       containerStyle={styles.container}
       innerContainerStyle={styles.innerContainerStyle}
       data={gym}
-      buttonOptions={{
+      buttonOptions={{  
         goToLivestream: getGoToLivestreamButton(),
         // addToCalendar: {
         //   show: hasMembership && user.account_type == 'user' && !classHasPassed,

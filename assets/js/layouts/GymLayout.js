@@ -121,7 +121,6 @@ export default function GymLayout(props) {
     promises.push(publicStorage(data.image_uri))
     const res = await Promise.all(promises)
     var profileImg = res[0]
-    console.log("profileImg: ", profileImg)
     setGymImage(profileImg) 
   }
 
@@ -133,16 +132,18 @@ export default function GymLayout(props) {
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
       <AppBackground />
 
-      {buttonOptions.viewAttendees.state === 'open'
+      {buttonOptions.viewAttendees.state === 'open' 
       ? <AttendeesPopup
           classId={buttonOptions.viewAttendees.data.classId}
           timeId={buttonOptions.viewAttendees.data.timeId}
-          onX={() => setCustomState({
+            onX={() => 
+              setCustomState({
             ...customState,
             viewAttendees: {
               state: 'closed',
             }
-          })}
+          })
+        }
         />
         : null}
       
@@ -237,7 +238,7 @@ export default function GymLayout(props) {
             }}
             title="Attendees"
             onPress={() => {
-              setCustomState({
+              setCustomState({ 
                 ...customState,
                 viewAttendees: {
                   state: "open",
