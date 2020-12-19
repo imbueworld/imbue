@@ -465,7 +465,6 @@ export default class User extends DataObject {
 
       let { paymentMethodId, classId, timeId } = details
 
-
       // Charge user
       const makePurchase = functions().httpsCallable('purchaseClassWithPaymentMethod')   
       await makePurchase({ paymentMethodId, classId, timeId })
@@ -485,19 +484,38 @@ export default class User extends DataObject {
    * Free Class – Add to Calender
    */
   async addClassToCalender(details) {
-      await this.init()
+    await this.init() 
+    console.log("called")
     
-      let { classId, timeId } = details
+    let { classId, timeId } = details
 
-      // After successful charge, register it for user in their doc
-      const { active_classes=[], scheduled_classes=[] } = this.getAll()
-      let newEntry = { class_id: classId, time_id: timeId }
-      this.mergeItems({
-        active_classes: [...active_classes, newEntry],
-        scheduled_classes: [...scheduled_classes, newEntry],
-      })
-      await this.push()
+    //increase attendees
+
+    // let int = 0
+    // console.log("classId: ", classId)
+
+    firestore()
+      .collection('classes')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          if (documentSnapshot.data().id == classId) {
+            console.log('documentSnapshot.data(): ',  documentSnapshot.data());
+          }
+        });
+      });
+      
+
+    // After successful charge, register it for user in their doc
+    // const { active_classes=[], scheduled_classes=[] } = this.getAll()
+    // let newEntry = { class_id: classId, time_id: timeId }
+    // this.mergeItems({
+    //   active_classes: [...active_classes, newEntry],
+    //   scheduled_classes: [...scheduled_classes, newEntry],
+    // })
+    // await this.push()
   }
+
 
   /**
    * Schedules a class
@@ -537,6 +555,8 @@ export default class User extends DataObject {
       await this.push()
     })
   }
+
+
 
   /**
    * Unschedules a class

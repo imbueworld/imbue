@@ -451,7 +451,8 @@ export default function ClassDescription(props) {
 
                         </>
                     
-                     : (
+                      : (
+                        <View>
                       <CustomButton
                   style={{
                     marginBottom: 0,
@@ -464,13 +465,13 @@ export default function ClassDescription(props) {
                       setSuccessMsg('')
 
                       const {
-                        id: classId,
+                        id: classId, 
                         time_id: timeId,
                       } = classDoc
 
                       const user = new User()
                       await user.addClassToCalender({
-                        classId,
+                        classId, 
                         timeId,
                       })
 
@@ -492,7 +493,9 @@ export default function ClassDescription(props) {
 
                     }
                   }}
-                />
+                        />
+                        
+                          </View>
                     )
                   )
                 }
@@ -543,6 +546,47 @@ export default function ClassDescription(props) {
                   marginTop: 10,
                 }}
               />
+              <CustomButton
+                  style={{
+                    marginBottom: 0,
+                  }}
+                  title="Test"
+                  onPress={async () => {
+
+                    try {
+                      setErrorMsg('')
+                      setSuccessMsg('')
+
+                      const {
+                        id: classId, 
+                        time_id: timeId,
+                      } = classDoc
+
+                      const user = new User()
+                      await user.addClassToCalender({
+                        classId, 
+                        timeId,
+                      })
+
+                      // refresh(r + 1)
+
+                    } catch (err) {
+                      switch (err.code) {
+                        case "busy":
+                          setErrorMsg(err.message)
+                          break
+                        case "class-already-added":
+                          setSuccessMsg(err.message)
+                          break
+                        default:
+                          setErrorMsg("Something prevented the action.")
+                          break
+                      }
+                      // Adds to calender. Called when priceType == free. Bypasses purchaing
+
+                    }
+                  }}
+                          />
             </View>}
         </View>}
     </GymLayout >

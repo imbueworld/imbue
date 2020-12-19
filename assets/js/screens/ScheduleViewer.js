@@ -71,6 +71,7 @@ export default function ScheduleViewer(props) {
           classStuff = (await classes
             .retrieveWhere('id', 'in', classIds)
           ).map(it => it.getFormatted())
+          
           setCalendarData(classStuff)
   
           setTitle('My Classes')
@@ -109,7 +110,8 @@ export default function ScheduleViewer(props) {
   
           classStuff = ( await user.retrieveScheduledClasses() )
             .map(it => it.getFormatted())
-            setCalendarData(classStuff)
+          
+          setCalendarData(classStuff)
           // if (user.accountType == 'user') classData = await filterUserClasses()
     
           setTitle('My Classes')
