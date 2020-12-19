@@ -9,7 +9,8 @@ import { colors } from '../contexts/Colors'
 import { getRandomId } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
-
+import firestore from '@react-native-firebase/firestore'
+import { useNavigation } from '@react-navigation/native'
 
 
 export default function CalendarPopulateForm(props) {
@@ -17,6 +18,9 @@ export default function CalendarPopulateForm(props) {
   const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
   const [redFields, setRedFields] = useState([])
+  const [edit, setEdit] = useState(false)
+  const [classDoc, setClassDoc] = useState(null)
+
 
   // const [forceCloseClock, setForceCloseClock] = useState(false)
   // const [dismissOverlay, setDismissOveraly] = useState(true)
@@ -25,15 +29,25 @@ export default function CalendarPopulateForm(props) {
 
   const [beginClock, setBeginClock] = useState([0, 0])
   const [endClock, setEndClock] = useState([0, 0])
-  const [dateStringList, setDateStringList] = useState([]) 
+  const [dateStringList, setDateStringList] = useState([])  
 
   const [class_id, setClassId] = useState(null)
+  const [timeId, setTimeId] = useState(null)
+
+  let navigation = useNavigation()
+
   // const [active_times, setActiveTimes] = useState(null)
 
   useEffect(() => {
     const init = async () => {
       const user = new User()
       const classes = await user.retrieveClasses()
+
+      setEdit(props.isEdit)
+      setClassId(props.classId)
+      setTimeId(props.timeId)
+
+      console.log("classDoc: ", props.classDoc)
 
       let dropDownClasses = classes.map(entity => {
         entity = entity.getAll()
@@ -46,6 +60,39 @@ export default function CalendarPopulateForm(props) {
       setInitialized(true)
     }; init()
   }, [])
+
+  // remove current time when they press apply
+  async function cleanUpClassTime() {
+    // create list of updated class times
+    let newTimes = []
+    // get attendees count
+    await firestore()
+    .collection('classes')
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        if (documentSnapshot.data().id == class_id) {
+          // map through active times
+          documentSnapshot.data().active_times.forEach(clss => {
+            // find relevant time, don't add back to list
+            if (clss.time_id == timeId) {
+              console.log("same: ", clss.time_id)
+            } else {
+              newTimes.push(clss)
+            }
+          })
+        }
+      });
+    });
+    console.log("newTimes: ", newTimes)
+    // update active_times in firebase
+    await firestore()
+      .collection('classes')
+      .doc(class_id)
+      .update({
+        'active_times': newTimes,
+      })
+  }
 
   function validate() {
     if (!class_id) {
@@ -141,19 +188,22 @@ export default function CalendarPopulateForm(props) {
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
       </View>
 
-      <CustomDropDownPicker
-        containerStyle={{
-          ...styles.dropDownPickerContainerStyle,
-          ...styles.layoutMargin
-        }}
-        style={{
-          ...styles.dropDownPicker,
-          borderColor: redFields.includes("class") ? "red" : undefined,
-        }}
-        items={dropDownClasses}
-        placeholder="Select your class"
-        onChangeItem={item => setClassId(item.value)}
-      />
+        {edit == false ? 
+          <CustomDropDownPicker
+          containerStyle={{
+            ...styles.dropDownPickerContainerStyle,
+            ...styles.layoutMargin
+          }}
+          style={{
+            ...styles.dropDownPicker,
+            borderColor: redFields.includes("class") ? "red" : undefined,
+          }}
+          items={dropDownClasses}
+          placeholder="Select your class"
+          onChangeItem={item => setClassId(item.value)}
+        /> : null
+      }
+      
 
       <DateSelector
         containerStyle={{
@@ -211,16 +261,32 @@ export default function CalendarPopulateForm(props) {
               setErrorMsg('You mustn\'t populate a class that has been integrated through Mindbody.')
               return
             }
+
             
-            try {
+            
+            try { 
               validate()
               let active_times = format() 
+
+              {edit == true ? 
+                await cleanUpClassTime()
+                : null
+              }
  
               await classObj.populate({
                 activeTimes: active_times,
+                classId: class_id,
+                timeId: timeId,
               })
 
               setSuccessMsg("Successfully scheduled class!")
+
+              // go back
+              setTimeout(
+                () => {  navigation.goBack() },
+                3000
+              )
+
             } catch(err) {
               setErrorMsg(err.message)
             }

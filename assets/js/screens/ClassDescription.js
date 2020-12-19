@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Alert, TouchableHighlight } from 'react-native'
+import { StyleSheet, View, Text, Alert, TouchableHighlight, ScrollView } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 // import CustomPopup from "../components/CustomPopup"
@@ -20,7 +20,7 @@ import config from '../../../App.config'
 import { StackActions, useNavigation } from '@react-navigation/native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import firestore from '@react-native-firebase/firestore'
-
+import CalendarPopulateForm from '../components/CalendarPopulateForm'
 
 
 export default function ClassDescription(props) {
@@ -47,6 +47,7 @@ export default function ClassDescription(props) {
   const [gym, setGym] = useState(null)
   const [classDoc, setClassDoc] = useState(null)
   const [priceType, setPriceType] = useState(null)
+  const [editShow, setEditShow] = useState(false)
 
   const handleDOB = () => {
     console.log("address (handDOB): ", address)
@@ -297,8 +298,6 @@ export default function ClassDescription(props) {
       });
     });
 
-    console.log("newAttendees: ", newTimes)
-
     // push updated times to firebase
     firestore()
       .collection('classes')
@@ -317,7 +316,7 @@ export default function ClassDescription(props) {
   }
 
   return ( 
-    <View>
+    <ScrollView showsVerticalScrollIndicator={false}>
     <GymLayout
       containerStyle={styles.container}
       innerContainerStyle={styles.innerContainerStyle}
@@ -593,23 +592,24 @@ export default function ClassDescription(props) {
             </View>}
         </View>}
       </GymLayout >
+
+      {/* pop Edit class time and date */}
+      {editShow == true ?
+        <CalendarPopulateForm
+          isEdit
+          classId={classId}
+          timeId={timeId}
+          classDoc={classDoc}
+          containerStyle={{
+            paddingRight: 15,
+            paddingLeft: 15
+            // backgroundColor: "red",
+          }}
+        />: null}
+      
       
       {/* Edit Class */}
-      <TouchableHighlight onPress={() =>
-         Alert.alert(
-          "Are you sure you wish to delete this class",
-          "All instances of this class will be removed from your schedule",
-          [
-            {
-              text: "Cancel",
-              onPress: () => console.log("Cancel Pressed"),
-              style: "cancel"
-            },
-            { text: "Yes", onPress: () => removeClass() }
-          ],
-          { cancelable: false }
-        )
-        }
+      <TouchableHighlight onPress={() => setEditShow(!editShow)}
       >
         <Text style={{
                 width: "100%",
@@ -648,7 +648,7 @@ export default function ClassDescription(props) {
               fontSize: 10,
           }}>Remove</Text>
     </TouchableHighlight>
-    </View>
+    </ScrollView>
   )
 }
 
