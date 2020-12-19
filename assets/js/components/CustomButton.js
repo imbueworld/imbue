@@ -34,8 +34,8 @@ export default function CustomButton(props) {
                 onLongPress={props.onLongPress || undefined}
             >
                 <>
-                {/* { Icon } // Icons disabled */}
-
+                    {Icon} 
+                    
                 <Text style={[
                     styles.text,
                     props.textStyle,

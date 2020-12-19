@@ -20,6 +20,8 @@ import RemoveFromCalendarButton from '../components/buttons/RemoveFromCalendarBu
 import { publicStorage } from '../backend/BackendFunctions'
 import Icon from '../components/Icon'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import firestore from '@react-native-firebase/firestore'
+import { set } from 'react-native-reanimated'
 
 
 /** 
@@ -31,18 +33,40 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
  */
 export default function GymLayout(props) {
   const gym = props.data
+  console.log("props.data: ", props.data)
   let navigation = useNavigation()
 
   // const [buttonOptions, setButtonOptions] = useState(null)
   const [customState, setCustomState] = useState({}) // Used only internally, during the lifetime of this component
   const [gymImage, setGymImage] = useState('')
   const { width, height } = useDimensions().window
+  const [attendees, setAttendees] = useState('')
+
 
   
 
   useEffect(() => {
     const init = async () => {
       getGymImage(gym)
+
+      // get attendees count
+      await firestore()
+        .collection('classes')
+        .get()
+        .then(querySnapshot => {
+          querySnapshot.forEach(documentSnapshot => {
+            if (documentSnapshot.data().id == buttonOptions.viewAttendees.data.classId) {
+              // map through active times
+              documentSnapshot.data().active_times.forEach(clss => {
+                // find relevant attendees count
+                if (clss.time_id == buttonOptions.viewAttendees.data.timeId) {
+                  setAttendees(clss.attendees)
+                }
+              })
+            }
+          });
+        });
+      
     }; init()
 
 
@@ -125,12 +149,17 @@ export default function GymLayout(props) {
   }
 
 
+  console.log("attendees: ", attendees)
+
+
   return (
     <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg,
       paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
 
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
-      <AppBackground />
+        <AppBackground />
+        
+        
 
       {buttonOptions.viewAttendees.state === 'open' 
       ? <AttendeesPopup
@@ -212,7 +241,7 @@ export default function GymLayout(props) {
         {buttonOptions.addToCalendar.show
         ? buttonOptions.addToCalendar.state === "opportunity"
           ? <AddToCalendarButton
-              {...buttonProps}
+              {...buttonProps}  
               onPress={buttonOptions.addToCalendar.onPress}
             />
           : <>
@@ -224,14 +253,40 @@ export default function GymLayout(props) {
               {...buttonProps}
             />
             </>
-        : null}
+            : null}
+          
+         <CustomButton
+            icon={<Icon source={require("../components/img/png/attendees-black.png")} containerStyle={{ height: 18, width: 18, paddingRight: 0 }} />}
+            title={attendees}
+            styleIsInverted
+            style={{
+              marginVertical: 0,
+              // paddingHorizontal: 10,
+              paddingTop: 2,
+              paddingBottom: 2,
+              paddingLeft: 2,
+              paddingRight: 2,
+              height: 40,
+              width: 55,
+              backgroundColor: "white"
+            }}
+            textStyle={{
+              fontSize: 16,
+              color: "#242426",
+            }}
+            
+            onPress={() => props.navigation.navigate(
+              "PartnerCreateClass"
+            )} 
+          />
         
-        {buttonOptions.viewAttendees.show
+        {/* {buttonOptions.viewAttendees.show
         ? <CustomButton
             style={{
               marginVertical: 0,
               paddingHorizontal: 10,
               height: 42,
+              color: "white"
             }}
             textStyle={{
               fontSize: 13,
@@ -246,7 +301,7 @@ export default function GymLayout(props) {
               })
             }}
           />
-        : null}
+        : null} */}
 
         {buttonOptions.goToCalendar.show
         ? <GoToCalendarButton

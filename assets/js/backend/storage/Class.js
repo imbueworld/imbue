@@ -5,7 +5,6 @@ import {
   dateStringFromTimestamp,
   shortDateFromTimestamp
 } from '../HelperFunctions'
-
 import firestore from '@react-native-firebase/firestore';
 
 
@@ -199,14 +198,43 @@ export default class Class extends DataObject {
   async populate(details) {
     let {
       activeTimes: newActiveTimes,
+      classId,
+      timeId
     } = details
 
     const {
       active_times=[],
     } = this.getAll()
 
+    // recall from firestore for update list
+    let newTimes = []
+    // get updated active_times
+    await firestore()
+      .collection('classes')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          if (documentSnapshot.data().id == classId) {
+            // map through active times
+            documentSnapshot.data().active_times.forEach(clss => {
+              // find relevant time, don't add back to list
+              if (clss.time_id == timeId) {
+                console.log("same(populate): ", clss.time_id)
+              } else {
+                newTimes.push(clss)
+              }
+            })
+          }
+        });
+      });
+
+    console.log("active_times(populate): ", active_times)
+    console.log("newTimes(populate): ", newTimes)
+    console.log("newActiveTimes(populate): ", newActiveTimes)
+
+
     // Make sure that the times don't overlap; it's not allowed
-    active_times.forEach(({ begin_time, end_time }) => {
+    newTimes.forEach(({ begin_time, end_time }) => {
       newActiveTimes.forEach(({
         begin_time: begin_time_NEW,
         end_time: end_time_NEW
@@ -230,7 +258,7 @@ export default class Class extends DataObject {
 
     // Populate class with the new times
     this.mergeItems({
-      active_times: [...active_times, ...newActiveTimes],
+      active_times: [...newTimes, ...newActiveTimes],
     })
     await this.push()
   }

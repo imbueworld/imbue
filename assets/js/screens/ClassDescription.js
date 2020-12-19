@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Alert } from 'react-native'
+import { StyleSheet, View, Text, Alert, TouchableHighlight, ScrollView } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 // import CustomPopup from "../components/CustomPopup"
@@ -18,7 +18,9 @@ import Gym from '../backend/storage/Gym'
 import Class from '../backend/storage/Class'
 import config from '../../../App.config'
 import { StackActions, useNavigation } from '@react-navigation/native'
- 
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import firestore from '@react-native-firebase/firestore'
+import CalendarPopulateForm from '../components/CalendarPopulateForm'
 
 
 export default function ClassDescription(props) {
@@ -45,6 +47,7 @@ export default function ClassDescription(props) {
   const [gym, setGym] = useState(null)
   const [classDoc, setClassDoc] = useState(null)
   const [priceType, setPriceType] = useState(null)
+  const [editShow, setEditShow] = useState(false)
 
   const handleDOB = () => {
     console.log("address (handDOB): ", address)
@@ -274,11 +277,51 @@ export default function ClassDescription(props) {
     return options
   }
 
-  return (
+  async function removeClass() {
+    let newTimes = []
+    // get attendees count
+    await firestore()
+    .collection('classes')
+    .get()
+    .then(querySnapshot => {
+      querySnapshot.forEach(documentSnapshot => {
+        if (documentSnapshot.data().id == classId) {
+          // map through active times
+          documentSnapshot.data().active_times.forEach(clss => {
+            // find relevant time, don't add back to lis
+            if (clss.time_id == timeId) {
+            } else {
+              newTimes.push(clss)
+            }
+          })
+        }
+      });
+    });
+
+    // push updated times to firebase
+    firestore()
+      .collection('classes')
+      .doc(classId)
+      .update({
+        'active_times': newTimes,
+      })
+
+    setSuccessMsg("Successfully removed class.")
+
+    // go back
+    setTimeout(
+      () => {  navigation.goBack() },
+      2000
+    )
+  }
+
+  return ( 
+    <ScrollView showsVerticalScrollIndicator={false}>
     <GymLayout
       containerStyle={styles.container}
       innerContainerStyle={styles.innerContainerStyle}
       data={gym}
+      classData={classId, timeId}
       buttonOptions={{  
         goToLivestream: getGoToLivestreamButton(),
         // addToCalendar: {
@@ -358,7 +401,7 @@ export default function ClassDescription(props) {
           {/* if null, it means it hasn't been initialized yet. */}
           {hasMembership === null ? <View /> :
 
-            hasMembership && user.dob ? null :
+            hasMembership && user.dob ? null : 
               <>
                 {popup === "buy"
                   ? <CreditCardSelectionV2
@@ -546,50 +589,66 @@ export default function ClassDescription(props) {
                   marginTop: 10,
                 }}
               />
-              <CustomButton
-                  style={{
-                    marginBottom: 0,
-                  }}
-                  title="Test"
-                  onPress={async () => {
-
-                    try {
-                      setErrorMsg('')
-                      setSuccessMsg('')
-
-                      const {
-                        id: classId, 
-                        time_id: timeId,
-                      } = classDoc
-
-                      const user = new User()
-                      await user.addClassToCalender({
-                        classId, 
-                        timeId,
-                      })
-
-                      // refresh(r + 1)
-
-                    } catch (err) {
-                      switch (err.code) {
-                        case "busy":
-                          setErrorMsg(err.message)
-                          break
-                        case "class-already-added":
-                          setSuccessMsg(err.message)
-                          break
-                        default:
-                          setErrorMsg("Something prevented the action.")
-                          break
-                      }
-                      // Adds to calender. Called when priceType == free. Bypasses purchaing
-
-                    }
-                  }}
-                          />
             </View>}
         </View>}
-    </GymLayout >
+      </GymLayout >
+
+      {/* pop Edit class time and date */}
+      {editShow == true ?
+        <CalendarPopulateForm
+          isEdit
+          classId={classId}
+          timeId={timeId}
+          classDoc={classDoc}
+          containerStyle={{
+            paddingRight: 15,
+            paddingLeft: 15
+            // backgroundColor: "red",
+          }}
+        />: null}
+      
+      
+      {/* Edit Class */}
+      <TouchableHighlight onPress={() => setEditShow(!editShow)}
+      >
+        <Text style={{
+                width: "100%",
+                textAlign: "center",
+                marginTop: hp('2%'),
+                marginBottom: hp('1%'),
+                color: '#1AA0FB',
+                ...FONTS.body,
+                fontSize: 10,
+            }}>Edit</Text>
+      </TouchableHighlight>
+
+    {/* Delete Class */}
+    <TouchableHighlight onPress={() =>
+        Alert.alert(
+        "Are you sure you wish to delete this class",
+        "All instances of this class will be removed from your schedule",
+        [
+          {
+            text: "Cancel",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "Yes", onPress: () => removeClass() }
+        ],
+        { cancelable: false }
+      )
+      }
+    >
+      <Text style={{
+              width: "100%",
+              textAlign: "center",
+              marginTop: hp('1%'),
+              color: 'red',
+              ...FONTS.body,
+              fontSize: 10,
+          }}>Remove</Text>
+    </TouchableHighlight>
+    </ScrollView>
   )
 }
 

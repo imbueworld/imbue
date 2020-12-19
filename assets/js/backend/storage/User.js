@@ -489,31 +489,48 @@ export default class User extends DataObject {
     
     let { classId, timeId } = details
 
-    //increase attendees
-
-    // let int = 0
-    // console.log("classId: ", classId)
-
-    firestore()
+    //get active_times and update relevant attendees
+    let int = 0
+    let currentAttendees
+    let updatedActiveTimes = []
+    await firestore()
       .collection('classes')
       .get()
       .then(querySnapshot => {
         querySnapshot.forEach(documentSnapshot => {
           if (documentSnapshot.data().id == classId) {
-            console.log('documentSnapshot.data(): ',  documentSnapshot.data());
+            // map through active times
+            documentSnapshot.data().active_times.forEach(clss => {
+              // update relevant attendees count
+              if (clss.time_id == timeId) {
+                console.log("clss.attendees: ", clss.attendees)
+
+                clss.attendees +=1
+              }
+              updatedActiveTimes.push(clss)
+            })
           }
         });
       });
-      
 
+    // update active_times with new array (which has the updated attendees count)
+    await firestore()
+      .collection('classes')
+      .doc(classId)
+      .update({
+       active_times: updatedActiveTimes
+      });
+
+
+      
     // After successful charge, register it for user in their doc
-    // const { active_classes=[], scheduled_classes=[] } = this.getAll()
-    // let newEntry = { class_id: classId, time_id: timeId }
-    // this.mergeItems({
-    //   active_classes: [...active_classes, newEntry],
-    //   scheduled_classes: [...scheduled_classes, newEntry],
-    // })
-    // await this.push()
+    const { active_classes=[], scheduled_classes=[] } = this.getAll()
+    let newEntry = { class_id: classId, time_id: timeId }
+    this.mergeItems({
+      active_classes: [...active_classes, newEntry],
+      scheduled_classes: [...scheduled_classes, newEntry],
+    })
+    await this.push()
   }
 
 
