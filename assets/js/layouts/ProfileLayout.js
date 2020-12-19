@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { SafeAreaView, StyleSheet, Text, View, TouchableHighlight, Platform } from 'react-native'
+import { SafeAreaView, StyleSheet, Text, View, TouchableHighlight, Platform, TouchableOpacity } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import {useRoute} from '@react-navigation/native';
+import { useRoute } from '@react-navigation/native';
 
 import { useNavigation } from '@react-navigation/native'
 import { FONTS } from '../contexts/Styles'
 
 import CustomCapsule from "../components/CustomCapsule"
 import { colors, simpleShadow } from '../contexts/Colors'
-import BackButton from '../components/BackButton' 
+import BackButton from '../components/BackButton'
 import LogOutButton from '../components/buttons/LogOutButton'
 import AppBackground from '../components/AppBackground'
 import Icon from '../components/Icon'
@@ -18,13 +18,13 @@ import { useFocusEffect } from '@react-navigation/native';
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
-import User from '../backend/storage/User' 
+import User from '../backend/storage/User'
 import config from '../../../App.config'
 
- 
+
 
 export default function ProfileLayout(props) {
-  const navigation = useNavigation() 
+  const navigation = useNavigation()
 
   const [errorMsg, setErrorMsg] = useState('')
   const [user, setUser] = useState()
@@ -38,7 +38,7 @@ export default function ProfileLayout(props) {
     React.useCallback(() => {
       // Do something when the screen is focused
       const init = async () => {
-        const user = new User() 
+        const user = new User()
         setUser(await user.retrieveUser())
       }; init()
       return () => {
@@ -50,10 +50,10 @@ export default function ProfileLayout(props) {
 
   useEffect(() => {
     const init = async () => {
-      const user = new User() 
+      const user = new User()
       setUser(await user.retrieveUser())
 
-      
+
       setRoute(thisRoute.name)
       console.log('route: ', route)
     }; init()
@@ -66,7 +66,7 @@ export default function ProfileLayout(props) {
       },
       logOut: {
         show: false,
-       onPress: async () => {
+        onPress: async () => {
           await Promise.all([
             auth().signOut(),
             GoogleSignin.signOut(),
@@ -76,7 +76,7 @@ export default function ProfileLayout(props) {
             index: 0,
             routes: [{ name: 'Boot' }],
           })
-         
+
         },
         // [v DEBUG ONLY v]
         onLongPress: config.DEBUG ? async () => {
@@ -96,11 +96,11 @@ export default function ProfileLayout(props) {
         show: false,
       },
     }
-  
+
     if (props.buttonOptions) {
       Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
         Object.entries(instructions).forEach(([key, value]) => {
-          defaultButtonOptions[ button ][ key ] = value
+          defaultButtonOptions[button][key] = value
         })
       })
     }
@@ -115,7 +115,7 @@ export default function ProfileLayout(props) {
     try {
       await user.changeIcon()
       refresh(r => r + 1)
-    } catch(errorMsg) { setErrorMsg(errorMsg) }
+    } catch (errorMsg) { setErrorMsg(errorMsg) }
   }
 
 
@@ -124,115 +124,135 @@ export default function ProfileLayout(props) {
 
   return (
     <>
-    <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
-      <KeyboardAwareScrollView
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollView}
-        keyboardShouldPersistTaps='handled'
-    >
-      <AppBackground />
-
-      <View style={{
-      }}>
-        <Icon
-          containerStyle={{
-            width: 200,
-            height: 200,
-            position: "absolute",
-            alignSelf: "center",
-            borderRadius: 999,
-            overflow: "hidden",
-            ...simpleShadow,
-            zIndex: 100,
-          }}
-          source={{ uri: user.icon_uri_full }}
-        />
-        <View style={{
-          width: 200,
-          height: 200,
-          position: "absolute",
-          alignSelf: "center",
-          alignItems: "center",
-          ...simpleShadow,
-          zIndex: 110,
-        }}>
-          {buttonOptions.editPfp.show
-          ? <EditButton
-              containerStyle={{
-                top: 145,
-                left: 65,
-              }}
-              onPress={editPfp}
-              // [v DEBUG ONLY v]
-              onLongPress={config.DEBUG ? editPfp : undefined}
-              // [^ DEBUG ONLY ^]
-            />
-          : null}
-        </View>
-
-        <CustomCapsule
-          style={[
-            {
-              marginTop: 115,
-              width: "88%",
-              alignSelf: "center",
-            },
-            props.containerStyle,
-          ]}
-          innerContainerStyle={[
-            {
-              paddingTop: 90,
-            },
-            props.innerContainerStyle,
-          ]} 
+      <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
+        <KeyboardAwareScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={styles.scrollView}
+          keyboardShouldPersistTaps='handled'
         >
-          {errorMsg && errorMsg.length
-          ? <Text style={{ color: "red" }}>{ errorMsg }</Text>
-          : null}
+          <AppBackground />
+          <TouchableOpacity
+                onPress={() => navigation.navigate('help')}
+                containerStyle={{
+                  alignSelf: "center",
+                }}
+              >
+                <Icon
+                  containerStyle={{
+                    marginLeft: 15,
+                  }}
+                  source={require("../components/img/png/help.png")}
+                />
+              </TouchableOpacity>
 
-          {!buttonOptions.goBack.show || props.hideBackButton ? null :
-          <TouchableHighlight
-            style={styles.sidePanelButtonContainer}
-            underlayColor="#eed"
-            onPress={props.onBack || (() => navigation.goBack())}
-          >
-            <BackButton
-              imageStyle={{
-                width: 48,
-                height: 48,
+          <View style={{
+          }}>
+            <Icon
+              containerStyle={{
+                width: 200,
+                height: 200,
+                position: "absolute",
+                alignSelf: "center",
+                borderRadius: 999,
+                overflow: "hidden",
+                ...simpleShadow,
+                zIndex: 100,
               }}
+              source={{ uri: user.icon_uri_full }}
             />
-          </TouchableHighlight>}
-
-          {buttonOptions.logOut.show ?
-          <LogOutButton
-            containerStyle={{
+            <View style={{
+              width: 200,
+              height: 200,
               position: "absolute",
-              top: 10,
-              right: 10,
-            }}
-            onPress={buttonOptions.logOut.onPress}
-            onLongPress={buttonOptions.logOut.onLongPress}
-          /> : null}
+              alignSelf: "center",
+              alignItems: "center",
+              ...simpleShadow,
+              zIndex: 110,
+            }}>
+              {buttonOptions.editPfp.show
+                ? <EditButton
+                  containerStyle={{
+                    top: 145,
+                    left: 65,
+                  }}
+                  onPress={editPfp}
+                  // [v DEBUG ONLY v]
+                  onLongPress={config.DEBUG ? editPfp : undefined}
+                // [^ DEBUG ONLY ^]
+                />
+                : null}
 
-          {route === 'PartnerDashboard' ?
-            <Text
-            style={styles.profileName}
-            numberOfLines={1}
+            </View>
+
+            <CustomCapsule
+              style={[
+                {
+                  marginTop: 115,
+                  width: "88%",
+                  alignSelf: "center",
+                },
+                props.containerStyle,
+              ]}
+              innerContainerStyle={[
+                {
+                  paddingTop: 90,
+                },
+                props.innerContainerStyle,
+              ]}
             >
-            {user.name} 
-            </Text>
-            : null
-          }
-         
 
-          {props.children}
 
-        </CustomCapsule>
+              {errorMsg && errorMsg.length
+                ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+                : null}
 
-      </View>
+              {!buttonOptions.goBack.show || props.hideBackButton ? null :
+                <TouchableHighlight
+                  style={styles.sidePanelButtonContainer}
+                  underlayColor="#eed"
+                  onPress={props.onBack || (() => navigation.goBack())}
+                >
+                  <BackButton
+                    imageStyle={{
+                      width: 47,
+                      height: 47,
+                    }}
+                  />
+                </TouchableHighlight>}
+
+              {buttonOptions.logOut.show ?
+                <LogOutButton
+                  containerStyle={{
+                    position: "absolute",
+                    top: 10,
+                    right: 10,
+                  }}
+                  onPress={buttonOptions.logOut.onPress}
+                  onLongPress={buttonOptions.logOut.onLongPress}
+                /> : null}
+
+              {route === 'PartnerDashboard' ?
+                <>
+
+                  <Text
+                    style={styles.profileName}
+                    numberOfLines={1}
+                  >
+                    {user.name}
+                  </Text>
+                </>
+                : null
+              }
+
+              {props.children}
+
+
+
+            </CustomCapsule>
+
+          </View>
         </KeyboardAwareScrollView>
-        </SafeAreaView>
+      </SafeAreaView>
     </>
   )
 }
@@ -255,7 +275,18 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 10,
     position: "absolute",
-    justifyContent: "center", 
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 999,
+    zIndex: 110,
+  },
+  leftSidePanelButtonContainer: {
+    ...simpleShadow,
+    backgroundColor: "white",
+    marginTop: 10,
+    marginRight: 10,
+    position: "absolute",
+    justifyContent: "flex-start",
     alignItems: "center",
     borderRadius: 999,
     zIndex: 110,
