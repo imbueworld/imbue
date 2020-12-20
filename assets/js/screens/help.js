@@ -47,7 +47,7 @@ export default function PartnerDashboard(props) {
 
 
       <CustomButton
-        onPress={() => Linking.openURL('mailto:<influencer@imbuefitness.com>?subject=I Need Help&body=I have really been struggling with: (expalain here)')}
+        onPress={() => Linking.openURL('mailto:<influencer@imbuefitness.com>?subject=I Need Help&body=I have really been struggling with: (explain here)')}
         title="Send Email" />
 
       <View>
