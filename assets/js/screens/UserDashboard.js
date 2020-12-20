@@ -229,11 +229,11 @@ export default function UserDashboard(props) {
         <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
           <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>view your classes</Text>
           <CustomButton
-              icon={
-                <Icon
-                  source={require("../components/img/png/my-classes.png")}
-                />
-              }
+              // icon={
+              //   <Icon
+              //     source={require("../components/img/png/my-classes.png")}
+              //   />
+              // }
               title="My Classes"
               onPress={() => {
                 props.navigation.navigate("ScheduleViewer")
@@ -353,42 +353,42 @@ export default function UserDashboard(props) {
         onBack={() => setExpanded(!expanded)}
       >
         <CustomButton
-          icon={
-            <Icon
-              source={require("../components/img/png/my-classes.png")}
-            />
-          }
+          // icon={
+          //   <Icon
+          //     source={require("../components/img/png/my-classes.png")}
+          //   />
+          // }
           title="My Classes"
           onPress={() => {
             props.navigation.navigate("ScheduleViewer")
           }}
         />
         <CustomButton
-          icon={
-            <Icon
-              source={require("../components/img/png/user-memberships.png")}
-            />
-          }
+          // icon={
+          //   <Icon
+          //     source={require("../components/img/png/user-memberships.png")}
+          //   />
+          // }
           title="Memberships"
           onPress={() => props.navigation.navigate(
             "UserMemberships")}
         />
         <CustomButton
-          icon={
-            <Icon
-              source={require("../components/img/png/profile.png")}
-            />
-          }
+          // icon={
+          //   <Icon
+          //     source={require("../components/img/png/profile.png")}
+          //   />
+          // }
           title="Edit Profile"
           onPress={() => props.navigation.navigate(
             "ProfileSettings")}
         />
         <CustomButton
-          icon={
-            <Icon
-              source={require("../components/img/png/generic-credit-card.png")}
-            />
-          }
+          // icon={
+          //   <Icon
+          //     source={require("../components/img/png/generic-credit-card.png")}
+          //   />
+          // }
           title="Payment Settings"
           onPress={() => props.navigation.navigate(
             "PaymentSettings")}

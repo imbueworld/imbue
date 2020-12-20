@@ -137,11 +137,11 @@ export default function PartnerDashboard(props) {
 
         
       <CustomButton 
-        icon={
-          <Icon
-            source={require("../components/img/png/livestream.png")}
-          />
-        }
+        // icon={
+        //   <Icon
+        //     source={require("../components/img/png/livestream.png")}
+        //   />
+        // }
         title="Go Live"
         onPress={() => {
           toggleStream,
@@ -167,11 +167,11 @@ export default function PartnerDashboard(props) {
             "PartnerLivestreamDashboard")}}
       /> */}
       <CustomButton
-        icon={
-          <Icon
-            source={require("../components/img/png/my-classes.png")}
-          />
-        }
+        // icon={
+        //   <Icon
+        //     source={require("../components/img/png/my-classes.png")}
+        //   />
+        // }
         title="Classes"
         onPress={() => {
           props.navigation.navigate(
@@ -186,11 +186,11 @@ export default function PartnerDashboard(props) {
         )}
         /> */}
       <CustomButton
-        icon={
-          <Icon
-            source={require("../components/img/png/profile.png")}
-          />
-        }
+        // icon={
+        //   <Icon
+        //     source={require("../components/img/png/profile.png")}
+        //   />
+        // }
         title="Edit Profile"
         onPress={() => props.navigation.navigate(
           "ProfileSettings")}
