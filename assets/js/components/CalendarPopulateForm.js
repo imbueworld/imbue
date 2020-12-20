@@ -188,7 +188,7 @@ export default function CalendarPopulateForm(props) {
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
       </View>
 
-        {edit == false ? 
+        {/* {edit == false ?  */}
           <CustomDropDownPicker
           containerStyle={{
             ...styles.dropDownPickerContainerStyle,
@@ -201,8 +201,9 @@ export default function CalendarPopulateForm(props) {
           items={dropDownClasses}
           placeholder="Select your class"
           onChangeItem={item => setClassId(item.value)}
-        /> : null
-      }
+        /> 
+        {/* : null */}
+      {/* } */}
       
 
       <DateSelector

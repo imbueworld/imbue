@@ -317,11 +317,7 @@ export default function ScheduleViewer(props) {
       {user.account_type === "partner" ?
         <View style={styles.capsule }>
               <CustomButton
-                icon={
-                  <Icon
-                    source={require("../components/img/png/my-classes-2.png")}
-                  />
-                }
+
                 style = {{marginBottom: 0}}
                 title="Create Class"
                 onPress={() => props.navigation.navigate(
@@ -329,11 +325,7 @@ export default function ScheduleViewer(props) {
                 )} 
             />
             <CustomButton
-                icon={
-                  <Icon
-                    source={require("../components/img/png/my-classes-2.png")}
-                  />
-                }
+
                 style = {{marginBottom: 0}}
                 title="Edit Classes"
                 onPress={() => props.navigation.navigate(
@@ -341,11 +333,6 @@ export default function ScheduleViewer(props) {
                 )}
               />
               <CustomButton
-                icon={
-                  <Icon
-                    source={require("../components/img/png/my-classes-2.png")}
-                  />
-                }
                 title="Schedule Class"
                 onPress={() => props.navigation.navigate(
                   "SchedulePopulate" 
