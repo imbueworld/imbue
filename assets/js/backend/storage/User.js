@@ -249,6 +249,18 @@ export default class User extends DataObject {
           scheduled_classes: [],
         })
       }
+
+      // Add account to SendGrid contacts 
+      const client = require('@sendgrid/client');
+      client.setApiKey(process.env.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);
+
+      request.method = 'POST';
+      request.url = '/v3/contactdb/lists/{list_id}/recipients/{recipient_id}';
+      client.request(request)
+      .then(([response, body]) => {
+        console.log(response.statusCode);
+        console.log(response.body);
+      })
       
       // Send out requests
       await Promise.all([
