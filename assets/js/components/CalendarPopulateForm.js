@@ -94,6 +94,9 @@ export default function CalendarPopulateForm(props) {
       })
   }
 
+  console.log("edit: ", edit)
+
+
   function validate() {
     if (!class_id) {
       setRedFields(["class"])
@@ -188,7 +191,7 @@ export default function CalendarPopulateForm(props) {
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
       </View>
 
-        {/* {edit == false ?  */}
+        {edit != true ? 
           <CustomDropDownPicker
           containerStyle={{
             ...styles.dropDownPickerContainerStyle,
@@ -202,8 +205,8 @@ export default function CalendarPopulateForm(props) {
           placeholder="Select your class"
           onChangeItem={item => setClassId(item.value)}
         /> 
-        {/* : null */}
-      {/* } */}
+        : null 
+       } 
       
 
       <DateSelector
