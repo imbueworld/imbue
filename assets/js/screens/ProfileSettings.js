@@ -46,9 +46,9 @@ export default function ProfileSettings(props) {
       setIsForeignUser(userDoc.icon_uri_foreign ? true : false)
       const gym = (
         await user.retrievePartnerGyms()
-      ).map(it => it.getAll())[ 0 ]
+      ).map(it => it.getAll())[0]
       setUser(userDoc)
-      setGym(gym) 
+      setGym(gym)
       setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
       // setHasBankAccountAdded(true)
 
@@ -436,8 +436,8 @@ export default function ProfileSettings(props) {
   const handleDOB = () => {
     {
       user.account_type == 'partner'
-      ? updateSafeInfoForPartner()
-      : updateSafeInfoForUser()
+        ? updateSafeInfoForPartner()
+        : updateSafeInfoForUser()
     }
   }
 
@@ -446,15 +446,15 @@ export default function ProfileSettings(props) {
       setTimeout(resolve, timeout);
     });
   }
-  
+
   // Gets new partner data from firestore
-  const onRefresh = React.useCallback(async() => {
+  const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
     const user = new User()
-      const userDoc = await user.retrieveUser()
-      const gym = (
-        await user.retrievePartnerGyms()
-    ).map(it => it.getAll())[ 0 ]
+    const userDoc = await user.retrieveUser()
+    const gym = (
+      await user.retrievePartnerGyms()
+    ).map(it => it.getAll())[0]
 
     const newUser = await firestore()
       .collection('partners')
@@ -532,6 +532,13 @@ export default function ProfileSettings(props) {
 
       {changing === "safeInfo"
         ? <>
+          <View>
+            <Text
+              style={{ ...FONTS.subtitle }}
+              textAlign='center'>
+              this information used only to connect with stripe so we can accecpt and process your payments with stripe.
+          </Text>
+          </View>
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("first")
@@ -679,28 +686,28 @@ export default function ProfileSettings(props) {
         onChangeText={setConfPasswordField}
       /> */}
 
-<Text style={{
-          paddingTop: 15,
-          paddingBottom: 10, 
-          ...FONTS.subtitle,
-          textAlign: "center",
-          fontSize: 22,
-        }}>Payouts</Text>
+      <Text style={{
+        paddingTop: 15,
+        paddingBottom: 10,
+        ...FONTS.subtitle,
+        textAlign: "center",
+        fontSize: 22,
+      }}>Payouts</Text>
 
-        <Text style={styles.error}>{ errorMsg }</Text>
-  
-        { !hasBankAccountAdded ? <> 
-          <BankAccountFormWithButtonEntry
-            onError={setErrorMsg} 
-            onSuccess={() => refresh(r => r + 1)}
-          />
-          <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded}/> 
-        </> : <>
+      <Text style={styles.error}>{errorMsg}</Text>
+
+      { !hasBankAccountAdded ? <>
+        <BankAccountFormWithButtonEntry
+          onError={setErrorMsg}
+          onSuccess={() => refresh(r => r + 1)}
+        />
+        <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded} />
+      </> : <>
           <Text style={styles.confirmation}>Your bank account has been linked.</Text>
-          </>
-        }
+        </>
+      }
 
-      <Text style={styles.miniText}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
+      <Text style={FONTS.body}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
 
       <CustomButton
         style={styles.button}
@@ -743,7 +750,8 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   miniText: {
-    ...config.styles.body,
+    // ...config.styles.body,
+    ...FONTS.body,
     fontSize: 12,
     textAlign: 'justify',
   },
