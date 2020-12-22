@@ -81,11 +81,9 @@ const styles = StyleSheet.create({
     height: 72,
     marginVertical: 10,
     justifyContent: 'center',
-    borderRadius: 30,
-    borderWidth: 1,
-    backgroundColor: colors.textInputFill,
-    borderColor: colors.textInputBorder,
+    backgroundColor: '#ffffff',
     overflow: "hidden",
+    borderBottomWidth: 0.25,
   },
   input: {
     ...FONTS.subtitle,
