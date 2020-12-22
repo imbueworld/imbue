@@ -168,13 +168,13 @@ export default function Login(props) {
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#FFFFFF",
   },
   container: {
     width: "88%",
     marginBottom: 30,
     alignSelf: "center",
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#FFFFFF",
   },
   // sidePanelButtonContainer: {
   //   backgroundColor: "white",

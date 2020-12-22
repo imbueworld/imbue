@@ -5,11 +5,11 @@ export const colors = {
 
     // bg: "#F9F9F9",
     bg: "#FFFFFF", // because the icon bg is this -- a slight adjustment
-    bgIcon: "#F7F7F7", 
-    buttonFill: "#242426",
-    buttonAccent: "#F9F9F9",
-    darkButtonText: "#242426",
-    textInputFill: "#7676801F",
+    bgIcon: "#FFFFFF", 
+    buttonFill: "#242429",
+    buttonAccent: "#FFFFFF",
+    darkButtonText: "#242429",
+    textInputFill: "#242429",
     textInputPlaceholder: "#3C3C439A",
     textInputPlaceholderLight: '#242426',
     textInputBorder: "#242426", // same as buttonFill
