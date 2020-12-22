@@ -56,7 +56,10 @@ const styles = StyleSheet.create({
         borderColor: colors.buttonFill,
         color: colors.buttonFill,
         textAlign: "center",
-        fontSize: 14,
+        fontSize: 8,
+        marginStart: 20,
+        marginEnd: 20,
+        marginBottom: 5,
     },
     font: {
         ...FONTS.body,

@@ -110,6 +110,7 @@ export default function PartnerDashboard(props) {
       }}
     >
       {/* Current Balance */}
+      <View style={{flex: 1, flexDirection: 'row'}}>
       <CustomText
           style={styles.text}
           containerStyle={styles.textContainer}
@@ -126,6 +127,7 @@ export default function PartnerDashboard(props) {
         > 
           {`$${currencyFromZeroDecimal(user.total_revenue)}`}
         </CustomText>
+        </View>
         
         {/* <CustomText
           style={styles.text}
@@ -220,6 +222,8 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginVertical: 10,
+    marginStart: 5,
+    marginEnd: 5,
   },
   miniText: {
     ...config.styles.body,
