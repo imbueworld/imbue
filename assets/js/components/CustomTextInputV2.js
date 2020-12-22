@@ -74,9 +74,8 @@ const styles = StyleSheet.create({
   container: {
     minHeight: 72,
     justifyContent: 'center',
-    borderWidth: 1,
-    backgroundColor: colors.textInputFill,
-    borderRadius: 30,
+    backgroundColor: "white",
     overflow: 'hidden',
+    borderBottomWidth: 0.25,
   },
 })

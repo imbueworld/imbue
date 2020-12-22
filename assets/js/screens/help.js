@@ -59,7 +59,7 @@ export default function PartnerDashboard(props) {
          
         <View style={{flex: 1, flexDirection: 'row'}}>
           <CustomButton
-            onPress={() => Communications.text('0123456789')}
+            onPress={() => Communications.text('9522928738')}
           title="Text"
           style={{width: wp('40%'), marginRight: 5}}
         />
