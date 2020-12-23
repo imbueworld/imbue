@@ -3,11 +3,10 @@ export const colors = {
     grayInactive: "#696461",
     checkmarkgreen: "#cbe558", // "#b2c94b"
 
-    // bg: "#F9F9F9",
-    bg: "#FFFFFF", // because the icon bg is this -- a slight adjustment
-    bgIcon: "#FFFFFF", 
+    bg: "#ffffff", 
+    bgIcon: "#ffffff", 
     buttonFill: "#242429",
-    buttonAccent: "#FFFFFF",
+    buttonAccent: "#ffffff",
     darkButtonText: "#242429",
     textInputFill: "#242429",
     textInputPlaceholder: "#3C3C439A",

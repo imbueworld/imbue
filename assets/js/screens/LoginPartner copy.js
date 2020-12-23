@@ -13,7 +13,7 @@ import BackButton from '../components/BackButton'
 import auth from '@react-native-firebase/auth'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
-import { colors } from '../contexts/Colors'
+import { colors, simpleShadow} from '../contexts/Colors'
 
 export default function LoginPartner(props) {
   const navigation = useNavigation()
@@ -64,6 +64,7 @@ export default function LoginPartner(props) {
               imageStyle={{
                 width: 48,
                 height: 48,
+                simpleShadow,
               }}
             />
       </TouchableHighlight>
@@ -170,7 +171,7 @@ const styles = StyleSheet.create({
     width: "88%",
     marginBottom: 30,
     alignSelf: "center",
-    backgroundColor: "#F9F9F9",
+    backgroundColor: "#ffffff",
     marginTop: 60
   },
   sidePanelButtonContainer: {
