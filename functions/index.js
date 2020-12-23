@@ -33,6 +33,9 @@ const MUX_TOKEN_SECRET = 'VAMH9mVP7GKlcqo+YHgym3gXoUu2w8043RHNpQSFDWMIfU8RtaZ2l9
 
 const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 
+const SEND_GRID_KEY = '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'
+
+
 const ALGOLIA_ID = 'O50JZXNYWV'
 const ALGOLIA_SEARCH_KEY = '2300b356761715188aa0242530b512d9'
 const ALGOLIA_ADMIN_KEY = '11abb122276b5eed15a3a0119b53622a'
@@ -40,6 +43,7 @@ const ALGOLIA_ADMIN_KEY = '11abb122276b5eed15a3a0119b53622a'
 const ALGOLIA_GYM_INDEX = 'gyms'
 const algoliaClient = algoliasearch(ALGOLIA_ID, ALGOLIA_ADMIN_KEY)
 
+const fetch = require("node-fetch");
 
 const users = admin.firestore().collection('users')
 const partners = admin.firestore().collection('partners')
@@ -151,6 +155,47 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
     }))
   })
 })
+
+// Add contact to SendGrid
+exports.addToSendGrid = functions.https.onCall(async (data, context) => {
+  const client = require('@sendgrid/client');
+  client.setApiKey(SEND_GRID_KEY);
+
+  // return fetch('https://api.sendgrid.com/v3/marketing/contacts', {
+  //   method: 'POST',
+  //   headers: {
+  //     'Authorization': 'Bearer ' + SEND_GRID_KEY,
+  //     'Content-Type': 'application/json',
+  //   },
+  //   body: JSON.stringify({
+  //     contacts: [{"email": "myMail@gmail.com","unique_name":"myName"}],
+  //   })
+  // }).then((response) => {
+  //   console.log("RESPONSE JSON: ", JSON.stringify(response))
+  //   console.log("RESPONSE: ", response.status, response.ok )
+  // });
+
+  return await new Promise(resolve => {
+    let xhr = new XMLHttpRequest()
+    const data = [
+      {
+        "age": "25",
+        "email": "example@example.com",
+        "first_name": "",
+        "last_name": "User"
+      },
+    ];
+      xhr.body = data;
+      xhr.method = 'POST';
+      xhr.url = '/v3/contactdb/all';
+      client.request(xhr)
+      .then(([response, body]) => {
+        console.log("ONE??: ", response.statusCode);
+        console.log("TWO??: ", response.body);
+      })
+  })
+})
+
 
 /**
  * When a user is created, create a Stripe customer object for them.
