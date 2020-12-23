@@ -14,7 +14,7 @@ export default function BackButton(props) {
   return (
     <View style={{
       ...simpleShadow,
-      // backgroundColor: "white",
+      backgroundColor: "242429",
       borderRadius: 999,
       ...style,
       ...containerStyle,
@@ -25,7 +25,7 @@ export default function BackButton(props) {
           height: 64,
           ...imageStyle,
         }}
-        source={require("./img/png/back-button-3.png")}
+        source={require("./img/png/forward-arrow-white.png")}
       />
     </View>
   )
