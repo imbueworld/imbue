@@ -426,7 +426,7 @@ const styles = StyleSheet.create({
     // minHeight: "100%",
     position: "absolute",
     zIndex: 100,
-    backgroundColor: "#F9F9F9"
+    backgroundColor: "#FFFFFF"
   },
   // map: {
   //   position:'absolute',
