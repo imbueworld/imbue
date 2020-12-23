@@ -9,6 +9,7 @@ import CompanyLogo from "../components/CompanyLogo"
 import CustomButton from "../components/CustomButton"
 import CustomCapsule from '../components/CustomCapsule'
 import { FONTS } from '../contexts/Styles'
+import functions from '@react-native-firebase/functions'
 
 
 
@@ -30,6 +31,11 @@ export default function Landing(props) {
         props.navigation.navigate("PartnerHome")
     }
 
+    async function testSendGrid() {
+        const addToSendGrid = functions().httpsCallable('addToSendGrid')
+        await addToSendGrid()
+    }
+
     return (
         <ScrollView alwaysBounceVertical={false} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
             <AppBackground />
@@ -48,6 +54,17 @@ export default function Landing(props) {
                     marginBottom: 50,
                 }}
             >
+
+
+                <CustomButton
+                    style={{
+                        marginTop: 10,
+                        marginBottom: 0,
+                    }}
+                    onPress={testSendGrid}
+                    title="sendGrid Test"
+                />
+
                 <Text style={{
                     marginTop: 0,
                     marginBottom: 0,
