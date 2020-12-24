@@ -36,6 +36,8 @@ import MindbodyActivation from './assets/js/screens/MindbodyActivation'
 import customRTMP from './assets/js/screens/customRTMP'
 import postApplicationUnverifiedPartner from './assets/js/screens/postApplicationUnverifiedPartner'
 import help from './assets/js/screens/help'
+import PartnerApply from './assets/js/screens/PartnerApply'
+import PartnerApply2 from './assets/js/screens/PartnerApply2'
 
 // import Waitlist from './assets/js/screens/Waitlist'
 
@@ -221,6 +223,16 @@ export default function App() {
         <Stack.Screen
           name='help'
           component={help}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='PartnerApply'
+          component={PartnerApply}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='PartnerApply2'
+          component={PartnerApply2}
           initialParams={{}}
         />
 

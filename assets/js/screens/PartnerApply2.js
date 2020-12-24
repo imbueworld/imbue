@@ -26,6 +26,7 @@ export default function PartnerApply(props) {
 
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  
   // const { state, navigate } = this.props.navigation; 
   function invalidate() {
     let redFields = []
@@ -62,13 +63,13 @@ export default function PartnerApply(props) {
           />
         </TouchableHighlight>
         <CustomCapsule containerStyle={styles.container}>
-                  <View>
-          <Text
-            style={styles.title}
-          >
-            Influencer application            
+          <View>
+            <Text
+              style={styles.title}
+            >
+              Influencer application
             </Text>
-        </View>
+          </View>
 
           {/* <SocialLogin
           containerStyle={{
@@ -97,15 +98,23 @@ export default function PartnerApply(props) {
             <Text
               style={styles.body}
             >
-              Thank you so much for your interest in imbue. We’re going to ask a few questions to make sure you’ll be a good fit! Click the button to get started!
-            </Text>
+              to start, What’s your first and last name?
+  </Text>
           </View>
 
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("email") ? "red" : undefined,
             }}
-            placeholder="Email"
+            placeholder="First Name"
+            value={email}
+            onChangeText={setEmail}
+          />
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes("email") ? "red" : undefined,
+            }}
+            placeholder="Last Name"
             value={email}
             onChangeText={setEmail}
           />
