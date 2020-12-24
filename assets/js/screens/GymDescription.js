@@ -149,11 +149,11 @@ export default function GymDescription(props) {
         }}
         title="Classes"
         onPress={openClassesSchedule}
-        Icon={ 
-          <Icon
-            source={require("../components/img/png/calendar.png")}
-          />
-        }
+        // Icon={ 
+        //   <Icon
+        //     source={require("../components/img/png/calendar.png")}
+        //   />
+        // }
         />
         
         
@@ -226,11 +226,11 @@ export default function GymDescription(props) {
                 }}
                 title="Get Membership"
                 onPress={() => setPopup("buy")}
-                Icon={
-                  <Icon
-                    source={require("../components/img/png/membership.png")}
-                  />
-                }
+                // Icon={
+                //   <Icon
+                //     source={require("../components/img/png/membership.png")}
+                //   />
+                // }
               />
               
              {/* <CustomButton

@@ -623,7 +623,7 @@ export default function ClassDescription(props) {
             }}>Edit</Text>
           </TouchableHighlight>
 
-          //* Delete Class 
+          // Delete Class 
           <TouchableHighlight onPress={() =>
             Alert.alert(
               "Are you sure you wish to delete this class",
