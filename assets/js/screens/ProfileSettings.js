@@ -24,7 +24,7 @@ import functions from '@react-native-firebase/functions'
 import firestore from '@react-native-firebase/firestore';
 const p = console.log
 
-
+ 
 
 export default function ProfileSettings(props) {
   const [user, setUser] = useState(null)
@@ -465,7 +465,7 @@ export default function ProfileSettings(props) {
 
   }, []);
 
-  if (!user || !gym || hasBankAccountAdded === undefined) return <View />
+  // if (!user || !gym || hasBankAccountAdded === undefined) return <View />
 
   if (!user || isForeignUser === undefined) return <View />
 

@@ -161,19 +161,7 @@ exports.addToSendGrid = functions.https.onCall(async (data, context) => {
   const client = require('@sendgrid/client');
   client.setApiKey(SEND_GRID_KEY);
 
-  // return fetch('https://api.sendgrid.com/v3/marketing/contacts', {
-  //   method: 'POST',
-  //   headers: {
-  //     'Authorization': 'Bearer ' + SEND_GRID_KEY,
-  //     'Content-Type': 'application/json',
-  //   },
-  //   body: JSON.stringify({
-  //     contacts: [{"email": "myMail@gmail.com","unique_name":"myName"}],
-  //   })
-  // }).then((response) => {
-  //   console.log("RESPONSE JSON: ", JSON.stringify(response))
-  //   console.log("RESPONSE: ", response.status, response.ok )
-  // });
+  // https://api.sendgrid.com/v3/marketing/contacts'
 
   return await new Promise(resolve => {
     let xhr = new XMLHttpRequest()
