@@ -53,8 +53,8 @@ export default function ClassDescription(props) {
     console.log("address (handDOB): ", address)
     {
       user.account_type == 'partner'
-      ? updateSafeInfoForPartner()
-      : updateSafeInfoForUser()
+        ? updateSafeInfoForPartner()
+        : updateSafeInfoForUser()
     }
   }
 
@@ -70,20 +70,20 @@ export default function ClassDescription(props) {
           ...classDoc,
           ...timeDoc,
         })
-   
+
         // Determine whether the class has passed, and, if it has, the variable
         // is going to be used to not show scheduling button
         const { begin_time } = timeDoc
         setClassHasPassed(begin_time < Date.now())
-  
+
         const { gym_id: classGymId } = classDoc
-  
+
         const user = new User()
         setUser(await user.retrieveUser())
-  
+
         const gym = new Gym()
         setGym(await gym.retrieveGym(classGymId))
-      }; init() 
+      }; init()
       return () => {
         // Do something when the screen is unfocused
         // Useful for cleanup functions
@@ -281,22 +281,22 @@ export default function ClassDescription(props) {
     let newTimes = []
     // get attendees count
     await firestore()
-    .collection('classes')
-    .get()
-    .then(querySnapshot => {
-      querySnapshot.forEach(documentSnapshot => {
-        if (documentSnapshot.data().id == classId) {
-          // map through active times
-          documentSnapshot.data().active_times.forEach(clss => {
-            // find relevant time, don't add back to lis
-            if (clss.time_id == timeId) {
-            } else {
-              newTimes.push(clss)
-            }
-          })
-        }
+      .collection('classes')
+      .get()
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
+          if (documentSnapshot.data().id == classId) {
+            // map through active times
+            documentSnapshot.data().active_times.forEach(clss => {
+              // find relevant time, don't add back to lis
+              if (clss.time_id == timeId) {
+              } else {
+                newTimes.push(clss)
+              }
+            })
+          }
+        });
       });
-    });
 
     // push updated times to firebase
     firestore()
@@ -310,160 +310,160 @@ export default function ClassDescription(props) {
 
     // go back
     setTimeout(
-      () => {  navigation.goBack() },
+      () => { navigation.goBack() },
       2000
     )
   }
 
-  return ( 
+  return (
     <ScrollView showsVerticalScrollIndicator={false}>
-    <GymLayout
-      containerStyle={styles.container}
-      innerContainerStyle={styles.innerContainerStyle}
-      data={gym}
-      classData={classId, timeId}
-      buttonOptions={{  
-        goToLivestream: getGoToLivestreamButton(),
-        // addToCalendar: {
-        //   show: hasMembership && user.account_type == 'user' && !classHasPassed,
-        //   state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
-        //   onPress: async () => {
-        //     const {
-        //       id: classId,
-        //       time_id: timeId,
-        //     } = classDoc
+      <GymLayout
+        containerStyle={styles.container}
+        innerContainerStyle={styles.innerContainerStyle}
+        data={gym}
+        classData={classId, timeId}
+        buttonOptions={{
+          goToLivestream: getGoToLivestreamButton(),
+          // addToCalendar: {
+          //   show: hasMembership && user.account_type == 'user' && !classHasPassed,
+          //   state: classIsAddedToCalendar ? 'fulfilled' : 'opportunity',
+          //   onPress: async () => {
+          //     const {
+          //       id: classId,
+          //       time_id: timeId,
+          //     } = classDoc
 
-        //     const user = new User()
-        //     try {
-        //       await user.scheduleClass({ classId, timeId })
-        //     } catch(error) {
-        //       if (config.DEBUG) console.error(error)
-        //       if (error.code == 'insufficient_fields') {
-        //         let additionalFields = error.context
-        //           .map(representDatabaseField).join(', ')
-        //         Alert.alert(
-        //           'Information Request',
-        //           `At the request of the owner of this class, you must be`
-        //           + `providing additional information: ${additionalFields}.`,
-        //           [
-        //             {
-        //               text: 'Add Now',
-        //               onPress: () => {
-        //                 navigation.dispatch(StackActions.push('ProfileSettings'))
-        //               },
-        //             },
-        //             {
-        //               text: 'Cancel',
-        //               style: 'cancel',
-        //             },
-        //           ],
-        //           { cancelable: true },
-        //         )
-        //       } else {
-        //         Alert.alert('Action was not possible at this time.')
-        //       }
-        //     }
+          //     const user = new User()
+          //     try {
+          //       await user.scheduleClass({ classId, timeId })
+          //     } catch(error) {
+          //       if (config.DEBUG) console.error(error)
+          //       if (error.code == 'insufficient_fields') {
+          //         let additionalFields = error.context
+          //           .map(representDatabaseField).join(', ')
+          //         Alert.alert(
+          //           'Information Request',
+          //           `At the request of the owner of this class, you must be`
+          //           + `providing additional information: ${additionalFields}.`,
+          //           [
+          //             {
+          //               text: 'Add Now',
+          //               onPress: () => {
+          //                 navigation.dispatch(StackActions.push('ProfileSettings'))
+          //               },
+          //             },
+          //             {
+          //               text: 'Cancel',
+          //               style: 'cancel',
+          //             },
+          //           ],
+          //           { cancelable: true },
+          //         )
+          //       } else {
+          //         Alert.alert('Action was not possible at this time.')
+          //       }
+          //     }
 
-        //     refresh(r + 1)
-        //   }
-        // },
-        // removeFromCalendar: {
-        //   onPress: async () => {
-        //     const { id: classId, time_id: timeId } = classDoc
+          //     refresh(r + 1)
+          //   }
+          // },
+          // removeFromCalendar: {
+          //   onPress: async () => {
+          //     const { id: classId, time_id: timeId } = classDoc
 
-        //     const user = new User()
-        //     await user.unscheduleClass({ classId, timeId })
+          //     const user = new User()
+          //     await user.unscheduleClass({ classId, timeId })
 
-        //     refresh(r + 1)
-        //   },
-        // },
-        viewAttendees: {
-          show: user.account_type === "partner" ? true : false,
-          data: {
-            classId: classId,
-            timeId: timeId,
+          //     refresh(r + 1)
+          //   },
+          // },
+          viewAttendees: {
+            show: user.account_type === "partner" ? true : false,
+            data: {
+              classId: classId,
+              timeId: timeId,
+            },
           },
-        },
-        goToCalendar: { show: false },
-      }}
-    >
-      { Content}
+          goToCalendar: { show: false },
+        }}
+      >
+        {Content}
 
-      {errorMsg
-        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-        : null}
-      {successMsg
-        ? <Text style={{ color: "green" }}>{successMsg}</Text>
-        : null}
+        {errorMsg
+          ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+          : null}
+        {successMsg
+          ? <Text style={{ color: "green" }}>{successMsg}</Text>
+          : null}
 
-      {user.account_type !== "user" ? null :
-        <View>
-          {/* if null, it means it hasn't been initialized yet. */}
-          {hasMembership === null ? <View /> :
+        {user.account_type !== "user" ? null :
+          <View>
+            {/* if null, it means it hasn't been initialized yet. */}
+            {hasMembership === null ? <View /> :
 
-            hasMembership && user.dob ? null : 
-              <>
-                {popup === "buy"
-                  ? <CreditCardSelectionV2
-                    containerStyle={styles.cardSelectionContainer}
-                    title={
-                      <Text>
-                        {`Confirm payment for ${gym.name}, ${classDoc.name} — `}
-                        <Text style={{
-                          textDecorationLine: "underline",
-                        }}>One Time Online Class</Text>
-                      </Text>
-                    }
-                    onX={() => setPopup(null)}
-                    onCardSelect={async paymentMethodId => {
-                      try {
-                        setErrorMsg('')
-                        setSuccessMsg('')
-
-                        const {
-                          id: classId,
-                          time_id: timeId,
-                        } = classDoc
-
-                        const user = new User()
-                        await user.purchaseClass({
-                          paymentMethodId,
-                          classId,
-                          timeId,
-                        })
-
-                        refresh(r + 1)
-
-                      } catch (err) {
-                        if (config.DEBUG) console.error(err.message) // DEBUG
-                        switch (err.code) {
-                          case "busy":
-                            setErrorMsg(err.message)
-                            break
-                          case "class-already-bought":
-                            setSuccessMsg(err.message)
-                            break
-                          default:
-                            setErrorMsg("Something prevented the action.")
-                            break
-                        }
+              hasMembership && user.dob ? null :
+                <>
+                  {popup === "buy"
+                    ? <CreditCardSelectionV2
+                      containerStyle={styles.cardSelectionContainer}
+                      title={
+                        <Text>
+                          {`Confirm payment for ${gym.name}, ${classDoc.name} — `}
+                          <Text style={{
+                            textDecorationLine: "underline",
+                          }}>One Time Online Class</Text>
+                        </Text>
                       }
-                    }}
-                  /> 
-                  :
-                  ((priceType === "paid" && user.dob) ?
-                  <>
-                    <CustomButton
-                      style={{
-                        marginBottom: 0,
-                      }}
-                      title="Book"
-                      onPress={() => {
-                        setPopup("buy")
+                      onX={() => setPopup(null)}
+                      onCardSelect={async paymentMethodId => {
+                        try {
+                          setErrorMsg('')
+                          setSuccessMsg('')
+
+                          const {
+                            id: classId,
+                            time_id: timeId,
+                          } = classDoc
+
+                          const user = new User()
+                          await user.purchaseClass({
+                            paymentMethodId,
+                            classId,
+                            timeId,
+                          })
+
+                          refresh(r + 1)
+
+                        } catch (err) {
+                          if (config.DEBUG) console.error(err.message) // DEBUG
+                          switch (err.code) {
+                            case "busy":
+                              setErrorMsg(err.message)
+                              break
+                            case "class-already-bought":
+                              setSuccessMsg(err.message)
+                              break
+                            default:
+                              setErrorMsg("Something prevented the action.")
+                              break
+                          }
+                        }
                       }}
                     />
-                    </>
-                    : (priceType === "paid" && !user.dob) ?
+                    :
+                    ((priceType === "paid" && user.dob) ?
+                      <>
+                        <CustomButton
+                          style={{
+                            marginBottom: 0,
+                          }}
+                          title="Book"
+                          onPress={() => {
+                            setPopup("buy")
+                          }}
+                        />
+                      </>
+                      : (priceType === "paid" && !user.dob) ?
 
                         <>
                           <View>
@@ -493,104 +493,104 @@ export default function ClassDescription(props) {
                           />
 
                         </>
-                    
-                      : (
-                        <View>
-                      <CustomButton
-                  style={{
-                    marginBottom: 0,
-                  }}
-                  title="Add to Calender"
-                  onPress={async () => {
 
-                    try {
-                      setErrorMsg('')
-                      setSuccessMsg('')
+                        : (
+                          <View>
+                            <CustomButton
+                              style={{
+                                marginBottom: 0,
+                              }}
+                              title="Add to Calender"
+                              onPress={async () => {
 
-                      const {
-                        id: classId, 
-                        time_id: timeId,
-                      } = classDoc
+                                try {
+                                  setErrorMsg('')
+                                  setSuccessMsg('')
 
-                      const user = new User()
-                      await user.addClassToCalender({
-                        classId, 
-                        timeId,
-                      })
+                                  const {
+                                    id: classId,
+                                    time_id: timeId,
+                                  } = classDoc
 
-                      refresh(r + 1)
+                                  const user = new User()
+                                  await user.addClassToCalender({
+                                    classId,
+                                    timeId,
+                                  })
 
-                    } catch (err) {
-                      switch (err.code) {
-                        case "busy":
-                          setErrorMsg(err.message)
-                          break
-                        case "class-already-added":
-                          setSuccessMsg(err.message)
-                          break
-                        default:
-                          setErrorMsg("Something prevented the action.")
-                          break
-                      }
-                      // Adds to calender. Called when priceType == free. Bypasses purchaing
+                                  refresh(r + 1)
 
-                    }
-                  }}
-                        />
-                        
+                                } catch (err) {
+                                  switch (err.code) {
+                                    case "busy":
+                                      setErrorMsg(err.message)
+                                      break
+                                    case "class-already-added":
+                                      setSuccessMsg(err.message)
+                                      break
+                                    default:
+                                      setErrorMsg("Something prevented the action.")
+                                      break
+                                  }
+                                  // Adds to calender. Called when priceType == free. Bypasses purchaing
+
+                                }
+                              }}
+                            />
+
                           </View>
+                        )
                     )
-                  )
-                }
-              </>}
+                  }
+                </>}
 
-          {hasMembership !== "imbue" ? null :
-            <MembershipApprovalBadgeImbue
-              containerStyle={{
-                marginTop: 10,
-              }}
-              data={gym}
-            />}
-          {hasMembership !== "gym" ? null :
-            <>
-              <CustomButton
-                style={{
-                  marginBottom: 0,
-                }}
-                title="Join Class"
-                onPress={() => {
-                  const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
-                  navigation.dispatch(pushAction)
-                  // getGoToLivestreamButton()
-                }}
-              />
-              <MembershipApprovalBadge
+            {hasMembership !== "imbue" ? null :
+              <MembershipApprovalBadgeImbue
                 containerStyle={{
                   marginTop: 10,
                 }}
                 data={gym}
-              />
-            </>}
-          {hasMembership !== "class" ? null :
-            <View>
-              <CustomButton
-                style={{
-                  marginBottom: 0,
-                }}
-                title="Join"
-                onPress={() => {
-                  const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
-                  navigation.dispatch(pushAction)
-                  // getGoToLivestreamButton()
-                }}
-              />
-              <ClassApprovalBadge
-                containerStyle={{
-                  marginTop: 10,
-                }}
-              />
-            </View>}
-        </View>}
+              />}
+            {hasMembership !== "gym" ? null :
+              <>
+                <CustomButton
+                  style={{
+                    marginBottom: 0,
+                  }}
+                  title="Join Class"
+                  onPress={() => {
+                    const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
+                    navigation.dispatch(pushAction)
+                    // getGoToLivestreamButton()
+                  }}
+                />
+                <MembershipApprovalBadge
+                  containerStyle={{
+                    marginTop: 10,
+                  }}
+                  data={gym}
+                />
+              </>}
+            {hasMembership !== "class" ? null :
+              <View>
+                <CustomButton
+                  style={{
+                    marginBottom: 0,
+                  }}
+                  title="Join"
+                  onPress={() => {
+                    const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
+                    navigation.dispatch(pushAction)
+                    // getGoToLivestreamButton()
+                  }}
+                />
+                <ClassApprovalBadge
+                  containerStyle={{
+                    marginTop: 10,
+                  }}
+                />
+              </View>}
+          </View>}
       </GymLayout >
 
       {/* pop Edit class time and date */}
@@ -605,49 +605,52 @@ export default function ClassDescription(props) {
             paddingLeft: 15
             // backgroundColor: "red",
           }}
-        />: null}
-      
-      
-      {/* Edit Class */}
-      <TouchableHighlight onPress={() => setEditShow(!editShow)}
-      >
-        <Text style={{
-                width: "100%",
-                textAlign: "center",
-                marginTop: hp('2%'),
-                marginBottom: hp('1%'),
-                color: '#1AA0FB',
-                ...FONTS.body,
-                fontSize: 10,
-            }}>Edit</Text>
-      </TouchableHighlight>
+        /> : null}
 
-    {/* Delete Class */}
-    <TouchableHighlight onPress={() =>
-        Alert.alert(
-        "Are you sure you wish to delete this class",
-        "All instances of this class will be removed from your schedule",
-        [
-          {
-            text: "Cancel",
-            onPress: () => console.log("Cancel Pressed"),
-            style: "cancel"
-          },
-          { text: "Yes", onPress: () => removeClass() }
-        ],
-        { cancelable: false }
-      )
-      }
-    >
-      <Text style={{
+      {user.account_type === 'parnter' ?
+        <>
+              // Edit Class
+          <TouchableHighlight onPress={() => setEditShow(!editShow)}
+          >
+            <Text style={{
+              width: "100%",
+              textAlign: "center",
+              marginTop: hp('2%'),
+              marginBottom: hp('1%'),
+              color: '#1AA0FB',
+              ...FONTS.body,
+              fontSize: 10,
+            }}>Edit</Text>
+          </TouchableHighlight>
+
+          //* Delete Class 
+          <TouchableHighlight onPress={() =>
+            Alert.alert(
+              "Are you sure you wish to delete this class",
+              "All instances of this class will be removed from your schedule",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => console.log("Cancel Pressed"),
+                  style: "cancel"
+                },
+                { text: "Yes", onPress: () => removeClass() }
+              ],
+              { cancelable: false }
+            )
+          }
+          >
+            <Text style={{
               width: "100%",
               textAlign: "center",
               marginTop: hp('1%'),
               color: 'red',
               ...FONTS.body,
               fontSize: 10,
-          }}>Remove</Text>
-    </TouchableHighlight>
+            }}>Remove</Text>
+          </TouchableHighlight>
+        </>
+        : null}
     </ScrollView>
   )
 }

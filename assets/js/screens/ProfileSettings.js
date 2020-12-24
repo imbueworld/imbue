@@ -24,7 +24,7 @@ import functions from '@react-native-firebase/functions'
 import firestore from '@react-native-firebase/firestore';
 const p = console.log
 
- 
+
 
 export default function ProfileSettings(props) {
   const [user, setUser] = useState(null)
@@ -638,6 +638,28 @@ export default function ProfileSettings(props) {
                 setSSNLast4(text)
               }}
             />
+            <Text style={{
+              paddingTop: 15,
+              paddingBottom: 10,
+              ...FONTS.subtitle,
+              textAlign: "center",
+              fontSize: 22,
+            }}>Payouts</Text>
+
+            <Text style={styles.error}>{errorMsg}</Text>
+
+            { !hasBankAccountAdded ? <>
+              <BankAccountFormWithButtonEntry
+                onError={setErrorMsg}
+                onSuccess={() => refresh(r => r + 1)}
+              />
+              <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded} />
+            </> : <>
+                <Text style={styles.confirmation}>Your bank account has been linked.</Text>
+              </>
+            }
+
+            <Text style={FONTS.body}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
           </>}
         </>
         : null}
@@ -686,28 +708,6 @@ export default function ProfileSettings(props) {
         onChangeText={setConfPasswordField}
       /> */}
 
-      <Text style={{
-        paddingTop: 15,
-        paddingBottom: 10,
-        ...FONTS.subtitle,
-        textAlign: "center",
-        fontSize: 22,
-      }}>Payouts</Text>
-
-      <Text style={styles.error}>{errorMsg}</Text>
-
-      { !hasBankAccountAdded ? <>
-        <BankAccountFormWithButtonEntry
-          onError={setErrorMsg}
-          onSuccess={() => refresh(r => r + 1)}
-        />
-        <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded} />
-      </> : <>
-          <Text style={styles.confirmation}>Your bank account has been linked.</Text>
-        </>
-      }
-
-      <Text style={FONTS.body}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
 
       <CustomButton
         style={styles.button}
