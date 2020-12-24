@@ -99,7 +99,7 @@ export default function GymLayout(props) {
       show: false,
       state: "closed" || "open",
       data: { classId: null, timeId: null },
-      onPress: () => {},
+      // onPress: () => {},
     },
     removeFromCalendar: {
       show: false,
@@ -275,9 +275,9 @@ export default function GymLayout(props) {
               color: "#242426",
             }}
             
-            onPress={() => props.navigation.navigate(
-              "PartnerCreateClass"
-            )} 
+            // onPress={() => props.navigation.navigate(
+            //   "PartnerCreateClass"
+            // )} 
           />
         
         {/* {buttonOptions.viewAttendees.show
