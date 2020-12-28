@@ -19,7 +19,6 @@ import { geocodeAddress } from '../backend/BackendFunctions'
 import Gym from '../backend/storage/Gym'
 import PlaidButton from '../components/PlaidButton'
 import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry'
-import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
 import functions from '@react-native-firebase/functions'
 import firestore from '@react-native-firebase/firestore';
 const p = console.log
@@ -35,7 +34,7 @@ export default function ProfileSettings(props) {
   const [errorMsg, setErrorMsg] = useState('')
   const [refreshing, setRefreshing] = React.useState(false);
   const [r, refresh] = useState(0)
-  
+
 
   // p(auth().currentUser)
 
@@ -55,18 +54,11 @@ export default function ProfileSettings(props) {
 
       console.log("user (useEffect): ", user)
 
-      // update Stripe balance revenue
-      if (gym) {
-        const updateStripeAccountRevenue = functions().httpsCallable('updateStripeAccountRevenue')
-        await updateStripeAccountRevenue(gym.id)
-      }
     }; init()
   }, [r])
 
   useEffect(() => {
     if (!user) return
-    setFirstNameField(user.first)
-    setLastNameField(user.last)
     setEmailField(user.email)
     let { day, month, year } = user.dob || {}
     let dobString = user.dob ? `${month}-${day}-${year}` : ''
@@ -86,8 +78,6 @@ export default function ProfileSettings(props) {
   const [successMsg, setSuccessMsg] = useState("")
   const [changing, change] = useState("safeInfo") // || "password"
 
-  const [firstNameField, setFirstNameField] = useState("")
-  const [lastNameField, setLastNameField] = useState("")
   const [emailField, setEmailField] = useState("")
 
   const [dob, setDob] = useState("")
@@ -187,10 +177,6 @@ export default function ProfileSettings(props) {
 
     let redFields = []
 
-    // let {
-    //   dob,
-    // } = reactNativeForm
-
     if (firstNameField.length === 0) redFields.push("first")
     if (lastNameField.length === 0) redFields.push("last")
     if (emailField.length === 0) redFields.push("email")
@@ -214,15 +200,6 @@ export default function ProfileSettings(props) {
           month: DateMoment.month() + 1,
           year: DateMoment.year(),
         },
-      }
-
-      if (firstNameField !== user.first) {
-        updatables.first = firstNameField
-        updatables.name = `${firstNameField} ${user.last}` // Upadting the helper property
-      }
-      if (lastNameField !== user.last) {
-        updatables.last = lastNameField
-        updatables.name = `${user.first} ${lastNameField}` // Upadting the helper property
       }
       if (emailField !== user.email) {
         updatables.email = emailField
@@ -262,6 +239,7 @@ export default function ProfileSettings(props) {
     setErrorMsg("")
     setSuccessMsg("")
 
+
     let redFields = []
     const auditField = (field, tag) => !field.length ? redFields.push(tag) : null
 
@@ -270,9 +248,6 @@ export default function ProfileSettings(props) {
     auditField(address, 'address')
     auditField(phone, 'phone')
     auditField(ssn_last_4, 'ssn_last_4')
-    // auditField(company_name, 'company_name')
-    // auditField(companyAddressText, 'company_address')
-    // auditField(tax_id, 'tax_id')
 
     if (redFields.length) {
       setRedFields(redFields)
@@ -296,8 +271,7 @@ export default function ProfileSettings(props) {
       // pf -- "prefetch", passed in .updateStripeAccount()
       // let pfGeocodeAddress, pfGeocodeCompanyAddress
       let pfGeocodeAddress
-      if (addressText) pfGeocodeAddress = await geocodeAddress(addressText)
-      // if (companyAddressText) pfGeocodeCompanyAddress = await geocodeAddress(companyAddressText)
+      if (address) pfGeocodeAddress = await geocodeAddress(address)
       if (pfGeocodeAddress) {
         const {
           address,
@@ -309,26 +283,8 @@ export default function ProfileSettings(props) {
         updatables.formatted_address = formatted_address
       }
 
-      // if (pfGeocodeCompanyAddress) {
-      //   const {
-      //     address,
-      //     formatted_address,
-      //     location,
-      //   } = pfGeocodeCompanyAddress
 
-      //   // updatables.company_address = address
-      //   // updatables.formatted_company_address = formatted_address
-
-      //   // Since company address and gym address are synced together,
-      //   // update the gym as well
-      //   await gym.updateCoordinates(location)
-      //   gym.mergeItems({
-      //     address,
-      //     formatted_address,
-      //   })
-      // }
-
-      if (phoneText) updatables.phone = phoneText.replaceAll(/[^0-9]/g, '')
+      if (phone) updatables.phone = phoneText.replaceAll(/[^0-9]/g, '')
       // if (company_name) updatables.company_name = company_name
       // if (tax_id) updatables.tax_id = tax_id
       if (ssn_last_4) updatables.ssn_last_4 = ssn_last_4
@@ -366,45 +322,9 @@ export default function ProfileSettings(props) {
       setRedFields(redFields)
       setErrorMsg(errorMsg)
     }
+    navigation.navigate('PartnerDashboard')
   }
 
-  async function updatePassword() {
-    setRedFields([])
-    setErrorMsg("")
-    setSuccessMsg("")
-    let redFields = []
-
-
-    if (redFields.length) {
-      setErrorMsg("Required fields need to be filled.")
-      setRedFields(redFields)
-      return
-    }
-
-    if (changePasswordField !== changePasswordFieldConfirm) {
-      setErrorMsg("Passwords do not match.")
-      setRedFields(["change_password", "change_password_confirm"])
-      return
-    }
-
-    try {
-      await auth().signInWithEmailAndPassword(user.email, passwordField)
-      await auth().currentUser.updatePassword(changePasswordField)
-      setSuccessMsg("Successfully changed password.")
-      setChangePasswordField("")
-      setChangePasswordFieldConfirm("")
-      // setPasswordField("")
-      Keyboard.dismiss()
-    } catch (err) {
-      let [errorMsg, redFields] = handleAuthError(err)
-      setRedFields(redFields)
-      setErrorMsg(errorMsg)
-    }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Boot' }],
-    })
-  }
 
 
   const wait = (timeout) => {
@@ -418,7 +338,12 @@ export default function ProfileSettings(props) {
 
   return (
     <ProfileLayout
-      hideBackButton={true}>
+      hideBackButton={true}
+      buttonOptions={{
+        logOut: {
+          show: true,
+        },
+      }}>
 
       <View>
         <Text
@@ -430,9 +355,6 @@ export default function ProfileSettings(props) {
       {errorMsg
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
-
-      {changing === "safeInfo"
-        ? <>
           <View>
             <Text
               style={{ ...FONTS.subtitle }}
@@ -460,26 +382,19 @@ export default function ProfileSettings(props) {
             onChangeText={setDob}
           />
 
-          {user.account_type == 'partner' && <>
             <CustomTextInputV2
               containerStyle={styles.inputField}
               red={redFields.includes('address')}
               placeholder='Personal Address'
               value={address}
-              onChangeText={text => {
-                setValue('address', text)
-                setAddress(text)
-              }}
+              onChangeText={setAddress}
             />
             <CustomTextInputV2
               containerStyle={styles.inputField}
               red={redFields.includes('phone')}
               placeholder='Phone'
               value={phone}
-              onChangeText={text => {
-                setValue('phone', text)
-                setPhone(text)
-              }}
+              onChangeText={setPhone}
             />
 
             <CustomTextInputV2
@@ -487,10 +402,7 @@ export default function ProfileSettings(props) {
               red={redFields.includes('ssn_last_4')}
               placeholder='SSN Last 4'
               value={ssn_last_4}
-              onChangeText={text => {
-                setValue('ssn_last_4', text)
-                setSSNLast4(text)
-              }}
+              onChangeText={setSSNLast4}
             />
             <Text style={{
               paddingTop: 15,
@@ -508,7 +420,7 @@ export default function ProfileSettings(props) {
                 onSuccess={() => refresh(r => r + 1)}
               />
               <Text
-              style={styles.miniText}>
+                style={styles.miniText}>
                 or
               </Text>
               <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded} />
@@ -516,10 +428,6 @@ export default function ProfileSettings(props) {
                 <Text style={styles.confirmation}>Your bank account has been linked.</Text>
               </>
             }
-
-          </>}
-        </>
-        : null}
       <CustomButton
         style={styles.button}
         title="Finish 

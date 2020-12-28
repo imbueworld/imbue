@@ -88,7 +88,7 @@ export default function PartnerDashboard(props) {
         hideBackButton={true}
         buttonOptions={{
           logOut: {
-            show: false,
+            show: true,
           },
         }}
       >
