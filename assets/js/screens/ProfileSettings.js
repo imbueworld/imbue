@@ -315,24 +315,7 @@ export default function ProfileSettings(props) {
         updatables.formatted_address = formatted_address
       }
 
-      // if (pfGeocodeCompanyAddress) {
-      //   const {
-      //     address,
-      //     formatted_address,
-      //     location,
-      //   } = pfGeocodeCompanyAddress
 
-      //   // updatables.company_address = address
-      //   // updatables.formatted_company_address = formatted_address
-
-      //   // Since company address and gym address are synced together,
-      //   // update the gym as well
-      //   await gym.updateCoordinates(location)
-      //   gym.mergeItems({
-      //     address,
-      //     formatted_address,
-      //   })
-      // }
 
       if (phoneText) updatables.phone = phoneText.replaceAll(/[^0-9]/g, '')
       // if (company_name) updatables.company_name = company_name
