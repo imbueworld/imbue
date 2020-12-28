@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, Keyboard } from 'react-native'
 
@@ -7,7 +8,7 @@ import CustomTextInput from "../components/CustomTextInput"
 import CustomButton from "../components/CustomButton"
 
 import auth from "@react-native-firebase/auth"
-import { FONTS } from '../contexts/Styles'
+import firestore from '@react-native-firebase/firestore'
 import moment from 'moment'
 import { useNavigation } from '@react-navigation/native'
 import { handleAuthError } from '../backend/HelperFunctions'
@@ -15,53 +16,29 @@ import User from '../backend/storage/User'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
 import config from '../../../App.config'
 import { useForm } from 'react-hook-form'
-import { geocodeAddress } from '../backend/BackendFunctions'
+import { geocodeAddress } from '../backend/BackendFunctions' 
 import Gym from '../backend/storage/Gym'
-import PlaidButton from '../components/PlaidButton'
-import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry'
-import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
-import functions from '@react-native-firebase/functions'
-import firestore from '@react-native-firebase/firestore';
 const p = console.log
-
+ 
 
 
 export default function ProfileSettings(props) {
   const [user, setUser] = useState(null)
   const [isForeignUser, setIsForeignUser] = useState()
   const navigation = useNavigation()
-  const [gym, setGym] = useState(null)
-  const [hasBankAccountAdded, setHasBankAccountAdded] = useState()
-  const [errorMsg, setErrorMsg] = useState('')
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [r, refresh] = useState(0)
-  
 
   // p(auth().currentUser)
 
   useEffect(() => {
     const init = async () => {
       const user = new User()
-      const userDoc = await user.retrieveUser()
+      const userDoc = await user.retrieveUser() 
       setUser(userDoc)
-      setIsForeignUser(userDoc.icon_uri_foreign ? true : false)
-      const gym = (
-        await user.retrievePartnerGyms()
-      ).map(it => it.getAll())[0]
-      setUser(userDoc)
-      setGym(gym)
-      setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
-      // setHasBankAccountAdded(true)
-
-      console.log("user (useEffect): ", user)
-
-      // update Stripe balance revenue
-      if (gym) {
-        const updateStripeAccountRevenue = functions().httpsCallable('updateStripeAccountRevenue')
-        await updateStripeAccountRevenue(gym.id)
-      }
+      // console.log("user (this): " + JSON.stringify(user))
+      console.log("user.account_type1: " + user.account_type)
+      setIsForeignUser( userDoc.icon_uri_foreign ? true : false )
     }; init()
-  }, [r])
+  }, [])
 
   useEffect(() => {
     if (!user) return
@@ -82,7 +59,7 @@ export default function ProfileSettings(props) {
   }, [user])
 
   const [redFields, setRedFields] = useState([])
-  // const [errorMsg, setErrorMsg] = useState("")
+  const [errorMsg, setErrorMsg] = useState("")
   const [successMsg, setSuccessMsg] = useState("")
   const [changing, change] = useState("safeInfo") // || "password"
 
@@ -98,7 +75,7 @@ export default function ProfileSettings(props) {
     const rules = {
       required: 'Required fields must be filled.',
     }
-
+    
     // register('company_address', rules)
     // register('company_name', rules)
     // register('tax_id', rules)
@@ -122,7 +99,7 @@ export default function ProfileSettings(props) {
             return 'User must be of age from 18 to 120.'
           if (currentDate.getUTCFullYear() - y > 119)
             return 'User must be of age from 18 to 120.'
-
+          
           return true
         },
         date: text =>
@@ -186,7 +163,7 @@ export default function ProfileSettings(props) {
 
 
 
-  const updateSafeInfoForUser = async () => {
+  const updateSafeInfoForUser = async() => {
     setRedFields([])
     setErrorMsg('')
     setSuccessMsg('')
@@ -196,6 +173,8 @@ export default function ProfileSettings(props) {
     // let {
     //   dob,
     // } = reactNativeForm
+    console.log("dob (this below): ", dob)
+
 
     if (firstNameField.length === 0) redFields.push("first")
     if (lastNameField.length === 0) redFields.push("last")
@@ -209,7 +188,7 @@ export default function ProfileSettings(props) {
       setErrorMsg("Required fields need to be filled.")
       return
     }
-
+    
     const DateMoment = moment(dob, 'MM-DD-YYYY')
 
     try {
@@ -260,7 +239,9 @@ export default function ProfileSettings(props) {
   }
 
   const updateSafeInfoForPartner = async () => {
-
+    let addressText = address
+    console.log("address (below): ", address)
+    let phoneText = phone
 
     const gym = new Gym
     await gym.retrievePartnerGym() // Loads (or instantly accesses cached) data, finishes instantiation
@@ -271,6 +252,20 @@ export default function ProfileSettings(props) {
     let redFields = []
     const auditField = (field, tag) => !field.length ? redFields.push(tag) : null
 
+    // let {
+    //   // dob,
+    //   address,
+    //   phone: phoneText,
+    //   // company_name,
+    //   // company_address: companyAddressText,
+    //   // tax_id,
+    //   ssn_last_4,
+    // } = reactNativeForm
+
+    if (firstNameField.length === 0) redFields.push("first")
+    if (lastNameField.length === 0) redFields.push("last")
+    if (emailField.length === 0) redFields.push("email")
+    // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
     //
     if (dob.split('-').length != 3) redFields.push('dob')
     auditField(addressText, 'address')
@@ -298,24 +293,52 @@ export default function ProfileSettings(props) {
         },
       }
 
+      if (firstNameField !== user.first) updatables.first = firstNameField
+      if (lastNameField !== user.last) updatables.last = lastNameField
+      if (emailField !== user.email) {
+        // updatables.email = emailField
+        await auth().currentUser.updateEmail(emailField)
+      }
+      updatables.email = emailField // here to ensure it pushes to Stripe on update
+
 
       // pf -- "prefetch", passed in .updateStripeAccount()
       // let pfGeocodeAddress, pfGeocodeCompanyAddress
       let pfGeocodeAddress
       if (addressText) pfGeocodeAddress = await geocodeAddress(addressText)
       // if (companyAddressText) pfGeocodeCompanyAddress = await geocodeAddress(companyAddressText)
+      console.log("pfGeocodeAddress ($$$): ", pfGeocodeAddress)
       if (pfGeocodeAddress) {
         const {
           address,
           formatted_address,
         } = pfGeocodeAddress
 
+        console.log("pfGeocodeAddress ($$$): ", address)
+        console.log("formatted_address ($$$): ", formatted_address)
 
         updatables.address = address
         updatables.formatted_address = formatted_address
       }
 
+      // if (pfGeocodeCompanyAddress) {
+      //   const {
+      //     address,
+      //     formatted_address,
+      //     location,
+      //   } = pfGeocodeCompanyAddress
 
+      //   // updatables.company_address = address
+      //   // updatables.formatted_company_address = formatted_address
+
+      //   // Since company address and gym address are synced together,
+      //   // update the gym as well
+      //   await gym.updateCoordinates(location)
+      //   gym.mergeItems({
+      //     address,
+      //     formatted_address,
+      //   })
+      // }
 
       if (phoneText) updatables.phone = phoneText.replaceAll(/[^0-9]/g, '')
       // if (company_name) updatables.company_name = company_name
@@ -329,8 +352,12 @@ export default function ProfileSettings(props) {
       }
 
       const userObj = new User()
-      await userObj.init()
+      await userObj.init() 
       userObj.mergeItems(updatables)
+
+      console.log("updatables2: ", updatables)
+      console.log("address (RAW): ", address)
+
 
       await Promise.all([
         userObj.push(),
@@ -341,9 +368,9 @@ export default function ProfileSettings(props) {
         //
         // note: Currently only minimum required fields are updated in stripe
         // (ones that weren't added during Partner Sign Up).
-
+        
         // userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }), 
-        userObj.updateStripeAccount(updatables, { pfGeocodeAddress })
+           userObj.updateStripeAccount(updatables, {pfGeocodeAddress} ) 
       ])
 
       setSuccessMsg('Successfully updated profile information.')
@@ -363,6 +390,9 @@ export default function ProfileSettings(props) {
     setSuccessMsg("")
     let redFields = []
 
+    if (changePasswordField.length === 0) redFields.push("change_password")
+    if (changePasswordFieldConfirm.length === 0) redFields.push("change_password_confirm")
+    // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
 
     if (redFields.length) {
       setErrorMsg("Required fields need to be filled.")
@@ -389,21 +419,19 @@ export default function ProfileSettings(props) {
       setRedFields(redFields)
       setErrorMsg(errorMsg)
     }
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Boot' }],
-    })
   }
 
-
-  const wait = (timeout) => {
-    return new Promise(resolve => {
-      setTimeout(resolve, timeout);
-    });
+  const handleDOB = () => {
+    console.log("address (handDOB): ", address)
+    {user.account_type == 'partner'
+          ? updateSafeInfoForPartner() 
+          : updateSafeInfoForUser()
+        } 
   }
+
 
   if (!user || isForeignUser === undefined) return <View />
-
+ 
   return (
     <ProfileLayout
       innerContainerStyle={{
@@ -420,7 +448,7 @@ export default function ProfileSettings(props) {
           style={styles.button}
           textStyle={styles.buttonText}
           title="Change password"
-          onPress={() => change("password")}
+          onPress={() => change("password")}  
         />
         : <CustomButton
           style={styles.button}
@@ -430,35 +458,28 @@ export default function ProfileSettings(props) {
         />}
 
       {user.account_type == 'partner' &&
-        <>
-          {/* <CustomButton
+         <>
+         {/* <CustomButton
           style={styles.button}
           textStyle={styles.buttonText}
           title="Memberships"
           onPress={() => navigation.navigate('PartnerUpdateMemberships')}
         /> */}
-
-          <CustomButton
-            // icon={
-            //   <Icon
-            //     source={require("../components/img/png/ellipsis.png")}
-            //   /> 
-            // }
-            style={styles.button}
-            textStyle={styles.buttonText}
-            title='Custom Brodcasting'
-            onPress={() => props.navigation.navigate(
-              "customRTMP"
-            )}
-          />
-          <CustomButton
-            style={styles.button}
-            textStyle={styles.buttonText}
-            title="Memberships"
-            onPress={() => navigation.navigate('PartnerUpdateMemberships')}
-          />
-
-        </>
+                
+        <CustomButton
+        // icon={
+        //   <Icon
+        //     source={require("../components/img/png/ellipsis.png")}
+        //   /> 
+        // }
+        style={styles.button}
+        textStyle={styles.buttonText}
+        title='Custom Brodcasting'
+        onPress={() => props.navigation.navigate(
+          "customRTMP"
+        )}
+      />
+      </>
       }
 
       {errorMsg
@@ -467,13 +488,6 @@ export default function ProfileSettings(props) {
 
       {changing === "safeInfo"
         ? <>
-          <View>
-            <Text
-              style={{ ...FONTS.subtitle }}
-              textAlign='center'>
-              this information used only to connect with stripe so we can accecpt and process your payments with stripe.
-          </Text>
-          </View>
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("first")
@@ -509,31 +523,31 @@ export default function ProfileSettings(props) {
             placeholder='Date of Birth (MM-DD-YYYY)'
             value={dob}
             // onChangeText={(text) => console.log("text: ", text)}
-            onChangeText={setDob}
+            onChangeText={setDob} 
           />
 
           {user.account_type == 'partner' && <>
-            <CustomTextInputV2
-              containerStyle={styles.inputField}
-              red={redFields.includes('address')}
-              placeholder='Personal Address'
-              value={address}
-              onChangeText={text => {
-                setValue('address', text)
-                setAddress(text)
-              }}
-            />
-            <CustomTextInputV2
-              containerStyle={styles.inputField}
-              red={redFields.includes('phone')}
-              placeholder='Phone'
-              value={phone}
-              onChangeText={text => {
-                setValue('phone', text)
-                setPhone(text)
-              }}
-            />
-            {/* <CustomTextInputV2
+          <CustomTextInputV2
+            containerStyle={styles.inputField}
+            red={redFields.includes('address')}
+            placeholder='Personal Address'
+            value={address}
+            onChangeText={text => {
+              setValue('address', text)
+              setAddress(text) 
+            }}
+          />
+          <CustomTextInputV2
+            containerStyle={styles.inputField}
+            red={redFields.includes('phone')}
+            placeholder='Phone'
+            value={phone}
+            onChangeText={text => {
+              setValue('phone', text)
+              setPhone(text)
+            }}
+          />
+          {/* <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('company_name')}
             placeholder='Company Name'
@@ -543,7 +557,7 @@ export default function ProfileSettings(props) {
               setCompanyName(text)
             }}
           /> */}
-            {/* <CustomTextInputV2
+          {/* <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('company_address')}
             placeholder='Company Address'
@@ -553,7 +567,7 @@ export default function ProfileSettings(props) {
               setCompanyAddress(text)
             }}
           /> */}
-            {/* <CustomTextInputV2
+          {/* <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('tax_id')}
             placeholder='Tax ID'
@@ -563,40 +577,18 @@ export default function ProfileSettings(props) {
               setTaxId(text)
             }}
           /> */}
-            <CustomTextInputV2
-              containerStyle={styles.inputField}
-              red={redFields.includes('ssn_last_4')}
-              placeholder='SSN Last 4'
-              value={ssn_last_4}
-              onChangeText={text => {
-                setValue('ssn_last_4', text)
-                setSSNLast4(text)
-              }}
-            />
-            <Text style={{
-              paddingTop: 15,
-              paddingBottom: 10,
-              ...FONTS.subtitle,
-              textAlign: "center",
-              fontSize: 22,
-            }}>Payouts</Text>
-
-            <Text style={styles.error}>{errorMsg}</Text>
-
-            { !hasBankAccountAdded ? <>
-              <BankAccountFormWithButtonEntry
-                onError={setErrorMsg}
-                onSuccess={() => refresh(r => r + 1)}
-              />
-              <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded} />
-            </> : <>
-                <Text style={styles.confirmation}>Your bank account has been linked.</Text>
-              </>
-            }
-
-            <Text style={FONTS.body}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
+          <CustomTextInputV2
+            containerStyle={styles.inputField}
+            red={redFields.includes('ssn_last_4')}
+            placeholder='SSN Last 4'
+            value={ssn_last_4}
+            onChangeText={text => {
+              setValue('ssn_last_4', text)
+              setSSNLast4(text)
+            }}
+          />
           </>}
-        </>
+          </>
         : null}
 
       {changing === "password"
@@ -643,14 +635,13 @@ export default function ProfileSettings(props) {
         onChangeText={setConfPasswordField}
       /> */}
 
-
       <CustomButton
         style={styles.button}
         title="Save"
         onPress={handleDOB}
       />
 
-      {/* <CustomButton
+    {/* <CustomButton
         style={styles.button}
         title="Save"
         onPress={changing == 'safeInfo'
@@ -675,36 +666,5 @@ const styles = StyleSheet.create({
   inputField: {
     marginTop: 10,
     marginBottom: 10,
-  },
-  text: {
-    paddingVertical: 8,
-    alignSelf: "center",
-    fontSize: 22,
-  },
-  textContainer: {
-    marginVertical: 10,
-  },
-  miniText: {
-    // ...config.styles.body,
-    ...FONTS.body,
-    fontSize: 12,
-    textAlign: 'justify',
-  },
-  confirmation: {
-    ...config.styles.body,
-    color: 'green',
-    textAlign: 'center',
-    paddingBottom: 10,
-  },
-  error: {
-    ...config.styles.body,
-    color: 'red',
-    textAlign: 'center',
-  },
-  scrollView: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    // alignItems: 'center',
-    // justifyContent: 'center',
   },
 })
