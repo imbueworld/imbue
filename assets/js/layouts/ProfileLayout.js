@@ -263,7 +263,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#F9F9F9"
   },
   profileName: {
-    // marginTop: 15,
+    marginTop: 15,
     marginBottom: 10,
     alignSelf: "center",
     ...FONTS.luloClean,

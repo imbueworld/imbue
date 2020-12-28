@@ -116,7 +116,7 @@ export default function PartnerApply(props) {
         <TouchableHighlight
           style={styles.forwardButtonContainer}
           underlayColor="#eed"
-          onPress={(() => navigation.navigate('PartnerApply2'))}
+          onPress={(() => navigation.navigate(''))}
         >
           <ForwardButton
             imageStyle={{
