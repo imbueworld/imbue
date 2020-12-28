@@ -54,17 +54,6 @@ export default function Landing(props) {
                     marginBottom: 50,
                 }}
             >
-
-
-                {/* <CustomButton
-                    style={{
-                        marginTop: 10,
-                        marginBottom: 0,
-                    }}
-                    onPress={testSendGrid}
-                    title="sendGrid Test"
-                /> */}
-
                 <Text style={{
                     marginTop: 0,
                     marginBottom: 0,

@@ -37,7 +37,11 @@ import customRTMP from './assets/js/screens/customRTMP'
 import postApplicationUnverifiedPartner from './assets/js/screens/postApplicationUnverifiedPartner'
 import help from './assets/js/screens/help'
 import PartnerApply from './assets/js/screens/PartnerApply'
-import PartnerApply2 from './assets/js/screens/PartnerApply2'
+import PartnerOnboard from './assets/js/screens/PartnerOnboard'
+import PartnerOnboardPhoto from './assets/js/screens/PartnerOnboardPhoto'
+import PartnerOnboardStripe from './assets/js/screens/PartnerOnboardStripe'
+import PartnerOnboardStripeQuestions from './assets/js/screens/PartnerOnboardStripeQuestions'
+
 
 // import Waitlist from './assets/js/screens/Waitlist'
 
@@ -231,23 +235,26 @@ export default function App() {
           initialParams={{}}
         />
         <Stack.Screen
-          name='PartnerApply2'
-          component={PartnerApply2}
+          name='PartnerOnboard'
+          component={PartnerOnboard}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='PartnerOnboardPhoto'
+          component={PartnerOnboardPhoto}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='PartnerOnboardStripe'
+          component={PartnerOnboardStripe}
+          initialParams={{}}
+        />
+                <Stack.Screen
+          name='PartnerOnboardStripeQuestions'
+          component={PartnerOnboardStripeQuestions}
           initialParams={{}}
         />
 
-        {/* <Stack.Screen
-          name='Waitlist'
-          component={Waitlist}
-          initialParams={{}}
-        /> */}
-        {/*
-        <Stack.Screen
-          name=''
-          component={}
-          initialParams={{}}
-        />
-        */}
       </Stack.Navigator>
     </NavigationContainer>
   )

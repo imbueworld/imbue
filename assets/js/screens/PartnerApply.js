@@ -3,15 +3,10 @@ import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View, Platform } fr
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from "../components/AppBackground"
 import CompanyLogo from "../components/CompanyLogo"
-import CustomTextInput from "../components/CustomTextInput"
-import CustomButton from "../components/CustomButton"
 import CustomCapsule from "../components/CustomCapsule"
-import { handleAuthErrorAnonymous } from '../backend/HelperFunctions'
-import SocialLogin from '../components/SocialLogin'
-import { StackActions, useNavigation } from '@react-navigation/native'
+import { useNavigation } from '@react-navigation/native'
 import BackButton from '../components/BackButton'
 import auth from '@react-native-firebase/auth'
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
 import { colors, simpleShadow } from '../contexts/Colors'
 import ForwardButton from '../components/ForwardButton'

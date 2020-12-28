@@ -57,7 +57,7 @@ export default function PartnerDashboard(props) {
         >
           Thank you so much for applying to showcase you're fitness content on imbue.
 
-          We'll email you withn 12 hours if we think you're a great fit!
+          We'll email you withn 12 hours with our response!
           </Text>
       </View>
     </ProfileLayout >

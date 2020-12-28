@@ -30,7 +30,9 @@ export default function Boot(props) {
     // console.log("await user.retrieveUser(): ", await user.retrieveUser())
     const { account_type } = await user.retrieveUser()
     const { approved } = await user.retrieveUser()
-    console.log("accounttype: ", account_type)
+    const { phone } = await user.retrieveUser()
+    const { associated_classes } = await user.retrieveUser()
+    const { dob } = await user.retrieveUser()
 
     // // Waitlist stuff:
     // // Determine whether to let in or not
@@ -66,29 +68,49 @@ console.log({user})
 
     switch (account_type) {
       case "user":
-        navigation.reset({
+        if (dob) {navigation.reset({
           index: 0,
           routes: [{ name: "UserDashboard" }],
-        })
-        break;
-
+        });
+        break
+      }
+      else if (!dob)
+      {navigation.reset({
+        index: 0,
+        routes: [{ name: "UserOnboard" }],
+      });
+      break
+    }
       case "partner":
-        if (approved) {
-          navigation.reset({
-            index: 0,
-            routes: [{ name: "PartnerDashboard" }],
-          })
-          break
-        }
-        else if (!approved) {
+         if (!approved) {
           navigation.reset({
             index: 0,
             routes: [{ name: "postApplicationUnverifiedPartner" }],
           });
           break
         }
-        else
+        else if (approved && !phone) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "PartnerOnboard" }],
+          })
           break
+        }
+        else if (approved && associated_classes) {
+          navigation.reset({
+            index: 0,
+            // Send to flow to create & schedule page
+            routes: [{ name: "PartnerOnboardCreateClass" }],
+          })
+          break
+        }
+        else if (approved && phone) {
+          navigation.reset({
+            index: 0,
+            routes: [{ name: "PartnerDashboard" }],
+          })
+          break
+        }
       default:
         navigation.reset({
           index: 0,

@@ -82,15 +82,14 @@ export default function ProfileSettings(props) {
   }, [user])
 
   const [redFields, setRedFields] = useState([])
-  // const [errorMsg, setErrorMsg] = useState("")
+
   const [successMsg, setSuccessMsg] = useState("")
   const [changing, change] = useState("safeInfo") // || "password"
 
   const [firstNameField, setFirstNameField] = useState("")
   const [lastNameField, setLastNameField] = useState("")
   const [emailField, setEmailField] = useState("")
-  // const [passwordField, setPasswordField] = useState("")
-  //
+
   const [dob, setDob] = useState("")
   const { register, handleSubmit, setValue, errors } = useForm()
 
@@ -153,13 +152,8 @@ export default function ProfileSettings(props) {
   const [address, setAddress] = useState('')
   const [phone, setPhone] = useState('')
   const [ssn_last_4, setSSNLast4] = useState('')
-  // Company type of data, for partner accounts
-  // const [company_address, setCompanyAddress] = useState('')
-  // const [company_name, setCompanyName] = useState('')
-  // const [tax_id, setTaxId] = useState('')
 
-  const [changePasswordField, setChangePasswordField] = useState("")
-  const [changePasswordFieldConfirm, setChangePasswordFieldConfirm] = useState("")
+
 
   useEffect(() => {
     let redFields = []
@@ -273,8 +267,8 @@ export default function ProfileSettings(props) {
 
     //
     if (dob.split('-').length != 3) redFields.push('dob')
-    auditField(addressText, 'address')
-    auditField(phoneText, 'phone')
+    auditField(address, 'address')
+    auditField(phone, 'phone')
     auditField(ssn_last_4, 'ssn_last_4')
     // auditField(company_name, 'company_name')
     // auditField(companyAddressText, 'company_address')
@@ -421,62 +415,17 @@ export default function ProfileSettings(props) {
 
   if (!user || isForeignUser === undefined) return <View />
 
+
   return (
     <ProfileLayout
-      innerContainerStyle={{
-        paddingBottom: 10,
-      }}
-      buttonOptions={{
-        editPfp: {
-          show: true,
-        },
-      }}
-    >
-      {changing === "safeInfo"
-        ? <CustomButton
-          style={styles.button}
-          textStyle={styles.buttonText}
-          title="Change password"
-          onPress={() => change("password")}
-        />
-        : <CustomButton
-          style={styles.button}
-          textStyle={styles.buttonText}
-          title="Change profile data"
-          onPress={() => change("safeInfo")}
-        />}
+      hideBackButton={true}>
 
-      {user.account_type == 'partner' &&
-        <>
-          {/* <CustomButton
-          style={styles.button}
-          textStyle={styles.buttonText}
-          title="Memberships"
-          onPress={() => navigation.navigate('PartnerUpdateMemberships')}
-        /> */}
-
-          <CustomButton
-            // icon={
-            //   <Icon
-            //     source={require("../components/img/png/ellipsis.png")}
-            //   /> 
-            // }
-            style={styles.button}
-            textStyle={styles.buttonText}
-            title='Custom Brodcasting'
-            onPress={() => props.navigation.navigate(
-              "customRTMP"
-            )}
-          />
-          <CustomButton
-            style={styles.button}
-            textStyle={styles.buttonText}
-            title="Memberships"
-            onPress={() => navigation.navigate('PartnerUpdateMemberships')}
-          />
-
-        </>
-      }
+      <View>
+        <Text
+          style={styles.profileName}>
+          {user.name}
+        </Text>
+      </View>
 
       {errorMsg
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>
@@ -491,24 +440,7 @@ export default function ProfileSettings(props) {
               this information used only to connect with stripe so we can accecpt and process your payments with stripe.
           </Text>
           </View>
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("first")
-                ? "red" : undefined
-            }}
-            placeholder="First Name"
-            value={firstNameField}
-            onChangeText={setFirstNameField}
-          />
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("last")
-                ? "red" : undefined
-            }}
-            placeholder="Last Name"
-            value={lastNameField}
-            onChangeText={setLastNameField}
-          />
+
           <CustomTextInput
             containerStyle={{
               borderColor: redFields.includes("email")
@@ -518,7 +450,6 @@ export default function ProfileSettings(props) {
             value={emailField}
             onChangeText={setEmailField}
           />
-
           <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('dob')}
@@ -550,36 +481,7 @@ export default function ProfileSettings(props) {
                 setPhone(text)
               }}
             />
-            {/* <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('company_name')}
-            placeholder='Company Name'
-            value={company_name}
-            onChangeText={text => {
-              setValue('company_name', text)
-              setCompanyName(text)
-            }}
-          /> */}
-            {/* <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('company_address')}
-            placeholder='Company Address'
-            value={company_address}
-            onChangeText={text => {
-              setValue('company_address', text)
-              setCompanyAddress(text)
-            }}
-          /> */}
-            {/* <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('tax_id')}
-            placeholder='Tax ID'
-            value={tax_id}
-            onChangeText={text => {
-              setValue('tax_id', text)
-              setTaxId(text)
-            }}
-          /> */}
+
             <CustomTextInputV2
               containerStyle={styles.inputField}
               red={redFields.includes('ssn_last_4')}
@@ -596,7 +498,7 @@ export default function ProfileSettings(props) {
               ...FONTS.subtitle,
               textAlign: "center",
               fontSize: 22,
-            }}>Payouts</Text>
+            }}>Add bank account</Text>
 
             <Text style={styles.error}>{errorMsg}</Text>
 
@@ -605,94 +507,30 @@ export default function ProfileSettings(props) {
                 onError={setErrorMsg}
                 onSuccess={() => refresh(r => r + 1)}
               />
+              <Text
+              style={styles.miniText}>
+                or
+              </Text>
               <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded} />
             </> : <>
                 <Text style={styles.confirmation}>Your bank account has been linked.</Text>
               </>
             }
 
-            <Text style={FONTS.body}>In order to receive payouts, you must also make sure to have provided all necessary information in the Profile Settings.</Text>
           </>}
         </>
         : null}
-
-      {changing === "password"
-        ? <>
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("change_password")
-                ? "red" : undefined
-            }}
-            placeholder="Password"
-            value={changePasswordField}
-            onChangeText={setChangePasswordField}
-          />
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("change_password_confirm")
-                ? "red" : undefined
-            }}
-            placeholder="Password Confirmation"
-            value={changePasswordFieldConfirm}
-            onChangeText={setChangePasswordFieldConfirm}
-          />
-        </>
-        : null}
-
-
-      {/* {!isForeignUser &&
-      <CustomTextInput
-        containerStyle={{
-          borderColor: redFields.includes("main_password")
-            || redFields.includes('password')
-              ? "red" : undefined
-        }}
-        placeholder="Current Password"
-        value={passwordField}
-        onChangeText={text => {
-          setPasswordField(text)
-          setValue('password', text)
-        }}
-      />} */}
-      {/* <CustomTextInput
-        placeholder="Confirm Password"
-        value={confPasswordField}
-        onChangeText={setConfPasswordField}
-      /> */}
-
-
       <CustomButton
         style={styles.button}
-        title="Save"
-        onPress={handleDOB}
+        title="Finish 
+        Your Account!"
+        onPress={updateSafeInfoForPartner}
       />
-
-      {/* <CustomButton
-        style={styles.button}
-        title="Save"
-        onPress={changing == 'safeInfo'
-          ? user.account_type == 'partner'
-              ? handleSubmit(updateSafeInfoForPartner)
-              : handleSubmit(updateSafeInfoForUser)
-          : () => updatePassword()}
-      /> */}
     </ProfileLayout>
   )
 }
 
 const styles = StyleSheet.create({
-  button: {
-    paddingVertical: 20,
-    marginHorizontal: 5,
-    borderRadius: 35
-  },
-  buttonText: {
-    fontSize: 14,
-  },
-  inputField: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
   text: {
     paddingVertical: 8,
     alignSelf: "center",
@@ -700,12 +538,13 @@ const styles = StyleSheet.create({
   },
   textContainer: {
     marginVertical: 10,
+    marginStart: 5,
+    marginEnd: 5,
   },
   miniText: {
-    // ...config.styles.body,
-    ...FONTS.body,
+    ...config.styles.body,
     fontSize: 12,
-    textAlign: 'justify',
+    alignSelf: "center",
   },
   confirmation: {
     ...config.styles.body,
@@ -718,10 +557,21 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
   },
-  scrollView: {
-    flex: 1,
-    backgroundColor: 'transparent',
-    // alignItems: 'center',
-    // justifyContent: 'center',
+  profileName: {
+    marginTop: 15,
+    marginBottom: 10,
+    alignSelf: "center",
+    ...FONTS.luloClean,
+    fontSize: 16,
   },
+  forwardButtonContainer: {
+    marginBottom: 30,
+    alignSelf: "flex-end",
+    marginEnd: 5,
+    backgroundColor: "#ffffff",
+    marginTop: 5,
+    position: "absolute",
+    bottom: 0,
+    right: 0,
+  }
 })
