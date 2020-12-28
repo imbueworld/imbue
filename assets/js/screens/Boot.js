@@ -68,13 +68,13 @@ console.log({user})
 
     switch (account_type) {
       case "user":
-        if (dob) {navigation.reset({
+        if (user.dob) {navigation.reset({
           index: 0,
           routes: [{ name: "UserDashboard" }],
         });
         break
       }
-      else if (!dob)
+      else if (!user.dob)
       {navigation.reset({
         index: 0,
         routes: [{ name: "UserOnboard" }],
