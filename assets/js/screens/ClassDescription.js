@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Alert, TouchableHighlight, ScrollView } from 'react-native'
+import { StyleSheet, View, Text, Alert, TouchableHighlight, TouchableOpacity,ScrollView } from 'react-native'
 
 import CustomButton from "../components/CustomButton"
 // import CustomPopup from "../components/CustomPopup"
@@ -292,7 +292,7 @@ export default function ClassDescription(props) {
               if (clss.time_id == timeId) {
               } else {
                 newTimes.push(clss)
-              }
+              } 
             })
           }
         });
@@ -317,12 +317,12 @@ export default function ClassDescription(props) {
 
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
-      <GymLayout
+      <GymLayout 
         containerStyle={styles.container}
         innerContainerStyle={styles.innerContainerStyle}
         data={gym}
         classData={classId, timeId}
-        buttonOptions={{
+        buttonOptions={{ 
           goToLivestream: getGoToLivestreamButton(),
           // addToCalendar: {
           //   show: hasMembership && user.account_type == 'user' && !classHasPassed,
@@ -606,25 +606,25 @@ export default function ClassDescription(props) {
             // backgroundColor: "red",
           }}
         /> : null}
-
-      {user.account_type === 'parnter' ?
+      
+      {user.account_type == 'partner' ?
         <>
-              // Edit Class
-          <TouchableHighlight onPress={() => setEditShow(!editShow)}
+         {/* Edit Class */}
+          <TouchableOpacity onPress={() => setEditShow(!editShow)}
           >
             <Text style={{
               width: "100%",
               textAlign: "center",
               marginTop: hp('2%'),
               marginBottom: hp('1%'),
-              color: '#1AA0FB',
+              color: colors.darkButtonText,
               ...FONTS.body,
               fontSize: 10,
             }}>Edit</Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
 
-          // Delete Class 
-          <TouchableHighlight onPress={() =>
+          {/* Delete Class  */}
+          <TouchableOpacity onPress={() =>
             Alert.alert(
               "Are you sure you wish to delete this class",
               "All instances of this class will be removed from your schedule",
@@ -644,11 +644,11 @@ export default function ClassDescription(props) {
               width: "100%",
               textAlign: "center",
               marginTop: hp('1%'),
-              color: 'red',
+              color: colors.darkButtonText,
               ...FONTS.body,
               fontSize: 10,
             }}>Remove</Text>
-          </TouchableHighlight>
+          </TouchableOpacity>
         </>
         : null}
     </ScrollView>
@@ -671,7 +671,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderRadius: 30,
     borderWidth: 1,
-    borderColor: colors.gray,
+    borderColor: colors.gray, 
   },
   // nameContainer: {
   //   marginTop: 20,

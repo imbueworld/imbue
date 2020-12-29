@@ -28,8 +28,8 @@ export default function LogOutButton(props) {
       backgroundColor: "white",
       borderRadius: 999,
       zIndex: 110,
-      ...simpleShadow,
-      ...containerStyle,
+      // ...simpleShadow,
+      // ...containerStyle,
     }}>
       <TouchableHighlight
         style={{
@@ -37,9 +37,9 @@ export default function LogOutButton(props) {
           height: 48,
           // padding: 10,
           // left: 2,
-          borderRadius: 999,
+          // borderRadius: 999,
         }}
-        underlayColor="#00000020"
+        // underlayColor="#00000020"
         onPress={onPress}
         onLongPress={onLongPress}
       >

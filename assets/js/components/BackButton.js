@@ -13,7 +13,7 @@ export default function BackButton(props) {
 
   return (
     <View style={{
-      ...simpleShadow,
+      // ...simpleShadow,
       // backgroundColor: "white",
       borderRadius: 999,
       ...style,

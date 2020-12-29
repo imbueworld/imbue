@@ -12,6 +12,7 @@ import {
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
 import Icon from '../components/Icon'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 import {
@@ -251,7 +252,7 @@ export default function ScheduleViewer(props) {
           borderTopLeftRadius: 0,
           borderTopRightRadius: 0,
           paddingTop: 0,
-          marginTop: 40,
+          marginTop: 10,
           marginBottom: 0,
         }}
         innerContainerStyle={{
@@ -262,14 +263,15 @@ export default function ScheduleViewer(props) {
       >
         <View style={{
           flexDirection: "row",
-          height: 80,
+          height: 50,
           alignItems: "center",
           justifyContent: "center",
         }}>
           <GoBackButton
             containerStyle={{
-              position: "absolute",
-              left: 15,
+              position: "absolute", 
+              top: 0,
+              left: 5,
             }}
             imageContainerStyle={{
               width: 48,
@@ -279,21 +281,21 @@ export default function ScheduleViewer(props) {
           <View style={{
             position: "absolute"
           }}>
-          <Text style={{
-            width: "100%",
-            textAlign: "center",
-            marginBottom: 70,
-            ...FONTS.body,
-            fontSize: 30,
-          }}>{title}</Text>
-          {subtitle ?
-          <Text style={{
-            width: "100%",
-            ...FONTS.body,
-            textAlign: "center",
-            fontSize: 18,
-            marginBottom: -10
-          }}>{subtitle}</Text> : null}
+            <Text style={{
+              width: "100%",
+              textAlign: "center",
+              marginBottom: 10,
+              ...FONTS.body,
+              fontSize: 20,
+            }}>{title}</Text>
+            {/* {subtitle ?
+            <Text style={{
+              width: "100%",
+              ...FONTS.body,
+              textAlign: "center",
+              fontSize: 18,
+              marginBottom: -10
+            }}>{subtitle}</Text> : null} */}
           </View>
         {/*           
           {user.account_type === "partner" ?
@@ -316,28 +318,29 @@ export default function ScheduleViewer(props) {
 
       {user.account_type === "partner" ?
         <View style={styles.capsule }>
-              <CustomButton
-
-                style = {{marginBottom: 0}}
-                title="Create Class"
-                onPress={() => props.navigation.navigate(
-                  "PartnerCreateClass"
-                )} 
-            />
             <CustomButton
-
-                style = {{marginBottom: 0}}
-                title="Edit Classes"
-                onPress={() => props.navigation.navigate(
-                  "PartnerEditClasses"
-                )}
-              />
+              style = {{marginBottom: 0}}
+              title="Create Class"
+              onPress={() => props.navigation.navigate(
+                "PartnerCreateClass"
+              )} 
+            />
+            <View style={{flex: 1, flexDirection: 'row', marginBottom: 10}}>
               <CustomButton
-                title="Schedule Class"
-                onPress={() => props.navigation.navigate(
-                  "SchedulePopulate" 
-                )}
-              />
+                  style = {{marginBottom: 0, marginRight: 5, width: wp('45%'), alignItems: 'stretch'}}
+                  title="Edit"
+                  onPress={() => props.navigation.navigate(
+                    "PartnerEditClasses"
+                  )}
+                />
+                <CustomButton
+                  style = {{marginBottom: 0, marginLeftt: 5, width: wp('45%')}}
+                  title="Schedule"
+                  onPress={() => props.navigation.navigate(
+                    "SchedulePopulate" 
+                  )}
+                />
+              </View>
             </View>
           : null}
       

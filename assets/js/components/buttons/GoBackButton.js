@@ -24,14 +24,14 @@ export default function GoBackButton(props) {
       backgroundColor: "white",
       borderRadius: 999,
       zIndex: 110,
-      ...simpleShadow,
+      // ...simpleShadow,
       ...containerStyle,
     }}>
       <TouchableHighlight
         style={{
           borderRadius: 999,
         }}
-        underlayColor="#00000020"
+        // underlayColor="#00000020"
         onPress={onPress}
       >
         <Icon

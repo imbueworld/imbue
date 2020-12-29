@@ -322,7 +322,7 @@ export default function EditClassForm(props) {
 
       {/* <CustomButton
         title="Add Photo"
-        onPress={editClassPhoto}
+        onPress={editClassPhoto} 
       />  */}
       <CustomTextInput
         containerStyle={{
@@ -486,7 +486,7 @@ export default function EditClassForm(props) {
                 width: "100%",
                 textAlign: "center",
                 marginTop: hp('1%'),
-                color: 'red',
+                color: colors.darkButtonText,
                 ...FONTS.body,
                 fontSize: 10,
             }}>Remove</Text>

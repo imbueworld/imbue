@@ -14,6 +14,9 @@ import AppBackground from '../components/AppBackground'
 import Icon from '../components/Icon'
 import EditButton from '../components/buttons/EditButton'
 import { useFocusEffect } from '@react-navigation/native';
+import QuestionMark from '../components/img/svg/question-mark.svg';
+import SvgUri from 'react-native-svg-uri';
+
 
 import auth from "@react-native-firebase/auth"
 import { GoogleSignin } from '@react-native-community/google-signin'
@@ -131,26 +134,73 @@ export default function ProfileLayout(props) {
           keyboardShouldPersistTaps='handled'
         >
           <AppBackground />
-          <TouchableOpacity
-                onPress={() => navigation.navigate('help')}
-                containerStyle={{
-                  alignSelf: "center",
-                }}
-              >
-                <Icon
-                  containerStyle={{
-                    marginLeft: 15,
-                  }}
-                  source={require("../components/img/png/help.png")}
-                />
-              </TouchableOpacity>
 
-          <View style={{
+
+          {/* <View style={{flex: 1, flexDirection: 'row'}}> */}
+            {!buttonOptions.goBack.show || props.hideBackButton ? null :
+              <TouchableHighlight
+                style={styles.sidePanelButtonContainer}
+                // underlayColor="#eed"
+                onPress={props.onBack || (() => navigation.goBack())}
+              >
+                <BackButton
+                  imageStyle={{
+                    width: 47,
+                    height: 47,
+                  }}
+                /> 
+            </TouchableHighlight>}
+          {/* </View> */}
+
+            {/* Help and logout buttons */}
+            <View style={{flex: 1, position: "absolute",  right: 0, flexDirection: 'row-reverse', paddingRight: 10, marginTop: 10, marginRight: 10 }}>
+
+              <View>
+                {buttonOptions.logOut.show ?
+                  <LogOutButton
+                    containerStyle={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+  
+                    }}
+                    onPress={buttonOptions.logOut.onPress}
+                    onLongPress={buttonOptions.logOut.onLongPress}
+                  /> : null}
+                </View>
+
+              <View>
+                <TouchableOpacity
+                    onPress={() => navigation.navigate('help')}
+                    containerStyle={{
+                      alignSelf: "center",
+                      width: 30,
+                      height: 30,
+                      marginLeft: 10,
+                    }}
+                  >
+                    <Icon
+                      containerStyle={{
+                      width: 30,
+                      height: 30,
+                      position: "absolute",
+                      top: 10,
+                      right: 0
+
+                      }}
+                      source={require("../components/img/png/question-mark.png")}
+                    />
+                </TouchableOpacity>
+              </View>
+              
+            </View>
+
+          <View style={{ marginTop: 20
           }}>
             <Icon
               containerStyle={{
-                width: 200,
-                height: 200,
+                width: 180,
+                height: 180,
                 position: "absolute",
                 alignSelf: "center",
                 borderRadius: 999,
@@ -161,8 +211,8 @@ export default function ProfileLayout(props) {
               source={{ uri: user.icon_uri_full }}
             />
             <View style={{
-              width: 200,
-              height: 200,
+              width: 180,
+              height: 180,
               position: "absolute",
               alignSelf: "center",
               alignItems: "center",
@@ -172,7 +222,7 @@ export default function ProfileLayout(props) {
               {buttonOptions.editPfp.show
                 ? <EditButton
                   containerStyle={{
-                    top: 145,
+                    top: 135,
                     left: 65,
                   }}
                   onPress={editPfp}
@@ -187,7 +237,7 @@ export default function ProfileLayout(props) {
             <CustomCapsule
               style={[
                 {
-                  marginTop: 115,
+                  marginTop: 100,
                   width: "88%",
                   alignSelf: "center",
                 },
@@ -206,30 +256,6 @@ export default function ProfileLayout(props) {
                 ? <Text style={{ color: "red" }}>{errorMsg}</Text>
                 : null}
 
-              {!buttonOptions.goBack.show || props.hideBackButton ? null :
-                <TouchableHighlight
-                  style={styles.sidePanelButtonContainer}
-                  underlayColor="#eed"
-                  onPress={props.onBack || (() => navigation.goBack())}
-                >
-                  <BackButton
-                    imageStyle={{
-                      width: 47,
-                      height: 47,
-                    }}
-                  />
-                </TouchableHighlight>}
-
-              {buttonOptions.logOut.show ?
-                <LogOutButton
-                  containerStyle={{
-                    position: "absolute",
-                    top: 10,
-                    right: 10,
-                  }}
-                  onPress={buttonOptions.logOut.onPress}
-                  onLongPress={buttonOptions.logOut.onLongPress}
-                /> : null}
 
               {route === 'PartnerDashboard' ?
                 <>
@@ -270,7 +296,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   sidePanelButtonContainer: {
-    ...simpleShadow,
+    // ...simpleShadow,
     backgroundColor: "white",
     marginTop: 10,
     marginLeft: 10,

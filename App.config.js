@@ -10,7 +10,7 @@ const config = {
     GoBackButton_screenDefault: {
       position: 'absolute',
       top: 40,
-      left: 10,
+      left: 0,
     },
     GoBackButton_rightSide_screenDefault: {
       position: 'absolute',

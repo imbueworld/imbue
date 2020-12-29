@@ -204,7 +204,7 @@ export default function GymLayout(props) {
       {/* Back Button */}
       <View style={{
         position: "absolute",
-        top: 10,
+        top: 0,
         left: 15,
       }}>
         {buttonOptions.goBackButton.show

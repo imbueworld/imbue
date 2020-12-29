@@ -27,6 +27,8 @@ target 'imbue' do
 
   pod 'Plaid', '~> 2.0.6'
 
+  pod 'RNSVG', :path => '../node_modules/react-native-svg'
+
   target 'imbueTests' do
     inherit! :complete
     # Pods for testing
