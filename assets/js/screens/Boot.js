@@ -95,14 +95,14 @@ export default function Boot(props) {
           })
           break
         }
-        // else if (approved && associated_classes) {
-        //   navigation.reset({
-        //     index: 0,
-        //     // Send to flow to create & schedule page
-        //     routes: [{ name: "PartnerOnboardCreateClass" }],
-        //   })
-        //   break
-        // }
+        else if (approved && associated_classes) {
+          navigation.reset({
+            index: 0,
+            // Send to flow to create & schedule page - not created yet
+            routes: [{ name: "PartnerDashboard" }],
+          })
+          break
+        }
         else if (approved && phone) {
           navigation.reset({
             index: 0,
