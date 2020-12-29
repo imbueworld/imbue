@@ -38,12 +38,13 @@ export default function UserOnboard(props) {
     setUpdating(true)
     let redFields = []
 
-    if (!userId) {
-      return
-    }
 
     if (dob.length != 10) redFields.push('dob')
     const DateMoment = moment(dob, 'MM-DD-YYYY')
+
+    if (!userId) {
+      return
+    }
 
     if (redFields.length) {
       setRedFields(redFields)
@@ -89,11 +90,9 @@ export default function UserOnboard(props) {
     async function init() {
       const user = new User()
       const userDoc = await user.retrieveUser()
-      console.log("user: ", user)
-      console.log("userDoc.id: ", userDoc.id)
-      setUserId(userDoc.id)
+      setUserId(user.uid)
     }; init()
-  }, [])
+  }, [updating])
 
   const wait = (timeout) => {
     return new Promise(resolve => {
