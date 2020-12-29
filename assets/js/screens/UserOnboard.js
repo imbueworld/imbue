@@ -8,6 +8,7 @@ import CustomTextInputV2 from "../components/CustomTextInputV2"
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import ForwardButton from '../components/ForwardButton'
 import { simpleShadow, colors } from '../contexts/Colors'
+import { handleAuthError } from '../backend/HelperFunctions'
 
 import User from '../backend/storage/User'
 import { FONTS } from '../contexts/Styles'
@@ -15,81 +16,70 @@ import config from '../../../App.config'
 import { useNavigation } from '@react-navigation/native'
 import functions from '@react-native-firebase/functions'
 import firestore from '@react-native-firebase/firestore';
-
+import { text } from 'react-native-communications'
+import moment from 'moment'
 
 
 export default function UserOnboard(props) {
   const [user, setUser] = useState(null)
-  const [errorMsg, setErrorMsg] = useState('')
   const navigation = useNavigation()
   const [refreshing, setRefreshing] = React.useState(false);
   const [dob, setDob] = useState("")
+  const [userId, setUserId] = useState("")
+  const [errorMsg, setErrorMsg] = useState('')
+  const [redFields, setRedFields] = useState([])
+  const [successMsg, setSuccessMsg] = useState("")
+  const [updating, setUpdating] = useState(false)
+
 
   const [r, refresh] = useState(0)
 
-  const updateSafeInfoForUser = async () => {
-    setErrorMsg('')
-    setSuccessMsg('')
-
+  const updateDobForUser = async () => {
+    setUpdating(true)
     let redFields = []
 
-    // let {
-    //   dob,
-    // } = reactNativeForm
+    if (!userId) {
+      return
+    }
 
-    if (firstNameField.length === 0) redFields.push("first")
-    if (lastNameField.length === 0) redFields.push("last")
-    if (emailField.length === 0) redFields.push("email")
-    // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
-    if (dob.split('-').length != 3) redFields.push('dob')
-
-
-
+    if (dob.length != 10) redFields.push('dob')
     const DateMoment = moment(dob, 'MM-DD-YYYY')
 
+    if (redFields.length) {
+      setRedFields(redFields)
+      setErrorMsg("Dob needs to look like: 00-00-0000 ")
+      return
+    } else {
+      setSuccessMsg("Success!")
+    }
+
+    console.log("userID: ", userId)
+
+    let dobInfo = {
+      day: DateMoment.date(),
+      month: DateMoment.month() + 1,
+      year: DateMoment.year(),
+    }
+
     try {
-      // if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
-      let updatables = {
-        dob: {
-          day: DateMoment.date(),
-          month: DateMoment.month() + 1,
-          year: DateMoment.year(),
-        },
-      }
+      firestore()
+        .collection('users')
+        .doc(userId)
+        .update({
+          dob: dobInfo,
+        })
+        .then(() => {
+          console.log('User added!');
+      });
 
-      if (firstNameField !== user.first) {
-        updatables.first = firstNameField
-        updatables.name = `${firstNameField} ${user.last}` // Upadting the helper property
-      }
-      if (lastNameField !== user.last) {
-        updatables.last = lastNameField
-        updatables.name = `${user.first} ${lastNameField}` // Upadting the helper property
-      }
-      if (emailField !== user.email) {
-        updatables.email = emailField
-        await auth().currentUser.updateEmail(emailField)
-      }
-
-      // Return if no fields to update.
-      if (!Object.keys(updatables).length) {
-        setSuccessMsg('All information is up to date.')
-        return
-      }
-
-      if (config.DEBUG) p('updatables', updatables)
-
-      const userObj = new User()
-      await userObj.init()
-      userObj.mergeItems(updatables)
-      await userObj.push()
-
-      setSuccessMsg('Successfully updated profile information.')
       // setPasswordField('')
-      Keyboard.dismiss()
+      // Keyboard.dismiss()
     } catch (err) {
-      if (config.DEBUG) console.error(err)
-      let [errorMsg, redFields] = handleAuthError(err)
-      setErrorMsg(errorMsg)
+      console.log('User not added!');
+      console.log('error: !', err);
+      // if (config.DEBUG) console.error(err)
+      // let [errorMsg, redFields] = handleAuthError(err)
+      // setErrorMsg(errorMsg)
     }
     navigation.navigate('UserDashboard')
   }
@@ -99,9 +89,11 @@ export default function UserOnboard(props) {
     async function init() {
       const user = new User()
       const userDoc = await user.retrieveUser()
-
+      console.log("user: ", user)
+      console.log("userDoc.id: ", userDoc.id)
+      setUserId(userDoc.id)
     }; init()
-  }, [r])
+  }, [])
 
   const wait = (timeout) => {
     return new Promise(resolve => {
@@ -113,13 +105,26 @@ export default function UserOnboard(props) {
     setRefreshing(true);
     const user = new User()
     const userDoc = await user.retrieveUser()
+    
     setUser(userDoc)
     wait(2000).then(() => setRefreshing(false));
 
   }, []);
 
-  if (!user === undefined) return <View />
+  // adds hyphens in text input
+  const handleDOB = (text) => {
+    if (text.length == 2) {
+      text = text += "-"
+      return text
+    } else if (text.length == 5) {
+      text = text += "-"
+      return text
+    }
 
+    return text
+  }
+
+  if (!user === undefined) return <View />
 
   return (
     <>
@@ -149,20 +154,25 @@ export default function UserOnboard(props) {
         </Text>
         </View>
 
+        {errorMsg
+        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
+        : <Text style={{ color: "green" }}>{successMsg}</Text>}
+
         <CustomTextInputV2
-            containerStyle={styles.inputField}
-            // red={redFields.includes('dob')}
-            // keyboardType='numeric'
-            placeholder='Date of Birth (MM-DD-YYYY)'
-            value={dob}
-            // onChangeText={(text) => console.log("text: ", text)}
-            onChangeText={setDob}
-          />
+          containerStyle={styles.inputField}
+          keyboardType='numeric'
+          value={dob}
+          maxLength={10}
+          placeholder='Date of Birth (MM-DD-YYYY)'
+          onChangeText={(text) => 
+              setDob(handleDOB(text))
+          }
+        />
 
         <View>
           <CustomButton
-          title='Finish Creating Your Account'
-          onPress={updateSafeInfoForUser}
+          title='Finish Setup'
+          onPress={updateDobForUser}
           />
         </View>
 
