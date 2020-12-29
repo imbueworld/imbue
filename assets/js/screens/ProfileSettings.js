@@ -466,19 +466,14 @@ export default function ProfileSettings(props) {
 
       {user.account_type == 'partner' &&
          <>
-         {/* <CustomButton
+         <CustomButton
           style={styles.button}
           textStyle={styles.buttonText}
           title="Memberships"
           onPress={() => navigation.navigate('PartnerUpdateMemberships')}
-        /> */}
+        />
                 
         <CustomButton
-        // icon={
-        //   <Icon
-        //     source={require("../components/img/png/ellipsis.png")}
-        //   /> 
-        // }
         style={styles.button}
         textStyle={styles.buttonText}
         title='Custom Brodcasting'
@@ -522,81 +517,7 @@ export default function ProfileSettings(props) {
             value={emailField}
             onChangeText={setEmailField}
           />
-
-          <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('dob')}
-            // keyboardType='numeric'
-            placeholder='Date of Birth (MM-DD-YYYY)'
-            value={dob}
-            // onChangeText={(text) => console.log("text: ", text)}
-            onChangeText={setDob} 
-          />
-
-          {user.account_type == 'partner' && <>
-          <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('address')}
-            placeholder='Personal Address'
-            value={address}
-            onChangeText={text => {
-              setValue('address', text)
-              setAddress(text) 
-            }}
-          />
-          <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('phone')}
-            placeholder='Phone'
-            value={phone}
-            onChangeText={text => {
-              setValue('phone', text)
-              setPhone(text)
-            }}
-          />
-          {/* <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('company_name')}
-            placeholder='Company Name'
-            value={company_name}
-            onChangeText={text => {
-              setValue('company_name', text)
-              setCompanyName(text)
-            }}
-          /> */}
-          {/* <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('company_address')}
-            placeholder='Company Address'
-            value={company_address}
-            onChangeText={text => {
-              setValue('company_address', text)
-              setCompanyAddress(text)
-            }}
-          /> */}
-          {/* <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('tax_id')}
-            placeholder='Tax ID'
-            value={tax_id}
-            onChangeText={text => {
-              setValue('tax_id', text)
-              setTaxId(text)
-            }}
-          /> */}
-          <CustomTextInputV2
-            containerStyle={styles.inputField}
-            red={redFields.includes('ssn_last_4')}
-            placeholder='SSN Last 4'
-            value={ssn_last_4}
-            onChangeText={text => {
-              setValue('ssn_last_4', text)
-              setSSNLast4(text)
-            }}
-          />
-          </>}
-          </>
-        : null}
+          </>: null}
 
       {changing === "password"
         ? <>
