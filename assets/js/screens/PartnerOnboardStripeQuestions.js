@@ -30,7 +30,6 @@ export default function ProfileSettings(props) {
   const [isForeignUser, setIsForeignUser] = useState()
   const navigation = useNavigation()
   const [gym, setGym] = useState(null)
-  const [hasBankAccountAdded, setHasBankAccountAdded] = useState()
   const [errorMsg, setErrorMsg] = useState('')
   const [refreshing, setRefreshing] = React.useState(false);
   const [r, refresh] = useState(0)
@@ -49,8 +48,6 @@ export default function ProfileSettings(props) {
       ).map(it => it.getAll())[0]
       setUser(userDoc)
       setGym(gym)
-      setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
-      // setHasBankAccountAdded(true)
 
       console.log("user (useEffect): ", user)
 
@@ -357,20 +354,6 @@ export default function ProfileSettings(props) {
 
             <Text style={styles.error}>{errorMsg}</Text>
 
-            { !hasBankAccountAdded ? <>
-              <BankAccountFormWithButtonEntry
-                onError={setErrorMsg}
-                onSuccess={() => refresh(r => r + 1)}
-              />
-              <Text
-                style={styles.miniText}>
-                or
-              </Text>
-              <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded} />
-            </> : <>
-                <Text style={styles.confirmation}>Your bank account has been linked.</Text>
-              </>
-            }
       <CustomButton
         style={styles.button}
         title="Finish 
