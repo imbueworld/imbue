@@ -10,10 +10,11 @@ import { simpleShadow, colors } from '../contexts/Colors'
 import { zeroDecimalFromCurrency } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
+import { useNavigation } from '@react-navigation/native'
 
 import ImagePicker from 'react-native-image-picker'
 import firestore from '@react-native-firebase/firestore'
-import storage from '@react-native-firebase/storage'
+import storage from '@react-native-firebase/storage' 
 
 
 export default function NewClassForm(props) {
@@ -36,15 +37,18 @@ export default function NewClassForm(props) {
 
   const [price, setPrice] = useState("$0.00")
 
+  let navigation = useNavigation()
+
+
   useEffect(() => {
     const init = async () => { 
-      const newClassForm = snatchNewClassForm()
+      const newClassForm = snatchNewClassForm() 
 
       setInstructor(newClassForm.instructor)
       setName(newClassForm.name)
       setImg(newClassForm.img)
       setDescription(newClassForm.description)
-      setPriceType(newClassForm.priceType)
+      setPriceType("free")
       // setGenres(newClassForm.genres || [])
       // setType(newClassForm.type || "studio")
       setGymId(newClassForm.gym_id || null)
@@ -389,6 +393,12 @@ export default function NewClassForm(props) {
             classObj.create(form)   
 
             setSuccessMsg("Successfully created class.")
+
+             // go back
+            setTimeout(
+              () => {  navigation.goBack() },
+              1500
+            )
           } catch (err) {
             setErrorMsg(err.message)
           }

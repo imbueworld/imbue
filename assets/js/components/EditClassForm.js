@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { StyleSheet, View, Text, Platform, Alert } from 'react-native'
+import { StyleSheet, View, Text, Platform, Alert, TouchableOpacity } from 'react-native'
 import CustomTextInput from './CustomTextInput'
 import CustomButton from './CustomButton'
 import CustomSelectButton from './CustomSelectButton'
@@ -49,7 +49,6 @@ export default function EditClassForm(props) {
 
   const [price, setPrice] = useState("$0.00")
   let navigation = useNavigation()
-
 
 
   useEffect(() => {
@@ -466,7 +465,7 @@ export default function EditClassForm(props) {
       />
       
       {/* Delete Class */}
-      <TouchableHighlight onPress={() =>
+      <TouchableOpacity onPress={() =>
          Alert.alert(
           "Are you sure you wish to delete this class",
           "All instances of this class will be removed from your schedule",
@@ -490,7 +489,7 @@ export default function EditClassForm(props) {
                 ...FONTS.body,
                 fontSize: 10,
             }}>Remove</Text>
-      </TouchableHighlight>
+      </TouchableOpacity>
       
     </View>
   )

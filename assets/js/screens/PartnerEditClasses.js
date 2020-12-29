@@ -15,35 +15,27 @@ import User from '../backend/storage/User'
 export default function PartnerEditClasses(props) {
   const [page, setPage] = useState("overview")
   const [user, setUser] = useState(null)
-  const [classes, setClasses] = useState(null)
+  const [classes, setClasses] = useState([])
 
 
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
       const init = async () => {
+        console.log("useFocusEffect called")
         const user = new User()
         const userDoc = await user.retrieveUser()
         setUser(userDoc)
-
         firestore()
           .collection('classes')
           .get()
           .then(querySnapshot => {
             querySnapshot.forEach(documentSnapshot => {
-              // console.log("documentSnapshot.data().partner_id", documentSnapshot.data().partner_id)
-              // console.log("user.id", user.uid)
-
-              if (documentSnapshot.data().partner_id == user.uid) {
-                console.log("documentSnapshot.data().partner_id", documentSnapshot.data().partner_id)
-                console.log("user.id", user.id)
+              if (documentSnapshot.data().partner_id == userDoc.id) {
                 setClasses(prevArray => [...prevArray, documentSnapshot.data()])
               }
-
-              // console.log("gym")
             });
           });
-  
       }; init()
       return () => {
         // Do something when the screen is unfocused
@@ -52,21 +44,21 @@ export default function PartnerEditClasses(props) {
     }, [])
   );
 
-  useEffect(() => {
-    const init = async () => {
-      const user = new User()
-      const userDoc = await user.retrieveUser()
 
-      const classes = (
-        await user.retrieveClasses()
-      ).map(it => it.getAll())
+  // useEffect(() => {
+  //   const init = async () => { 
+  //     const user = new User()
+  //     const userDoc = await user.retrieveUser()
 
-      setUser(userDoc)
-      setClasses(classes)
-      console.log("classDoc: " + JSON.stringify(classDoc))
+  //     const classes = (
+  //       await user.retrieveClasses()
+  //     ).map(it => it.getAll())
 
-    }; init()
-  }, [])
+  //     setUser(userDoc)
+  //     setClasses(classes)
+
+  //   }; init()
+  // }, [])
 
   if (!user || !classes) return <View />
 
@@ -78,7 +70,7 @@ export default function PartnerEditClasses(props) {
         { classDoc: classDoc })}
     >
       <View key={idx} style={{
-        height: 72,
+        height: 72, 
         marginTop: idx !== 0 ? 10 : 0,
         backgroundColor: colors.buttonFill,
         borderRadius: 30,
@@ -96,7 +88,6 @@ export default function PartnerEditClasses(props) {
 
   ) 
 
- 
   let PageContent
   PageContent = 
   <>
@@ -111,7 +102,7 @@ export default function PartnerEditClasses(props) {
         fontSize: 20,
       }}>My Classes</Text>
       {Classes}  
-    </View> 
+    </View>  
   </> 
  
  
