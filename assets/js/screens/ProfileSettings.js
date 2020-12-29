@@ -422,11 +422,18 @@ export default function ProfileSettings(props) {
   }
 
   const handleDOB = () => {
-    console.log("address (handDOB): ", address)
-    {user.account_type == 'partner'
-          ? updateSafeInfoForPartner() 
-          : updateSafeInfoForUser()
-        } 
+    {
+      user.account_type == 'partner'
+        ? updateSafeInfoForPartner()
+        : updateSafeInfoForUser()
+    }
+  }
+
+
+  const wait = (timeout) => {
+    return new Promise(resolve => {
+      setTimeout(resolve, timeout);
+    });
   }
 
 

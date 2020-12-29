@@ -168,68 +168,6 @@ export default function ProfileSettings(props) {
     // setValue('password', 'asdfg')
   }, [])
 
-
-
-  // const updateSafeInfoForUser = async () => {
-  //   setRedFields([])
-  //   setErrorMsg('')
-  //   setSuccessMsg('')
-
-  //   let redFields = []
-
-  //   if (firstNameField.length === 0) redFields.push("first")
-  //   if (lastNameField.length === 0) redFields.push("last")
-  //   if (emailField.length === 0) redFields.push("email")
-  //   // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
-  //   if (dob.split('-').length != 3) redFields.push('dob')
-
-
-  //   if (redFields.length) {
-  //     setRedFields(redFields)
-  //     setErrorMsg("Required fields need to be filled.")
-  //     return
-  //   }
-
-  //   const DateMoment = moment(dob, 'MM-DD-YYYY')
-
-  //   try {
-  //     // if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
-  //     let updatables = {
-  //       dob: {
-  //         day: DateMoment.date(),
-  //         month: DateMoment.month() + 1,
-  //         year: DateMoment.year(),
-  //       },
-  //     }
-  //     if (emailField !== user.email) {
-  //       updatables.email = emailField
-  //       await auth().currentUser.updateEmail(emailField)
-  //     }
-
-  //     // Return if no fields to update.
-  //     if (!Object.keys(updatables).length) {
-  //       setSuccessMsg('All information is up to date.')
-  //       return
-  //     }
-
-  //     if (config.DEBUG) p('updatables', updatables)
-
-  //     const userObj = new User()
-  //     await userObj.init()
-  //     userObj.mergeItems(updatables)
-  //     await userObj.push()
-
-  //     setSuccessMsg('Successfully updated profile information.')
-  //     // setPasswordField('')
-  //     Keyboard.dismiss()
-  //   } catch (err) {
-  //     if (config.DEBUG) console.error(err)
-  //     let [errorMsg, redFields] = handleAuthError(err)
-  //     setRedFields(redFields)
-  //     setErrorMsg(errorMsg)
-  //   }
-  // }
-
   const updateSafeInfoForPartner = async () => {
 
 
@@ -282,7 +220,7 @@ export default function ProfileSettings(props) {
         updatables.address = address
         updatables.formatted_address = formatted_address
       }
-      if (emailField !== user.email) {
+      if (emailField !== user.email || emailField == user.email) {
         updatables.email = emailField
         await auth().currentUser.updateEmail(emailField)
       }

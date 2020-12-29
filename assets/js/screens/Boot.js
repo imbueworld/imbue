@@ -32,7 +32,7 @@ export default function Boot(props) {
     const { approved } = await user.retrieveUser()
     const { phone } = await user.retrieveUser()
     const { associated_classes } = await user.retrieveUser()
-    const { dob } = await user.retrieveUser()
+    const userDoc = await user.retrieveUser()
 
     // // Waitlist stuff:
     // // Determine whether to let in or not
@@ -63,22 +63,21 @@ export default function Boot(props) {
     //     break
     // }
 
-console.log('user.approved: ', approved )
-console.log({user})
+  console.log('userDoc: ', userDoc )
 
     switch (account_type) {
       case "user":
-        if (user.dob) {navigation.reset({
+        if (userDoc.dob) {navigation.reset({
           index: 0,
           routes: [{ name: "UserDashboard" }],
         });
         break
-      }
-      else if (!user.dob)
-      {navigation.reset({
-        index: 0,
-        routes: [{ name: "UserOnboard" }],
-      });
+        }
+        else if (!userDoc.dob)
+          {navigation.reset({
+            index: 0,
+            routes: [{ name: "UserOnboard" }],
+          });
       break
     }
       case "partner":
@@ -99,8 +98,8 @@ console.log({user})
         else if (approved && associated_classes) {
           navigation.reset({
             index: 0,
-            // Send to flow to create & schedule page
-            routes: [{ name: "PartnerOnboardCreateClass" }],
+            // Send to flow to create & schedule page - not created yet
+            routes: [{ name: "PartnerDashboard" }],
           })
           break
         }
