@@ -138,7 +138,7 @@ export default function ProfileLayout(props) {
 
           {/* <View style={{flex: 1, flexDirection: 'row'}}> */}
             {!buttonOptions.goBack.show || props.hideBackButton ? null :
-              <TouchableHighlight
+              <TouchableOpacity
                 style={styles.sidePanelButtonContainer}
                 // underlayColor="#eed"
                 onPress={props.onBack || (() => navigation.goBack())}
@@ -149,14 +149,14 @@ export default function ProfileLayout(props) {
                     height: 47,
                   }}
                 /> 
-            </TouchableHighlight>}
+            </TouchableOpacity>}
           {/* </View> */}
 
             {/* Help and logout buttons */}
             <View style={{flex: 1, position: "absolute", right: 0, flexDirection: 'row-reverse', paddingRight: 10, marginTop: 10, marginRight: 10, zIndex: 2 }}>
 
                 {buttonOptions.logOut.show ?
-                  <LogOutButton
+                  <LogOutButton 
                     containerStyle={{
                       position: "absolute",
                       top: 0,

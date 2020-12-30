@@ -1,6 +1,6 @@
 import React from 'react'
 import { View } from 'react-native'
-import { TouchableHighlight } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from '../Icon'
 import { simpleShadow } from '../../contexts/Colors'
 import { useNavigation } from '@react-navigation/native'
@@ -31,7 +31,7 @@ export default function LogOutButton(props) {
       // ...simpleShadow,
       // ...containerStyle,
     }}>
-      <TouchableHighlight
+      <TouchableOpacity
         style={{
           width: 48,
           height: 48,
@@ -62,7 +62,7 @@ export default function LogOutButton(props) {
           source={require("../img/png/logout.png")}
         />
         </>
-      </TouchableHighlight>
+      </TouchableOpacity>
     </View>
   )
 }
