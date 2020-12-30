@@ -22,26 +22,47 @@ export default function CustomTextInputV2(props) {
 
   const ref = useRef()
   const [tapPanel, setTapPanel] = useState(true)
+  const [isFocused, setIsFocused] = useState(false)
 
-
+  const handleFocus = () => setIsFocused(true)
+  const handleBlur = () => setIsFocused(false)
 
   return (
     <View style={[containerStyle, styles.container, {
       borderColor: red ? 'red' : colors.textInputBorder,
     }]}>
-      {tapPanel && (
+      {isFocused && (
         <View
+          // style={(isFocused ? styles.focusedView : styles.blurredView)}
           style={{
             width: '100%',
             height: '100%',
             position: 'absolute',
-            borderRadius: 20,
-            zIndex: 1,
-            // backgroundColor: 'blue', // DEBUG
+            zIndex: 0,
+            borderBottomWidth: 2,
+            borderBottomColor: colors.textInputFill
           }}
           onTouchEnd={() => {
             // ref.current.focus()
-            setTapPanel(false)
+            setIsFocused(false)
+          }}
+        />
+      )}
+      
+      {!isFocused &&  (
+        <View
+          // style={(isFocused ? styles.focusedView : styles.blurredView)}
+          style={{
+            width: '100%',
+            height: '100%',
+            position: 'absolute',
+            zIndex: 0,
+            borderBottomWidth: 1,
+            borderBottomColor: "#D6D9DC"
+          }}
+          onTouchEnd={() => {
+            // ref.current.focus()
+            setIsFocused(false)
           }}
         />
       )}
@@ -60,10 +81,12 @@ export default function CustomTextInputV2(props) {
           ...style,
           // backgroundColor: 'red', // DEBUG
         }}
-        onBlur={e => {
-          setTapPanel(true)
-          onBlur(e)
-        }}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        // onBlur={e => {
+        //   setTapPanel(true)
+        //   onBlur(e)
+        // }}
         ref={ref}
       />
     </View>
@@ -76,6 +99,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: "white",
     overflow: 'hidden',
-    borderBottomWidth: 0.25,
+    // borderBottomWidth: 0.25,
+  },
+  focusedView: {
+    width: '100%',
+    height: 30, 
+    position: 'absolute',
+    zIndex: 1,
+    borderBottomWidth: 2,
+    borderBottomColor: colors.textInputFill
+  },
+  blurredView: {
+    width: '100%',
+    height: 30,
+    position: 'absolute',
+    zIndex: 1,
+    borderBottomWidth: 1,
+    borderBottomColor: "#D6D9DC"
   },
 })

@@ -25,7 +25,6 @@ import firestore from '@react-native-firebase/firestore';
 const p = console.log
 
 
-
 export default function ProfileSettings(props) {
   const [user, setUser] = useState(null)
   const [isForeignUser, setIsForeignUser] = useState()
@@ -44,15 +43,14 @@ export default function ProfileSettings(props) {
       const userDoc = await user.retrieveUser()
       setUser(userDoc)
       setIsForeignUser(userDoc.icon_uri_foreign ? true : false)
-      const gym = (
-        await user.retrievePartnerGyms()
-      ).map(it => it.getAll())[0]
-      setUser(userDoc)
-      setGym(gym)
+          
+      if (userDoc.account_type == "partner") {
+        const gym = ( await user.retrievePartnerGyms()).map(it => it.getAll())[0]
+        setGym(gym)
+      }
+
       setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
       // setHasBankAccountAdded(true)
-
-      console.log("user (useEffect): ", user)
 
       // update Stripe balance revenue
       if (gym) {
@@ -452,7 +450,7 @@ export default function ProfileSettings(props) {
     setRefreshing(true);
     const user = new User()
     const userDoc = await user.retrieveUser()
-    const gym = (
+    const gym = ( 
       await user.retrievePartnerGyms()
     ).map(it => it.getAll())[0]
 
@@ -465,7 +463,7 @@ export default function ProfileSettings(props) {
 
   }, []);
 
-  if (!user || !gym || hasBankAccountAdded === undefined) return <View />
+  // if (!user || !gym || hasBankAccountAdded === undefined) return <View />
 
   if (!user || isForeignUser === undefined) return <View />
 
@@ -595,7 +593,8 @@ export default function ProfileSettings(props) {
         onChangeText={setConfPasswordField}
       /> */}
 
-      <Text style={{
+      {/* Bank stuff */}
+      {/* <Text style={{
         paddingTop: 15,
         paddingBottom: 10,
         ...FONTS.subtitle,
@@ -614,7 +613,8 @@ export default function ProfileSettings(props) {
       </> : <>
           <Text style={styles.confirmation}>Your bank account has been linked.</Text>
         </>
-      }
+      } */}
+
       <CustomButton
         style={styles.button}
         title="Save"

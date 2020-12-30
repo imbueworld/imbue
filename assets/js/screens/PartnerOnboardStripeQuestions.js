@@ -29,6 +29,7 @@ export default function ProfileSettings(props) {
   const [user, setUser] = useState(null)
   const [isForeignUser, setIsForeignUser] = useState()
   const navigation = useNavigation()
+  const [hasBankAccountAdded, setHasBankAccountAdded] = useState()
   const [gym, setGym] = useState(null)
   const [errorMsg, setErrorMsg] = useState('')
   const [refreshing, setRefreshing] = React.useState(false);
@@ -141,7 +142,6 @@ export default function ProfileSettings(props) {
   const [ssn_last_4, setSSNLast4] = useState('')
 
 
-
   useEffect(() => {
     let redFields = []
     for (let tag of Object.keys(errors)) {
@@ -166,7 +166,6 @@ export default function ProfileSettings(props) {
   }, [])
 
   const updateSafeInfoForPartner = async () => {
-
 
     const gym = new Gym
     await gym.retrievePartnerGym() // Loads (or instantly accesses cached) data, finishes instantiation
@@ -201,7 +200,6 @@ export default function ProfileSettings(props) {
           year: DateMoment.year(),
         },
       }
-
 
       // pf -- "prefetch", passed in .updateStripeAccount()
       // let pfGeocodeAddress, pfGeocodeCompanyAddress
@@ -265,12 +263,23 @@ export default function ProfileSettings(props) {
     // navigation.navigate('PartnerDashboard')
   }
 
-
-
   const wait = (timeout) => {
     return new Promise(resolve => {
       setTimeout(resolve, timeout);
     });
+  }
+
+  // adds hyphens in text input
+  const handleDOB = (text) => {
+    if (text.length == 2) {
+      text = text += "-"
+      return text
+    } else if (text.length == 5) {
+      text = text += "-"
+      return text
+    }
+
+    return text
   }
 
   if (!user || isForeignUser === undefined) return <View />
@@ -312,7 +321,7 @@ export default function ProfileSettings(props) {
             value={emailField}
             onChangeText={setEmailField}
           />
-          <CustomTextInputV2
+          {/* <CustomTextInputV2
             containerStyle={styles.inputField}
             red={redFields.includes('dob')}
             // keyboardType='numeric'
@@ -320,7 +329,17 @@ export default function ProfileSettings(props) {
             value={dob}
             // onChangeText={(text) => console.log("text: ", text)}
             onChangeText={setDob}
-          />
+          /> */}
+          <CustomTextInputV2
+            containerStyle={styles.inputField}
+            keyboardType='numeric'
+            value={dob}
+            maxLength={10}
+            placeholder='Date of Birth (MM-DD-YYYY)'
+            onChangeText={(text) => 
+                setDob(handleDOB(text))
+            }
+        />
 
             <CustomTextInputV2
               containerStyle={styles.inputField}
@@ -345,21 +364,35 @@ export default function ProfileSettings(props) {
               onChangeText={setSSNLast4}
             />
             <Text style={{
-              paddingTop: 15,
+              paddingTop: 20,
               paddingBottom: 10,
               ...FONTS.subtitle,
-              textAlign: "center",
-              fontSize: 22,
+              textAlign: "center", 
+              fontSize: 16,
             }}>Add bank account</Text>
+
+            { !hasBankAccountAdded ? <> 
+              <BankAccountFormWithButtonEntry
+                onError={setErrorMsg} 
+                onSuccess={() => refresh(r => r + 1)}
+              />
+              <PlaidButton onError={setErrorMsg} onSuccess={setHasBankAccountAdded(true)}/> 
+            </> : <>
+              <Text style={styles.confirmation}>Your bank account has been linked.</Text>
+              </>
+            }
 
             <Text style={styles.error}>{errorMsg}</Text>
 
-      <CustomButton
+      {hasBankAccountAdded ?
+        (<CustomButton
         style={styles.button}
         title="Finish 
         Your Account!"
         onPress={updateSafeInfoForPartner}
-      />
+      />):null
+      }
+      
     </ProfileLayout>
   )
 }

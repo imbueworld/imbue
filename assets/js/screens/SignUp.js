@@ -49,6 +49,7 @@
           "and at least 1 lowercase and uppercase letter."
       }
     }
+    
     return (
       <KeyboardAwareScrollView
         contentContainerStyle={styles.scrollView}
@@ -156,7 +157,7 @@
                   last,
                   email,
                   password,
-                  type,
+                  type, 
                 })
 
                 setSuccessMsg("You've been signed up!")

@@ -153,9 +153,8 @@ export default function ProfileLayout(props) {
           {/* </View> */}
 
             {/* Help and logout buttons */}
-            <View style={{flex: 1, position: "absolute",  right: 0, flexDirection: 'row-reverse', paddingRight: 10, marginTop: 10, marginRight: 10 }}>
+            <View style={{flex: 1, position: "absolute", right: 0, flexDirection: 'row-reverse', paddingRight: 10, marginTop: 10, marginRight: 10, zIndex: 2 }}>
 
-              <View>
                 {buttonOptions.logOut.show ?
                   <LogOutButton
                     containerStyle={{
@@ -167,9 +166,7 @@ export default function ProfileLayout(props) {
                     onPress={buttonOptions.logOut.onPress}
                     onLongPress={buttonOptions.logOut.onLongPress}
                   /> : null}
-                </View>
 
-              <View>
                 <TouchableOpacity
                     onPress={() => navigation.navigate('help')}
                     containerStyle={{
@@ -190,9 +187,7 @@ export default function ProfileLayout(props) {
                       }}
                       source={require("../components/img/png/question-mark.png")}
                     />
-                </TouchableOpacity>
-              </View>
-              
+                </TouchableOpacity>              
             </View>
 
           <View style={{ marginTop: 20
