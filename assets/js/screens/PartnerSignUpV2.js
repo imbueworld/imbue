@@ -11,7 +11,6 @@ import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 import SocialLogin from '../components/SocialLogin'
 
-
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import AppBackground from '../components/AppBackground'
 import CompanyLogo from '../components/CompanyLogo'
@@ -128,6 +127,8 @@ export default function PartnerSignUpV2(props) {
       ...USER
     } = form
 
+    let {email} = form
+
 
     // Create user
     const partner = new User()
@@ -182,6 +183,16 @@ export default function PartnerSignUpV2(props) {
       associated_gyms: [gym.uid],
     })
     await partner.push()
+
+    // add to SendGrid applied influencers
+    try {
+      let listName = "applied influencer"
+      // Add to Sendgrid
+      const addToSendGrid = functions().httpsCallable('addToSendGrid')
+      await addToSendGrid({email, first, last, listName})
+    } catch (err) {
+      console.log("addToSendGrid didn't work: ", err)
+    }
 
     // Redirect
     navigation.reset({

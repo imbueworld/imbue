@@ -13,7 +13,7 @@
   import { StackActions, useNavigation } from '@react-navigation/native'
   import BackButton from '../components/BackButton'
   import User from '../backend/storage/User'
-
+  import functions from '@react-native-firebase/functions'
 
   export default function SignUp(props) {
     const navigation = useNavigation()
@@ -159,6 +159,17 @@
                   password,
                   type, 
                 })
+
+                try {
+                  let listName = "member"
+
+                  // Add to Sendgrid
+                  const addToSendGrid = functions().httpsCallable('addToSendGrid')
+                  await addToSendGrid({email, first, last, listName})
+
+                } catch (err) {
+                  console.log("addToSendGrid didn't work: ", err)
+                }
 
                 setSuccessMsg("You've been signed up!")
                 // Navigate

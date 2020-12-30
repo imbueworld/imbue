@@ -31,10 +31,18 @@ export default function Landing(props) {
         props.navigation.navigate("PartnerHome")
     }
 
-    async function testSendGrid() {
+    async function sendGridDelete() {
+        let first = "t"
+        let last = "t"
+        let email = "t@gmail.com"
+        let listName = "accepted influencer"
+        const removeFromSendGrid = functions().httpsCallable('removeFromSendGrid')
+        await removeFromSendGrid({email, first, last, listName})
+
         const addToSendGrid = functions().httpsCallable('addToSendGrid')
-        await addToSendGrid()
+        await addToSendGrid({email, first, last, listName})
     }
+
 
     return (
         <ScrollView alwaysBounceVertical={false} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
@@ -54,6 +62,16 @@ export default function Landing(props) {
                     marginBottom: 50,
                 }}
             >
+
+                <CustomButton
+                    style={{
+                        marginTop: 10,
+                        marginBottom: 0,
+                    }}
+                    onPress={sendGridDelete}
+                    title="test SendGrid Delete"
+                />
+
                 <Text style={{
                     marginTop: 0,
                     marginBottom: 0,

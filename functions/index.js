@@ -156,32 +156,166 @@ exports.createLivestream = functions.https.onCall(async (data, context) => {
   })
 })
 
+// 4b198f0e-d7ea-4d7e-9f9b-e561fa1ba18b
+ 
 // Add contact to SendGrid
-exports.addToSendGrid = functions.https.onCall(async (data, context) => {
-  const client = require('@sendgrid/client');
-  client.setApiKey(SEND_GRID_KEY);
+exports.addToSendGrid = functions.https.onCall(async (data) => {
+  p("data: ", data)
+  const e = data.email
+  const f = data.first
+  const l = data.last
+  const listName = data.listName
 
-  // https://api.sendgrid.com/v3/marketing/contacts'
+  p("listName: ", listName)
 
-  return await new Promise(resolve => {
-    let xhr = new XMLHttpRequest()
-    const data = [
-      {
-        "age": "25",
-        "email": "example@example.com",
-        "first_name": "",
-        "last_name": "User"
-      },
-    ];
-      xhr.body = data;
-      xhr.method = 'POST';
-      xhr.url = '/v3/contactdb/all';
-      client.request(xhr)
-      .then(([response, body]) => {
-        console.log("ONE??: ", response.statusCode);
-        console.log("TWO??: ", response.body);
-      })
-  })
+  var request = require("request");
+
+  switch(listName) {
+    case "member":
+      var options = { method: 'PUT',
+        url: 'https://api.sendgrid.com/v3/marketing/contacts',
+        headers: 
+        { 'content-type': 'application/json',
+          authorization: 'Bearer ' + SEND_GRID_KEY},
+        body: 
+        { list_ids: [ 'eda0bc01-b098-4366-ad58-8bab03ec9b33' ],
+          contacts: [
+            {
+              "email": e,
+              "first_name": f,
+              "last_name": l
+            }
+          ]
+        },
+      json: true };
+      break;
+
+    case "influencer":
+      var options = { method: 'PUT',
+        url: 'https://api.sendgrid.com/v3/marketing/contacts',
+        headers: 
+        { 'content-type': 'application/json',
+          authorization: 'Bearer ' + SEND_GRID_KEY},
+        body: 
+        { list_ids: [ 'bc418b1f-ff60-462a-b966-fd2a112e087b' ],
+          contacts: [
+            {
+              "email": e,
+              "first_name": f,
+              "last_name": l
+            }
+          ]
+        },
+      json: true };
+      break;
+
+    case "applied influencer":
+      var options = { method: 'PUT',
+        url: 'https://api.sendgrid.com/v3/marketing/contacts',
+        headers: 
+        { 'content-type': 'application/json',
+          authorization: 'Bearer ' + SEND_GRID_KEY},
+        body: 
+        { list_ids: [ '6991237b-3587-43fc-af4e-bffbbb1bff9b' ],
+          contacts: [
+            {
+              "email": e,
+              "first_name": f,
+              "last_name": l
+            }
+          ]
+        },
+      json: true };
+      break;
+
+    case "accepted influencer":
+      var options = { method: 'PUT',
+        url: 'https://api.sendgrid.com/v3/marketing/contacts',
+        headers: 
+        { 'content-type': 'application/json',
+          authorization: 'Bearer ' + SEND_GRID_KEY},
+        body: 
+        { list_ids: [ 'f64cccae-9f54-4b3b-856d-08c8c2182d07' ],
+          contacts: [
+            {
+              "email": e,
+              "first_name": f,
+              "last_name": l
+            }
+          ]
+        },
+      json: true };
+      break;
+
+    default:
+     null
+  }
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
+
+// Remove contact to SendGrid
+exports.removeFromSendGrid = functions.https.onCall(async (data) => {
+  p("data: ", data)
+  const e = data.email
+  const f = data.first
+  const l = data.last
+  const listName = data.listName
+
+  var request = require("request");
+
+  // First, tet contact_id
+  var request = require("request");
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/marketing/contacts/search',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: { query: "email LIKE '" + e + "'" },
+    json: true };
+  request(options, function (error, response, body) {
+    if (error) {
+      console.log("Error: ", error)
+      return
+    }
+
+    const contact_id = body.result[0].id
+
+    // Decide which list to delete contact from
+    switch(listName) {
+      case "member":
+        break;
+  
+      case "influencer":
+        break;
+  
+      case "applied influencer":
+        break;
+  
+      case "accepted influencer":
+        // Insert code here
+        var options = { method: 'DELETE',
+        url: 'https://api.sendgrid.com/v3/marketing/lists/6991237b-3587-43fc-af4e-bffbbb1bff9b/contacts',
+        qs: { contact_ids: contact_id },
+        headers: { authorization: 'Bearer ' + SEND_GRID_KEY},
+        body: '{}' };
+        break;
+  
+      default:
+       null
+    }
+    // final request to delete
+    request(options, function (error, response, body) {
+      if (error) throw new Error(error);
+  
+      console.log(body);
+   });
+  });
 })
 
 

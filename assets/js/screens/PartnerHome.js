@@ -24,7 +24,6 @@ export default function PartnerHome(props) {
     }
 
 
-
     function login() {
         props.navigation.navigate("LoginPartner")
     }

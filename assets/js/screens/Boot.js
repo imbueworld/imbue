@@ -12,6 +12,7 @@ import { GoogleSignin } from '@react-native-community/google-signin'
 import { LoginManager } from 'react-native-fbsdk'
 import { StackActions, useNavigation } from '@react-navigation/native'
 import { colors } from '../contexts/Colors'
+import functions from '@react-native-firebase/functions'
 
 import User from '../backend/storage/User'
 import cache from '../backend/storage/cache'
@@ -89,6 +90,29 @@ export default function Boot(props) {
           break
         }
         else if (approved && !phone) {
+
+          // add to SendGrid accepted influencers
+          try {
+            let listName = "accepted influencer"
+            let email = userDoc.email
+            let first = userDoc.first
+            let last = userDoc.last
+
+            // Remove fromt Sendgrid
+            const removeFromSendGrid = functions().httpsCallable('removeFromSendGrid')
+            await removeFromSendGrid({email, first, last, listName})
+
+            // add to new list
+            const addToSendGrid = functions().httpsCallable('addToSendGrid')
+            await addToSendGrid({email, first, last, listName})
+      
+          } catch (err) {
+            console.log("addToSendGrid didn't work: ", err)
+          }
+
+          // remove from SendGrid applied influencers
+
+
           navigation.reset({
             index: 0,
             routes: [{ name: "PartnerOnboard" }],

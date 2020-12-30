@@ -11,6 +11,7 @@
     "firebase-functions": "^3.3.0",
     "node-fetch": "^2.6.1",
     "plaid": "^8.0.0",
+    "request": "^2.88.2",
     "stripe": "^8.56.0",
     "xmlhttprequest": "^1.8.0"
   },
