@@ -1,6 +1,6 @@
 import React from 'react'
 import { View } from 'react-native'
-import { TouchableHighlight } from 'react-native-gesture-handler'
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from '../Icon'
 import { simpleShadow } from '../../contexts/Colors'
 import { useNavigation } from '@react-navigation/native'
@@ -27,7 +27,7 @@ export default function GoBackButton(props) {
       // ...simpleShadow,
       ...containerStyle,
     }}>
-      <TouchableHighlight
+      <TouchableOpacity
         style={{
           borderRadius: 999,
         }}
@@ -43,7 +43,7 @@ export default function GoBackButton(props) {
           imageStyle={imageStyle}
           source={require("../img/png/back-button-3.png")}
         />
-      </TouchableHighlight>
+      </TouchableOpacity>
     </View>
   )
 }

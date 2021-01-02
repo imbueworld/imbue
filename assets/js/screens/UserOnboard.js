@@ -25,6 +25,9 @@ export default function UserOnboard(props) {
   const navigation = useNavigation()
   const [refreshing, setRefreshing] = React.useState(false);
   const [dob, setDob] = useState("")
+  const [email, setEmail] = useState("")
+  const [first, setFirst] = useState("")
+  const [last, setLast] = useState("")
   const [userId, setUserId] = useState("")
   const [errorMsg, setErrorMsg] = useState('')
   const [redFields, setRedFields] = useState([])
@@ -37,7 +40,6 @@ export default function UserOnboard(props) {
   const updateDobForUser = async () => {
     setUpdating(true)
     let redFields = []
-
 
     if (dob.length != 10) redFields.push('dob')
     const DateMoment = moment(dob, 'MM-DD-YYYY')
@@ -73,6 +75,7 @@ export default function UserOnboard(props) {
           console.log('User added!');
       });
 
+
       // setPasswordField('')
       // Keyboard.dismiss()
     } catch (err) {
@@ -82,9 +85,50 @@ export default function UserOnboard(props) {
       // let [errorMsg, redFields] = handleAuthError(err)
       // setErrorMsg(errorMsg)
     }
+
+    console.log("user??: ", user)
+
+
+     // Adding to Member sendgrid list (assuming if no dob they are a new user)
+     try {
+      console.log("addToSendGrid UserOnboard")
+      let listName = "member"
+      // Add to Sendgrid
+      const addToSendGrid = functions().httpsCallable('addToSendGrid')
+      await addToSendGrid({email, first, last, listName})
+    } catch (err) {
+      console.log("addToSendGrid didn't work: ", err)
+    }
+
+    // then navigate to user dashboard
     navigation.navigate('UserDashboard')
   }
 
+
+  useEffect(() => {
+    async function init() {
+
+
+    }; init()
+  }, [])
+
+  // get user info
+  useEffect(() => {
+    async function init() {
+      const user = new User()
+      const userDoc = await user.retrieveUser()
+      setUserId(user.uid)
+
+      setEmail(userDoc.email)
+      setFirst(userDoc.first)
+      setLast(userDoc.last)
+
+      console.log("email: ", userDoc.email)
+      console.log("first: ", userDoc.first)
+      console.log("last: ", userDoc.last)
+      
+    }; init()
+  }, [])
 
   useEffect(() => {
     async function init() {

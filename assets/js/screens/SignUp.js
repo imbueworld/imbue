@@ -160,16 +160,14 @@
                   type, 
                 })
 
-                try {
-                  let listName = "member"
-
-                  // Add to Sendgrid
-                  const addToSendGrid = functions().httpsCallable('addToSendGrid')
-                  await addToSendGrid({email, first, last, listName})
-
-                } catch (err) {
-                  console.log("addToSendGrid didn't work: ", err)
-                }
+                // try {
+                //   let listName = "member"
+                //   // Add to Sendgrid
+                //   const addToSendGrid = functions().httpsCallable('addToSendGrid')
+                //   await addToSendGrid({email, first, last, listName})
+                // } catch (err) {
+                //   console.log("addToSendGrid didn't work: ", err)
+                // }
 
                 setSuccessMsg("You've been signed up!")
                 // Navigate

@@ -65,7 +65,6 @@ export default function Boot(props) {
     // }
 
   console.log('userDoc: ', userDoc )
-
     switch (account_type) {
       case "user":
         if (userDoc.dob) {navigation.reset({
@@ -75,9 +74,9 @@ export default function Boot(props) {
         break
         }
         else if (!userDoc.dob)
-          {navigation.reset({
+           {navigation.reset({
             index: 0,
-            routes: [{ name: "UserOnboard" }],
+            routes: [{ name: "UserOnboard" }], 
           });
       break
     }
