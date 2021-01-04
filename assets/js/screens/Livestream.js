@@ -12,7 +12,11 @@ import { get } from 'react-hook-form';
 import GoBackButton from '../components/buttons/GoBackButton'
 
 
+// e9b8229d-b5b1-4d89-e7cd-c141c08ac1a1
+
 function getPlaybackLink(playbackId) {
+  // return `rtmps://global-live.mux.com:443/app/88e75daa-9fd8-d94e-e161-cf2d304d10c7`
+  // return `https://stream.mux.com/tS9QgfIFHCsCS689rWJC7UCXGMCVMsWpt1gblcJbc018.m3u8` 
   return `https://stream.mux.com/${playbackId}.m3u8` 
 }
 
@@ -81,7 +85,6 @@ export default function Livestream(props) {
 
    // getsGymImage
   const getGymImage = async (data) => {
-     console.log("data: ", data)
       let promises = []
       promises.push(publicStorage(data))
       const res = await Promise.all(promises)

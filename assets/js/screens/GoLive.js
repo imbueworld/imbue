@@ -126,7 +126,8 @@ export default function GoLive(props) {
     }
   }
 
-  const base = "rtmp://global-live.mux.com:5222/app/"
+  const base = 'rtmps://global-live.mux.com:443/app/'
+  // const base = "rtmp://global-live.mux.com:443/app/"
 
   const toggleStream = async () => {
     console.log("pressed")
