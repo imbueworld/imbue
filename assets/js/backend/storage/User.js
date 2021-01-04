@@ -481,7 +481,7 @@ export default class User extends DataObject {
   }
 
   /**
-   * Free Class – Add to Calender
+   * Free Class – Add to Calendar
    */
   async addClassToCalender(details) {
     await this.init() 

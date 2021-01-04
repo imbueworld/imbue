@@ -22,6 +22,7 @@ import Icon from '../components/Icon'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import firestore from '@react-native-firebase/firestore'
 import { set } from 'react-native-reanimated'
+import functions from '@react-native-firebase/functions'
 
 
 /** 
@@ -33,17 +34,14 @@ import { set } from 'react-native-reanimated'
  */
 export default function GymLayout(props) {
   const gym = props.data
-  console.log("props.data: ", props.data)
   let navigation = useNavigation()
 
   // const [buttonOptions, setButtonOptions] = useState(null)
   const [customState, setCustomState] = useState({}) // Used only internally, during the lifetime of this component
   const [gymImage, setGymImage] = useState('')
   const { width, height } = useDimensions().window
-  const [attendees, setAttendees] = useState('')
+  const [attendees, setAttendees] = useState('0')
 
-
-  
 
   useEffect(() => {
     const init = async () => {
@@ -81,7 +79,8 @@ export default function GymLayout(props) {
     addToCalendar: {
       show: false,
       state: "opportunity" || "fulfilled",
-      onPress: () => {},
+      onPress: async () => {
+      },
     },
     goToCalendar: {
       show: false,
@@ -149,9 +148,6 @@ export default function GymLayout(props) {
   }
 
 
-  console.log("attendees: ", attendees)
-
-
   return (
     <SafeAreaView style={{ flex: 0, backgroundColor: colors.bg,
       paddingTop: Platform.OS === 'android' ? 25 : 0 }}>
@@ -162,7 +158,7 @@ export default function GymLayout(props) {
         
 
       {buttonOptions.viewAttendees.state === 'open' 
-      ? <AttendeesPopup
+      ? <AttendeesPopup 
           classId={buttonOptions.viewAttendees.data.classId}
           timeId={buttonOptions.viewAttendees.data.timeId}
             onX={() => 
@@ -240,7 +236,7 @@ export default function GymLayout(props) {
 
         {buttonOptions.addToCalendar.show
         ? buttonOptions.addToCalendar.state === "opportunity"
-          ? <AddToCalendarButton
+          ? <AddToCalendarButton 
               {...buttonProps}  
               onPress={buttonOptions.addToCalendar.onPress}
             />
@@ -255,10 +251,11 @@ export default function GymLayout(props) {
             </>
             : null}
           
-         <CustomButton
+          {/* {attendees ? 
+            <CustomButton
             icon={<Icon source={require("../components/img/png/attendees-black.png")} containerStyle={{ height: 18, width: 18, paddingRight: 0 }} />}
             title={attendees}
-            styleIsInverted
+            // styleIsInverted
             style={{
               marginVertical: 0,
               // paddingHorizontal: 10,
@@ -268,6 +265,7 @@ export default function GymLayout(props) {
               paddingRight: 2,
               height: 40,
               width: 55,
+              borderWidth: 0,
               backgroundColor: "white"
             }}
             textStyle={{
@@ -278,7 +276,9 @@ export default function GymLayout(props) {
             // onPress={() => props.navigation.navigate(
             //   "PartnerCreateClass"
             // )} 
-          />
+          /> : null
+         } */}
+         
         
         {/* {buttonOptions.viewAttendees.show
         ? <CustomButton

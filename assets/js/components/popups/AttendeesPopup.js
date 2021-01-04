@@ -29,11 +29,8 @@ export default function AttendeesPopup(props) {
 
   useEffect(() => {
     const init = async () => {
-      console.log("yo")
-      console.log("timeId: ", timeId)
       const classObj = new Class()
       await classObj.initByUid(classId)
-      console.log("classObj: ", classObj)
 
       // get attendees
       // const attendees = firestore()
@@ -55,7 +52,6 @@ export default function AttendeesPopup(props) {
       //   });
 
       const attendees = await classObj.retrieveAttendees(timeId) 
-      console.log("hiii")
 
       console.log("attendees", attendees) // DEBUG
 

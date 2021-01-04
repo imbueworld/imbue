@@ -21,6 +21,7 @@ import { StackActions, useNavigation } from '@react-navigation/native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import firestore from '@react-native-firebase/firestore'
 import CalendarPopulateForm from '../components/CalendarPopulateForm'
+import functions from '@react-native-firebase/functions'
 
 
 export default function ClassDescription(props) {
@@ -45,6 +46,7 @@ export default function ClassDescription(props) {
 
   const [user, setUser] = useState(null)
   const [gym, setGym] = useState(null)
+  const [gymUid, setGymUid] = useState(null)
   const [classDoc, setClassDoc] = useState(null)
   const [priceType, setPriceType] = useState(null)
   const [editShow, setEditShow] = useState(false)
@@ -114,6 +116,9 @@ export default function ClassDescription(props) {
 
       const gym = new Gym()
       setGym(await gym.retrieveGym(classGymId))
+
+      console.log("gym.uid (top)?: ", gym.uid)
+      setGymUid(gym.uid)
     }; init()
   }, [r])
 
@@ -316,7 +321,7 @@ export default function ClassDescription(props) {
   }
 
   return (
-    <ScrollView showsVerticalScrollIndicator={false}>
+    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flex: 1}}>
       <GymLayout 
         containerStyle={styles.container}
         innerContainerStyle={styles.innerContainerStyle}
@@ -432,6 +437,8 @@ export default function ClassDescription(props) {
                             timeId,
                           })
 
+                          // 
+
                           refresh(r + 1)
 
                         } catch (err) {
@@ -500,7 +507,7 @@ export default function ClassDescription(props) {
                               style={{
                                 marginBottom: 0,
                               }}
-                              title="Add to Calender"
+                              title="Add to Calendar"
                               onPress={async () => {
 
                                 try {
@@ -517,6 +524,17 @@ export default function ClassDescription(props) {
                                     classId,
                                     timeId,
                                   })
+
+                                  // sendGrid somebody joined your class
+                                  console.log("addToCalendar Pressed")
+                                  try {
+                                    // initiate SendGrid email
+                                    console.log("gymUid: ", gymUid)
+                                    const sendGridMemberPurchasedClass = functions().httpsCallable('sendGridMemberPurchasedClass')
+                                    await sendGridMemberPurchasedClass(gymUid)
+                                  } catch (err) {
+                                    setErrorMsg('Email could not be sent')
+                                  }
 
                                   refresh(r + 1)
 
@@ -628,7 +646,7 @@ export default function ClassDescription(props) {
             Alert.alert(
               "Are you sure you wish to delete this class",
               "All instances of this class will be removed from your schedule",
-              [
+              [ 
                 {
                   text: "Cancel",
                   onPress: () => console.log("Cancel Pressed"),
@@ -656,7 +674,8 @@ export default function ClassDescription(props) {
 }
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+  },
   innerContainerStyle: {
     paddingBottom: 10,
   },

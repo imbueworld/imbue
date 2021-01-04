@@ -230,6 +230,57 @@ exports.sendGridCreateClass = functions.https.onCall(async (data) => {
 })
 
 
+// Send Payout Success Email
+exports.sendGridMemberPurchasedClass = functions.https.onCall(async (data) => {
+  const gymId = data
+
+  // get account info from firebase via stripe account id
+  const snapshot = await partners.where('associated_gyms', 'array-contains', gymId).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+    // console.log(doc.id, '=>', doc.data());
+  });
+  name = first + ' ' + last
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'Congrats! Somebody booked your class' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-867d6f83dab1476dabd255279e484edf' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
+
 exports.createImbueProduct = functions.https.onCall(async (data, context) => {
   const imbueId = 'imbue'
   const unit_amount = 20000 // USD 200
