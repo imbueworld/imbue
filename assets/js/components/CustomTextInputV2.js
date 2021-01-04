@@ -39,7 +39,7 @@ export default function CustomTextInputV2(props) {
             height: 30,
             position: 'absolute',
             zIndex: 0,
-            borderBottomWidth: 2,
+            borderBottomWidth: 1,
             borderBottomColor: colors.textInputFill
           }}
           onTouchEnd={() => {

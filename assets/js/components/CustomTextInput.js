@@ -46,7 +46,7 @@ export default function CustomTextInput(props) {
             height: 30,
             position: 'absolute',
             zIndex: 1,
-            borderBottomWidth: 2,
+            borderBottomWidth: 1,
             borderBottomColor: colors.textInputFill
           }}
           onTouchEnd={() => {
@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   input: {
     ...FONTS.subtitle,
-    textAlign: 'center',
+    textAlign: 'auto',
     fontSize: 12,
     // backgroundColor: 'red', // DEBUG
   },
