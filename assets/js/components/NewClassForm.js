@@ -15,6 +15,7 @@ import { useNavigation } from '@react-navigation/native'
 import ImagePicker from 'react-native-image-picker'
 import firestore from '@react-native-firebase/firestore'
 import storage from '@react-native-firebase/storage' 
+import functions from '@react-native-firebase/functions'
 
 
 export default function NewClassForm(props) {
@@ -391,6 +392,14 @@ export default function NewClassForm(props) {
  
             const classObj = new Class()
             classObj.create(form)   
+
+            try {
+              // initiate SendGrid email
+              const sendGridCreateClass = functions().httpsCallable('sendGridCreateClass')
+              await sendGridCreateClass(gym_id)
+            } catch (err) {
+              setErrorMsg('Email could not be sent')
+            }
 
             setSuccessMsg("Successfully created class.")
 

@@ -3,8 +3,8 @@
 const algoliasearch = require('algoliasearch')
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 const functions = require('firebase-functions')
-// import * as firebase from 'firebase';
-// import 'firebase/firestore';
+const express = require('express')
+const app = express()
 const admin = require('firebase-admin')
 admin.initializeApp()
 // const { Logging } = require('@google-cloud/logging');
@@ -14,7 +14,7 @@ admin.initializeApp()
 const stripe = require('stripe')(functions.config().stripe.secret, {
   apiVersion: '2020-08-27',
 })
-
+const endpointSecret = functions.config().keys.signing;
 
 
 
@@ -77,6 +77,158 @@ forward_exports(payout_functions)
 
 // stripe_functions.js
 forward_exports(require('./src/functions/stripe_functions'))
+
+
+// Stripe Webhooks Handler
+exports.events = functions.https.onRequest((request, response) => {
+  let sig = request.headers["stripe-signature"];
+
+  try {
+    let event = stripe.webhooks.constructEvent(request.rawBody, sig, endpointSecret);
+
+    return admin.database().ref('/events').push(event) // Add the event to the database
+      .then((snapshot) => {
+        // Return a successful response to acknowledge the event was processed successfully
+        return response.json({ received: true, ref: snapshot.ref.toString() });
+      })
+      .catch((err) => {
+        console.error(err) // Catch any errors saving to the database
+        return response.status(500).end();
+      });
+  } catch (err) {
+    return response.status(400).end();
+  }
+});
+
+
+// Add webhook events to Firebase Realtime Database
+exports.databaseTrigger = functions.database.ref('/events/{eventId}').onCreate(async (snapshot, context) => {
+  const stripeAccount = snapshot.val().account
+  const eventType = snapshot.val().type
+
+  switch(eventType) {
+    case "payout.paid":
+      const sendGridPayoutPaid = functions().httpsCallable('sendGridPayoutPaid')
+      await sendGridPayoutPaid(stripeAccount)
+      break;
+    default:
+      // code block
+  }
+
+  console.log("stripeAccount: ", stripeAccount)
+  console.log("eventType: ", eventType)
+  // return console.log({
+  //   eventId: context.params.eventId,
+  //   data: snapshot.val()
+  // });
+});
+
+
+// Send Payout Success Email
+exports.sendGridEmailPayoutPaid = functions.https.onCall(async (data) => {
+  const account = data
+
+  // get account info from firebase via stripe account id
+  const snapshot = await partners.where('stripe_account_id', '==', account).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+    // console.log(doc.id, '=>', doc.data());
+  });
+
+  name = first + ' ' + last
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'Payouts Are on the Way' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-1fe00f897a154902854fc66ce46eaa27' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
+
+// Send Payout Success Email
+exports.sendGridCreateClass = functions.https.onCall(async (data) => {
+  console.log("DATA: ", data)
+  const gymId = data
+
+  // get account info from firebase via stripe account id
+  const snapshot = await partners.where('associated_gyms', 'array-contains', gymId).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+    // console.log(doc.id, '=>', doc.data());
+  });
+  name = first + ' ' + last
+
+  console.log("email, first, last, name: ", email, first, last, name)
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'Class Created!' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-8eba98fc52f644498d687206bf0239cb' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
 
 exports.createImbueProduct = functions.https.onCall(async (data, context) => {
   const imbueId = 'imbue'
@@ -318,6 +470,11 @@ exports.removeFromSendGrid = functions.https.onCall(async (data) => {
   });
 })
 
+// Remove contact to SendGrid
+exports.sendPayoutsConfirmationEmail = functions.https.onCall(async (data) => {
+
+})
+
 
 /**
  * When a user is created, create a Stripe customer object for them.
@@ -342,6 +499,7 @@ exports.createStripeCustomer = functions.auth.user().onCreate(async (user) => {
 
   return;
 });
+
 
 exports.createStripeSeller = functions.https.onCall(async (data, context) => {
   const { auth: { uid } } = context

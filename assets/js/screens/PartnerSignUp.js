@@ -48,7 +48,6 @@ export default function PartnerSignUp(props) {
   }, [])
 
 
-
   function invalidate() {
     let redFields = []
     if (!first) redFields.push("first")

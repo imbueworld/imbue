@@ -221,7 +221,9 @@ export default function ProfileSettings(props) {
       }
   
 
+      // remove hyphens from phone number (/-/gi, ' ')
       if (phone) updatables.phone = phone.replaceAll(/[^0-9]/g, '')
+      // if (phone) updatables.phone = phone.replaceAll(/-/gi, ' ')
       // if (company_name) updatables.company_name = company_name
       // if (tax_id) updatables.tax_id = tax_id
       if (ssn_last_4) updatables.ssn_last_4 = ssn_last_4
@@ -231,6 +233,8 @@ export default function ProfileSettings(props) {
         setSuccessMsg('All information is up to date.')
         return
       }
+
+      console.log('UPDATABLES: ', updatables)
 
       const userObj = new User()
       await userObj.init()
@@ -247,7 +251,7 @@ export default function ProfileSettings(props) {
         // (ones that weren't added during Partner Sign Up).
 
         // userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }), 
-        userObj.updateStripeAccount(updatables, { pfGeocodeAddress }),
+        userObj.updateStripeAccount(updatables, { pfGeocodeAddress }), 
         navigation.navigate('PartnerDashboard')
       ])
 
@@ -275,6 +279,19 @@ export default function ProfileSettings(props) {
       text = text += "-"
       return text
     } else if (text.length == 5) {
+      text = text += "-"
+      return text
+    }
+
+    return text
+  }
+
+   // adds hyphens in phone input
+   const handlePhone = (text) => {
+    if (text.length == 3) {
+      text = text += "-"
+      return text
+    } else if (text.length == 7) {
       text = text += "-"
       return text
     }
@@ -337,7 +354,7 @@ export default function ProfileSettings(props) {
             maxLength={10}
             placeholder='Date of Birth (MM-DD-YYYY)'
             onChangeText={(text) => 
-                setDob(handleDOB(text))
+                setDob(handleDOB(text)) 
             }
         />
 
@@ -348,12 +365,13 @@ export default function ProfileSettings(props) {
               value={address}
               onChangeText={setAddress}
             />
+
             <CustomTextInputV2
               containerStyle={styles.inputField}
               red={redFields.includes('phone')}
-              placeholder='Phone'
-              value={phone}
-              onChangeText={setPhone}
+              placeholder='Phone' 
+              value={phone} 
+              onChangeText={(text) => setPhone(handlePhone(text))}
             />
 
             <CustomTextInputV2

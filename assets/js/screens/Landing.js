@@ -31,17 +31,12 @@ export default function Landing(props) {
         props.navigation.navigate("PartnerHome")
     }
 
-    // async function sendGridDelete() {
-    //     let first = "t"
-    //     let last = "t"
-    //     let email = "t@gmail.com"
-    //     let listName = "accepted influencer"
-    //     const removeFromSendGrid = functions().httpsCallable('removeFromSendGrid')
-    //     await removeFromSendGrid({email, first, last, listName})
+    async function sendGridTest() {
+        let acct_id = "acct_1I5i0OPXzRLgWwwY"
 
-    //     const addToSendGrid = functions().httpsCallable('addToSendGrid')
-    //     await addToSendGrid({email, first, last, listName})
-    // }
+        const sendGridEmailPayoutPaid = functions().httpsCallable('sendGridEmailPayoutPaid')
+        await sendGridEmailPayoutPaid(acct_id)
+    }
 
 
     return (
@@ -62,6 +57,15 @@ export default function Landing(props) {
                     marginBottom: 50,
                 }}
             >
+
+                {/* <CustomButton
+                    style={{
+                        marginTop: 10,
+                        marginBottom: 0,
+                    }}
+                    onPress={sendGridTest}
+                    title="test sendgrid"
+                /> */}
 
                 <Text style={{
                     marginTop: 0,

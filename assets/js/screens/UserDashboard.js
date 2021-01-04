@@ -70,7 +70,8 @@ export default function UserDashboard(props) {
         .then(querySnapshot => {
           querySnapshot.forEach(documentSnapshot => {
             console.log("gym")
-            setGyms(prevArray => [...prevArray, documentSnapshot.data()])
+              setGyms(prevArray => [...prevArray, documentSnapshot.data()])
+            
           });
         });
       

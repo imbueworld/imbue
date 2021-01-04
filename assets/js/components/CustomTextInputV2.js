@@ -36,7 +36,7 @@ export default function CustomTextInputV2(props) {
           // style={(isFocused ? styles.focusedView : styles.blurredView)}
           style={{
             width: '100%',
-            height: '100%',
+            height: 30,
             position: 'absolute',
             zIndex: 0,
             borderBottomWidth: 2,
@@ -54,9 +54,9 @@ export default function CustomTextInputV2(props) {
           // style={(isFocused ? styles.focusedView : styles.blurredView)}
           style={{
             width: '100%',
-            height: '100%',
+            height: 30,
             position: 'absolute',
-            zIndex: 0,
+            zIndex: 0, 
             borderBottomWidth: 1,
             borderBottomColor: "#D6D9DC"
           }}
