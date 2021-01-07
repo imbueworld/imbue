@@ -23,6 +23,7 @@ import { simpleShadow } from '../contexts/Colors'
 import Icon from '../components/Icon'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 const layoutOptions = {
@@ -63,20 +64,19 @@ const buttonOptions = {
 export default function LivestreamLayout(props) {
   // const [gymId, setGymId] = useState(null)
   // const [user, setUser] = useState(null)
-  
 
   const gymId = props.gymId
   const user = props.user
   const isLive = props.isLive
   const gymImage = props.gymImageUri
   const gymName = props.gymName
+  const liveStatus = props.liveStatus
   const { width, height } = useDimensions().window
   const cardIconLength = width / 4
   if (!gymId) throw new Error("prop gymId must be provided")
   if (!user) throw new Error("prop user must be provided")
   let navigation = useNavigation()
 
-  
 
   const [r, refresh] = useState(0)
 
@@ -90,7 +90,6 @@ export default function LivestreamLayout(props) {
 
   // Apply props.buttonOptions to buttonOptions
   useEffect(() => {
-    console.log("isLive (livestreamlayout): ", isLive)
     if (props.buttonOptions) {
       Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
         Object.entries(instructions).forEach(([key, value]) => {
@@ -98,31 +97,9 @@ export default function LivestreamLayout(props) {
         })
       })
     }
-  }, [])
+    console.log("USER?: ", user)
 
-  // useEffect(() => {
-  //   console.log('1')
-  //   const init = async () => {
-  //     // Get gymID
-  //     const partner = new User()
-  //     const partnerDoc = await partner.retrieveUser() 
-  //     console.log("partnerDoc: " + JSON.stringify(partnerDoc))
-  //     const { associated_gyms = [] } = partnerDoc
-  //     const gymIds = associated_gyms[0]
-  //     console.log("gymIds: " + gymIds)
-  //     await registerParticipant({
-  //       gymIds,
-  //       name: partnerDoc.name,
-  //       uid: partnerDoc.id,
-  //       icon_uri: partnerDoc.icon_uri,
-  //     })
-  //     setUser(partnerDoc)
-  //     setGymId(gymIds)
-  //     console.log('2')
-  //   }
-  //   init()
-    
-  // }, [])
+  }, [])
 
   useEffect(() => {
     const init = async () => {
@@ -335,45 +312,11 @@ export default function LivestreamLayout(props) {
       height: "100%",
       zIndex: -110,
       }} />
-      
-      {/* Show waiting screen if influencer isn't live */}
-      { isLive === false
-        ?  
-        <View style={{
-          height: 100,
-          width: 300,
-          marginTop: height / 2 - 70,
-          marginLeft: width * .10,
-          // flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}>
-          <Icon
-            containerStyle={{
-              width: cardIconLength,
-              height: cardIconLength,
-              borderRadius: 50,
-              overflow: 'hidden', 
-            }}
-            source={{ uri: gymImage}}
-          />
-          <Text style={{
-            color: "#fff",
-            marginTop: 20,
-            ...FONTS.body,
-            textAlign: "center"
-            // justifyContent: 'center',
-            // alignItems: 'center',
-          }}>
-            {gymName} will be going live shortly...
-            Leave and come back in periodically to check
-          </Text>
-         </View>
-        :  null
-      }
 
-    {buttonOptions.viewButtonPanel.show
-    ? <TouchableWithoutFeedback
+
+    {/* {buttonOptions.viewButtonPanel.show 
+    ?  */}
+    <TouchableWithoutFeedback
         style={{
           width: "100%",
           height: "100%",
@@ -383,76 +326,54 @@ export default function LivestreamLayout(props) {
           buttonOptions.viewButtonPanel.state === "open" ? "closed" : "open"
         )}
       />
-    : null}
+    {/* : null} */}
 
-    {buttonOptions.viewButtonPanel.state === "open"
-    ? <View style={{
+     {/* {buttonOptions.viewButtonPanel.state === "open" 
+    ?  */}
+    <View style={{
         width: "100%",
         height: "100%",
         position: "absolute",
           zIndex: 105,
           marginTop: 40,
       }}>
-        { buttonOptions.goBack.show
-        ? <View style={{
+        {/* { buttonOptions.goBack.show  ? */}
+       <View style={{
           position: "absolute",
           top: 10,
           left: 10,
             }}>
-              
-              {/* Custom backbutton - sends back to Partner Dash */}
-              {/* <View style={{
-                backgroundColor: "white",
-                borderRadius: 999,
-                zIndex: 110,
-                ...simpleShadow,
-                ...containerStyle,
-              }}>
-                <TouchableHighlight
-                  style={{
-                    borderRadius: 999,
-                  }}
-                  underlayColor="#00000020"
-                  onPress={onPress}
-                >
-                  <Icon
-                    containerStyle={{
-                      width: 50,
-                      height: 50,
-                      ...imageContainerStyle,
-                    }}
-                    imageStyle={imageStyle}
-                    source={require("../components/img/png/back-button-4.png")}
-                  />
-                </TouchableHighlight>
-              </View> */}
-
             <GoBackButton />
           </View>
-        : null }
+        {/* // : null } */}
 
-        <TouchableWithoutFeedback
-          containerStyle={{
-            position: "absolute",
-            top: 20,
-              right: 20,
-          }}
-          onPress={() => {
-            layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
-            refresh(r => r + 1)
-          }}
-          // [v DEBUG ONLY v]
-          onLongPress={config.DEBUG ? () => {
-            layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
-            refresh(r => r + 1)
-          } : null}
-          // [^ DEBUG ONLY ^]
-        >
-          <LiveViewerCountBadge
-            hidden={!layoutOptions.viewerCount.show}
-          />
-        </TouchableWithoutFeedback>
-
+        {/* {user.account_type == "partner" ? 
+            <TouchableWithoutFeedback
+            containerStyle={{
+              position: "absolute",
+              top: 20,
+                right: 20,
+            }}
+            onPress={() => {
+              layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
+              refresh(r => r + 1)
+            }}
+            // [v DEBUG ONLY v]
+            onLongPress={config.DEBUG ? () => {
+              layoutOptions.viewerCount.show = !layoutOptions.viewerCount.show
+              refresh(r => r + 1)
+            } : null}
+            // [^ DEBUG ONLY ^]
+            >
+            <LiveViewerCountBadge
+              hidden={!layoutOptions.viewerCount.show}
+            />
+            </TouchableWithoutFeedback>
+        : null
+       } */}
+       
+       {/* { liveStatus == 'video.live_stream.connected' ? */}
+        
         <View style={{
           width: "100%",
           paddingHorizontal: 15,
@@ -484,38 +405,40 @@ export default function LivestreamLayout(props) {
             />
           : null}
 
-          {buttonOptions.leaveLivestream.show
-          ? <CancelButton
-              title="Leave"
-              onPress={() => navigation.goBack()} 
-            />
-          : null}
 
-          { buttonOptions.goLive.show
-          ? <GoLiveButton
-              title={buttonOptions.goLive.state === "streaming" ? "End Livestream" : "Go Live"}
-                onPress={() => {
-                switch(buttonOptions.goLive.state) {
-                  case "streaming":
-                    buttonOptions.goLive.state = "idle"
-                    buttonOptions.goBack.show = true
-                    console.log("streaming")
-                    break
-                  case "idle":
-                    buttonOptions.goLive.state = "streaming"
-                    buttonOptions.goBack.show = false
-                    console.log("idle")
-                    break
-                }
-                refresh(r => r + 1)
-                
-                buttonOptions.goLive.onPress()
-              }}
-            />
+      {user.account_type == "partner" ? 
+        <View>
+          <CancelButton
+            title="Leave"
+            onPress={() => navigation.goBack()} 
+          />
+          <GoLiveButton
+                title={buttonOptions.goLive.state === "streaming" ? "End Livestream" : "Go Live"}
+                  onPress={() => {
+                  switch(buttonOptions.goLive.state) {
+                    case "streaming":
+                      buttonOptions.goLive.state = "idle"
+                      buttonOptions.goBack.show = true
+                      console.log("streaming")
+                      break
+                    case "idle":
+                      buttonOptions.goLive.state = "streaming"
+                      buttonOptions.goBack.show = false
+                      console.log("idle")
+                      break
+                  }
+                  refresh(r => r + 1)
+                  
+                  buttonOptions.goLive.onPress()
+                }}
+              />
+            </View>
           : null }
           
-          {buttonOptions.viewParticipants.show
-          ? <ListButton
+          
+          {/* {buttonOptions.viewParticipants.show ? */}
+          {user.account_type == "partner" ? 
+          <ListButton
               onPress={() => {
                 let ptcState, chatState
                 switch (buttonOptions.viewParticipants.state) {
@@ -536,9 +459,7 @@ export default function LivestreamLayout(props) {
             />
           : null}
         </View>
-
-      </View>
-    : null}
+        {/* : null} */}
 
     {buttonOptions.viewChat.state === "open"
     ? <Chat
@@ -578,6 +499,7 @@ export default function LivestreamLayout(props) {
         }}
       />
     : null}
+    </View>
     </>
   )
 }

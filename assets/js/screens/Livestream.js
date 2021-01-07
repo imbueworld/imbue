@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, ScrollView, RefreshControl } from 'react-native'
 import LivestreamLayout from '../layouts/LivestreamLayout'
 import firestore from '@react-native-firebase/firestore';
+import functions from '@react-native-firebase/functions'
 import { useDimensions } from '@react-native-community/hooks'
 import { publicStorage } from '../backend/BackendFunctions'
 import Video from 'react-native-video'
@@ -11,8 +12,6 @@ import config from '../../../App.config'
 import { get } from 'react-hook-form';
 import GoBackButton from '../components/buttons/GoBackButton'
 
-
-// e9b8229d-b5b1-4d89-e7cd-c141c08ac1a1
 
 function getPlaybackLink(playbackId) {
   // return `rtmps://global-live.mux.com:443/app/88e75daa-9fd8-d94e-e161-cf2d304d10c7`
@@ -26,13 +25,14 @@ export default function Livestream(props) {
   const { classDoc } = props.route.params
 
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [playbackLink, setPlaybackLink] = useState(null)
   const [playbackId, setPlaybackId] = useState(null)
+  const [liveStatus, setLiveStatus] = useState(null)
   const [isLive, setIsLive] = useState(false)
   const [gymName, setGymName] = useState(null)
   const [gymImage, setGymImage] = useState(null)
   const [refreshing, setRefreshing] = React.useState(false);
-  const [classHasPassed, setClassHasPassed] = useState()
 
   const { width, height } = useDimensions().window
   const cardIconLength = width / 4
@@ -45,9 +45,11 @@ export default function Livestream(props) {
       const user = new User()
 
       setUser(await user.retrieveUser())
+      setUserId(user.uid)
+
       const gym = new Gym()
       
-      const playback_id  =  firestore()
+      firestore()
         .collection('gyms')
         .doc(gymId)
         .get()
@@ -57,17 +59,11 @@ export default function Livestream(props) {
           getGymImage(documentSnapshot.data().image_uri)
           // setPlaybackId(documentSnapshot.data().playback_id)
         });
+
       
     }; init()
   }, [])
 
-
-// Refresh
-  const onRefresh = React.useCallback(async() => {
-    setRefreshing(true);
-
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
 
   const wait = (timeout) => {
     return new Promise(resolve => {
@@ -92,22 +88,14 @@ export default function Livestream(props) {
      setGymImage(profileImg)
   }
 
-  console.log("isLive: ", isLive)
-
   if (!user) return <View />
 
   return (
     <>
-       {/* <ScrollView
-        contentContainerStyle={styles.scrollView}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      > */}
         <LivestreamLayout 
           gymId={gymId} 
           user={user}
+          liveStatus={liveStatus}
           isLive={isLive}
           gymImageUri={gymImage}
           gymName={gymName}
@@ -120,19 +108,20 @@ export default function Livestream(props) {
             source={{ uri: playbackLink }} 
             refreshing={refreshing}
             onReadyForDisplay={() => {
-            // console.log("hiiiii onReadyForDisplay: ")
               setIsLive(true)
             }}
             onError={() => {
-              console.log("hiiiii onError: ")
+              console.log("video resulted in an error: ")
             }}
             paused={false}
+            onEnd={() => 
+              navigation.navigate('SuccessPage'),
+              console.log('ended')
+            }
             resizeMode={"cover"}
-            repeat={true}
+            repeat={false}
         />
        : null}  
-        
-       {/* </ScrollView> */}
     </>
   )
 }
@@ -141,7 +130,7 @@ const styles = StyleSheet.create({
   scrollView: {
     width: "100%",
     height: "100%",
-    zIndex: -999,
+    // zIndex: -999,
     backgroundColor: 'pink',
     alignItems: 'center',
     justifyContent: 'center',

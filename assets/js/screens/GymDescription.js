@@ -54,7 +54,6 @@ export default function GymDescription(props) {
     const {
       id
     } = gym
-    console.log("gym (GymDescription): ", gym)
     setGymId(id)
     const init = async () => {
       const thisUser = new User()

@@ -3,8 +3,10 @@
   "description": "Imbue Firebase Functions",
   "dependencies": {
     "@google-cloud/logging": "^7.2.3",
+    "@mux/mux-node": "^3.1.0",
     "@sendgrid/client": "^7.4.0",
     "algoliasearch": "^4.6.0",
+    "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "firebase": "^8.0.1",
     "firebase-admin": "^8.13.0",

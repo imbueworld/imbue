@@ -3,8 +3,13 @@
 const algoliasearch = require('algoliasearch')
 const XMLHttpRequest = require('xmlhttprequest').XMLHttpRequest
 const functions = require('firebase-functions')
-const express = require('express')
-const app = express()
+
+const Mux = require('@mux/mux-node');
+const { Webhooks } = Mux;
+const express = require('express');
+const bodyParser = require('body-parser');
+const app = express();
+
 const admin = require('firebase-admin')
 admin.initializeApp()
 // const { Logging } = require('@google-cloud/logging');
@@ -16,8 +21,6 @@ const stripe = require('stripe')(functions.config().stripe.secret, {
 })
 const endpointSecret = functions.config().keys.signing;
 
-
-
 const {
   p, w, e,
   _extractOnlyData,
@@ -27,7 +30,6 @@ const {
 const { Reports } = require('./src/Reports');
 
 
-
 const MUX_TOKEN_ID = '801aa96e-5814-4c01-a0e8-94119fdf59df'
 const MUX_TOKEN_SECRET = 'VAMH9mVP7GKlcqo+YHgym3gXoUu2w8043RHNpQSFDWMIfU8RtaZ2l9RNOLAjkPo400Y5WklQbJ9'
 
@@ -35,6 +37,7 @@ const GOOGLE_API_KEY = 'AIzaSyBjP2VSTSNfScD2QsEDN1loJf8K1IlM_xM'
 
 const SEND_GRID_KEY = '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'
 
+const MUX_WEBHOOK_SECRET = 'igcp513mem3l9fouq6flvkd85s8ph4p6'
 
 const ALGOLIA_ID = 'O50JZXNYWV'
 const ALGOLIA_SEARCH_KEY = '2300b356761715188aa0242530b512d9'
@@ -54,7 +57,6 @@ const membership_instances = admin.firestore().collection('membership_instances'
 const stripe_customers = admin.firestore().collection('stripe_customers')
 const stripe_products = admin.firestore().collection('stripe_products')
 const stripe_prices = admin.firestore().collection('stripe_prices')
-
 
 
 function forward_exports(fns) {
@@ -77,6 +79,87 @@ forward_exports(payout_functions)
 
 // stripe_functions.js
 forward_exports(require('./src/functions/stripe_functions'))
+
+
+// Mux Webhooks
+exports.muxEvents = functions.https.onRequest(async(request, response) => {
+  try {
+    const sig = request.headers['mux-signature'];
+
+    // returns a `boolean` with value `true` if the signature is valid
+    const isValidSignature = Webhooks.verifyHeader(
+      request.rawBody,
+      sig,
+      MUX_WEBHOOK_SECRET
+    );
+    console.log('Success:', isValidSignature);
+
+    // convert the raw req.body to JSON, which is originally Buffer (raw)
+    const jsonFormattedBody = JSON.parse(request.rawBody);
+    console.log("jsonFormattedBody.type: ", jsonFormattedBody.type)
+
+    let playbackID
+    let snapshot
+    let partnerId
+    // send data to firestore partners
+    switch(jsonFormattedBody.type) {
+      case 'video.live_stream.connected':
+        playbackID = jsonFormattedBody.data.playback_ids[0].id
+        // get partnerID
+        snapshot = await partners.where('playback_id', '==', playbackID).get();
+        snapshot.forEach(doc => {
+          partnerId = doc.data().id
+        });
+        // push status to firestore
+        await partners 
+          .doc(partnerId)
+          .update({
+            'liveStatus': 'video.live_stream.connected',
+          })
+        break;
+
+      case 'video.live_stream.disconnected':
+        playbackID = jsonFormattedBody.data.playback_ids[0].id
+        // get partnerID
+        snapshot = await partners.where('playback_id', '==', playbackID).get();
+        snapshot.forEach(doc => {
+          partnerId = doc.data().id
+        });
+        // push status to firestore
+        await partners 
+          .doc(partnerId)
+          .update({
+            'liveStatus': 'video.live_stream.disconnected',
+          })
+        break;
+
+      case 'video.live_stream.idle':
+        playbackID = jsonFormattedBody.data.playback_ids[0].id
+        // get partnerID
+        snapshot = await partners.where('playback_id', '==', playbackID).get();
+        snapshot.forEach(doc => {
+          partnerId = doc.data().id
+        });
+        // push status to firestore
+        await partners 
+          .doc(partnerId)
+          .update({
+            'liveStatus': 'video.live_stream.idle',
+          })
+        break;
+
+      default:
+        // code block
+    }
+  
+
+    // await doSomething();
+    response.json({ received: true });
+  } catch (err) {
+    console.log("nah fam: ", err.message)
+    // return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+});
 
 
 // Stripe Webhooks Handler

@@ -586,7 +586,7 @@ export default function ClassDescription(props) {
                   containerStyle={{
                     marginTop: 10,
                   }}
-                  data={gym}
+                  data={gym} 
                 />
               </>}
             {hasMembership !== "class" ? null :
@@ -597,7 +597,7 @@ export default function ClassDescription(props) {
                   }}
                   title="Join"
                   onPress={() => {
-                    const pushAction = StackActions.push("Livestream", { gymId: gym.id, classDoc: classDoc })
+                    const pushAction = StackActions.push("LivestreamWaitScreen", { gymId: gym.id, classDoc: classDoc })
                     navigation.dispatch(pushAction)
                     // getGoToLivestreamButton()
                   }}

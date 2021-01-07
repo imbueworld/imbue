@@ -3,6 +3,8 @@
 .vscode/
 google_api/
 
+.env
+
 # OSX
 #
 .DS_Store
