@@ -11,6 +11,7 @@ import Gym from '../backend/storage/Gym'
 import config from '../../../App.config'
 import { get } from 'react-hook-form';
 import GoBackButton from '../components/buttons/GoBackButton'
+import { useNavigation } from '@react-navigation/native'
 
 
 function getPlaybackLink(playbackId) {
@@ -38,6 +39,8 @@ export default function Livestream(props) {
   const cardIconLength = width / 4
 
   const [pageWidth, setPageWidth] = useState(width)
+  let navigation = useNavigation()
+
 
   useEffect(() => {
     const init = async () => {
@@ -74,7 +77,6 @@ export default function Livestream(props) {
 
   useEffect(() => {
     const init = async () => {
-      console.log("isLive (useEffect): ", isLive)
     }; init()
   }, [isLive])
 
@@ -113,13 +115,13 @@ export default function Livestream(props) {
             onError={() => {
               console.log("video resulted in an error: ")
             }}
+            controls={false}
             paused={false}
-            onEnd={() => 
-              navigation.navigate('SuccessPage'),
-              console.log('ended')
-            }
+            onEnd={()=> {
+              navigation.navigate('SuccessScreen')
+              // console.log('abc')
+            }}
             resizeMode={"cover"}
-            repeat={false}
         />
        : null}  
     </>
@@ -139,7 +141,6 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     position: "absolute",
-    zIndex: -100,
   },
   GoBackButton: {
     ...config.styles.GoBackButton_screenDefault,

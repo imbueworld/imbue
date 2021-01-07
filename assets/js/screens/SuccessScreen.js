@@ -1,18 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, ScrollView, RefreshControl, Platform } from 'react-native'
-import { useDimensions } from '@react-native-community/hooks'
 
 import { useNavigation } from '@react-navigation/native'
-import GoBackButton from '../components/buttons/GoBackButton'
-import config from '../../../App.config' 
 import User from '../backend/storage/User'
-import Icon from '../components/Icon'
 import { FONTS } from '../contexts/Styles'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
-import firestore from '@react-native-firebase/firestore';
-import { publicStorage } from '../backend/BackendFunctions'
 import LottieView from 'lottie-react-native';
 import CustomButton from "../components/CustomButton"
+import { colors } from "../contexts/Colors"
 
 
 export default function SuccessScreen(props) {
@@ -44,33 +39,23 @@ export default function SuccessScreen(props) {
 
 
   return (
-    <>
       <View style={{
-        position: "absolute",
-        backgroundColor: "black",
-        width: "100%",
-        height: "100%",
-        }} />
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: colors.bg,
+        paddingHorizontal: 30
+       }} >
 
-          <View style={{
-            height: 100,
-            width: 300,
-            flex: 1,
-            marginTop: hp('5%'),
-            marginLeft: wp('2%'),
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}>
 
-            <LottieView source={require('../components/img/animations/health-and-fitness.json')} autoPlay loop />;
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{width: 250, height: 250}} autoPlay loop />
            
             <Text style={{
-              color: "#fff",
-              marginTop: 20,
+              color: colors.textInputFill,
               ...FONTS.body,
-              textAlign: "center"
-              // justifyContent: 'center',
-              // alignItems: 'center',
+              textAlign: 'center',
+              marginTop: 30,
             }}>
               Congrats you completed a class! Keep it up.
             </Text>
@@ -78,32 +63,18 @@ export default function SuccessScreen(props) {
             <CustomButton
               style={{
                 marginBottom: 20,
+                paddingHorizontal: 40,
+                marginTop: 30
               }}
               title="Go to Home"
               onPress={async () => {
                 navigation.navigate('UserDashboard')
               }}
             />
-        </View>
-    </>
+    </View>
   )
 }
 
 const styles = StyleSheet.create({
-  scrollView: {
-    width: "100%",
-    height: "100%",
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: "black"
-  },
-  video: {
-    width: "100%",
-    height: "100%",
-    position: "absolute",
-    zIndex: -100,
-  },
-  GoBackButton: {
-    ...config.styles.GoBackButton_screenDefault,
-  },
+
 })

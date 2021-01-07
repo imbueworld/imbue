@@ -117,7 +117,6 @@ export default function ClassDescription(props) {
       const gym = new Gym()
       setGym(await gym.retrieveGym(classGymId))
 
-      console.log("gym.uid (top)?: ", gym.uid)
       setGymUid(gym.uid)
     }; init()
   }, [r])
@@ -526,7 +525,6 @@ export default function ClassDescription(props) {
                                   })
 
                                   // sendGrid somebody joined your class
-                                  console.log("addToCalendar Pressed")
                                   try {
                                     // initiate SendGrid email
                                     console.log("gymUid: ", gymUid)

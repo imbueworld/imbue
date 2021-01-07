@@ -97,8 +97,6 @@ export default function LivestreamLayout(props) {
         })
       })
     }
-    console.log("USER?: ", user)
-
   }, [])
 
   useEffect(() => {
@@ -310,7 +308,7 @@ export default function LivestreamLayout(props) {
       backgroundColor: "black",
       width: "100%",
       height: "100%",
-      zIndex: -110,
+      // zIndex: 999,
       }} />
 
 

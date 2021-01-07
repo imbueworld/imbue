@@ -47,7 +47,6 @@ export default function LivestreamWaitScreen(props) {
         .then(documentSnapshot =>  {      
           setGymName(documentSnapshot.data().name)
           setFillerText(`${documentSnapshot.data().name} is not live. Try refreshing...`)
-          console.log("documentSnapshot.data().image_uri: ", documentSnapshot.data().image_uri)
           getGymImage(documentSnapshot.data().image_uri)
         });
 
@@ -67,7 +66,6 @@ export default function LivestreamWaitScreen(props) {
       .get()
       .then(documentSnapshot =>  {      
         thisPlaybackId  = documentSnapshot.data().playback_id
-        console.log('documentSnapshot.data().playback_id: ', documentSnapshot.data().playback_id)
       });
 
     let docu
@@ -76,15 +74,13 @@ export default function LivestreamWaitScreen(props) {
       docu = doc
     });
 
-    console.log("docu.data().liveStatus: ", docu.data().liveStatus)
-
     switch(docu.data().liveStatus) {
       case 'video.live_stream.active':
         navigation.navigate('Livestream', { gymId: gymId, classDoc: classDoc } )
         break;
-      case 'video.live_stream.connected':
-        navigation.navigate('Livestream', { gymId: gymId, classDoc: classDoc } )
-        break;
+      // case 'video.live_stream.connected':
+      //   navigation.navigate('Livestream', { gymId: gymId, classDoc: classDoc } )
+      //   break;
       case 'video.live_stream.disconnected':
         setFillerText(`The livestream has been disconnected. Try refreshing the page. The influencer may have ended the video`)
         break;

@@ -118,6 +118,21 @@ exports.muxEvents = functions.https.onRequest(async(request, response) => {
           })
         break;
 
+      case 'video.live_stream.active':
+        playbackID = jsonFormattedBody.data.playback_ids[0].id
+        // get partnerID
+        snapshot = await partners.where('playback_id', '==', playbackID).get();
+        snapshot.forEach(doc => {
+          partnerId = doc.data().id
+        });
+        // push status to firestore
+        await partners 
+          .doc(partnerId)
+          .update({
+            'liveStatus': 'video.live_stream.active',
+          })
+        break;
+
       case 'video.live_stream.disconnected':
         playbackID = jsonFormattedBody.data.playback_ids[0].id
         // get partnerID

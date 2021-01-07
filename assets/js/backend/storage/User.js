@@ -503,8 +503,6 @@ export default class User extends DataObject {
             documentSnapshot.data().active_times.forEach(clss => {
               // update relevant attendees count
               if (clss.time_id == timeId) {
-                console.log("clss.attendees: ", clss.attendees)
-
                 clss.attendees +=1
               }
               updatedActiveTimes.push(clss)
