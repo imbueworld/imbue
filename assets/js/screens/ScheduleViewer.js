@@ -55,8 +55,6 @@ export default function ScheduleViewer(props) {
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
-      console.log("focused")
-
         const init = async () => {
         const user = new User()
         setUser(await user.retrieveUser())
@@ -122,7 +120,6 @@ export default function ScheduleViewer(props) {
       
 
       return () => {
-        console.log("blurred")
         // Do something when the screen is unfocused
         // Useful for cleanup functions
       };

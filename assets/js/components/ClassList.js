@@ -26,7 +26,6 @@ export default function ClassList(props) {
 
   useEffect(() => {
     const init = async () => {
-      console.log("calendarData (ClassList): ", calendarData)
       // let iconUri = await publicStorage("workout.jpg") // To-Do
       // setIconUri(iconUri)
     }

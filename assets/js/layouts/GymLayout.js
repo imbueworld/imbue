@@ -172,10 +172,13 @@ export default function GymLayout(props) {
         />
         : null}
       
+      {gymImage ? 
         <Image
           style={styles.image}
           source={{ uri: gymImage}}
         /> 
+      :null}
+     
 {/* 
       <Icon
         containerStyle={{
