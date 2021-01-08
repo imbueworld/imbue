@@ -57,7 +57,7 @@ export default function SuccessScreen(props) {
               textAlign: 'center',
               marginTop: 30,
             }}>
-              Congrats you completed a class! Keep it up.
+              Congrats! You completed a class. Keep it up.
             </Text>
 
             <CustomButton

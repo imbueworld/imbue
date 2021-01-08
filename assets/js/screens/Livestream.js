@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react'
 import { StyleSheet, View, Text, ScrollView, RefreshControl } from 'react-native'
 import LivestreamLayout from '../layouts/LivestreamLayout'
 import firestore from '@react-native-firebase/firestore';
-import functions from '@react-native-firebase/functions'
 import { useDimensions } from '@react-native-community/hooks'
 import { publicStorage } from '../backend/BackendFunctions'
 import Video from 'react-native-video'
@@ -12,6 +11,9 @@ import config from '../../../App.config'
 import { get } from 'react-hook-form';
 import GoBackButton from '../components/buttons/GoBackButton'
 import { useNavigation } from '@react-navigation/native'
+import LottieView from 'lottie-react-native';
+import { FONTS } from '../contexts/Styles'
+import { colors } from "../contexts/Colors"
 
 
 function getPlaybackLink(playbackId) {
@@ -31,12 +33,12 @@ export default function Livestream(props) {
   const [playbackId, setPlaybackId] = useState(null)
   const [liveStatus, setLiveStatus] = useState(null)
   const [isLive, setIsLive] = useState(false)
+  const [didPressEnd, setDidPressEnd] = useState(false)
   const [gymName, setGymName] = useState(null)
   const [gymImage, setGymImage] = useState(null)
   const [refreshing, setRefreshing] = React.useState(false);
 
   const { width, height } = useDimensions().window
-  const cardIconLength = width / 4
 
   const [pageWidth, setPageWidth] = useState(width)
   let navigation = useNavigation()
@@ -48,22 +50,29 @@ export default function Livestream(props) {
       const user = new User()
 
       setUser(await user.retrieveUser())
-      setUserId(user.uid)
 
       const gym = new Gym()
-      
-      firestore()
+    
+      await firestore()
         .collection('gyms')
         .doc(gymId)
         .get()
         .then(documentSnapshot =>  {      
           setPlaybackLink(getPlaybackLink(documentSnapshot.data().playback_id))
           setGymName(documentSnapshot.data().name)
+
+          setUserId(documentSnapshot.data().partner_id)
+          // update didPressEnd
+          firestore()
+            .collection('partners')
+            .doc(documentSnapshot.data().partner_id)
+            .update({
+              didPressEnd: false,
+            })
+          
           getGymImage(documentSnapshot.data().image_uri)
           // setPlaybackId(documentSnapshot.data().playback_id)
-        });
-
-      
+        });      
     }; init()
   }, [])
 
@@ -103,6 +112,24 @@ export default function Livestream(props) {
           gymName={gymName}
         />
 
+      {/* Loader */}
+      {isLive != true ? 
+          <LottieView source={require('../components/img/animations/loading-dots.json')} style={{marginRight: 100, marginLeft: 50}} autoPlay loop />
+          
+      :null}
+
+      {/* repetitive bc Lottie can't be wrapped in a View */}
+      {isLive != true ? 
+          <Text style={{
+            color: colors.textInputPlaceholderLight,
+            ...FONTS.body,
+            textAlign: 'center',
+            flex: 1
+          }}>
+            just a sec
+          </Text>
+      :null}
+
       { playbackLink
           ?
           <Video   
@@ -111,6 +138,25 @@ export default function Livestream(props) {
             refreshing={refreshing}
             onReadyForDisplay={() => {
               setIsLive(true)
+            }}
+            onBuffer={async() => {
+              // get livestream status
+              firestore()
+                .collection('partners')
+                .doc(userId)
+                .get()
+                .then(documentSnapshot =>  {   
+
+                    {documentSnapshot.data().liveStatus == 'video.live_stream.disconnected' && documentSnapshot.data().didPressEnd == true ? (
+                      navigation.navigate('SuccessScreen')
+                    ):null}
+
+                    {documentSnapshot.data().liveStatus == 'video.live_stream.disconnected' && documentSnapshot.data().didPressEnd == false ? (
+                      navigation.navigate('LivestreamDisconnectedScreen', { gymId: gymId, classDoc: classDoc })
+
+                    ):null}
+
+                });
             }}
             onError={() => {
               console.log("video resulted in an error: ")

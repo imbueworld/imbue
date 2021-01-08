@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, ScrollView, RefreshControl, Platform } from 're
 import { useDimensions } from '@react-native-community/hooks'
 
 import { useNavigation } from '@react-navigation/native'
-import GoBackButton from '../components/buttons/GoBackButton'
+import GoHomeButton from '../components/buttons/GoHomeButton'
 import config from '../../../App.config' 
 import User from '../backend/storage/User'
 import Icon from '../components/Icon'
@@ -13,7 +13,7 @@ import firestore from '@react-native-firebase/firestore';
 import { publicStorage } from '../backend/BackendFunctions'
 
 
-export default function LivestreamWaitScreen(props) {
+export default function LivestreamDisconnectedScreen(props) {
   const { gymId } = props.route.params
   const { classDoc } = props.route.params
   let navigation = useNavigation()
@@ -38,7 +38,7 @@ export default function LivestreamWaitScreen(props) {
       const user = new User()
 
       setUser(await user.retrieveUser())
-      // setUserId(user.uid)
+      setUserId(user.uid)
       
       await firestore()
         .collection('gyms')
@@ -48,7 +48,6 @@ export default function LivestreamWaitScreen(props) {
           setGymName(documentSnapshot.data().name)
           setFillerText(`${documentSnapshot.data().name} is not live. Try refreshing...`)
           getGymImage(documentSnapshot.data().image_uri)
-          setUserId(documentSnapshot.data().partner_id)
         });
 
         // Get livestatus
@@ -76,12 +75,12 @@ export default function LivestreamWaitScreen(props) {
     });
 
     switch(docu.data().liveStatus) {
-      case 'video.live_stream.active':
+      case 'video.live_stream.connected':
         navigation.navigate('Livestream', { gymId: gymId, classDoc: classDoc } )
         break;
-      // case 'video.live_stream.connected':
-      //   navigation.navigate('Livestream', { gymId: gymId, classDoc: classDoc } )
-      //   break;
+      case 'video.live_stream.disconnected':
+        setFillerText(`The livestream has been disconnected. Try refreshing the page. The influencer may have ended the video`)
+        break;
       default: 
         break;
     }
@@ -128,12 +127,14 @@ export default function LivestreamWaitScreen(props) {
         height: "100%",
         }} />
 
+        {/* Go Home */}
         <View style={{
           position: "absolute",
           top: 50,
           left: 10,
             }}>
-            <GoBackButton />
+              
+            <GoHomeButton />
           </View>
 
           <View style={{

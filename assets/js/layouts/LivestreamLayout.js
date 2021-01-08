@@ -23,7 +23,7 @@ import { simpleShadow } from '../contexts/Colors'
 import Icon from '../components/Icon'
 import { TouchableHighlight } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
-import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import firestore from '@react-native-firebase/firestore';
 
 
 const layoutOptions = {
@@ -406,15 +406,24 @@ export default function LivestreamLayout(props) {
 
       {user.account_type == "partner" ? 
         <View>
-          <CancelButton
+          {/* <CancelButton
             title="Leave"
             onPress={() => navigation.goBack()} 
-          />
+          /> */}
           <GoLiveButton
                 title={buttonOptions.goLive.state === "streaming" ? "End Livestream" : "Go Live"}
                   onPress={() => {
                   switch(buttonOptions.goLive.state) {
                     case "streaming":
+
+                      // register didPressEnd
+                      firestore()
+                        .collection('partners')
+                        .doc(user.id)
+                        .update({
+                          didPressEnd: true,
+                        })
+
                       buttonOptions.goLive.state = "idle"
                       buttonOptions.goBack.show = true
                       console.log("streaming")

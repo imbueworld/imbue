@@ -25,6 +25,7 @@ import PartnerRevenueInfo from './assets/js/screens/PartnerRevenueInfo'
 import GoLive from './assets/js/screens/GoLive'
 import Livestream from './assets/js/screens/Livestream'
 import LivestreamWaitScreen from './assets/js/screens/LivestreamWaitScreen'
+import LivestreamDisconnectedScreen from './assets/js/screens/LivestreamDisconnectedScreen'
 import SuccessScreen from './assets/js/screens/SuccessScreen'
 import PurchaseUnlimited from './assets/js/screens/PurchaseUnlimited'
 import GymDescription from './assets/js/screens/GymDescription'
@@ -165,6 +166,11 @@ export default function App() {
         <Stack.Screen
           name='LivestreamWaitScreen'
           component={LivestreamWaitScreen}
+          initialParams={{}}
+        />
+        <Stack.Screen
+          name='LivestreamDisconnectedScreen'
+          component={LivestreamDisconnectedScreen}
           initialParams={{}}
         />
         <Stack.Screen
