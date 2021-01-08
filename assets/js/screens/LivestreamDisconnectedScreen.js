@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, ScrollView, RefreshControl, Platform } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
+import CustomButton from "../components/CustomButton"
 
 import { useNavigation } from '@react-navigation/native'
 import GoHomeButton from '../components/buttons/GoHomeButton'
 import config from '../../../App.config' 
 import User from '../backend/storage/User'
 import Icon from '../components/Icon'
+import { colors } from "../contexts/Colors"
 import { FONTS } from '../contexts/Styles'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import firestore from '@react-native-firebase/firestore';
@@ -79,7 +81,7 @@ export default function LivestreamDisconnectedScreen(props) {
         navigation.navigate('Livestream', { gymId: gymId, classDoc: classDoc } )
         break;
       case 'video.live_stream.disconnected':
-        setFillerText(`The livestream has been disconnected. Try pulling down to refresh the page. The influencer may have ended the video`)
+        setFillerText(`The livestream has been disconnected. Try refreshing the page. The influencer may have ended the video`)
         break;
       default: 
         break;
@@ -160,11 +162,23 @@ export default function LivestreamDisconnectedScreen(props) {
               marginTop: 20,
               ...FONTS.body,
               textAlign: "center"
-              // justifyContent: 'center',
-              // alignItems: 'center',
             }}>
               {fillerText}
             </Text>
+            <CustomButton
+              style={{
+                marginBottom: 0,
+                marginTop: 20,
+                paddingHorizontal: 50, 
+                backgroundColor: colors.buttonAccent
+              }}
+              styleIsInverted={true}
+              textStyle={colors.darkButtonText}
+              title="Refresh"
+              onPress={() => {
+                onRefresh()
+              }}
+              />
         </View>
       </ScrollView>
     </>

@@ -341,7 +341,31 @@ export default function LivestreamLayout(props) {
           top: 10,
           left: 10,
             }}>
-            <GoBackButton />
+               
+               <View style={{
+                  backgroundColor: "white",
+                  borderRadius: 999,
+                  zIndex: 110,
+                  // ...simpleShadow,
+                  ...containerStyle,
+                }}>
+                  <TouchableOpacity
+                    style={{
+                      borderRadius: 999,
+                    }}
+                    // underlayColor="#00000020"
+                    onPress={navigation.goBack()}
+                  >
+                    <Icon
+                      containerStyle={{
+                        width: 50,
+                        height: 50,
+                      }}
+                      imageStyle={imageStyle}
+                      source={require("../components/img/png/x.png")}
+                    />
+                  </TouchableOpacity>
+                </View>
           </View>
         {/* // : null } */}
 

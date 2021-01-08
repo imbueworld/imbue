@@ -15,12 +15,15 @@ import cache from '../backend/storage/cache'
 export default function PaymentSettings(props) {
   const [creditCards, setCreditCards] = useState([])
   const [CreditCards, CreditCardsCreate] = useState(null)
+  const [user, setUser] = useState(null)
+
 
   useFocusEffect(
     React.useCallback(() => {
       // Do something when the screen is focused
       const init = async () => {
         const user = new User()
+        setUser(user)
         const creditCards = await user.retrievePaymentMethods()
         setCreditCards(creditCards)
       }; init()
@@ -29,12 +32,12 @@ export default function PaymentSettings(props) {
         // Useful for cleanup functions
       };
     }, [])
-  );
+  ); 
 
   useEffect(() => {
     const init = async () => {
       const user = new User()
-      const creditCards = await user.retrievePaymentMethods()
+      const creditCards = await user.retrievePaymentMethods()  
       setCreditCards(creditCards)
     }; init()
   })
@@ -44,9 +47,10 @@ export default function PaymentSettings(props) {
 
     CreditCardsCreate(
       creditCards.map(({ brand, last4, exp_month, exp_year }, idx) =>
-        <CreditCardBadge
+        <CreditCardBadge 
           key={`${exp_year}${last4}`}
           data={{ brand, last4, exp_month, exp_year }}
+          user={user}
         />
       )
     )
@@ -68,7 +72,7 @@ export default function PaymentSettings(props) {
           maxHeight: 450,
         }}>
           <ScrollView>
-            {CreditCards}
+            {CreditCards} 
           </ScrollView>
         </View>
 

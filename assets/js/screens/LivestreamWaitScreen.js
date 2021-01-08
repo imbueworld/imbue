@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View, Text, ScrollView, RefreshControl, Platform, TouchableOpacity } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
+import CustomButton from "../components/CustomButton"
 
 import { useNavigation } from '@react-navigation/native'
 import GoBackButton from '../components/buttons/GoBackButton'
 import config from '../../../App.config' 
 import User from '../backend/storage/User'
 import Icon from '../components/Icon'
+import { colors } from "../contexts/Colors"
 import { FONTS } from '../contexts/Styles'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import firestore from '@react-native-firebase/firestore';
@@ -46,7 +48,7 @@ export default function LivestreamWaitScreen(props) {
         .get()
         .then(documentSnapshot =>  {      
           setGymName(documentSnapshot.data().name)
-          setFillerText(`${documentSnapshot.data().name} is not live. Try pulling down to refresh...`)
+          setFillerText(`${documentSnapshot.data().name} is not live.`)
           getGymImage(documentSnapshot.data().image_uri)
           setUserId(documentSnapshot.data().partner_id)
         });
@@ -165,6 +167,20 @@ export default function LivestreamWaitScreen(props) {
             }}>
               {fillerText}
             </Text>
+            <CustomButton
+              style={{
+                marginBottom: 0,
+                marginTop: 20,
+                paddingHorizontal: 50, 
+                backgroundColor: colors.buttonAccent
+              }}
+              styleIsInverted={true}
+              textStyle={colors.darkButtonText}
+              title="Refresh"
+              onPress={() => {
+                onRefresh()
+              }}
+              />
         </View>
       </ScrollView>
     </>

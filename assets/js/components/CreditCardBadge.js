@@ -4,7 +4,8 @@ import { imageSourceFromCCBrand } from '../backend/HelperFunctions'
 import Icon from './Icon'
 import { colors } from '../contexts/Colors'
 import { FONTS } from '../contexts/Styles'
-
+import { TouchableOpacity } from 'react-native-gesture-handler'
+import firestore from '@react-native-firebase/firestore';
 
 
 /**
@@ -12,19 +13,45 @@ import { FONTS } from '../contexts/Styles'
  *  .data -- { brand, last4, exp_month, exp_year }
  */
 export default function CreditCardBadge(props) {
+    console.log("props.data: ", props)
     let CC = props.data
     let source = imageSourceFromCCBrand(CC.brand)
+    let user = props.user
 
-    return (
+    console.log("CC: ", CC)
+    console.log("user: ", user)
+
+
+    const removeCard = async() => {
+        await firestore()
+            .collection('users')
+            .doc('ABC')
+            .delete()
+            .then(() => {
+                console.log('User deleted!');
+            });
+    }
+
+    return ( 
         <View
-            style={[styles.creditCardContainer, props.containerStyle]}
-        >
+            style={[styles.creditCardContainer]}>
             <Icon
                 source={source}
             />
-            <Text numberOfLines={1} style={styles.creditCardText}>
-                {`•••• ${CC.last4}  |  ${CC.exp_month}/${CC.exp_year}`}
+            <Text numberOfLines={1} style={styles.creditCardText}> 
+                {`•••• ${CC.last4} | ${CC.exp_month}/${CC.exp_year}`}
             </Text>
+            <TouchableOpacity onPress={() => {
+                
+            }}>
+                <Icon
+                    containerStyle={{flex: 1,
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center', marginTop: 5, marginLeft: 8, width: 25, height: 25}}
+                    source={require("./img/png/x.png")}
+                />
+            </TouchableOpacity>
         </View>
     )
 }
@@ -46,7 +73,7 @@ const styles = StyleSheet.create({
         alignSelf: "center",
         ...FONTS.subtitle,
         color: colors.buttonFill,
-        fontSize: 20,
+        fontSize: 16,
         paddingBottom: 7,
     },
 })
