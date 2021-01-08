@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View, Text, ScrollView, RefreshControl, Platform } from 'react-native'
+import { StyleSheet, View, Text, ScrollView, RefreshControl, Platform, TouchableOpacity } from 'react-native'
 import { useDimensions } from '@react-native-community/hooks'
 
 import { useNavigation } from '@react-navigation/native'
@@ -46,7 +46,7 @@ export default function LivestreamWaitScreen(props) {
         .get()
         .then(documentSnapshot =>  {      
           setGymName(documentSnapshot.data().name)
-          setFillerText(`${documentSnapshot.data().name} is not live. Try refreshing...`)
+          setFillerText(`${documentSnapshot.data().name} is not live. Try pulling down to refresh...`)
           getGymImage(documentSnapshot.data().image_uri)
           setUserId(documentSnapshot.data().partner_id)
         });
@@ -135,6 +135,7 @@ export default function LivestreamWaitScreen(props) {
             }}>
             <GoBackButton />
           </View>
+
 
           <View style={{
             height: 100,

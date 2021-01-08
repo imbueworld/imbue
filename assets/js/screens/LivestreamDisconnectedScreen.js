@@ -46,7 +46,7 @@ export default function LivestreamDisconnectedScreen(props) {
         .get()
         .then(documentSnapshot =>  {      
           setGymName(documentSnapshot.data().name)
-          setFillerText(`${documentSnapshot.data().name} is not live. Try refreshing...`)
+          setFillerText(`${documentSnapshot.data().name} is not live. Try pulling down to refresh...`)
           getGymImage(documentSnapshot.data().image_uri)
         });
 
@@ -79,7 +79,7 @@ export default function LivestreamDisconnectedScreen(props) {
         navigation.navigate('Livestream', { gymId: gymId, classDoc: classDoc } )
         break;
       case 'video.live_stream.disconnected':
-        setFillerText(`The livestream has been disconnected. Try refreshing the page. The influencer may have ended the video`)
+        setFillerText(`The livestream has been disconnected. Try pulling down to refresh the page. The influencer may have ended the video`)
         break;
       default: 
         break;
