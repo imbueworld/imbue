@@ -6,6 +6,7 @@ import { colors } from '../contexts/Colors'
 import { FONTS } from '../contexts/Styles'
 import { TouchableOpacity } from 'react-native-gesture-handler'
 import firestore from '@react-native-firebase/firestore';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 
 
 /**
@@ -13,22 +14,20 @@ import firestore from '@react-native-firebase/firestore';
  *  .data -- { brand, last4, exp_month, exp_year }
  */
 export default function CreditCardBadge(props) {
-    console.log("props.data: ", props)
     let CC = props.data
     let source = imageSourceFromCCBrand(CC.brand)
-    let user = props.user
-
-    console.log("CC: ", CC)
-    console.log("user: ", user)
-
+    const user = props.user
+    const id = props.paymentMethodId
 
     const removeCard = async() => {
         await firestore()
-            .collection('users')
-            .doc('ABC')
+            .collection('stripe_customers')
+            .doc(user.id)
+            .collection('payment_methods')
+            .doc(id)
             .delete()
             .then(() => {
-                console.log('User deleted!');
+                console.log('card deleted!');
             });
     }
 
@@ -42,7 +41,7 @@ export default function CreditCardBadge(props) {
                 {`•••• ${CC.last4} | ${CC.exp_month}/${CC.exp_year}`}
             </Text>
             <TouchableOpacity onPress={() => {
-                
+                removeCard()
             }}>
                 <Icon
                     containerStyle={{flex: 1,

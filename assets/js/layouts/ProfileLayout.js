@@ -56,9 +56,7 @@ export default function ProfileLayout(props) {
       const user = new User()
       setUser(await user.retrieveUser())
 
-
       setRoute(thisRoute.name)
-      console.log('route: ', route)
     }; init()
   }, [])
 
@@ -281,7 +279,7 @@ export default function ProfileLayout(props) {
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: "100%",
-    backgroundColor: "#F9F9F9"
+    backgroundColor: "#F9F9F9",
   },
   profileName: {
     marginTop: 15,

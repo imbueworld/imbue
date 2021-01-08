@@ -9,7 +9,7 @@ import { colors } from '../contexts/Colors'
 import ProfileLayout from '../layouts/ProfileLayout'
 import User from '../backend/storage/User'
 import cache from '../backend/storage/cache'
-
+import firestore from '@react-native-firebase/firestore';
 
 
 export default function PaymentSettings(props) {
@@ -22,10 +22,15 @@ export default function PaymentSettings(props) {
     React.useCallback(() => {
       // Do something when the screen is focused
       const init = async () => {
+        setCreditCards([])
+
         const user = new User()
-        setUser(user)
-        const creditCards = await user.retrievePaymentMethods()
-        setCreditCards(creditCards)
+        setUser(await user.retrieveUser())
+
+        getCreditCards(await user.retrieveUser())
+        
+        // const creditCards = await user.retrievePaymentMethods()
+        // setCreditCards(creditCards)
       }; init()
       return () => {
         // Do something when the screen is unfocused
@@ -34,32 +39,46 @@ export default function PaymentSettings(props) {
     }, [])
   ); 
 
-  useEffect(() => {
-    const init = async () => {
-      const user = new User()
-      const creditCards = await user.retrievePaymentMethods()  
-      setCreditCards(creditCards)
-    }; init()
-  })
+
+  const getCreditCards = async(thisUser) => {
+
+    let obje
+    await firestore()
+      .collection('stripe_customers')
+      .doc(thisUser.id)
+      .collection('payment_methods')
+      .get()
+       .then((snap) => {
+          snap.forEach((doc) => {
+            obje = doc.data()
+            obje.docId = doc.id
+            setCreditCards(creditCards => [...creditCards, obje])
+          })
+      })
+
+  }
+
 
   useEffect(() => {
-    if (!creditCards) return
-
+    // if (!creditCards) return
+    console.log("cards: ", creditCards)
     CreditCardsCreate(
-      creditCards.map(({ brand, last4, exp_month, exp_year }, idx) =>
+      creditCards.map(({ brand, last4, exp_month, exp_year, docId, paymentMethodId }, idx) =>
         <CreditCardBadge 
           key={`${exp_year}${last4}`}
           data={{ brand, last4, exp_month, exp_year }}
           user={user}
+          paymentMethodId={docId}
         />
       )
     )
-  }, [creditCards.length])
+  }, [creditCards])
+
 
   return (
     <KeyboardAwareScrollView
       showsVerticalScrollIndicator={false}
-      style={{ backgroundColor: '#f9f9f9' }}
+      style={{ backgroundColor: '#fff' }}
       resetScrollToCoords={{ x: 0, y: 0 }}
 
       contentContainerStyle={styles.container}

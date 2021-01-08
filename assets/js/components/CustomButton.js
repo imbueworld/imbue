@@ -38,12 +38,12 @@ export default function CustomButton(props) {
                     
                 <Text style={[
                     styles.text,
+                    props.textStyle,
                     {
                         color: inverted ? colors.buttonFill : colors.buttonAccent,
                         paddingLeft: Icon ? 10 : undefined,
                         flexShrink: 1,
                     },
-                    props.textStyle,
                 ]}>
                     {props.title}
                 </Text>

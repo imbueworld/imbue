@@ -8,7 +8,7 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 import CreditCardBadgeV2 from './CreditCardBadgeV2'
 import { FONTS } from '../contexts/Styles'
 import User from '../backend/storage/User'
-
+import firestore from '@react-native-firebase/firestore';
 
  
 //  * .data -- creditCards ( [{}, {}, ..] )
@@ -28,14 +28,18 @@ export default function CreditCardSelectionV2(props) {
 
   const [cards, setCards] = useState(null)
 
-  useFocusEffect(
+  useFocusEffect( 
     React.useCallback(() => {
       // Do something when the screen is focused
       const init = async () => {
+        setCards([])
+        
         const user = new User()
-        const cards = await user.retrievePaymentMethods()
-  
-        setCards(cards)
+        getCreditCards(await user.retrieveUser())
+
+        // const cards = await user.retrievePaymentMethods()
+        // setCards(cards)
+
       }; init()
       return () => {
         // Do something when the screen is unfocused
@@ -44,20 +48,37 @@ export default function CreditCardSelectionV2(props) {
     }, [])
   );
 
-  useEffect(() => {
-    const init = async () => {
-      const user = new User()
-      const cards = await user.retrievePaymentMethods()
+  const getCreditCards = async(thisUser) => {
 
-      setCards(cards)
-    }; init()
-  }, [])
+    let obje
+    await firestore()
+      .collection('stripe_customers')
+      .doc(thisUser.id)
+      .collection('payment_methods')
+      .get()
+       .then((snap) => {
+          snap.forEach((doc) => {
+            obje = doc.data()
+            obje.docId = doc.id
+            setCards(cards => [...cards, obje])
+          })
+      })
+  }
+
+  // useEffect(() => {
+  //   const init = async () => {
+  //     const user = new User()
+  //     const cards = await user.retrievePaymentMethods()
+  //     setCards(cards)
+  //   }; init()
+  // }, [])
 
 
 
   if (!cards) return <View />
 
   const Cards = cards.map((card, idx) => // { brand, last4, exp_month, exp_year, id }
+    // console.log("yyy: ", card.docId),
     <CreditCardBadgeV2
       key={idx}
       containerStyle={{
@@ -75,11 +96,11 @@ export default function CreditCardSelectionV2(props) {
         paddingHorizontal: 15,
       }}
       onPress={() => navigation.navigate("AddPaymentMethod")}
-    >
+    > 
       <Text style={{
         ...FONTS.luloClean,
         textDecorationLine: "underline",
-      }}>Add a new card</Text>
+      }}>Add a new card</Text> 
     </TouchableWithoutFeedback>
 
   const Cancel =
@@ -139,7 +160,7 @@ export default function CreditCardSelectionV2(props) {
       }}>
         <ScrollView showsVerticalScrollIndicator={false}>
           {Cards}
-        </ScrollView>
+        </ScrollView> 
       </View>
 
       <View style={{

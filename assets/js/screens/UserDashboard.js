@@ -69,9 +69,7 @@ export default function UserDashboard(props) {
         .get()
         .then(querySnapshot => {
           querySnapshot.forEach(documentSnapshot => {
-            console.log("gym")
               setGyms(prevArray => [...prevArray, documentSnapshot.data()])
-            
           });
         });
       
@@ -391,10 +389,10 @@ export default function UserDashboard(props) {
           //   />
           // }
           title="Payment Settings"
-          onPress={() => props.navigation.navigate(
-            "PaymentSettings")}
+          onPress={() => 
+            props.navigation.navigate('PaymentSettings')
+           }
         />
-
       </ProfileLayout>
           </Animated.View>}
       </KeyboardAwareScrollView>

@@ -15,7 +15,7 @@ import User from '../backend/storage/User'
 
 // 4000000760000002 // Visa
 // 5555555555554444 // Mastercard
-// 6011111111111117 // Discover
+// 6011111111111117 // Discover 
 // const exampleUser = {
 //     cardNumber: "4000000760000002",
 //     expMonth: "12",
@@ -75,6 +75,16 @@ export default function AddPaymentMethod(props) {
     }
   }
 
+  // adds hyphens in text input
+  const handleExp = (text) => {
+    if (text.length == 2) {
+      text = text += "-"
+      return text
+    } 
+
+    return text
+  }
+
 
   if (!user) return <View />
 
@@ -101,7 +111,7 @@ export default function AddPaymentMethod(props) {
         placeholder="MM-YY"
         multiline={true}
         value={expireDateText}
-        onChangeText={(text) => setExpireDateText(text)}
+        onChangeText={(text) => setExpireDateText(handleExp(text))} 
       />
       <CustomTextInput
         multiline={true}

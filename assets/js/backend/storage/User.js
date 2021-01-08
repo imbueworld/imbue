@@ -317,10 +317,10 @@ export default class User extends DataObject {
   async retrievePaymentMethods() {
     await this.init()
     const cacheObj = cache(`${this.collection}/${this.uid}/payment_methods`)
-
+ 
     // If already cached => return that
-    const data = cacheObj.get() || []
-    if (data.length) return data
+    const data = cacheObj.get() || [] 
+    if (data.length) return data 
 
     // Retrieve from database
     const paymentMethods = (await this._getPaymentMethodsDbRef().get())
@@ -328,7 +328,7 @@ export default class User extends DataObject {
         // Scuffed, but only one that uses this extra
         // property is <CreditCardSelectionV2 />
         let data = doc.data()
-        data.paymentMethodId = doc.id
+        data.paymentMethodId = doc.id 
         return data
       })
     
@@ -460,8 +460,9 @@ export default class User extends DataObject {
    * One Time Class Purchase
    */
   async purchaseClass(details) {
-    return await this._BusyErrorWrapper('purchaseClass', async () => {
+    return await this._BusyErrorWrapper('purchaseClass', async () => { 
       await this.init()
+
 
       let { paymentMethodId, classId, timeId } = details
 

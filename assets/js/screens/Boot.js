@@ -64,7 +64,6 @@ export default function Boot(props) {
     //     break
     // }
 
-  console.log('userDoc: ', userDoc )
     switch (account_type) {
       case "user":
         if (userDoc.dob) {navigation.reset({

@@ -408,19 +408,19 @@ export default function ClassDescription(props) {
               hasMembership && user.dob ? null :
                 <>
                   {popup === "buy"
-                    ? <CreditCardSelectionV2
+                    ? <CreditCardSelectionV2 
                       containerStyle={styles.cardSelectionContainer}
                       title={
                         <Text>
                           {`Confirm payment for ${gym.name}, ${classDoc.name} — `}
-                          <Text style={{
+                          <Text style={{ 
                             textDecorationLine: "underline",
                           }}>One Time Online Class</Text>
                         </Text>
                       }
                       onX={() => setPopup(null)}
                       onCardSelect={async paymentMethodId => {
-                        try {
+                        try { 
                           setErrorMsg('')
                           setSuccessMsg('')
 
@@ -430,7 +430,7 @@ export default function ClassDescription(props) {
                           } = classDoc
 
                           const user = new User()
-                          await user.purchaseClass({
+                          await user.purchaseClass({ 
                             paymentMethodId,
                             classId,
                             timeId,
@@ -465,7 +465,7 @@ export default function ClassDescription(props) {
                           }}
                           title="Book"
                           onPress={() => {
-                            setPopup("buy")
+                            setPopup("buy") 
                           }}
                         />
                       </>

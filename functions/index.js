@@ -1177,13 +1177,12 @@ exports.purchaseClassWithPaymentMethod = functions.https.onCall(async (data, con
   } = data
   const IMBUE_PERCENTAGE_CUT = 0.15
 
-  console.log("paymentMethodId, classId, timeId: ", paymentMethodId, classId, timeId)
 
   // Do not continue if insufficient parameters
   if (!paymentMethodId || !classId || !timeId)
     throw 'Insufficient params.'
 
-  const { active_classes=[] } = (
+  const { active_classes=[] } = ( 
     await users
       .doc(uid)
       .get()
