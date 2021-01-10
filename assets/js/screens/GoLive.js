@@ -175,7 +175,7 @@ export default function GoLive(props) {
         width: "100%",
         height: "100%",
         position: "absolute",
-        zIndex: -100,
+        // zIndex: -100,
       }}>
         {
           (hasAllPermissions || hasAllPermissionsiOS) &&
@@ -183,7 +183,7 @@ export default function GoLive(props) {
             style={{
               width: "100%",
               height: "100%",
-              zIndex: -100,
+              // zIndex: -100,
               // position: "absolute",
             }}
             ref={vb => {

@@ -12,27 +12,18 @@ import { colors } from "../contexts/Colors"
 
 export default function SuccessScreen(props) {
   const { gymId } = props.route.params
-  const { classDoc } = props.route.params
   let navigation = useNavigation()
 
-  const [user, setUser] = useState(null)
-  const [userId, setUserId] = useState(null)
-  const [r, refresh] = useState(0)
-  const [liveStatus, setLiveStatus] = useState(null)
-  const [gymImage, setGymImage] = useState(null)
-  const [fillerText, setFillerText] = useState(null)
 
-  const [refreshing, setRefreshing] = React.useState(false);
-  const [gymName, setGymName] = useState(null)
-  const [playbackLink, setPlaybackLink] = useState(null)
 
 
   useEffect(() => {
     const init = async () => {
-      const user = new User()
-
-      setUser(await user.retrieveUser())
-      setUserId(user.uid)
+        // go back
+      setTimeout(
+        () => { navigation.navigation() },
+        5000
+      )
       
     }; init()
   }, [])

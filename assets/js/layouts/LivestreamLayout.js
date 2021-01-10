@@ -21,7 +21,7 @@ import config from '../../../App.config'
 import User from '../backend/storage/User'
 import { simpleShadow } from '../contexts/Colors'
 import Icon from '../components/Icon'
-import { TouchableHighlight } from 'react-native-gesture-handler'
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
 import firestore from '@react-native-firebase/firestore';
 
@@ -354,7 +354,7 @@ export default function LivestreamLayout(props) {
                       borderRadius: 999,
                     }}
                     // underlayColor="#00000020"
-                    onPress={navigation.goBack()}
+                    onPress={() => navigation.goBack()}
                   >
                     <Icon
                       containerStyle={{

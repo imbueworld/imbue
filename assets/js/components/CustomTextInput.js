@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   input: {
     ...FONTS.subtitle,
-    textAlign: 'auto',
+    textAlign: 'center',
     fontSize: 12,
     // backgroundColor: 'red', // DEBUG
   },
