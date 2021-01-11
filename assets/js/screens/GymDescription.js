@@ -15,6 +15,7 @@ import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 import config from '../../../App.config'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import functions from '@react-native-firebase/functions'
 
 
 export default function GymDescription(props) {
@@ -30,6 +31,7 @@ export default function GymDescription(props) {
   const [partnerInfo, setPartnerInfo] = useState(null)
 
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
 
   const [Genres, GenresCreate] = useState(null)
   const [Desc, DescCreate] = useState(null)
@@ -58,6 +60,7 @@ export default function GymDescription(props) {
     const init = async () => {
       const thisUser = new User()
       setUser(await thisUser.retrieveUser())
+      setUserId(user.uid)
     }; init()
   }, [])
 
@@ -187,18 +190,39 @@ export default function GymDescription(props) {
 
                     const { id: gymId } = gym
 
-                    // DEBUG
-                    if (config.DEBUG) {
-                      console.log('paymentMethodId', paymentMethodId)
-                      console.log('gymId', gymId)
-                    }
+                    console.log('paymentMethodId', paymentMethodId) 
+
+
+                    // // DEBUG
+                    // if (config.DEBUG) {
+                    //   console.log('paymentMethodId', paymentMethodId) 
+                    //   console.log('gymId', gymId)
+                    // }
 
                     const user = new User()
                     await user.purchaseGymMembership({ 
-                      user,
+                      user, 
                       paymentMethodId,
                       gymId,
                     })
+
+                    // sendGridPurchasedYourMembership
+                    try {
+                      // initiate SendGrid email
+                      const sendGridPurchasedYourMembership = functions().httpsCallable('sendGridPurchasedYourMembership')
+                      await sendGridPurchasedYourMembership(gymId)
+                    } catch (err) {
+                      setErrorMsg('Email could not be sent')
+                    }
+
+                    // sendGridMemberPurchasedMembership
+                    try {
+                      // initiate SendGrid email
+                      const sendGridMemberPurchasedMembership = functions().httpsCallable('sendGridMemberPurchasedMembership')
+                      await sendGridMemberPurchasedMembership(userId)
+                    } catch (err) {
+                      setErrorMsg('Email could not be sent')
+                    }
 
                     // After success with purchase
                     setHasMembership('gym')
@@ -224,8 +248,8 @@ export default function GymDescription(props) {
                 style={{
                   marginBottom: 0,
                 }}
-                title="Get Membership"
-                onPress={() => setPopup("buy")}
+                title="Get Membership" 
+                onPress={() => setPopup("buy")} 
                 // Icon={
                 //   <Icon
                 //     source={require("../components/img/png/membership.png")}

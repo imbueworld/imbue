@@ -64,6 +64,7 @@ export default function Boot(props) {
     //     break
     // }
 
+
     switch (account_type) {
       case "user":
         if (userDoc.dob) {navigation.reset({
@@ -73,7 +74,18 @@ export default function Boot(props) {
         break
         }
         else if (!userDoc.dob)
-           {navigation.reset({
+           {
+
+            // Member missing info
+            // try {
+            //   // initiate SendGrid email
+            //   const sendGridMemberFinishSigningUp = functions().httpsCallable('sendGridMemberFinishSigningUp')
+            //   await sendGridMemberFinishSigningUp(userDoc.id)
+            // } catch (err) {
+            //   setErrorMsg('Email could not be sent')
+            // }
+             
+            navigation.reset({
             index: 0,
             routes: [{ name: "UserOnboard" }], 
           });

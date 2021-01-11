@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, BackHandler, PanResponder } from 'react-native'
+import { View, Text, BackHandler, PanResponder, TouchableOpacity } from 'react-native'
 
 import database from "@react-native-firebase/database"
 

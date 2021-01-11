@@ -80,8 +80,9 @@ export default function ClassList(props) {
             key={timeId}
             onPress={() => {
               navigation.navigate('ClassDescription', {
-                classId,
+                classId, 
                 timeId, 
+                typeOfSuccess: "classCreated"
               })
             }}
           >

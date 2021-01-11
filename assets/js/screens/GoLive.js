@@ -8,7 +8,7 @@ import LivestreamLayout from '../layouts/LivestreamLayout'
 import cache from '../backend/storage/cache'
 import User from '../backend/storage/User'
 import { requestPermissions } from '../backend/HelperFunctions'
-import { colors } from '../contexts/Colors'
+import { colors } from '../contexts/Colors' 
 
 async function checkPermissionsiOS() {
   let hasAllPermissionsiOS = false
