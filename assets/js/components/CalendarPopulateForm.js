@@ -11,6 +11,7 @@ import User from '../backend/storage/User'
 import Class from '../backend/storage/Class'
 import firestore from '@react-native-firebase/firestore'
 import { useNavigation } from '@react-navigation/native'
+import functions from '@react-native-firebase/functions'
 
 
 export default function CalendarPopulateForm(props) {
@@ -20,7 +21,6 @@ export default function CalendarPopulateForm(props) {
   const [redFields, setRedFields] = useState([])
   const [edit, setEdit] = useState(false)
   const [classDoc, setClassDoc] = useState(null)
-
 
   // const [forceCloseClock, setForceCloseClock] = useState(false)
   // const [dismissOverlay, setDismissOveraly] = useState(true)
@@ -33,6 +33,9 @@ export default function CalendarPopulateForm(props) {
 
   const [class_id, setClassId] = useState(null)
   const [timeId, setTimeId] = useState(null)
+  const [user, setUser] = useState(null)
+  const [gymId, setGymId] = useState(null)
+
 
   let navigation = useNavigation()
 
@@ -41,13 +44,14 @@ export default function CalendarPopulateForm(props) {
   useEffect(() => {
     const init = async () => {
       const user = new User()
+      setUser(await user.retrieveUser()) 
+      // setGymId(await user.retrieveUser().associated_gyms[0])
+
       const classes = await user.retrieveClasses()
 
       setEdit(props.isEdit)
       setClassId(props.classId)
       setTimeId(props.timeId)
-
-      console.log("classDoc: ", props.classDoc)
 
       let dropDownClasses = classes.map(entity => {
         entity = entity.getAll()
@@ -60,6 +64,12 @@ export default function CalendarPopulateForm(props) {
       setInitialized(true)
     }; init()
   }, [])
+
+  useEffect(() => {
+    const init = async () => {
+      setGymId(user.associated_gyms[0])
+    }; init()
+  }, [user])
 
   // remove current time when they press apply
   async function cleanUpClassTime() {
@@ -93,8 +103,6 @@ export default function CalendarPopulateForm(props) {
         'active_times': newTimes,
       })
   }
-
-  console.log("edit: ", edit)
 
 
   function validate() {
@@ -266,8 +274,7 @@ export default function CalendarPopulateForm(props) {
               return
             }
 
-            
-            
+          
             try { 
               validate()
               let active_times = format() 
@@ -282,6 +289,17 @@ export default function CalendarPopulateForm(props) {
                 classId: class_id,
                 timeId: timeId,
               })
+
+              // SendGrid Scheduled Class 
+              try {
+                // initiate SendGrid email
+                console.log("gymId: ", gymId)
+                const sendGridScheduledClass = functions().httpsCallable('sendGridScheduledClass')
+                await sendGridScheduledClass(gymId)
+              } catch (err) {
+                setErrorMsg('Email could not be sent')
+              }
+  
 
               setSuccessMsg("Successfully scheduled class!")
 

@@ -6,7 +6,6 @@ import { fonts, FONTS } from "../contexts/Styles"
 import { TouchableHighlight } from 'react-native-gesture-handler'
 
 
-
 export default function CustomButton(props) {
     const Icon = props.icon || props.Icon
     const inverted = props.styleIsInverted
@@ -14,7 +13,7 @@ export default function CustomButton(props) {
     return (
         <View>
             <TouchableHighlight
-                style={{
+                style={{ 
                     backgroundColor: inverted ? colors.buttonAccent : colors.buttonFill,
                     
                     // Icons disabled

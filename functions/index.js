@@ -219,7 +219,8 @@ exports.databaseTrigger = functions.database.ref('/events/{eventId}').onCreate(a
   //   eventId: context.params.eventId,
   //   data: snapshot.val()
   // });
-});
+}); 
+
 
 
 // Send Payout Success Email
@@ -274,9 +275,8 @@ exports.sendGridEmailPayoutPaid = functions.https.onCall(async (data) => {
 })
 
 
-// Send Payout Success Email
+// Sendgrid Create Class
 exports.sendGridCreateClass = functions.https.onCall(async (data) => {
-  console.log("DATA: ", data)
   const gymId = data
 
   // get account info from firebase via stripe account id
@@ -327,6 +327,108 @@ exports.sendGridCreateClass = functions.https.onCall(async (data) => {
   });
 })
 
+// Sendgrid Schedule Class
+exports.sendGridScheduledClass = functions.https.onCall(async (data) => {
+  const gymId = data
+
+  // get account info from firebase via stripe account id
+  const snapshot = await partners.where('associated_gyms', 'array-contains', gymId).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+  });
+  name = first + ' ' + last
+
+  console.log("email, first, last, name: ", email, first, last, name)
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'Class Scheduled!' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-137cd03168e546b0a6c9455fcb57473a' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
+// Sendgrid Purchased Your Membership
+exports.sendGridPurchasedYourMembership = functions.https.onCall(async (data) => {
+  const gymId = data
+
+  // get account info from firebase via stripe account id
+  const snapshot = await partners.where('associated_gyms', 'array-contains', gymId).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+  });
+  name = first + ' ' + last
+
+  console.log("email, first, last, name: ", email, first, last, name)
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'Somebody Purchased Your Membership' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-c8c8f2a0588144a8a8b0d49d4f8bd1f4' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
 
 // Send Payout Success Email
 exports.sendGridMemberPurchasedClass = functions.https.onCall(async (data) => {
@@ -352,6 +454,8 @@ exports.sendGridMemberPurchasedClass = functions.https.onCall(async (data) => {
     // console.log(doc.id, '=>', doc.data());
   });
   name = first + ' ' + last
+
+  console.log("email, first, last, name: ", email, first, last, name)
   
   var request = require("request");
 
@@ -365,10 +469,178 @@ exports.sendGridMemberPurchasedClass = functions.https.onCall(async (data) => {
     { personalizations: 
         [ { to: [ { email: email, name: name } ],
             dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
-            subject: 'Congrats! Somebody booked your class' } ],
+            subject: 'Congrats! Somebody signed up for your class' } ],
       from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
       reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
       template_id: 'd-867d6f83dab1476dabd255279e484edf' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
+
+// SendGrid You Added a Class
+exports.sendGridMemberAddedClass = functions.https.onCall(async (data) => {
+  const account = data
+
+  console.log("account: ", account)
+
+  // get account info from firebase via stripe account id
+  const snapshot = await users.where('id', '==', account).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+    // console.log(doc.id, '=>', doc.data());
+  });
+
+
+  name = first + ' ' + last
+
+  console.log("EMAIL, NAME: ", email, name)
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'You Signed Up For a Class' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-dd4666b917164f4c9f6fbf9286d2bf5b' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
+
+// SendGrid You Purchased a Membership
+exports.sendGridMemberPurchasedMembership = functions.https.onCall(async (data) => {
+  const account = data
+
+  console.log("account: ", account)
+
+  // get account info from firebase via stripe account id
+  const snapshot = await users.where('id', '==', account).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+    // console.log(doc.id, '=>', doc.data());
+  });
+
+  name = first + ' ' + last
+
+  console.log("EMAIL, NAME: ", email, name)
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'You Purchased a Membership' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-d22e245d301e445f88b2e83302e27724' },
+    json: true };
+
+  request(options, function (error, response, body) {
+    if (error) throw new Error(error);
+
+    console.log(body);
+  });
+})
+
+// SendGrid Member Finish Signing Up
+exports.sendGridMemberFinishSigningUp = functions.https.onCall(async (data) => {
+  const account = data
+
+  console.log("account: ", account)
+
+  // get account info from firebase via stripe account id
+  const snapshot = await users.where('id', '==', account).get();
+
+  if (snapshot.empty) {
+    console.log('No matching documents.');
+    return;
+  }  
+
+  let email
+  let first
+  let last
+  let name 
+  
+  snapshot.forEach(doc => {
+    email = doc.data().email
+    first = doc.data().first
+    last = doc.data().last
+    // console.log(doc.id, '=>', doc.data());
+  });
+
+  name = first + ' ' + last
+
+  console.log("EMAIL, NAME: ", email, name)
+  
+  var request = require("request");
+
+  // Send Payout email
+  var options = { method: 'POST',
+    url: 'https://api.sendgrid.com/v3/mail/send',
+    headers: 
+    { 'content-type': 'application/json',
+      authorization: 'Bearer ' + SEND_GRID_KEY },
+    body: 
+    { personalizations: 
+        [ { to: [ { email: email, name: name } ],
+            dynamic_template_data: { verb: '', adjective: '', noun: '', currentDayofWeek: '' },
+            subject: 'Oops, you missed something' } ],
+      from: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      reply_to: { email: 'hello@imbuefitness.com', name: 'Imbue Team' },
+      template_id: 'd-20ac9f1acee1406f86864b8d2a9014a8' },
     json: true };
 
   request(options, function (error, response, body) {
@@ -616,7 +888,7 @@ exports.removeFromSendGrid = functions.https.onCall(async (data) => {
   
       console.log(body);
    });
-  });
+  }); 
 })
 
 // Remove contact to SendGrid

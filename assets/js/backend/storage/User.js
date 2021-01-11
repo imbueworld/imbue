@@ -619,12 +619,12 @@ export default class User extends DataObject {
 
       let { user, paymentMethodId, gymId } = details
 
-      console.log("user: ", user)
+      console.log("details: ", details)
 
       // Charge user
       const makePurchase = functions().httpsCallable('purchaseMembership')
       await makePurchase({ paymentMethodId, gymId })
-
+ 
       // After a successful charge, register the membership
       const { active_memberships=[] } = this.getAll()
       this.mergeItems({

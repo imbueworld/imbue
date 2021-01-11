@@ -45,11 +45,14 @@ export default function ClassDescription(props) {
   const [dob, setDob] = useState('')
 
   const [user, setUser] = useState(null)
+  const [userId, setUserId] = useState(null)
   const [gym, setGym] = useState(null)
   const [gymUid, setGymUid] = useState(null)
   const [classDoc, setClassDoc] = useState(null)
   const [priceType, setPriceType] = useState(null)
   const [editShow, setEditShow] = useState(false)
+  const [buttonDisabled, setButtonDisabled] = useState(false)
+
 
   const handleDOB = () => {
     console.log("address (handDOB): ", address)
@@ -82,6 +85,7 @@ export default function ClassDescription(props) {
 
         const user = new User()
         setUser(await user.retrieveUser())
+        setUserId(user.uid)
 
         const gym = new Gym()
         setGym(await gym.retrieveGym(classGymId))
@@ -319,6 +323,7 @@ export default function ClassDescription(props) {
     )
   }
 
+
   return (
     <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{flex: 1}}>
       <GymLayout 
@@ -430,13 +435,12 @@ export default function ClassDescription(props) {
                           } = classDoc
 
                           const user = new User()
-                          await user.purchaseClass({ 
+                          await user.purchaseClass({  
                             paymentMethodId,
                             classId,
                             timeId,
                           })
 
-                          // 
 
                           refresh(r + 1)
 
@@ -508,52 +512,70 @@ export default function ClassDescription(props) {
                               }}
                               title="Add to Calendar"
                               onPress={async () => {
+                                setButtonDisabled(true)
+                                // enable after 10 second
+                                setTimeout(() => {
+                                  setButtonDisabled(false)
+                                }, 10000)
 
-                                try {
-                                  setErrorMsg('')
-                                  setSuccessMsg('')
+                                if (buttonDisabled != true) {                                
+                                  try { 
+                                    setErrorMsg('')
+                                    setSuccessMsg('')
 
-                                  const {
-                                    id: classId,
-                                    time_id: timeId,
-                                  } = classDoc
+                                      const {
+                                        id: classId,
+                                        time_id: timeId,
+                                      } = classDoc
+  
+                                      const user = new User()
+                                      await user.addClassToCalender({
+                                        classId,
+                                        timeId,
+                                      })
+  
+                                      // sendGrid somebody joined your class
+                                      try {
+                                        // initiate SendGrid email 
+                                        console.log("sendGridMemberPurchasedClass???")
+                                        console.log("gymUid: ", gymUid)
+                                        const sendGridMemberPurchasedClass = functions().httpsCallable('sendGridMemberPurchasedClass')
+                                        await sendGridMemberPurchasedClass(gymUid)
+                                      } catch (err) {
+                                        setErrorMsg('Email could not be sent')
+                                      }
 
-                                  const user = new User()
-                                  await user.addClassToCalender({
-                                    classId,
-                                    timeId,
-                                  })
+                                       // sendGrid you joined a class
+                                       try {
 
-                                  // sendGrid somebody joined your class
-                                  try {
-                                    // initiate SendGrid email
-                                    console.log("gymUid: ", gymUid)
-                                    const sendGridMemberPurchasedClass = functions().httpsCallable('sendGridMemberPurchasedClass')
-                                    await sendGridMemberPurchasedClass(gymUid)
+                                        console.log("IDDDD: ", userId)
+
+                                        // initiate SendGrid email 
+                                        console.log("user.id: ", userId)
+                                        const sendGridMemberAddedClass = functions().httpsCallable('sendGridMemberAddedClass')
+                                        await sendGridMemberAddedClass(userId)
+                                      } catch (err) {
+                                        setErrorMsg('Email could not be sent')
+                                      }
+
+                                      refresh(r + 1)
+
                                   } catch (err) {
-                                    setErrorMsg('Email could not be sent')
-                                  }
-
-                                  refresh(r + 1)
-
-                                } catch (err) {
-                                  switch (err.code) {
-                                    case "busy":
-                                      setErrorMsg(err.message)
-                                      break
-                                    case "class-already-added":
-                                      setSuccessMsg(err.message)
-                                      break
-                                    default:
-                                      setErrorMsg("Something prevented the action.")
-                                      break
-                                  }
-                                  // Adds to calender. Called when priceType == free. Bypasses purchaing
-
+                                    switch (err.code) {
+                                      case "busy":
+                                        setErrorMsg(err.message)
+                                        break
+                                      case "class-already-added":
+                                        setSuccessMsg(err.message)
+                                        break
+                                      default:
+                                        setErrorMsg("Something prevented the action.")
+                                        break
+                                    }
+                                   }
                                 }
                               }}
                             />
-
                           </View>
                         )
                     )

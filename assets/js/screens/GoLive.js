@@ -8,7 +8,7 @@ import LivestreamLayout from '../layouts/LivestreamLayout'
 import cache from '../backend/storage/cache'
 import User from '../backend/storage/User'
 import { requestPermissions } from '../backend/HelperFunctions'
-import { colors } from '../contexts/Colors'
+import { colors } from '../contexts/Colors' 
 
 async function checkPermissionsiOS() {
   let hasAllPermissionsiOS = false
@@ -175,7 +175,7 @@ export default function GoLive(props) {
         width: "100%",
         height: "100%",
         position: "absolute",
-        zIndex: -100,
+        zIndex: 0,
       }}>
         {
           (hasAllPermissions || hasAllPermissionsiOS) &&
@@ -183,7 +183,7 @@ export default function GoLive(props) {
             style={{
               width: "100%",
               height: "100%",
-              zIndex: -100,
+              zIndex: 0,
               // position: "absolute",
             }}
             ref={vb => {
