@@ -202,6 +202,7 @@ export default function GymDescription(props) {
 
                     // After success with purchase
                     setHasMembership('gym')
+                    navigation.navigate ('SuccessScreen', {successMessageType: 'UserPurchasedMembership'})
                   } catch (err) {
                     if (config.DEBUG) console.error(err.message) // DEBUG
                     switch (err.code) {

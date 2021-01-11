@@ -252,7 +252,7 @@ export default function ProfileSettings(props) {
 
         // userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }), 
         userObj.updateStripeAccount(updatables, { pfGeocodeAddress }), 
-        navigation.navigate('PartnerDashboard')
+        navigation.navigate('SuccessScreen', {successMessageType: 'PartnerAccountCreated'})
       ])
 
       setSuccessMsg('Successfully updated profile information.')

@@ -17,7 +17,7 @@ import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge'
 import cache from '../backend/storage/cache'
 import GoLiveButton from '../components/buttons/GoLiveButton'
 import GoBackButton from '../components/buttons/GoBackButton'
-import config from '../../../App.config' 
+import config from '../../../App.config'
 import User from '../backend/storage/User'
 import { simpleShadow } from '../contexts/Colors'
 import Icon from '../components/Icon'
@@ -39,7 +39,8 @@ const buttonOptions = {
   goLive: {
     show: false,
     state: "idle" || "streaming",
-    onPress: () => {},
+    navigate: 'SuccessScreen',
+    onPress: () => { },
   },
   leaveLivestream: {
     show: true,
@@ -50,7 +51,7 @@ const buttonOptions = {
   },
   viewChat: {
     show: true,
-    state: "closed" || "open", 
+    state: "closed" || "open",
   },
   viewButtonPanel: {
     show: true,
@@ -81,11 +82,11 @@ export default function LivestreamLayout(props) {
   const [r, refresh] = useState(0)
 
   const {
-    containerStyle={},
-    imageContainerStyle={},
-    imageStyle={},
+    containerStyle = {},
+    imageContainerStyle = {},
+    imageStyle = {},
     //
-    onPress=() => navigation.navigate("PartnerDashboard"),
+    onPress = () => navigation.navigate("PartnerDashboard"),
   } = props
 
   // Apply props.buttonOptions to buttonOptions
@@ -93,7 +94,7 @@ export default function LivestreamLayout(props) {
     if (props.buttonOptions) {
       Object.entries(props.buttonOptions).forEach(([button, instructions]) => {
         Object.entries(instructions).forEach(([key, value]) => {
-          buttonOptions[ button ][ key ] = value
+          buttonOptions[button][key] = value
         })
       })
     }
@@ -137,7 +138,7 @@ export default function LivestreamLayout(props) {
         let x = existingMessages.map(msg => `${msg.timestamp}${msg.message}`)
         let y = `${message.timestamp}${message.message}`
         if (x.includes(y)) return
-        
+
         const newSetOfMessages = [
           ...existingMessages,
           message
@@ -155,7 +156,7 @@ export default function LivestreamLayout(props) {
     // if (chatNodeRef) {
     //   return () => chatNodeRef.off()
     // }
-    
+
   }, [])
 
 
@@ -188,7 +189,7 @@ export default function LivestreamLayout(props) {
       ptcsNodeRef.on('child_changed', snap => {
         const user = { ...snap.val(), uid: snap.key }
         let existingPtcs = cache("livestream/participants").get() || []
-        const newSetOfPtcs = [ user, ...existingPtcs ]
+        const newSetOfPtcs = [user, ...existingPtcs]
 
         // child_changed can provide an entirely new user, or an update to an existing one
         // let's distinguish..
@@ -200,12 +201,12 @@ export default function LivestreamLayout(props) {
           existingPtcs.forEach(ptc => {
             if (ptc.uid === user.uid) {
               for (let key in user) {
-                ptc[ key ] = user[ key ]
+                ptc[key] = user[key]
               }
             }
           })
         }
-        
+
         //
         // [UPDATING OF WHETHER USER PRESENT OR NOT]
 
@@ -262,26 +263,26 @@ export default function LivestreamLayout(props) {
       refresh(r => r + 1)
     }
     // [^ DEBUG ONLY ^]
-    
-    
+
+
     // [v DISABLED DURING DEBUG v]
     if (!config.DEBUG) {
       clearTimeout(buttonOptions.viewButtonPanel.data)
       buttonOptions.viewButtonPanel.state = state
-  
+
       if (state === "open") {
         let timeout = setTimeout(() => {
           if (buttonOptions.viewChat.state === "open"
-              ||buttonOptions.viewParticipants.state === "open") {
-              return
-            }
-  
+            || buttonOptions.viewParticipants.state === "open") {
+            return
+          }
+
           buttonOptions.viewButtonPanel.state = "closed"
           refresh(r => r + 1)
         }, 4500)
         buttonOptions.viewButtonPanel.data = timeout
       }
-  
+
       refresh(r => r + 1)
     }
     // [^ DISABLED DURING DEBUG ^]
@@ -303,70 +304,70 @@ export default function LivestreamLayout(props) {
 
   return (
     <>
-    <View style={{
-      position: "absolute",
-      backgroundColor: "black",
-      width: "100%",
-      height: "100%",
-      // zIndex: 999,
+      <View style={{
+        position: "absolute",
+        backgroundColor: "black",
+        width: "100%",
+        height: "100%",
+        // zIndex: 999,
       }} />
 
 
-    {/* {buttonOptions.viewButtonPanel.show 
+      {/* {buttonOptions.viewButtonPanel.show 
     ?  */}
-    <TouchableWithoutFeedback
+      <TouchableWithoutFeedback
         style={{
           width: "100%",
           height: "100%",
-            zIndex: -10,
+          zIndex: -10,
         }}
         onPress={() => setDeck(
           buttonOptions.viewButtonPanel.state === "open" ? "closed" : "open"
         )}
       />
-    {/* : null} */}
+      {/* : null} */}
 
-     {/* {buttonOptions.viewButtonPanel.state === "open" 
+      {/* {buttonOptions.viewButtonPanel.state === "open" 
     ?  */}
-    <View style={{
+      <View style={{
         width: "100%",
         height: "100%",
         position: "absolute",
-          zIndex: 105,
-          marginTop: 40,
+        zIndex: 105,
+        marginTop: 40,
       }}>
         {/* { buttonOptions.goBack.show  ? */}
-       <View style={{
+        <View style={{
           position: "absolute",
           top: 10,
           left: 10,
-            }}>
-               
-               <View style={{
-                  backgroundColor: "white",
-                  borderRadius: 999,
-                  zIndex: 110,
-                  // ...simpleShadow,
-                  ...containerStyle,
-                }}>
-                  <TouchableOpacity
-                    style={{
-                      borderRadius: 999,
-                    }}
-                    // underlayColor="#00000020"
-                    onPress={() => navigation.goBack()}
-                  >
-                    <Icon
-                      containerStyle={{
-                        width: 50,
-                        height: 50,
-                      }}
-                      imageStyle={imageStyle}
-                      source={require("../components/img/png/x.png")}
-                    />
-                  </TouchableOpacity>
-                </View>
+        }}>
+
+          <View style={{
+            backgroundColor: "white",
+            borderRadius: 999,
+            zIndex: 110,
+            // ...simpleShadow,
+            ...containerStyle,
+          }}>
+            <TouchableOpacity
+              style={{
+                borderRadius: 999,
+              }}
+              // underlayColor="#00000020"
+              onPress={() => navigation.goBack()}
+            >
+              <Icon
+                containerStyle={{
+                  width: 50,
+                  height: 50,
+                }}
+                imageStyle={imageStyle}
+                source={require("../components/img/png/x.png")}
+              />
+            </TouchableOpacity>
           </View>
+        </View>
         {/* // : null } */}
 
         {/* {user.account_type == "partner" ? 
@@ -393,9 +394,9 @@ export default function LivestreamLayout(props) {
             </TouchableWithoutFeedback>
         : null
        } */}
-       
-       {/* { liveStatus == 'video.live_stream.connected' ? */}
-        
+
+        {/* { liveStatus == 'video.live_stream.connected' ? */}
+
         <View style={{
           width: "100%",
           paddingHorizontal: 15,
@@ -406,7 +407,7 @@ export default function LivestreamLayout(props) {
           justifyContent: "space-between",
         }}>
           {buttonOptions.viewChat.show
-          ? <ChatButton
+            ? <ChatButton
               onPress={() => {
                 let ptcState, chatState
                 switch (buttonOptions.viewChat.state) {
@@ -425,33 +426,34 @@ export default function LivestreamLayout(props) {
                 refresh(r => r + 1)
               }}
             />
-          : null}
+            : null}
 
 
-      {user.account_type == "partner" ? 
-        <View>
-          {/* <CancelButton
+          {user.account_type == "partner" ?
+            <View>
+              {/* <CancelButton
             title="Leave"
             onPress={() => navigation.goBack()} 
           /> */}
-          <GoLiveButton
+              <GoLiveButton
                 title={buttonOptions.goLive.state === "streaming" ? "End Livestream" : "Go Live"}
-                  onPress={() => {
-                  switch(buttonOptions.goLive.state) {
+                onPress={() => {
+                  switch (buttonOptions.goLive.state) {
                     case "streaming":
-
-                      // register didPressEnd
+                      navigation.navigate('SuccessScreen', {successMessageType: 'PartnerLiveStreamCompleted'})                      // register didPressEnd
                       firestore()
                         .collection('partners')
                         .doc(user.id)
                         .update({
                           didPressEnd: true,
                         })
+                      firestore()
 
-                      buttonOptions.goLive.state = "idle"
-                      buttonOptions.goBack.show = true
-                      console.log("streaming")
-                      break
+                          buttonOptions.goLive.state = "idle"
+                          buttonOptions.goBack.show = true
+
+                          console.log("streaming")
+                          break
                     case "idle":
                       buttonOptions.goLive.state = "streaming"
                       buttonOptions.goBack.show = false
@@ -459,17 +461,17 @@ export default function LivestreamLayout(props) {
                       break
                   }
                   refresh(r => r + 1)
-                  
+
                   buttonOptions.goLive.onPress()
                 }}
               />
             </View>
-          : null }
-          
-          
+            : null}
+
+
           {/* {buttonOptions.viewParticipants.show ? */}
-          {user.account_type == "partner" ? 
-          <ListButton
+          {user.account_type == "partner" ?
+            <ListButton
               onPress={() => {
                 let ptcState, chatState
                 switch (buttonOptions.viewParticipants.state) {
@@ -488,49 +490,49 @@ export default function LivestreamLayout(props) {
                 refresh(r => r + 1)
               }}
             />
-          : null}
+            : null}
         </View>
         {/* : null} */}
 
-    {buttonOptions.viewChat.state === "open"
-    ? <Chat
-        containerStyle={{
-          width: "94%",
-          height: "70%",
-          marginTop: 120,
-          position: "absolute",
-          alignSelf: "center",
-          zIndex: 110,
-        }}
-        gymId={gymId}
-        user={user}
-        onSend={message => {
-          message = message.trim()
-          if (!message) return
+        {buttonOptions.viewChat.state === "open"
+          ? <Chat
+            containerStyle={{
+              width: "94%",
+              height: "70%",
+              marginTop: 120,
+              position: "absolute",
+              alignSelf: "center",
+              zIndex: 110,
+            }}
+            gymId={gymId}
+            user={user}
+            onSend={message => {
+              message = message.trim()
+              if (!message) return
 
-          sendMessage({
-            gymId,
-            uid: user.id,
-            name: `${user.first} ${user.last}`,
-            message
-          })
-        }}
-      />
-    : null}
+              sendMessage({
+                gymId,
+                uid: user.id,
+                name: `${user.first} ${user.last}`,
+                message
+              })
+            }}
+          />
+          : null}
 
-    {buttonOptions.viewParticipants.state === "open"
-    ? <ParticipantList
-        containerStyle={{
-          width: "94%",
-          height: 500,
-          marginTop: 120,
-          position: "absolute",
-          alignSelf: "center",
-          zIndex: 110,
-        }}
-      />
-    : null}
-    </View>
+        {buttonOptions.viewParticipants.state === "open"
+          ? <ParticipantList
+            containerStyle={{
+              width: "94%",
+              height: 500,
+              marginTop: 120,
+              position: "absolute",
+              alignSelf: "center",
+              zIndex: 110,
+            }}
+          />
+          : null}
+      </View>
     </>
   )
 }

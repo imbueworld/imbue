@@ -439,7 +439,7 @@ export default function ClassDescription(props) {
                           // 
 
                           refresh(r + 1)
-
+                          navigation.navigate ('SuccessScreen', {successMessageType: 'UserPurchasedClass'})
                         } catch (err) {
                           if (config.DEBUG) console.error(err.message) // DEBUG
                           switch (err.code) {

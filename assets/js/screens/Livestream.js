@@ -148,7 +148,7 @@ export default function Livestream(props) {
                 .then(documentSnapshot =>  {   
 
                     {documentSnapshot.data().liveStatus == 'video.live_stream.disconnected' && documentSnapshot.data().didPressEnd == true ? (
-                      navigation.navigate('SuccessScreen')
+                      navigation.navigate('SuccessScreen', {successMessageType: 'UserLiveStreamCompleted'})
                     ):null}
 
                     {documentSnapshot.data().liveStatus == 'video.live_stream.disconnected' && documentSnapshot.data().didPressEnd == false ? (

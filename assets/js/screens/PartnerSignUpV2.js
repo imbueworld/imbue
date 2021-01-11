@@ -195,10 +195,7 @@ export default function PartnerSignUpV2(props) {
     }
 
     // Redirect
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Boot' }],
-    })
+    navigation.navigate ('SuccessScreen', {successMessageType: 'PartnerApplicationSubmitted'})
   }
 
 

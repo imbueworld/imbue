@@ -247,11 +247,13 @@ export default function CalendarPopulateForm(props) {
 
         <CustomButton
           style={{ marginTop: 20 }}
-          title="Apply"
+          title="Schedule"
           onPress={async () => {
             setRedFields([])
             setErrorMsg("")
             setSuccessMsg("")
+            navigation.navigate('SuccessScreen', {successMessageType: 'ClassScheduled'})
+
 
             const classObj = new Class()
             await classObj.initByUid(class_id)
@@ -287,7 +289,7 @@ export default function CalendarPopulateForm(props) {
 
               // go back
               setTimeout(
-                () => {  navigation.goBack() },
+                () => {  navigation.navigate ('PartnerDashboard') },
                 3000
               )
 

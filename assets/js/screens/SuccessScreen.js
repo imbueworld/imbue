@@ -11,7 +11,7 @@ import { colors } from "../contexts/Colors"
 
 
 export default function SuccessScreen(props) {
-  const { gymId } = props.route.params
+  const { successMessageType } = props.route.params
   let navigation = useNavigation()
 
 
@@ -19,37 +19,65 @@ export default function SuccessScreen(props) {
 
   useEffect(() => {
     const init = async () => {
-        // go back
-      setTimeout(
-        () => { navigation.navigation() },
-        5000
-      )
-      
+      // go back
+      // setTimeout(
+      //   () => { navigation.navigation() },
+      //   5000
+      // )
+
     }; init()
   }, [])
 
 
   return (
-      <View style={{
-        flex: 1,
-        flexDirection: 'column',
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: colors.bg,
-        paddingHorizontal: 30
-       }} >
+    <View style={{
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.bg,
+      paddingHorizontal: 30
+    }} >
+      {successMessageType === "UserLiveStreamCompleted" ?
+        <>
+          <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+          <Text style={{
+            color: colors.textInputFill,
+            ...FONTS.body,
+            textAlign: 'center',
+            marginTop: 30,
+          }}>
+            Congrats! You completed a class. Keep it up.
+            </Text>
+
+          <CustomButton
+            style={{
+              marginBottom: 20,
+              paddingHorizontal: 40,
+              marginTop: 30
+            }}
+            title="Go to Home"
+            onPress={async () => {
+              navigation.navigate('UserDashboard')
+            }}
+          />
 
 
-            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{width: 250, height: 250}} autoPlay loop />
-           
+        </>
+        :
+        successMessageType === "PartnerLiveStreamCompleted" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
             <Text style={{
               color: colors.textInputFill,
               ...FONTS.body,
               textAlign: 'center',
               marginTop: 30,
             }}>
-              Congrats! You completed a class. Keep it up.
-            </Text>
+              Congrats! You completed your class. Thanks so much for using imbue - we couldn't do what we do without you.
+              </Text>
 
             <CustomButton
               style={{
@@ -58,10 +86,182 @@ export default function SuccessScreen(props) {
                 marginTop: 30
               }}
               title="Go to Home"
-              onPress={async () => {
+              onPress={ () => {
+                navigation.navigate('PartnerDashboard')
+              }}
+            />
+          </>
+          :
+          successMessageType === "PartnerApplicationSubmitted" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+            <Text style={{
+              color: colors.textInputFill,
+              ...FONTS.body,
+              textAlign: 'center',
+              marginTop: 30,
+            }}>
+              Congrats! Your application has been submitted. We'll get back to you shortly!
+              </Text>
+
+            <CustomButton
+              style={{
+                marginBottom: 20,
+                paddingHorizontal: 40,
+                marginTop: 30
+              }}
+              title="Go to Home"
+              onPress={ () => {
+                navigation.navigate('Landing')
+              }}
+            />
+          </>
+          :
+          successMessageType === "MemberSignUp" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+            <Text style={{
+              color: colors.textInputFill,
+              ...FONTS.body,
+              textAlign: 'center',
+              marginTop: 30,
+            }}>
+              Congrats! You created your imbue member account! Let's get you set up for your first class!
+              </Text>
+
+            <CustomButton
+              style={{
+                marginBottom: 20,
+                paddingHorizontal: 40,
+                marginTop: 30
+              }}
+              title="See our influencers"
+              onPress={ () => {
                 navigation.navigate('UserDashboard')
               }}
             />
+          </>
+          :
+          successMessageType === "UserPurchasedMembership" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+            <Text style={{
+              color: colors.textInputFill,
+              ...FONTS.body,
+              textAlign: 'center',
+              marginTop: 30,
+            }}>
+              Congrats! You purchased an influencer membership!
+              </Text>
+
+            <CustomButton
+              style={{
+                marginBottom: 20,
+                paddingHorizontal: 40,
+                marginTop: 30
+              }}
+              title="Go to your schedule"
+              onPress={ () => {
+                navigation.navigate('ScheduleViewer')
+              }}
+            />
+          </>
+          :
+          successMessageType === "UserPurchasedClass" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+            <Text style={{
+              color: colors.textInputFill,
+              ...FONTS.body,
+              textAlign: 'center',
+              marginTop: 30,
+            }}>
+              Congrats! You purchased an influencer class!
+              </Text>
+
+            <CustomButton
+              style={{
+                marginBottom: 20,
+                paddingHorizontal: 40,
+                marginTop: 30
+              }}
+              title="Go to your schedule"
+              onPress={ () => {
+                navigation.navigate('ScheduleViewer')
+              }}
+            />
+          </>
+          :
+          successMessageType === "PartnerAccountCreated" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+            <Text style={{
+              color: colors.textInputFill,
+              ...FONTS.body,
+              textAlign: 'center',
+              marginTop: 30,
+            }}>
+              Congrats! You're account is created!
+              </Text>
+
+            <CustomButton
+              style={{
+                marginBottom: 20,
+                paddingHorizontal: 40,
+                marginTop: 30
+              }}
+              title="Go to Dasboard"
+              onPress={ () => {
+                navigation.navigate('PartnerDasboard')
+              }}
+            />
+          </>
+          :
+          successMessageType === "ClassCreated" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+            <Text style={{
+              color: colors.textInputFill,
+              ...FONTS.body,
+              textAlign: 'center',
+              marginTop: 30,
+            }}>
+              Congrats! You created a class!
+              </Text>
+
+            <CustomButton
+              style={{
+                marginBottom: 20,
+                paddingHorizontal: 40,
+                marginTop: 30
+              }}
+              title="Schedule Class"
+              onPress={ () => {
+                navigation.navigate('SchedulePopulate')
+              }}
+            />
+          </>
+          :
+          successMessageType === "ClassScheduled" ?
+          <>
+            <LottieView source={require('../components/img/animations/black-check-animation.json')} style={{ width: 250, height: 250 }} autoPlay loop />
+
+            <Text style={{
+              color: colors.textInputFill,
+              ...FONTS.body,
+              textAlign: 'center',
+              marginTop: 30,
+            }}>
+              Congrats! You scheduled a class!
+              </Text>
+          </>
+          : null}
     </View>
   )
 }

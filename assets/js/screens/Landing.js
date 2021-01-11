@@ -76,7 +76,6 @@ export default function Landing(props) {
                     ...FONTS.body
 
                 }}>I'm:</Text>
-         
 
                 <CustomButton
                     style={{
@@ -86,7 +85,7 @@ export default function Landing(props) {
                     onPress={memberHome}
                     title="member"
                 />
-                       <Text style={{
+                <Text style={{
                     marginTop: 5,
                     marginBottom: 0,
                     color: colors.gray,
@@ -105,7 +104,7 @@ export default function Landing(props) {
                     title="influencer"
                     onPress={partnerHome}
                 />
-                                <Text style={{
+                <Text style={{
                     marginTop: 5,
                     marginBottom: 0,
                     color: colors.gray,
