@@ -21,7 +21,7 @@ import config from '../../../App.config'
 import User from '../backend/storage/User'
 import { simpleShadow } from '../contexts/Colors'
 import Icon from '../components/Icon'
-import { TouchableHighlight } from 'react-native-gesture-handler'
+import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
 import firestore from '@react-native-firebase/firestore';
 
