@@ -171,7 +171,8 @@
 
                 setSuccessMsg("You've been signed up!")
                 // Navigate
-                navigation.navigate('SuccessScreen', {successMessageType: 'MemberSignUp'})
+                const pushAction = StackActions.push("Boot")
+                navigation.dispatch(pushAction)
               } catch (err) {
                 // If not native (form) error, check for auth error
                 if (!errorMsg) {

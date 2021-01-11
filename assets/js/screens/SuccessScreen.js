@@ -78,18 +78,6 @@ export default function SuccessScreen(props) {
             }}>
               Congrats! You completed your class. Thanks so much for using imbue - we couldn't do what we do without you.
               </Text>
-
-            <CustomButton
-              style={{
-                marginBottom: 20,
-                paddingHorizontal: 40,
-                marginTop: 30
-              }}
-              title="Go to Home"
-              onPress={ () => {
-                navigation.navigate('PartnerDashboard')
-              }}
-            />
           </>
           :
           successMessageType === "PartnerApplicationSubmitted" ?
@@ -131,17 +119,6 @@ export default function SuccessScreen(props) {
               Congrats! You created your imbue member account! Let's get you set up for your first class!
               </Text>
 
-            <CustomButton
-              style={{
-                marginBottom: 20,
-                paddingHorizontal: 40,
-                marginTop: 30
-              }}
-              title="See our influencers"
-              onPress={ () => {
-                navigation.navigate('UserDashboard')
-              }}
-            />
           </>
           :
           successMessageType === "UserPurchasedMembership" ?
@@ -232,20 +209,9 @@ export default function SuccessScreen(props) {
               textAlign: 'center',
               marginTop: 30,
             }}>
-              Congrats! You created a class!
+              Congrats! You created a class! Now, let's schedule it.
               </Text>
 
-            <CustomButton
-              style={{
-                marginBottom: 20,
-                paddingHorizontal: 40,
-                marginTop: 30
-              }}
-              title="Schedule Class"
-              onPress={ () => {
-                navigation.navigate('SchedulePopulate')
-              }}
-            />
           </>
           :
           successMessageType === "ClassScheduled" ?

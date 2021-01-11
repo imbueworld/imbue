@@ -305,7 +305,7 @@ export default function CalendarPopulateForm(props) {
 
               setSuccessMsg("Successfully scheduled class!")
 
-              // navigate after successful class
+              // navigate after successful class creation
               setTimeout(
                 () => {  navigation.navigate ('PartnerDashboard') },
                 3000

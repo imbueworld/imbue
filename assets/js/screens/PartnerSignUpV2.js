@@ -196,6 +196,11 @@ export default function PartnerSignUpV2(props) {
 
     // Redirect
     navigation.navigate ('SuccessScreen', {successMessageType: 'PartnerApplicationSubmitted'})
+    setTimeout(
+      () => {  navigation.navigate ('Landing') },
+      12000
+    )
+
   }
 
 

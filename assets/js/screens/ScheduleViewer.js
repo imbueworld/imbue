@@ -324,14 +324,14 @@ export default function ScheduleViewer(props) {
             />
             <View style={{flex: 1, flexDirection: 'row', marginBottom: 10}}>
               <CustomButton
-                  style = {{marginBottom: 0, marginRight: 5, width: wp('45%'), alignItems: 'stretch'}}
+                  style = {{marginBottom: 0, marginRight: 5, width: wp('47%'), alignItems: 'stretch'}}
                   title="Edit"
                   onPress={() => props.navigation.navigate(
                     "PartnerEditClasses"
                   )}
                 />
                 <CustomButton
-                  style = {{marginBottom: 0, marginLeftt: 5, width: wp('45%')}}
+                  style = {{marginBottom: 0, marginLeftt: 5, width: wp('47%')}}
                   title="Schedule"
                   onPress={() => props.navigation.navigate(
                     "SchedulePopulate" 

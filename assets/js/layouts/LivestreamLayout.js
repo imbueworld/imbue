@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, BackHandler, PanResponder, TouchableOpacity } from 'react-native'
+import { View, Text, BackHandler, PanResponder } from 'react-native'
 
 import database from "@react-native-firebase/database"
 
@@ -440,7 +440,8 @@ export default function LivestreamLayout(props) {
                 onPress={() => {
                   switch (buttonOptions.goLive.state) {
                     case "streaming":
-                      navigation.navigate('SuccessScreen', {successMessageType: 'PartnerLiveStreamCompleted'})                      // register didPressEnd
+                      navigation.navigate('SuccessScreen', {successMessageType: 'PartnerLiveStreamCompleted'})                    
+                      // register didPressEnd
                       firestore()
                         .collection('partners')
                         .doc(user.id)
@@ -451,6 +452,10 @@ export default function LivestreamLayout(props) {
 
                           buttonOptions.goLive.state = "idle"
                           buttonOptions.goBack.show = true
+                          setTimeout(
+                            () => {  navigation.navigate ('PartnerDashboard') },
+                            6000
+                          )  
 
                           console.log("streaming")
                           break
@@ -461,7 +466,6 @@ export default function LivestreamLayout(props) {
                       break
                   }
                   refresh(r => r + 1)
-
                   buttonOptions.goLive.onPress()
                 }}
               />

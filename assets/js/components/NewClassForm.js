@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native'
 
 import ImagePicker from 'react-native-image-picker'
 import firestore from '@react-native-firebase/firestore'
-import storage from '@react-native-firebase/storage' 
+import storage from '@react-native-firebase/storage'
 import functions from '@react-native-firebase/functions'
 
 
@@ -42,8 +42,8 @@ export default function NewClassForm(props) {
 
 
   useEffect(() => {
-    const init = async () => { 
-      const newClassForm = snatchNewClassForm() 
+    const init = async () => {
+      const newClassForm = snatchNewClassForm()
 
       setInstructor(newClassForm.instructor)
       setName(newClassForm.name)
@@ -168,7 +168,7 @@ export default function NewClassForm(props) {
     }
   }
 
-  function changeClassPhoto(gym) { 
+  function changeClassPhoto(gym) {
     return new Promise(async (resolve, reject) => {
       // Ascertain that all permissions have been granted
       if (Platform == "android") {
@@ -199,7 +199,7 @@ export default function NewClassForm(props) {
         //   fileSize,
         // } = res
 
-        const source = { uri: res.uri }; 
+        const source = { uri: res.uri };
         const id = Math.random().toString(36).substring(7);
         // const img = source.uri
 
@@ -251,7 +251,7 @@ export default function NewClassForm(props) {
         ? <Text style={{ color: "red" }}>{errorMsg}</Text>
         : <Text style={{ color: "green" }}>{successMsg}</Text>}
 
-      
+
       {/* <DropDownPicker
         style={{
           ...styles.picker,
@@ -352,10 +352,10 @@ export default function NewClassForm(props) {
         options={{ free: "free", paid: "paid" }}
         value={priceType}
         onChange={priceType => setPriceType(priceType)}
-      />    
+      />
 
       {priceType == "paid" ?
-        ( <CustomTextInput
+        (<CustomTextInput
           containerStyle={{
             borderColor: redFields.includes("price") ? "red" : undefined,
           }}
@@ -371,11 +371,11 @@ export default function NewClassForm(props) {
             if (letters) newText = price
             setPrice(newText)
           }}
-        /> 
-        ):
+        />
+        ) :
         (null)
       }
-     
+
       <CustomButton
         title="Create Class"
 
@@ -383,16 +383,17 @@ export default function NewClassForm(props) {
           setRedFields([])
           setErrorMsg("")
           setSuccessMsg("")
-          
+          navigation.navigate('SuccessScreen', { successMessageType: 'ClassCreated' })
+
 
 
           try {
             // validate()
 
             let form = format({ name, description, type, gym_id, price, priceType })
- 
+
             const classObj = new Class()
-            classObj.create(form)   
+            classObj.create(form)
 
             try {
               // initiate SendGrid email
@@ -403,10 +404,10 @@ export default function NewClassForm(props) {
             }
             setSuccessMsg("Successfully created class.")
 
-             // go back
+            // navigate after successful class
             setTimeout(
-              () => { navigation.navigate('SuccessScreen', {successMessageType: 'ClassCreated'}) },
-              1500
+              () => { navigation.navigate('SchedulePopulate') },
+              2000
             )
           } catch (err) {
             setErrorMsg(err.message)

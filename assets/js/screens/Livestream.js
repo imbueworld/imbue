@@ -157,6 +157,10 @@ export default function Livestream(props) {
                     ):null}
 
                 });
+                setTimeout(
+                  () => {  navigation.navigate ('UserDashboard') },
+                  6000
+                )  
             }}
             onError={() => {
               console.log("video resulted in an error: ")

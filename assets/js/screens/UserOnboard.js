@@ -101,7 +101,11 @@ export default function UserOnboard(props) {
     }
 
     // then navigate to user dashboard
-    navigation.navigate('UserDashboard')
+    navigation.navigate('SuccessScreen', {successMessageType: 'MemberSignUp'})
+    setTimeout(
+      () => {  navigation.navigate ('UserDashboard') },
+      6000
+    )
   }
 
 
