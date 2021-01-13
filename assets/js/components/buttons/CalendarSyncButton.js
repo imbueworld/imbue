@@ -52,9 +52,11 @@ export default function CalendarSyncButton(props) {
         }
 
         // add to calendar
-        let response = await RNCalendarEvents.saveEvent(className + ' Imbue Class000000', {
+        let response = await RNCalendarEvents.saveEvent(className + ' Imbue Class', {
           startDate: beg_time,
           endDate: end_time,
+          notes: 'Open the Imbue app at class time to join'
+
         }) 
 
         // update firestore
@@ -87,9 +89,10 @@ export default function CalendarSyncButton(props) {
     }
 
      // add to calendar
-     let response = await RNCalendarEvents.saveEvent(classDoc.name + ' Imbue Class!!', {
+     let response = await RNCalendarEvents.saveEvent(classDoc.name + ' Imbue Class', {
        startDate: beg_time,
        endDate: end_time,
+       notes: 'Open the Imbue app at class time to join'
      }) 
 
      // update firestore
@@ -125,7 +128,7 @@ export default function CalendarSyncButton(props) {
   const showSuccess = () => {
     Alert.alert(
       'Success!',
-      'Your classes have been added to your phone calendar',
+      'Your class has been added to your phone calendar',
       [
         {
           text: 'Ok',

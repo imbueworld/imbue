@@ -15,7 +15,7 @@ export default function CalendarView(props) {
   let calendarData = props.data
   if (!calendarData) return <View />
 
-
+ 
   useEffect(() => {
     calendarData.forEach(doc => {
       if (!(doc.active_times instanceof Array)) return
@@ -54,11 +54,11 @@ export default function CalendarView(props) {
     }}>
       <Calendar
         markedDates={markedDates}
-        markingType={"multi-dot"}
         // theme={calendarStyle}
         onDayPress={day => {
           props.setSlctdDate(day.dateString)
         }}
+        markingType={'multi-dot'}
         theme={{
           textSectionTitleColor: '#242429',
           dayTextColor: '#242429',
@@ -72,7 +72,6 @@ export default function CalendarView(props) {
           textDayFontFamily: FONTS.cardBody.fontFamily,
           textMonthFontFamily: FONTS.cardBody.fontFamily,
           textDayHeaderFontFamily: FONTS.cardBody.fontFamily,
-          
         }}
         // [v DEBUG ONLY v]
         onDayLongPress={config.DEBUG ? day => {
