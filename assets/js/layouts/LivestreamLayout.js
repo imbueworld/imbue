@@ -363,7 +363,7 @@ export default function LivestreamLayout(props) {
                   height: 50,
                 }}
                 imageStyle={imageStyle}
-                source={require("../components/img/png/x.png")}
+                source={require("../components/img/png/home.png")}
               />
             </TouchableOpacity>
           </View>
