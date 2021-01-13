@@ -15,7 +15,7 @@ import CreditCardSelectionV2 from '../components/CreditCardSelectionV2'
 import { classType, currencyFromZeroDecimal, representDatabaseField } from '../backend/HelperFunctions'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
-import Class from '../backend/storage/Class'
+import Class from '../backend/storage/Class' 
 import config from '../../../App.config'
 import { StackActions, useNavigation } from '@react-navigation/native'
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
@@ -331,6 +331,7 @@ export default function ClassDescription(props) {
         innerContainerStyle={styles.innerContainerStyle}
         data={gym}
         classData={classId, timeId}
+        classDoc={classDoc}
         buttonOptions={{ 
           goToLivestream: getGoToLivestreamButton(),
           // addToCalendar: {

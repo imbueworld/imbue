@@ -23,6 +23,7 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import firestore from '@react-native-firebase/firestore'
 import { set } from 'react-native-reanimated'
 import functions from '@react-native-firebase/functions'
+import CalendarSyncButton from '../components/buttons/CalendarSyncButton'
 
 
 /** 
@@ -33,6 +34,7 @@ import functions from '@react-native-firebase/functions'
  * .children 
  */
 export default function GymLayout(props) {
+  const classDoc = props.classDoc
   const gym = props.data
   let navigation = useNavigation()
 
@@ -216,6 +218,19 @@ export default function GymLayout(props) {
           />
         : null}
       </View>
+
+    {/* Calendar Sync Button */}
+    <View style={{
+        position: "absolute",
+        top: 0,
+        right: 15,
+      }}>
+        <CalendarSyncButton
+          classDoc={classDoc}
+          type="singleSync"
+        />
+      </View>
+
 
       <View style={{
         position: "absolute",
