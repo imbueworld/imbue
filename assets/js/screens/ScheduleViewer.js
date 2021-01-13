@@ -297,7 +297,7 @@ export default function ScheduleViewer(props) {
           </View>
 
            {/* Calendar Sync Button */}
-          <View style={{
+          {/* <View style={{
               position: "absolute",
               top: 0,
               right: 15,
@@ -306,7 +306,7 @@ export default function ScheduleViewer(props) {
                 calendarData={calendarData}
                 type="allSync"
               />
-           </View>
+           </View> */}
         {/*           
           {user.account_type === "partner" ?
             // {/* 
