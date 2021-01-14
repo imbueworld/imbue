@@ -1300,6 +1300,7 @@ exports.cleanupUser = functions.auth.user().onDelete(async (user) => {
   return;
 })
 
+
 exports.cleanUpAfterPartner = functions.firestore
   .document('partners/{partnerId}')
   .onDelete(async (snap, context) => {

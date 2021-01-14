@@ -7,7 +7,7 @@ import {
   clockFromTimestamp,
   dateStringFromTimestamp,
   shortDateFromTimestamp
-} from '../backend/HelperFunctions'
+} from '../backend/HelperFunctions' 
 
 import CalendarView from "../components/CalendarView"
 import ClassList from "../components/ClassList"
@@ -27,6 +27,7 @@ import PlusButton from '../components/buttons/PlusButton'
 import User from '../backend/storage/User'
 import Gym from '../backend/storage/Gym'
 import ClassesCollection from '../backend/storage/ClassesCollection'
+import CalendarSyncButton from '../components/buttons/CalendarSyncButton'
 
 
 
@@ -294,6 +295,18 @@ export default function ScheduleViewer(props) {
               marginBottom: -10
             }}>{subtitle}</Text> : null} */}
           </View>
+
+           {/* Calendar Sync Button */}
+          {/* <View style={{
+              position: "absolute",
+              top: 0,
+              right: 15,
+            }}>
+              <CalendarSyncButton
+                calendarData={calendarData}
+                type="allSync"
+              />
+           </View> */}
         {/*           
           {user.account_type === "partner" ?
             // {/* 
