@@ -176,28 +176,23 @@ export default function GymDescription(props) {
                 containerStyle={styles.cardSelectionContainer}
                 title={
                   <Text>
-                    {`Confirm payment for ${gym.name} `}
+                    {`Confirm payment for ${gym.name}'s `}
                     <Text style={{
                       textDecorationLine: "underline"
-                    }}>Gym Online Membership</Text>
+                    }}>Unlimited Membership:</Text>
                   </Text>
+                }
+                price={
+                  <Text style={{}}>{`$${gym.membership_price_online} `}</Text>
                 }
                 onX={() => setPopup(null)}
                 onCardSelect={async paymentMethodId => {
                   try {
-                    setErrorMsg('')
+                    setErrorMsg('') 
                     setSuccessMsg('')
 
                     const { id: gymId } = gym
 
-                    console.log('paymentMethodId', paymentMethodId) 
-
-
-                    // // DEBUG
-                    // if (config.DEBUG) {
-                    //   console.log('paymentMethodId', paymentMethodId) 
-                    //   console.log('gymId', gymId)
-                    // }
 
                     const user = new User()
                     await user.purchaseGymMembership({ 
@@ -250,7 +245,7 @@ export default function GymDescription(props) {
             : <>
               <CustomButton
                 style={{
-                  marginBottom: 0,
+                  marginBottom: 0, 
                 }}
                 title="Get Membership" 
                 onPress={() => setPopup("buy")} 
