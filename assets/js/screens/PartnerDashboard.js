@@ -148,7 +148,7 @@ export default function PartnerDashboard(props) {
         onPress={() => {
           props.navigation.navigate(
             "PreLiveChecklist",
-          )
+          ) 
 
           // toggleStream,
           // props.navigation.navigate(

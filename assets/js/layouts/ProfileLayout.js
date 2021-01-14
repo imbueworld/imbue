@@ -188,44 +188,44 @@ export default function ProfileLayout(props) {
                 </TouchableOpacity>              
             </View>
 
-          <View style={{ marginTop: 20
-          }}>
-            <Icon
-              containerStyle={{
+          <View style={{ marginTop: 20}}>
+              <Icon
+                containerStyle={{
+                  width: 180,
+                  height: 180,
+                  position: "absolute",
+                  alignSelf: "center",
+                  borderRadius: 999,
+                  overflow: "hidden",
+                  ...simpleShadow,
+                  zIndex: 100,
+                }}
+                source={{ uri: user.icon_uri_full }}
+              />
+              <View style={{
                 width: 180,
                 height: 180,
                 position: "absolute",
                 alignSelf: "center",
-                borderRadius: 999,
-                overflow: "hidden",
+                alignItems: "center",
                 ...simpleShadow,
-                zIndex: 100,
-              }}
-              source={{ uri: user.icon_uri_full }}
-            />
-            <View style={{
-              width: 180,
-              height: 180,
-              position: "absolute",
-              alignSelf: "center",
-              alignItems: "center",
-              ...simpleShadow,
-              zIndex: 110,
-            }}>
-              {buttonOptions.editPfp.show
-                ? <EditButton
-                  containerStyle={{
-                    top: 135,
-                    left: 65,
-                  }}
-                  onPress={editPfp}
-                  // [v DEBUG ONLY v]
-                  onLongPress={config.DEBUG ? editPfp : undefined}
-                // [^ DEBUG ONLY ^]
-                />
-                : null}
+                zIndex: 110,
+              }}>
+                {buttonOptions.editPfp.show
+                  ? <EditButton
+                    containerStyle={{
+                      top: 135,
+                      left: 65,
+                    }}
+                    onPress={editPfp}
+                    // [v DEBUG ONLY v]
+                    onLongPress={config.DEBUG ? editPfp : undefined}
+                  // [^ DEBUG ONLY ^]
+                  />
+                  : null}
 
-            </View>
+                </View>
+
 
             <CustomCapsule
               style={[
@@ -268,8 +268,10 @@ export default function ProfileLayout(props) {
 
 
             </CustomCapsule>
-
           </View>
+
+
+
         </KeyboardAwareScrollView>
       </SafeAreaView>
     </>
@@ -286,7 +288,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     alignSelf: "center",
     ...FONTS.luloClean,
-    fontSize: 16,
+    fontSize: 16, 
   },
   sidePanelButtonContainer: {
     // ...simpleShadow,

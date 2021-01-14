@@ -355,7 +355,7 @@ export default function LivestreamLayout(props) {
                 borderRadius: 999,
               }}
               // underlayColor="#00000020"
-              onPress={() => navigation.goBack()}
+              onPress={() => navigation.navigate("PartnerDashboard")}
             >
               <Icon
                 containerStyle={{
