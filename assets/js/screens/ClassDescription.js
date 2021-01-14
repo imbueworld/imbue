@@ -22,7 +22,8 @@ import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-nat
 import firestore from '@react-native-firebase/firestore'
 import CalendarPopulateForm from '../components/CalendarPopulateForm'
 import functions from '@react-native-firebase/functions'
-
+import moment from 'moment';
+import RNCalendarEvents from "react-native-calendar-events";
 
 export default function ClassDescription(props) {
   const { classId, timeId } = props.route.params
@@ -528,6 +529,41 @@ export default function ClassDescription(props) {
                                         id: classId,
                                         time_id: timeId,
                                       } = classDoc
+
+                                      // add class to user's native calendar
+                                      console.log("classDoc: ", classDoc)
+
+                                      let beg_time = classDoc.begin_time
+                                      let end_time = classDoc.end_time
+
+                                      // Get event ID from firestore
+                                      const updatedClass = await firestore()
+                                        .collection('classes')
+                                        .doc(classDoc.id)
+                                        .get()
+                                      
+                                      let calendarId =  updatedClass.data().calendarId
+
+                                      ///// Take care of duplicate entries
+                                      if (calendarId) {
+                                        RNCalendarEvents.removeEvent(calendarId);
+                                      }
+
+                                       // add to calendar
+                                        let response = await RNCalendarEvents.saveEvent(classDoc.name + ' Imbue Class', {
+                                          startDate: beg_time,
+                                          endDate: end_time,
+                                          notes: 'Open the Imbue app at class time to join'
+                                        }) 
+
+                                        // update firestore
+                                        firestore()
+                                        .collection('classes')
+                                        .doc(classDoc.id)
+                                        .update({
+                                          calendarId: response,
+                                        })
+                                      ///// end add class to user's native calendar
   
                                       const user = new User()
                                       await user.addClassToCalender({
