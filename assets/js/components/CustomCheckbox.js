@@ -17,14 +17,13 @@ export default function CustomCheckbox(props) {
     <View style={[containerStyle, styles.container]}>
 
       <CheckBox
-          disabled={false}
           value={toggleCheckBox}
           onValueChange={(newValue) => setToggleCheckBox(newValue)}
           onCheckColor='#f9f9f9'
           onFillColor='#242429'
           onTintColor='#242429'
           tintColor='#242429'
-
+           newValue='test'
       />
     </View>
   )
