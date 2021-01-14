@@ -146,10 +146,14 @@ export default function PartnerDashboard(props) {
         // }
         title="Go Live"
         onPress={() => {
-          toggleStream,
           props.navigation.navigate(
-            "GoLive",
+            "PreLiveChecklist",
           )
+
+          // toggleStream,
+          // props.navigation.navigate(
+          //   "GoLive",
+          // )
         }}
       />
        {/* <CustomButton

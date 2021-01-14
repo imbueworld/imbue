@@ -45,6 +45,7 @@ import PartnerOnboardPhoto from './assets/js/screens/PartnerOnboardPhoto'
 import PartnerOnboardStripe from './assets/js/screens/PartnerOnboardStripe'
 import PartnerOnboardStripeQuestions from './assets/js/screens/PartnerOnboardStripeQuestions'
 import UserOnboard from './assets/js/screens/UserOnboard'
+import PreLiveChecklist from './assets/js/screens/PreLiveChecklist'
 
 
 // import Waitlist from './assets/js/screens/Waitlist'
@@ -268,16 +269,23 @@ export default function App() {
           component={PartnerOnboardStripe}
           initialParams={{}}
         />
-                <Stack.Screen
+        <Stack.Screen
           name='PartnerOnboardStripeQuestions'
           component={PartnerOnboardStripeQuestions}
           initialParams={{}}
         />
-                        <Stack.Screen
+        <Stack.Screen
           name='UserOnboard'
           component={UserOnboard}
           initialParams={{}}
         />
+        <Stack.Screen
+          name='PreLiveChecklist'
+          component={PreLiveChecklist}
+          initialParams={{}}
+        />
+
+
 
       </Stack.Navigator>
     </NavigationContainer>
