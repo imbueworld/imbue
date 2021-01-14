@@ -156,12 +156,9 @@ export default function Livestream(props) {
 
                     ):null}
 
-                });
-                setTimeout(
-                  () => {  navigation.navigate ('UserDashboard') },
-                  6000
-                )  
+                });  
             }}
+      
             onError={() => {
               console.log("video resulted in an error: ")
             }}
@@ -169,7 +166,10 @@ export default function Livestream(props) {
             paused={false}
             onEnd={()=> {
               navigation.navigate('SuccessScreen')
-              // console.log('abc')
+              setTimeout(
+                () => {  navigation.navigate ('UserDashboard') },
+                6000
+              )
             }}
             resizeMode={"cover"}
         />
