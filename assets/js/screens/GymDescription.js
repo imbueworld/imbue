@@ -176,14 +176,14 @@ export default function GymDescription(props) {
                 containerStyle={styles.cardSelectionContainer}
                 title={
                   <Text>
-                    {`Confirm payment for ${gym.name}'s `}
+                    {`Confirm payment for ${gym.name}'s`}
                     <Text style={{
                       textDecorationLine: "underline"
                     }}>Unlimited Membership:</Text>
                   </Text>
                 }
                 price={
-                  <Text style={{}}>{`$${gym.membership_price_online} `}</Text>
+                  <Text>{`$${gym.membership_price_online} `}</Text>
                 }
                 onX={() => setPopup(null)}
                 onCardSelect={async paymentMethodId => {

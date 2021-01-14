@@ -383,9 +383,6 @@ export default function NewClassForm(props) {
           setRedFields([])
           setErrorMsg("")
           setSuccessMsg("")
-          navigation.navigate('SuccessScreen', { successMessageType: 'ClassCreated' })
-
-
 
           try {
             // validate()
@@ -403,6 +400,8 @@ export default function NewClassForm(props) {
               setErrorMsg('Email could not be sent')
             }
             setSuccessMsg("Successfully created class.")
+
+            navigation.navigate('SuccessScreen', { successMessageType: 'ClassCreated' })
 
             // navigate after successful class
             setTimeout(

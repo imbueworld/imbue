@@ -234,8 +234,6 @@ export default function GymLayout(props) {
 
       <View style={{
         position: "absolute",
-        // top: 7,
-        // right: 7,
         top: 0,
         right: 15,
         flexDirection: "row",

@@ -59,44 +59,9 @@ export default function PartnerCreateClass(props) {
   let PageContent
   PageContent = 
     <>
-      {/* <CustomSmallButton
-        title="See Class List"
-        onPress={() => setPage("overview")}
-      /> */}
       <NewClassForm />
  </>
-  // switch (page) {
-  //   case "overview":
-  //     PageContent = 
-  //       <>
-  //         <CustomSmallButton
-  //           title="Create New Class"
-  //           onPress={() => setPage("new_class")}
-  //         />
-  //         {/* <ClassList data={classes} /> */}
-  //         <View>
-  //           <Text style={{
-  //             marginTop: 5,
-  //             marginBottom: 20,
-  //             alignSelf: "center", 
-  //             ...FONTS.subtitle,
-  //             fontSize: 20,
-  //           }}>List of Classes</Text>
-  //           {Classes}  
-  //         </View> 
-  //       </> 
-  //     break
-  //   case "new_class":
-  //     PageContent = 
-  //       <>
-  //         <CustomSmallButton
-  //           title="See Class List"
-  //           onPress={() => setPage("overview")}
-  //         />
-  //         <NewClassForm />
-  //       </>
-  //     break
-  // }
+
  
   return (
     <ProfileLayout

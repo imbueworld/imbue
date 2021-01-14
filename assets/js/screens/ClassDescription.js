@@ -211,14 +211,14 @@ export default function ClassDescription(props) {
             {classDoc.description}
           </Text>
 
-          {hasMembership
+          {/* {hasMembership
             ? null
             : <Text style={{
               ...styles.descText,
               alignSelf: "flex-end",
             }}>
               {`$${currencyFromZeroDecimal(classDoc.price)}`}
-            </Text>}
+            </Text>} */}
         </View>
 
       </View>
@@ -417,8 +417,11 @@ export default function ClassDescription(props) {
                   {popup === "buy"
                     ? <CreditCardSelectionV2 
                       containerStyle={styles.cardSelectionContainer}
+                      price={
+                        <Text>{`$${currencyFromZeroDecimal(classDoc.price)}`}</Text>
+                      }
                       title={
-                        <Text>
+                        <Text> 
                           {`Confirm payment for ${gym.name}, ${classDoc.name} — `}
                           <Text style={{ 
                             textDecorationLine: "underline",
@@ -792,6 +795,6 @@ const styles = StyleSheet.create({
   descText: {
     ...FONTS.body,
     fontSize: 16,
-    textAlign: "justify",
+    textAlign: "center",
   },
 })
