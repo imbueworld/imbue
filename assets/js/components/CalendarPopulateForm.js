@@ -261,6 +261,10 @@ export default function CalendarPopulateForm(props) {
             setErrorMsg("")
             setSuccessMsg("")
             navigation.navigate('SuccessScreen', {successMessageType: 'ClassScheduled'})
+            setTimeout(
+              () => {  navigation.navigate ('PartnerDashboard') },
+              6000
+            )
 
 
             const classObj = new Class()

@@ -256,6 +256,10 @@ export default function ProfileSettings(props) {
       ])
 
       setSuccessMsg('Successfully updated profile information.')
+      setTimeout(
+        () => {  navigation.navigate ('PartnerDashboard') },
+        7000
+      )
       // setPasswordField('')
       Keyboard.dismiss()
     } catch (err) {

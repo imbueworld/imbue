@@ -134,17 +134,6 @@ export default function SuccessScreen(props) {
               Congrats! You purchased an influencer membership!
               </Text>
 
-            <CustomButton
-              style={{
-                marginBottom: 20,
-                paddingHorizontal: 40,
-                marginTop: 30
-              }}
-              title="Go to your schedule"
-              onPress={ () => {
-                navigation.navigate('ScheduleViewer')
-              }}
-            />
           </>
           :
           successMessageType === "UserPurchasedClass" ?
