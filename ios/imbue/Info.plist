@@ -74,6 +74,8 @@
 	<string>Imbue requires access to the photo library for livestreaming video.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Imbue requires access to the photo library for adding profile pictures.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Imbue requires access to the Calendar for seamless calendar sync</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>LuloClean-Bold.ttf</string>

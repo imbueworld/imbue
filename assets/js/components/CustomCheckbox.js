@@ -23,7 +23,6 @@ export default function CustomCheckbox(props) {
           onFillColor='#242429'
           onTintColor='#242429'
           tintColor='#242429'
-           newValue='test'
       />
     </View>
   )
