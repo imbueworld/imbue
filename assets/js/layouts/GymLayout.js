@@ -238,7 +238,7 @@ export default function GymLayout(props) {
         right: 15,
         flexDirection: "row",
       }}>
-        {buttonOptions.goToLivestream.show
+        {/* {buttonOptions.goToLivestream.show
         ? buttonOptions.goToLivestream.state === "normal"
           ? <GoToLivestreamButton
               {...buttonProps}
@@ -248,7 +248,7 @@ export default function GymLayout(props) {
               {...buttonProps}
               inactive
             />
-        : null}
+        : null} */}
 
         {buttonOptions.addToCalendar.show
         ? buttonOptions.addToCalendar.state === "opportunity"
@@ -352,9 +352,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 0,
   },
   image: {
-    height: hp('50%'),
+    height: hp('35%'),
     marginLeft: 0,
     marginRight: 0,
+    marginTop: 50,
     resizeMode: 'cover'
     // borderRadius: 30,
     // borderBottomLeftRadius: 0,

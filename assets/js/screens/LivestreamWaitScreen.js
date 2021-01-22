@@ -89,6 +89,8 @@ export default function LivestreamWaitScreen(props) {
     }
   }
 
+  
+
 
   // Refresh
   const onRefresh = React.useCallback(async() => {
@@ -113,6 +115,7 @@ export default function LivestreamWaitScreen(props) {
       setTimeout(resolve, timeout);
     });
   }
+
 
   return (
     <>

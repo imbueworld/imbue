@@ -180,8 +180,10 @@ export default function ClassDescription(props) {
       width: "88%",
       height: 1,
       alignSelf: "center",
-      borderBottomWidth: 1,
+      borderBottomWidth: .5,
       borderColor: `${colors.gray}40`,
+      marginBottom: 10,
+      marginTop: 10,
     }} />
 
     ContentCreate(
@@ -748,9 +750,9 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     marginTop: 20,
-    borderRadius: 30,
-    borderWidth: 1,
-    borderColor: colors.gray, 
+    // borderRadius: 30,
+    // borderWidth: 1,
+    // borderColor: colors.gray, 
   },
   // nameContainer: {
   //   marginTop: 20,
@@ -794,7 +796,7 @@ const styles = StyleSheet.create({
   },
   descText: {
     ...FONTS.body,
-    fontSize: 16,
+    fontSize: 8,
     textAlign: "center",
   },
 })
