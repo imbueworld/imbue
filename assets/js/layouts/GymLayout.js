@@ -353,10 +353,13 @@ const styles = StyleSheet.create({
   },
   image: {
     height: hp('35%'),
+    width: wp('75%'),
     marginLeft: 0,
     marginRight: 0,
     marginTop: 50,
-    resizeMode: 'cover'
+    resizeMode: 'cover',
+    alignSelf: 'center',
+    borderRadius: 500,
     // borderRadius: 30,
     // borderBottomLeftRadius: 0,
     // borderBottomRightRadius: 0,
