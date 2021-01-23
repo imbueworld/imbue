@@ -44,14 +44,14 @@ export default function CustomCapsule(props) {
 const styles = StyleSheet.create({
     container: {
         borderRadius: 40,
-        backgroundColor: "#FFFFFFA0", // "#e6e6e6",
+        backgroundColor: "#FFFFFF", // "#e6e6e6",
         // paddingBottom: 12,
         // paddingRight: 12,
         padding: 12,
     },
     innerContainer: {
         borderRadius: 30,
-        backgroundColor: "#FFFFFFC0",
+        backgroundColor: "#FFFFFF",
         // paddingHorizontal: 20,
         paddingHorizontal: "6%",
         overflow: "hidden",

@@ -195,6 +195,7 @@ export default function GoLive(props) {
             audio={settings.audio}
             video={settings.video}
             autopreview
+            switchCameraswitchCamera
           />
         }
       </View>

@@ -24,6 +24,7 @@ import Icon from '../components/Icon'
 import { TouchableHighlight, TouchableOpacity } from 'react-native-gesture-handler'
 import { FONTS } from '../contexts/Styles'
 import firestore from '@react-native-firebase/firestore';
+import CustomButton from '../components/CustomButton'
 
 
 const layoutOptions = {
