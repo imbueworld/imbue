@@ -198,7 +198,7 @@ export default function SuccessScreen(props) {
               textAlign: 'center',
               marginTop: 30,
             }}>
-              Congrats! You created a class! Now, let's schedule it.
+              Congrats! You created a class! Now, click the schedule button to schedule your class!
               </Text>
 
           </>

@@ -173,11 +173,6 @@ export default function PartnerDashboard(props) {
             "PartnerLivestreamDashboard")}}
       /> */}
       <CustomButton
-        // icon={
-        //   <Icon
-        //     source={require("../components/img/png/my-classes.png")}
-        //   />
-        // }
         title="Classes"
         onPress={() => {
           props.navigation.navigate(

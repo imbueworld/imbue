@@ -8,23 +8,25 @@ import User from '../backend/storage/User'
 
 
 export default function SchedulePopulate(props) {
-  const [user, setUser] = useState(null)
+  const [user, setUser] = useState(null)git --version
 
-  useEffect(() => {
-    const init = async () => {
-      const user = new User()
-      setUser(await user.retrieveUser())
-    }; init()
-  }, [])
-
+    useEffect(() => {
+      const init = async () => {
+        const user = new User()
+        setUser(await user.retrieveUser())
+      }; init()
+    }, [])
   if (!user) return <View />
 
   return (
-    <ProfileLayout 
+    <ProfileLayout
       innerContainerStyle={{
         paddingHorizontal: 0,
         paddingBottom: 10,
       }}
+      refreshControl={
+        <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+      }
     >
       <CalendarPopulateForm
         containerStyle={{

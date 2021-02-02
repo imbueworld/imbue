@@ -42,6 +42,7 @@
         "react-native-gesture-handler": "~1.6.0",
         "react-native-image-picker": "^2.3.4",
         "react-native-keyboard-aware-scroll-view": "^0.9.3",
+        "react-native-loading-spinner-overlay": "^2.0.0",
         "react-native-maps": "^0.27.1",
         "react-native-network-info": "^5.2.1",
         "react-native-nodemediaclient": "^0.2.13",

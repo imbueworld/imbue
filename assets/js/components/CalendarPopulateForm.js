@@ -146,10 +146,10 @@ export default function CalendarPopulateForm(props) {
       setRedFields(["beginClock", "endClock"])
       throw new Error("Class starting time must be before its end time.")
     }
-    // Classes must last at least 5 minutes
-    if ((eH + eM) - (bH + bM) < 5) {
+    // Classes must last at least 1 minute
+    if ((eH + eM) - (bH + bM) < 1) {
       setRedFields(["beginClock", "endClock"])
-      throw new Error("A class must last at least 5 minutes.")
+      throw new Error("A class must last at least 1 minute.")
     }
   }
   
@@ -310,10 +310,10 @@ export default function CalendarPopulateForm(props) {
               setSuccessMsg("Successfully scheduled class!")
 
               // navigate after successful class creation
-              setTimeout(
-                () => {  navigation.navigate ('PartnerDashboard') },
-                3000
-              )
+              // setTimeout(
+              //   () => {  navigation.navigate ('PartnerDashboard') },
+              //   3000
+              // )
 
             } catch(err) {
               setErrorMsg(err.message)

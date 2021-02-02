@@ -405,8 +405,8 @@ export default function NewClassForm(props) {
 
             // navigate after successful class
             setTimeout(
-              () => { navigation.navigate('SchedulePopulate') },
-              2000
+              () => { navigation.navigate('ScheduleViewer') },
+              5000
             )
           } catch (err) {
             setErrorMsg(err.message)

@@ -117,25 +117,17 @@ export default function ClassList(props) {
                 </SidePanelContainer>
                 : null}
 
-              {/* <Icon
-                  containerStyle={{
-                      position: "absolute",
-                      width: "100%",
-                      height: "100%",
-                      zIndex: -100,
-                  }}
-                  source={{ uri: iconUri }}
-              /> */}
 
               <View style={{
                 alignItems: "flex-end",
+                marginLeft: 75, 
                 marginEnd: 10,
                 marginTop: 10,
               }}>
                 <Text style={styles.text}>{formattedDate}</Text>
                 <Text style={styles.text}>{formattedTime}</Text>
-                <Text style={styles.text}>{doc.name}</Text>
-                <Text style={styles.text}>{doc.instructor}</Text>
+                <Text style={styles.descriptionText}>{doc.name}</Text>
+                <Text style={styles.descriptionText}>{doc.instructor}</Text>
               </View>
             </View>
           </TouchableHighlight>
@@ -175,5 +167,12 @@ const styles = StyleSheet.create({
     color: colors.buttonAccent,
     // textAlign: 'justify',
     fontSize: 12
+  },
+  descriptionText: {
+    ...FONTS.body,
+    color: colors.buttonAccent,
+    // textAlign: 'justify',
+    fontSize: 12,
+    textAlign: 'right'
   },
 })
