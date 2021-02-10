@@ -1,3 +1,6 @@
+// LoginPartner
+// Login
+// SignUp
 import React, { useState } from 'react'
 import { SafeAreaView, StyleSheet, Text, TouchableHighlight, View, Platform } from 'react-native'
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
