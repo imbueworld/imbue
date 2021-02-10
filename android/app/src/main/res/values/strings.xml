@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Imbue</string>
+    <string name="facebook_app_id">472586343541363</string>
+    <!-- <string name="fb_login_protocol_scheme">fb472586343541363</string> -->
+</resources>

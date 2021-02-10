@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>736868821-kf9o1qalpaee63uo1bkd9m5hh52g660l.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.736868821-kf9o1qalpaee63uo1bkd9m5hh52g660l</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>736868821-1vof7nsel90ofe75gumnaom633jvo53s.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDMqJscgDIPOIIKsIoXevLJhFW8Qbx7OK4</string>
+	<key>GCM_SENDER_ID</key>
+	<string>736868821</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.ImbueFitness.Imbue</string>
+	<key>PROJECT_ID</key>
+	<string>spring-ranger-281214</string>
+	<key>STORAGE_BUCKET</key>
+	<string>spring-ranger-281214.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:736868821:ios:3ca2307e38e507b5c5e55c</string>
+	<key>DATABASE_URL</key>
+	<string>https://spring-ranger-281214.firebaseio.com</string>
+</dict>
+</plist>
