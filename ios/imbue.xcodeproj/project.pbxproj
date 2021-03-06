@@ -694,12 +694,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-imbue-imbueTests/Pods-imbue-imbueTests-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/LinkKit/LinkKit.framework/LinkKit",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LinkKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -715,7 +713,6 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-imbue/Pods-imbue-resources.sh",
 				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/Mixpanel-swift/Sources/MiniNotificationViewController.xib",
 				"${PODS_ROOT}/Mixpanel-swift/Sources/placeholder-image.png",
@@ -744,7 +741,6 @@
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MiniNotificationViewController.nib",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/placeholder-image.png",
@@ -783,7 +779,6 @@
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-imbue-imbueTests/Pods-imbue-imbueTests-resources.sh",
 				"${PODS_ROOT}/FBSDKCoreKit/FacebookSDKStrings.bundle",
-				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
 				"${PODS_ROOT}/GoogleSignIn/Resources/GoogleSignIn.bundle",
 				"${PODS_ROOT}/Mixpanel-swift/Sources/MiniNotificationViewController.xib",
 				"${PODS_ROOT}/Mixpanel-swift/Sources/placeholder-image.png",
@@ -812,7 +807,6 @@
 			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/FacebookSDKStrings.bundle",
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleSignIn.bundle",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/MiniNotificationViewController.nib",
 				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/placeholder-image.png",
@@ -850,12 +844,10 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-imbue/Pods-imbue-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/LinkKit/LinkKit.framework/LinkKit",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/LinkKit.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
