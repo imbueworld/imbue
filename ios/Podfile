@@ -5,12 +5,20 @@ platform :ios, '11.0'
 
 target 'imbue' do
   # Added manually \/
+<<<<<<< HEAD
   rn_maps_path = '../node_modules/react-native-maps'
   pod 'react-native-google-maps', :path => rn_maps_path
   pod 'GoogleMaps'
   pod 'Google-Maps-iOS-Utils'
   # Added manually /\
 
+=======
+  # rn_maps_path = '../node_modules/react-native-maps'
+  # pod 'react-native-google-maps', :path => rn_maps_path
+  # pod 'GoogleMaps'
+  # pod 'Google-Maps-iOS-Utils'
+  # Added manually /\
+>>>>>>> removedFlipper
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
@@ -33,6 +41,7 @@ target 'imbue' do
     inherit! :complete
     # Pods for testing
   end
+<<<<<<< HEAD
 
   # Enables Flipper.
   #
@@ -42,6 +51,8 @@ target 'imbue' do
   post_install do |installer|
     flipper_post_install(installer)
   end
+=======
+>>>>>>> removedFlipper
 end
 
 target 'imbue-tvOS' do

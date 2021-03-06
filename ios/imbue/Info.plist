@@ -39,6 +39,13 @@
 			</array>
 		</dict>
 	</array>
+<<<<<<< HEAD
+=======
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<string>TRUE</string>
+	<key>FacebookAutoLogAppEventsEnabled</key>
+	<string>TRUE</string>
+>>>>>>> removedFlipper
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>FacebookAppID</key>

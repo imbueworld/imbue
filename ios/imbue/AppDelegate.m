@@ -5,6 +5,7 @@
 #import <React/RCTRootView.h>
 #import <Firebase.h>
 
+<<<<<<< HEAD
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
 #import <FlipperKitLayoutPlugin/FlipperKitLayoutPlugin.h>
@@ -27,10 +28,13 @@ static void InitializeFlipper(UIApplication *application) {
 
 @import GoogleMaps;
 
+=======
+>>>>>>> removedFlipper
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+<<<<<<< HEAD
 #ifdef FB_SONARKIT_ENABLED
   InitializeFlipper(application);
 #endif
@@ -38,6 +42,10 @@ static void InitializeFlipper(UIApplication *application) {
 
 
   [GMSServices provideAPIKey:@"AIzaSyDMqJscgDIPOIIKsIoXevLJhFW8Qbx7OK4"];
+=======
+
+       
+>>>>>>> removedFlipper
 
   RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
   RCTRootView *rootView = [[RCTRootView alloc] initWithBridge:bridge

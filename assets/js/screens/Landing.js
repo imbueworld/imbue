@@ -40,6 +40,7 @@ export default function Landing(props) {
 
 
     return (
+<<<<<<< HEAD
         <ScrollView alwaysBounceVertical={false} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
             <AppBackground />
             <CompanyLogo
@@ -48,6 +49,16 @@ export default function Landing(props) {
                     position: "absolute",
                     alignSelf: "center",
                 }}
+=======
+            <ScrollView alwaysBounceVertical={false} showsVerticalScrollIndicator={false} contentContainerStyle={styles.scrollView}>
+            <AppBackground />
+            <CompanyLogo
+        containerStyle={{
+            top: 0,
+            position: "absolute",
+            alignSelf: "center",
+        }}
+>>>>>>> removedFlipper
             />
 
             <CustomCapsule
@@ -131,4 +142,8 @@ const styles = StyleSheet.create({
         marginBottom: 50,
         backgroundColor: "#F9F9F9",
     },
+<<<<<<< HEAD
 })
+=======
+})
+>>>>>>> removedFlipper

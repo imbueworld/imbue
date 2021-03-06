@@ -21,7 +21,11 @@ import cache from '../backend/storage/cache'
 import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay'
 import config from '../../../App.config'
 import ImbueMap from '../components/ImbueMap'
+<<<<<<< HEAD
 import { create } from 'react-test-renderer';
+=======
+//import { create } from 'react-test-renderer';
+>>>>>>> removedFlipper
 import { FONTS } from "../contexts/Styles"
 import { colors } from "../contexts/Colors"
 import { ScrollView } from 'react-native-gesture-handler';

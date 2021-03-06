@@ -55,6 +55,10 @@
         "react-native-svg": "^12.1.0",
         "react-native-svg-transformer": "^0.14.3",
         "react-native-svg-uri": "^1.2.3",
+<<<<<<< HEAD
+=======
+        "react-native-test-renderer": "0.0.1",
+>>>>>>> removedFlipper
         "react-native-vector-icons": "^7.1.0",
         "react-native-video": "^4.4.5",
         "react-native-web": "~0.11.7"
@@ -67,7 +71,11 @@
         "eslint": "^6.5.1",
         "jest": "^25.5.4",
         "metro-react-native-babel-preset": "^0.59.0",
+<<<<<<< HEAD
         "react-test-renderer": "16.13.1"
+=======
+        "react-test-renderer": "^16.13.1"
+>>>>>>> removedFlipper
     },
     "jest": {
         "preset": "react-native"
