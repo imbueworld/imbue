@@ -151,11 +151,6 @@ export default function GymDescription(props) {
         }}
         title="Classes"
         onPress={openClassesSchedule}
-        // Icon={ 
-        //   <Icon
-        //     source={require("../components/img/png/calendar.png")}
-        //   />
-        // }
         />
         
         

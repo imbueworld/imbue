@@ -8,11 +8,7 @@ import User from '../backend/storage/User'
 
 
 export default function SchedulePopulate(props) {
-<<<<<<< HEAD
-  const [user, setUser] = useState(null)git --version
-=======
   const [user, setUser] = useState(null)
->>>>>>> removedFlipper
 
     useEffect(() => {
       const init = async () => {
