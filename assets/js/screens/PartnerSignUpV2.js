@@ -18,8 +18,10 @@ import GoBackButton from '../components/buttons/GoBackButton'
 import CustomTextInputV2 from '../components/CustomTextInputV2'
 import CustomButton from '../components/CustomButton'
 import FormStatusMessage from '../components/FormStatusMessage'
-
-
+import LottieView from 'lottie-react-native';
+const LoadingComponent = () => {
+return <LottieView source={require('../components/img/animations/cat-loading.json')} style={{marginRight: 100, marginLeft: 50}} autoPlay loop />
+}
 
 export default function PartnerSignUpV2(props) {
   const navigation = useNavigation()
@@ -28,7 +30,7 @@ export default function PartnerSignUpV2(props) {
   local.passwordText = watch('password', '')
   const [ip, setIp] = useState(ip)
   const [submitError, setSubmitError] = useState('')
-
+  const [showLoading, setShowLoading] = useState(false);
   useEffect(() => {
     const rules = {
       required: 'Required fields must be filled.',
@@ -290,8 +292,11 @@ export default function PartnerSignUpV2(props) {
         <CustomButton
           style={styles.signUpButton}
           title='Apply' 
-          onPress={handleSubmit(onSubmit)}
+          onPress={() => {handleSubmit(onSubmit)
+          setShowLoading(true)}}
         />
+{showLoading && !errors
+          ? <LoadingComponent/> : null}
       </View>
       </KeyboardAwareScrollView>
     </SafeAreaView>
