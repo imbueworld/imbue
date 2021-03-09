@@ -62,6 +62,6 @@ const styles = StyleSheet.create({
         marginBottom: 5
     },
     font: {
-        ...FONTS.body,
+        ...FONTS.textInput,
     },
 })

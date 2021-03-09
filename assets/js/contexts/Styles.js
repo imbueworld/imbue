@@ -17,6 +17,9 @@ export const FONTS = {
       subtitle: {
         fontFamily: 'LuloCleanW01-One',
       },
+      textInput: {
+        fontFamily: 'PlayfairDisplay-Black',
+      },
       body: {
         fontFamily: 'LuloCleanW01-One',
       },
@@ -46,6 +49,9 @@ export const FONTS = {
       },
       body: {
         fontFamily: 'LuloCleanThin',
+      },
+      textInput: {
+        fontFamily: 'PlayfairDisplay-Black',
       },
       heading: {
         fontFamily: 'LuloClean-Bold', 

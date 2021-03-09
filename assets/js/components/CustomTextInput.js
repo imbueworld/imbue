@@ -130,7 +130,7 @@ const styles = StyleSheet.create({
     borderBottomColor: "#D6D9DC"
   },
   input: {
-    ...FONTS.subtitle,
+    ...FONTS.textInput,
     textAlign: 'center',
     fontSize: 12,
     // backgroundColor: 'red', // DEBUG

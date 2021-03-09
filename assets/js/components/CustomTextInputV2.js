@@ -75,7 +75,7 @@ export default function CustomTextInputV2(props) {
         // to use secureTextEntry
         {...props}
         style={{
-          ...FONTS.subtitle,
+          ...FONTS.textInput,
           fontSize: 12,
           textAlign: 'center',
           ...style,
