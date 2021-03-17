@@ -225,20 +225,15 @@ export default function UserDashboard(props) {
           />
         </View> */}
 
-        <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
+        {/* <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
           <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>view your classes</Text>
           <CustomButton
-              // icon={
-              //   <Icon
-              //     source={require("../components/img/png/my-classes.png")}
-              //   />
-              // }
               title="My Classes"
               onPress={() => {
                 props.navigation.navigate("ScheduleViewer")
               }}
             />
-        </View>
+        </View> */}
 
         {/* upcoming classes */}
         {/* {classes.length ?

@@ -144,7 +144,7 @@ export default function GymDescription(props) {
             props.navigation.navigate("Livestream", { gymId })
           }}
         /> */}
-
+{/* 
       <CustomButton
         style={{
           marginBottom: 0,
@@ -152,7 +152,7 @@ export default function GymDescription(props) {
         title="Classes"
         onPress={openClassesSchedule}
         />
-        
+         */}
         
 
       {errorMsg

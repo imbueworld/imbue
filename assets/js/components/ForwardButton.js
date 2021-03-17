@@ -9,24 +9,23 @@ export default function BackButton(props) {
     style={},
     containerStyle={},
     imageStyle={},
+    size
   } = props
 
   return (
     <View style={{
       ...simpleShadow,
       backgroundColor: "#242429",
-      borderRadius: 999,
-      ...style,
-      ...containerStyle,
+      borderRadius: size/2,
+      width: size,
+      height: size,
+      alignItems: 'center',
+      justifyContent: 'center'
     }}>
       <Image
         style={{
-          width: 64,
-          height: 64,
-          marginBottom: 10,
-          marginTop: 10,
-          marginLeft: 10,
-          marginRight: 10,
+          width: size - 34,
+          height: size - 34,
           ...imageStyle,
         }}
         source={require("./img/png/forward-arrow-white.png")}

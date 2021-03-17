@@ -10,7 +10,7 @@ target 'imbue' do
   # pod 'GoogleMaps'
   # pod 'Google-Maps-iOS-Utils'
   # Added manually /\
-
+  
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])

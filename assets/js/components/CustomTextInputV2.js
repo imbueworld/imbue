@@ -67,26 +67,18 @@ export default function CustomTextInputV2(props) {
         />
       )}
       <TextInput
-        // Prop order is important here,
-        // with regards to what `{...props}` overrides, and not
         placeholderTextColor={colors.textInputPlaceholder}
-        multiline={secureTextEntry ? false : true} // multiline can never be
-        // enabled if there is a desire
-        // to use secureTextEntry
+        multiline={secureTextEntry ? false : true}
         {...props}
         style={{
-          ...FONTS.textInput,
-          fontSize: 12,
+          ...FONTS.subtitle,
+          fontSize: 17,
           textAlign: 'center',
+          paddingBottom: 6,
           ...style,
-          // backgroundColor: 'red', // DEBUG
         }}
         onFocus={handleFocus}
         onBlur={handleBlur}
-        // onBlur={e => {
-        //   setTapPanel(true)
-        //   onBlur(e)
-        // }}
         ref={ref}
       />
     </View>

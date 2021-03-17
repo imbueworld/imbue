@@ -61,7 +61,7 @@ export default function PartnerHome(props) {
                         marginTop: 20,
                         marginBottom: 0,
                     }}
-                    onPress={() => props.navigation.navigate("PartnerSignUp")}
+                    onPress={() => props.navigation.navigate("PartnerApply")}
                     title="Apply"
                 />
                 <CustomButton
