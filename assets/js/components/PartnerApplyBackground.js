@@ -1,95 +1,100 @@
-import React, { useState } from 'react'
-import { SafeAreaView, ScrollView, StyleSheet, Text, TouchableHighlight, View, Platform } from 'react-native'
-import AppBackground from "../components/AppBackground"
-import CompanyLogo from "../components/CompanyLogo"
-import CustomCapsule from "../components/CustomCapsule"
-import { useNavigation } from '@react-navigation/native'
-import BackButton from '../components/BackButton'
-import { FONTS } from '../contexts/Styles'
-import { colors, simpleShadow } from '../contexts/Colors'
-import ForwardButton from '../components/ForwardButton'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import React, {useState} from 'react';
+import {
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableHighlight,
+  View,
+  Platform,
+} from 'react-native';
+import AppBackground from '../components/AppBackground';
+import CompanyLogo from '../components/CompanyLogo';
+import CustomCapsule from '../components/CustomCapsule';
+import {useNavigation} from '@react-navigation/native';
+import BackButton from '../components/BackButton';
+import {FONTS} from '../contexts/Styles';
+import {colors, simpleShadow} from '../contexts/Colors';
+import ForwardButton from '../components/ForwardButton';
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 
 export const PartnerApplyBackground = (props) => {
-    const { onNextButton, children } = props;
-    const navigation = useNavigation()
-  
-    const { top, bottom } = useSafeAreaInsets()
-  
-    return (
-      <SafeAreaView style={{ flex: 1, backgroundColor: colors.bg, paddingTop: Platform.OS === 'android' ? 25 : 0, justifyContent: 'space-between' }}>
-          <TouchableHighlight
-            style={[styles.sidePanelButtonContainer, {top: top}]}
-            underlayColor="#fff"
-            onPress={() => navigation.goBack()}
-          >
-            <BackButton
-              imageStyle={{
-                width: 48,
-                height: 48,
-                simpleShadow,
-              }}
-            />
-          </TouchableHighlight>
-          <ScrollView containerStyle={{flexGrow: 1, justifyContent: 'center'}}>
-            <CompanyLogo style={{height: 100, marginTop: 80, marginBottom: 60}} />
-            <CustomCapsule containerStyle={styles.container}>
-              <View>
-                <Text
-                  style={styles.title}
-                >
-                  Influencer application
-                </Text>
-              </View>
-              <View>
-                {children}
-              </View>
-            </CustomCapsule>
-          
-          </ScrollView>
-         <TouchableHighlight
-            style={[styles.forwardButtonContainer, {bottom: bottom}]}
-            underlayColor="#eed"
-            onPress={(() => onNextButton())}
-          >
-            <ForwardButton
-              size={70}
-            />
-          </TouchableHighlight>
-      </SafeAreaView>
-    )
-}
+  const {onNextButton, children} = props;
+  const navigation = useNavigation();
+
+  const {top, bottom} = useSafeAreaInsets();
+
+  return (
+    <SafeAreaView
+      style={{
+        flex: 1,
+        backgroundColor: colors.bg,
+        paddingTop: Platform.OS === 'android' ? 25 : 0,
+        justifyContent: 'space-between',
+      }}>
+      <TouchableHighlight
+        style={[styles.sidePanelButtonContainer, {top: top}]}
+        underlayColor="#fff"
+        onPress={() => navigation.goBack()}>
+        <BackButton
+          imageStyle={{
+            width: 48,
+            height: 48,
+            simpleShadow,
+          }}
+        />
+      </TouchableHighlight>
+      <ScrollView containerStyle={{flexGrow: 1, justifyContent: 'center'}}>
+        <CompanyLogo style={{height: 100, marginTop: 80, marginBottom: 60}} />
+        <CustomCapsule containerStyle={styles.container}>
+          <View>
+            <Text style={styles.title}>Influencer application</Text>
+          </View>
+          <View>{children}</View>
+        </CustomCapsule>
+      </ScrollView>
+      {onNextButton && (
+        <TouchableHighlight
+          style={[styles.forwardButtonContainer, {bottom: bottom}]}
+          underlayColor="#fff"
+          onPress={() => onNextButton()}>
+          <ForwardButton size={70} />
+        </TouchableHighlight>
+      )}
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   scrollView: {
-    minHeight: "100%",
-    backgroundColor: "#F9F9F9",
+    minHeight: '100%',
+    backgroundColor: '#F9F9F9',
   },
   container: {
-    width: "88%",
+    width: '88%',
     marginBottom: 30,
-    alignSelf: "center",
-    backgroundColor: "#ffffff",
+    alignSelf: 'center',
+    backgroundColor: '#ffffff',
   },
   sidePanelButtonContainer: {
-    backgroundColor: "white",
-    justifyContent: "center",
+    backgroundColor: 'white',
+    justifyContent: 'center',
     position: 'absolute',
-    zIndex: 99
+    zIndex: 99,
   },
   forwardButtonContainer: {
     marginBottom: 30,
-    alignSelf: "flex-end",
+    alignSelf: 'flex-end',
     position: 'absolute',
     right: 25,
-    backgroundColor: "#ffffff",
-    marginTop: 5
+    backgroundColor: '#ffffff',
+    marginTop: 5,
   },
   title: {
     width: '60%',
     textAlign: 'center',
     marginBottom: 50,
-    alignSelf: "center",
+    alignSelf: 'center',
     ...FONTS.subtitle,
     fontSize: 17,
   },
@@ -103,4 +108,4 @@ const styles = StyleSheet.create({
     ...FONTS.body,
     color: colors.accent,
   },
-})
+});
