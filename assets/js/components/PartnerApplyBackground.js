@@ -17,6 +17,7 @@ import {FONTS} from '../contexts/Styles';
 import {colors, simpleShadow} from '../contexts/Colors';
 import ForwardButton from '../components/ForwardButton';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 export const PartnerApplyBackground = (props) => {
   const {onNextButton, children} = props;
@@ -44,7 +45,8 @@ export const PartnerApplyBackground = (props) => {
           }}
         />
       </TouchableHighlight>
-      <ScrollView containerStyle={{flexGrow: 1, justifyContent: 'center'}}>
+      <KeyboardAwareScrollView
+        containerStyle={{flexGrow: 1, justifyContent: 'center'}}>
         <CompanyLogo style={{height: 100, marginTop: 80, marginBottom: 60}} />
         <CustomCapsule containerStyle={styles.container}>
           <View>
@@ -52,7 +54,7 @@ export const PartnerApplyBackground = (props) => {
           </View>
           <View>{children}</View>
         </CustomCapsule>
-      </ScrollView>
+      </KeyboardAwareScrollView>
       {onNextButton && (
         <TouchableHighlight
           style={[styles.forwardButtonContainer, {bottom: bottom}]}
