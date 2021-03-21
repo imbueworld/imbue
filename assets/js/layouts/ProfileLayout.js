@@ -180,20 +180,22 @@ export default function ProfileLayout(props) {
             />
           </TouchableOpacity>
         </View>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: bottom + 25,
-            right: 25,
-            zIndex: 3,
-          }}>
-          <TouchableHighlight
-            style={[styles.forwardButtonContainer, {bottom: bottom}]}
-            underlayColor="#fff"
-            onPress={() => onNextButton()}>
-            <ForwardButton size={70} />
-          </TouchableHighlight>
-        </View>
+        {onNextButton && (
+          <View
+            style={{
+              position: 'absolute',
+              bottom: bottom + 25,
+              right: 25,
+              zIndex: 3,
+            }}>
+            <TouchableHighlight
+              style={[styles.forwardButtonContainer, {bottom: bottom}]}
+              underlayColor="#fff"
+              onPress={() => onNextButton()}>
+              <ForwardButton size={70} />
+            </TouchableHighlight>
+          </View>
+        )}
         <KeyboardAwareScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={styles.scrollView}

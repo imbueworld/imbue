@@ -86,7 +86,7 @@ export default class User extends DataObject {
     const {
       first = '',
       last = '',
-      icon_uri = 'imbueProfileLogo.png',
+      icon_uri = 'imbueProfileLogoBlack.png',
       icon_uri_foreign = '',
       social_media = '',
       // For user:  These three should always be present as Arrays
@@ -709,7 +709,6 @@ export default class User extends DataObject {
       // Do the image stuff
       ImagePicker.showImagePicker({}, async (res) => {
         if (res.didCancel) {
-          // ...
           if (config.DEBUG)
             console.log('Photo selection canceled:', res.didCancel);
         }
@@ -725,7 +724,7 @@ export default class User extends DataObject {
         //   path: filePath,
         //   fileSize,
         // } = res
-
+        console.log(res);
         const source = {uri: res.uri};
 
         console.log('source: ' + JSON.stringify(source));

@@ -110,7 +110,22 @@ export default function PartnerDashboard(props) {
             show: false,
           },
         }}
-        onNextButton={() => navigation.navigate('PartnerOnboardStripe')}>
+        onNextButton={() => {
+          if (user.icon_uri === 'imbueProfileLogoBlack.png')
+            setErrorMsg('You need upload photo firstly.');
+          else navigation.navigate('PartnerOnboardStripe');
+        }}>
+        {errorMsg !== '' && (
+          <Text
+            style={{
+              textAlign: 'center',
+              marginTop: 10,
+              fontSize: 15,
+              color: 'red',
+            }}>
+            {errorMsg}
+          </Text>
+        )}
         <Text style={styles.profileName} numberOfLines={1}>
           {user.name}
         </Text>
