@@ -216,7 +216,7 @@ export default class User extends DataObject {
         first,
         last,
         email,
-        icon_uri: 'imbueProfileLogo.png',
+        icon_uri: 'imbueProfileLogoBlack.png',
         icon_uri_foreign,
       });
 

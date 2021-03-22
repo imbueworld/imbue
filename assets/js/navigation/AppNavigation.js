@@ -1,5 +1,5 @@
-import React from 'react';
-import {NavigationContainer} from '@react-navigation/native';
+import React, {useRef, useEffect, useState} from 'react';
+import {NavigationContainer, useLinking} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 import _TestingGrounds from '../screens/_TestingGrounds';
@@ -46,12 +46,41 @@ import PartnerOnboardStripeQuestions from '../screens/PartnerOnboardStripeQuesti
 import UserOnboard from '../screens/UserOnboard';
 import PreLiveChecklist from '../screens/PreLiveChecklist';
 import {PartnerStep} from '../screens/PartnerStep';
+import auth from '@react-native-firebase/auth';
 
 const Stack = createStackNavigator();
 
 export const AppNavigation = () => {
+  const ref = useRef();
+
+  const {getInitialState} = useLinking(ref, {
+    prefixes: ['https://imbue.com', 'imbue://'],
+    config: {
+      screens: {
+        GymDescription: {
+          path: 'gym/:id',
+          pards: {
+            id: String,
+          },
+        },
+      },
+    },
+  });
+
+  const [initialState, setInitialState] = useState();
+
+  useEffect(() => {
+    getInitialState().then((state) => {
+      console.log('State: ' + state);
+      console.log(auth().currentUser);
+      if (state !== undefined && auth().currentUser) {
+        setInitialState(state);
+      }
+    });
+  }, []);
+
   return (
-    <NavigationContainer>
+    <NavigationContainer initialState={initialState} ref={ref}>
       <Stack.Navigator
         screenOptions={{
           headerShown: false,

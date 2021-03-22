@@ -1,273 +1,286 @@
-import React, { useState, useEffect } from 'react'
-import { StyleSheet, Text, View, Keyboard } from 'react-native'
+import React, {useState, useEffect} from 'react';
+import {StyleSheet, Text, View, Keyboard, Modal} from 'react-native';
 
-import ProfileLayout from "../layouts/ProfileLayout"
+import ProfileLayout from '../layouts/ProfileLayout';
 
-import CustomTextInput from "../components/CustomTextInput"
-import CustomButton from "../components/CustomButton"
+import CustomTextInput from '../components/CustomTextInput';
+import CustomButton from '../components/CustomButton';
 
-import auth from "@react-native-firebase/auth"
-import { FONTS } from '../contexts/Styles'
-import moment from 'moment'
-import { useNavigation } from '@react-navigation/native'
-import { handleAuthError } from '../backend/HelperFunctions'
-import User from '../backend/storage/User'
-import CustomTextInputV2 from '../components/CustomTextInputV2'
-import config from '../../../App.config'
-import { useForm } from 'react-hook-form'
-import { geocodeAddress } from '../backend/BackendFunctions'
-import Gym from '../backend/storage/Gym'
-import PlaidButton from '../components/PlaidButton'
-import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry'
-import { currencyFromZeroDecimal } from '../backend/HelperFunctions'
-import functions from '@react-native-firebase/functions'
+import auth from '@react-native-firebase/auth';
+import {FONTS} from '../contexts/Styles';
+import moment from 'moment';
+import {useNavigation} from '@react-navigation/native';
+import {handleAuthError} from '../backend/HelperFunctions';
+import User from '../backend/storage/User';
+import CustomTextInputV2 from '../components/CustomTextInputV2';
+import config from '../../../App.config';
+import {useForm} from 'react-hook-form';
+import {geocodeAddress} from '../backend/BackendFunctions';
+import Gym from '../backend/storage/Gym';
+import PlaidButton from '../components/PlaidButton';
+import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
+import {currencyFromZeroDecimal} from '../backend/HelperFunctions';
+import functions from '@react-native-firebase/functions';
 import firestore from '@react-native-firebase/firestore';
-const p = console.log
-
+import LottieView from 'lottie-react-native';
+const p = console.log;
 
 export default function ProfileSettings(props) {
-  const [user, setUser] = useState(null)
-  const [isForeignUser, setIsForeignUser] = useState()
-  const navigation = useNavigation()
-  const [gym, setGym] = useState(null)
-  const [hasBankAccountAdded, setHasBankAccountAdded] = useState()
-  const [errorMsg, setErrorMsg] = useState('')
+  const [loading, setLoading] = useState(false);
+  const [user, setUser] = useState(null);
+  const [isForeignUser, setIsForeignUser] = useState();
+  const navigation = useNavigation();
+  const [gym, setGym] = useState(null);
+  const [hasBankAccountAdded, setHasBankAccountAdded] = useState();
+  const [errorMsg, setErrorMsg] = useState('');
   const [refreshing, setRefreshing] = React.useState(false);
-  const [r, refresh] = useState(0)
+  const [r, refresh] = useState(0);
 
   // p(auth().currentUser)
 
   useEffect(() => {
     const init = async () => {
-      const user = new User()
-      const userDoc = await user.retrieveUser()
-      setUser(userDoc)
-      setIsForeignUser(userDoc.icon_uri_foreign ? true : false)
-          
-      if (userDoc.account_type == "partner") {
-        const gym = ( await user.retrievePartnerGyms()).map(it => it.getAll())[0]
-        setGym(gym)
+      const user = new User();
+      const userDoc = await user.retrieveUser();
+      setUser(userDoc);
+      setIsForeignUser(userDoc.icon_uri_foreign ? true : false);
+
+      if (userDoc.account_type == 'partner') {
+        const gym = (await user.retrievePartnerGyms()).map((it) =>
+          it.getAll(),
+        )[0];
+        setGym(gym);
       }
 
-      setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id))
+      setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id));
       // setHasBankAccountAdded(true)
 
       // update Stripe balance revenue
       if (gym) {
-        const updateStripeAccountRevenue = functions().httpsCallable('updateStripeAccountRevenue')
-        await updateStripeAccountRevenue(gym.id)
+        const updateStripeAccountRevenue = functions().httpsCallable(
+          'updateStripeAccountRevenue',
+        );
+        await updateStripeAccountRevenue(gym.id);
       }
-    }; init()
-  }, [r])
+    };
+    init();
+  }, [r]);
 
   useEffect(() => {
-    if (!user) return
-    setFirstNameField(user.first)
-    setLastNameField(user.last)
-    setEmailField(user.email)
-    let { day, month, year } = user.dob || {}
-    let dobString = user.dob ? `${month}-${day}-${year}` : ''
-    setDob(dobString)
+    if (!user) return;
+    setFirstNameField(user.first);
+    setLastNameField(user.last);
+    setEmailField(user.email);
+    let {day, month, year} = user.dob || {};
+    let dobString = user.dob ? `${month}-${day}-${year}` : '';
+    setDob(dobString);
     //
     //
-    setAddress(user.formatted_address)
-    setPhone(user.phone)
-    setSSNLast4(user.ssn_last_4)
+    setAddress(user.formatted_address);
+    setPhone(user.phone);
+    setSSNLast4(user.ssn_last_4);
     // setCompanyAddress(user.formatted_company_address)
     // setCompanyName(user.company_name)
     // setTaxId(user.tax_id)
-  }, [user])
+  }, [user]);
 
-  const [redFields, setRedFields] = useState([])
+  const [redFields, setRedFields] = useState([]);
   // const [errorMsg, setErrorMsg] = useState("")
-  const [successMsg, setSuccessMsg] = useState("")
-  const [changing, change] = useState("safeInfo") // || "password"
+  const [successMsg, setSuccessMsg] = useState('');
+  const [changing, change] = useState('safeInfo'); // || "password"
 
-  const [firstNameField, setFirstNameField] = useState("")
-  const [lastNameField, setLastNameField] = useState("")
-  const [emailField, setEmailField] = useState("")
-  // const [passwordField, setPasswordField] = useState("")
+  const [firstNameField, setFirstNameField] = useState('');
+  const [lastNameField, setLastNameField] = useState('');
+  const [emailField, setEmailField] = useState('');
+  const [userPasswordField, setUserPasswordField] = useState('');
+  const [passwordField, setPasswordField] = useState('');
   //
-  const [dob, setDob] = useState("")
-  const { register, handleSubmit, setValue, errors } = useForm()
+  const [dob, setDob] = useState('');
+  const {register, handleSubmit, setValue, errors} = useForm();
 
   useEffect(() => {
     const rules = {
       required: 'Required fields must be filled.',
-    }
+    };
 
     // register('company_address', rules)
     // register('company_name', rules)
     // register('tax_id', rules)
     register('phone', {
       ...rules,
-      validate: text =>
-        text.replaceAll(/[^0-9]/g, '').length == 10
-        || 'Number should consist of 10 digits.',
-    })
+      validate: (text) =>
+        text.replaceAll(/[^0-9]/g, '').length == 10 ||
+        'Number should consist of 10 digits.',
+    });
     register('dob', {
       ...rules,
       validate: {
-        format: text =>
-          text.split('-').length == 3
-          || 'Date of birth should be of correct format.',
-        values: text => {
-          const [m, d, y] = text.split('-')
-          const currentDate = new Date()
+        format: (text) =>
+          text.split('-').length == 3 ||
+          'Date of birth should be of correct format.',
+        values: (text) => {
+          const [m, d, y] = text.split('-');
+          const currentDate = new Date();
 
           if (currentDate.getUTCFullYear() - y < 18)
-            return 'User must be of age from 18 to 120.'
+            return 'User must be of age from 18 to 120.';
           if (currentDate.getUTCFullYear() - y > 119)
-            return 'User must be of age from 18 to 120.'
+            return 'User must be of age from 18 to 120.';
 
-          return true
+          return true;
         },
-        date: text =>
-          moment(text, 'MM-DD-YYYY').isValid()
-          || 'Date of Birth is invalid.',
+        date: (text) =>
+          moment(text, 'MM-DD-YYYY').isValid() || 'Date of Birth is invalid.',
       },
-    })
+    });
 
-    register('address', rules)
+    register('address', rules);
     register('ssn_last_4', {
       ...rules,
       validate: {
-        length: text =>
-          text.length == 4
-          || 'SSN last 4 should consist of 4 digits.',
-        content: text =>
+        length: (text) =>
+          text.length == 4 || 'SSN last 4 should consist of 4 digits.',
+        content: (text) =>
           !text
             .split('')
-            .map(char => isNaN(char))
-            .includes(true)
-          || 'SSN last 4 should only consist of numbers.'
+            .map((char) => isNaN(char))
+            .includes(true) || 'SSN last 4 should only consist of numbers.',
       },
-    })
+    });
     // register('password', rules)
-  }, [register])
+  }, [register]);
 
   // Personal type of data, for partner accounts
-  const [address, setAddress] = useState('')
-  const [phone, setPhone] = useState('')
-  const [ssn_last_4, setSSNLast4] = useState('')
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [ssn_last_4, setSSNLast4] = useState('');
   // Company type of data, for partner accounts
   // const [company_address, setCompanyAddress] = useState('')
   // const [company_name, setCompanyName] = useState('')
   // const [tax_id, setTaxId] = useState('')
 
-  const [changePasswordField, setChangePasswordField] = useState("")
-  const [changePasswordFieldConfirm, setChangePasswordFieldConfirm] = useState("")
+  const [changePasswordField, setChangePasswordField] = useState('');
+  const [changePasswordFieldConfirm, setChangePasswordFieldConfirm] = useState(
+    '',
+  );
 
   useEffect(() => {
-    let redFields = []
+    let redFields = [];
     for (let tag of Object.keys(errors)) {
-      redFields.push(tag)
+      redFields.push(tag);
     }
-    setRedFields(redFields)
-  }, [errors])
+    setRedFields(redFields);
+  }, [errors]);
 
   // DEBUG stuff
   useEffect(() => {
-    if (!config.DEBUG) return
+    if (!config.DEBUG) return;
 
     // setValue('company_address', '1111 S Figueroa St, Los Angeles, CA 90015')
     // setValue('company_name', 'CompanyName')
     // setValue('tax_id', '000000000')
-    setValue('phone', '888 867 5309')
-    setValue('dob', '7-6-1998')
-    setValue('address', '1111 S Figueroa St, Los Angeles, CA 90015')
-    setValue('ssn_last_4', '0000')
+    setValue('phone', '888 867 5309');
+    setValue('dob', '7-6-1998');
+    setValue('address', '1111 S Figueroa St, Los Angeles, CA 90015');
+    setValue('ssn_last_4', '0000');
 
     // setValue('password', 'asdfg')
-  }, [])
-
-
+  }, []);
 
   const updateSafeInfoForUser = async () => {
-    setRedFields([])
-    setErrorMsg('')
-    setSuccessMsg('')
+    setRedFields([]);
+    setErrorMsg('');
+    setSuccessMsg('');
 
-    let redFields = []
+    let redFields = [];
 
     // let {
     //   dob,
     // } = reactNativeForm
 
-    if (firstNameField.length === 0) redFields.push("first")
-    if (lastNameField.length === 0) redFields.push("last")
-    if (emailField.length === 0) redFields.push("email")
+    if (firstNameField.length === 0) redFields.push('first');
+    if (lastNameField.length === 0) redFields.push('last');
+    if (emailField.length === 0) redFields.push('email');
     // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
-    if (dob.split('-').length != 3) redFields.push('dob')
-
+    // if (dob.split('-').length != 3) redFields.push('dob');
 
     if (redFields.length) {
-      setRedFields(redFields)
-      setErrorMsg("Required fields need to be filled.")
-      return
+      setRedFields(redFields);
+      setErrorMsg('Required fields need to be filled.');
+      return;
     }
 
-    const DateMoment = moment(dob, 'MM-DD-YYYY')
+    // const DateMoment = moment(dob, 'MM-DD-YYYY');
 
     try {
       // if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
       let updatables = {
-        dob: {
-          day: DateMoment.date(),
-          month: DateMoment.month() + 1,
-          year: DateMoment.year(),
-        },
-      }
+        // dob: {
+        //   day: DateMoment.date(),
+        //   month: DateMoment.month() + 1,
+        //   year: DateMoment.year(),
+        // },
+      };
 
       if (firstNameField !== user.first) {
-        updatables.first = firstNameField
-        updatables.name = `${firstNameField} ${user.last}` // Upadting the helper property
+        updatables.first = firstNameField;
+        updatables.name = `${firstNameField} ${user.last}`; // Upadting the helper property
       }
       if (lastNameField !== user.last) {
-        updatables.last = lastNameField
-        updatables.name = `${user.first} ${lastNameField}` // Upadting the helper property
+        updatables.last = lastNameField;
+        updatables.name = `${user.first} ${lastNameField}`; // Upadting the helper property
       }
       if (emailField !== user.email) {
-        updatables.email = emailField
-        await auth().currentUser.updateEmail(emailField)
+        if (userPasswordField !== '') {
+          await auth().signInWithEmailAndPassword(
+            user.email,
+            userPasswordField,
+          );
+          await auth().currentUser.updateEmail(emailField);
+        } else {
+          setRedFields(['user_password']);
+          setErrorMsg('Required password need for update email.');
+          return;
+        }
       }
-
+      updatables.email = emailField;
       // Return if no fields to update.
       if (!Object.keys(updatables).length) {
-        setSuccessMsg('All information is up to date.')
-        return
+        setSuccessMsg('All information is up to date.');
+        return;
       }
 
-      if (config.DEBUG) p('updatables', updatables)
+      if (config.DEBUG) p('updatables', updatables);
 
-      const userObj = new User()
-      await userObj.init()
-      userObj.mergeItems(updatables)
-      await userObj.push()
+      const userObj = new User();
+      await userObj.init();
+      userObj.mergeItems(updatables);
+      await userObj.push();
 
-      setSuccessMsg('Successfully updated profile information.')
-      // setPasswordField('')
-      Keyboard.dismiss()
+      setSuccessMsg('Successfully updated profile information.');
+      setUserPasswordField('');
+      Keyboard.dismiss();
     } catch (err) {
-      if (config.DEBUG) console.error(err)
-      let [errorMsg, redFields] = handleAuthError(err)
-      setRedFields(redFields)
-      setErrorMsg(errorMsg)
+      if (config.DEBUG) console.error(err);
+      let [errorMsg, redFields] = handleAuthError(err);
+      setRedFields(redFields);
+      setErrorMsg(errorMsg);
     }
-  }
+  };
 
   const updateSafeInfoForPartner = async () => {
-    let addressText = address
-    let phoneText = phone
+    // let addressText = address;
+    // let phoneText = phone;
 
-    const gym = new Gym
-    await gym.retrievePartnerGym() // Loads (or instantly accesses cached) data, finishes instantiation
-    setRedFields([])
-    setErrorMsg("")
-    setSuccessMsg("")
+    const gym = new Gym();
+    await gym.retrievePartnerGym(); // Loads (or instantly accesses cached) data, finishes instantiation
+    setRedFields([]);
+    setErrorMsg('');
+    setSuccessMsg('');
 
-    let redFields = []
-    const auditField = (field, tag) => !field.length ? redFields.push(tag) : null
+    let redFields = [];
+    // const auditField = (field, tag) =>
+    //   !field || !field.length ? redFields.push(tag) : null;
 
     // let {
     //   // dob,
@@ -279,61 +292,59 @@ export default function ProfileSettings(props) {
     //   ssn_last_4,
     // } = reactNativeForm
 
-    if (firstNameField.length === 0) redFields.push("first")
-    if (lastNameField.length === 0) redFields.push("last")
-    if (emailField.length === 0) redFields.push("email")
+    if (firstNameField.length === 0) redFields.push('first');
+    if (lastNameField.length === 0) redFields.push('last');
+    if (emailField.length === 0) redFields.push('email');
     // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
     //
-    if (dob.split('-').length != 3) redFields.push('dob')
-    auditField(addressText, 'address')
-    auditField(phoneText, 'phone')
-    auditField(ssn_last_4, 'ssn_last_4')
+    // if (dob.split('-').length != 3) redFields.push('dob');
+    // auditField(addressText, 'address');
+    // auditField(phoneText, 'phone');
+    // auditField(ssn_last_4, 'ssn_last_4');
     // auditField(company_name, 'company_name')
     // auditField(companyAddressText, 'company_address')
     // auditField(tax_id, 'tax_id')
 
     if (redFields.length) {
-      setRedFields(redFields)
-      setErrorMsg("Required fields need to be filled.")
-      return
+      setRedFields(redFields);
+      setErrorMsg('Required fields need to be filled.');
+      return;
     }
 
-    const DateMoment = moment(dob, 'MM-DD-YYYY')
+    // const DateMoment = moment(dob, 'MM-DD-YYYY');
 
     try {
       // if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
-      let updatables = {
-        dob: {
-          day: DateMoment.date(),
-          month: DateMoment.month() + 1,
-          year: DateMoment.year(),
-        },
-      }
+      let updatables = {};
 
-      if (firstNameField !== user.first) updatables.first = firstNameField
-      if (lastNameField !== user.last) updatables.last = lastNameField
+      if (firstNameField !== user.first) updatables.first = firstNameField;
+      if (lastNameField !== user.last) updatables.last = lastNameField;
       if (emailField !== user.email) {
-        // updatables.email = emailField
-        await auth().currentUser.updateEmail(emailField)
+        if (userPasswordField !== '') {
+          await auth().signInWithEmailAndPassword(
+            user.email,
+            userPasswordField,
+          );
+          await auth().currentUser.updateEmail(emailField);
+        } else {
+          setRedFields(['user_password']);
+          setErrorMsg('Required password need for update email.');
+          return;
+        }
       }
-      updatables.email = emailField // here to ensure it pushes to Stripe on update
-
+      updatables.email = emailField; // here to ensure it pushes to Stripe on update
 
       // pf -- "prefetch", passed in .updateStripeAccount()
       // let pfGeocodeAddress, pfGeocodeCompanyAddress
-      let pfGeocodeAddress
-      if (addressText) pfGeocodeAddress = await geocodeAddress(addressText)
+      // let pfGeocodeAddress;
+      // if (addressText) pfGeocodeAddress = await geocodeAddress(addressText);
       // if (companyAddressText) pfGeocodeCompanyAddress = await geocodeAddress(companyAddressText)
-      if (pfGeocodeAddress) {
-        const {
-          address,
-          formatted_address,
-        } = pfGeocodeAddress
+      // if (pfGeocodeAddress) {
+      //   const {address, formatted_address} = pfGeocodeAddress;
 
-
-        updatables.address = address
-        updatables.formatted_address = formatted_address
-      }
+      //   updatables.address = address;
+      //   updatables.formatted_address = formatted_address;
+      // }
 
       // if (pfGeocodeCompanyAddress) {
       //   const {
@@ -354,20 +365,20 @@ export default function ProfileSettings(props) {
       //   })
       // }
 
-      if (phoneText) updatables.phone = phoneText.replaceAll(/[^0-9]/g, '')
+      // if (phoneText) updatables.phone = phoneText.replace(/[^0-9]/g, '');
       // if (company_name) updatables.company_name = company_name
       // if (tax_id) updatables.tax_id = tax_id
-      if (ssn_last_4) updatables.ssn_last_4 = ssn_last_4
+      // if (ssn_last_4) updatables.ssn_last_4 = ssn_last_4;
 
       // Return if no fields to update.
       if (!Object.keys(updatables).length) {
-        setSuccessMsg('All information is up to date.')
-        return
+        setSuccessMsg('All information is up to date.');
+        return;
       }
 
-      const userObj = new User()
-      await userObj.init()
-      userObj.mergeItems(updatables)
+      const userObj = new User();
+      await userObj.init();
+      userObj.mergeItems(updatables);
 
       await Promise.all([
         userObj.push(),
@@ -379,201 +390,242 @@ export default function ProfileSettings(props) {
         // note: Currently only minimum required fields are updated in stripe
         // (ones that weren't added during Partner Sign Up).
 
-        // userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }), 
-        userObj.updateStripeAccount(updatables, { pfGeocodeAddress })
-      ])
-
-      setSuccessMsg('Successfully updated profile information.')
-      // setPasswordField('')
-      Keyboard.dismiss()
+        // userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }),
+        // userObj.updateStripeAccount(updatables, {pfGeocodeAddress}),
+      ]);
+      setSuccessMsg('Successfully updated profile information.');
+      setUserPasswordField('');
+      Keyboard.dismiss();
     } catch (err) {
-      if (config.DEBUG) console.error(err)
-      let [errorMsg, redFields] = handleAuthError(err)
-      setRedFields(redFields)
-      setErrorMsg(errorMsg)
+      console.log(err);
+      if (config.DEBUG) console.error(err);
+      let [errorMsg, redFields] = handleAuthError(err);
+      setRedFields(redFields);
+      setErrorMsg(errorMsg);
     }
-  }
+  };
 
   async function updatePassword() {
-    setRedFields([])
-    setErrorMsg("")
-    setSuccessMsg("")
-    let redFields = []
+    setRedFields([]);
+    setErrorMsg('');
+    setSuccessMsg('');
+    let redFields = [];
 
-    if (changePasswordField.length === 0) redFields.push("change_password")
-    if (changePasswordFieldConfirm.length === 0) redFields.push("change_password_confirm")
+    if (changePasswordField.length === 0) redFields.push('change_password');
+    if (changePasswordFieldConfirm.length === 0)
+      redFields.push('change_password_confirm');
     // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
 
     if (redFields.length) {
-      setErrorMsg("Required fields need to be filled.")
-      setRedFields(redFields)
-      return
+      setErrorMsg('Required fields need to be filled.');
+      setRedFields(redFields);
+      return;
     }
 
     if (changePasswordField !== changePasswordFieldConfirm) {
-      setErrorMsg("Passwords do not match.")
-      setRedFields(["change_password", "change_password_confirm"])
-      return
+      setErrorMsg('Passwords do not match.');
+      setRedFields(['change_password', 'change_password_confirm']);
+      return;
     }
 
     try {
-      await auth().signInWithEmailAndPassword(user.email, passwordField)
-      await auth().currentUser.updatePassword(changePasswordField)
-      setSuccessMsg("Successfully changed password.")
-      setChangePasswordField("")
-      setChangePasswordFieldConfirm("")
-      // setPasswordField("")
-      Keyboard.dismiss()
+      await auth().signInWithEmailAndPassword(user.email, passwordField);
+      await auth().currentUser.updatePassword(changePasswordField);
+      setSuccessMsg('Successfully changed password.');
+      setChangePasswordField('');
+      setChangePasswordFieldConfirm('');
+      setPasswordField('');
+      Keyboard.dismiss();
     } catch (err) {
-      let [errorMsg, redFields] = handleAuthError(err)
-      setRedFields(redFields)
-      setErrorMsg(errorMsg)
+      console.log(err);
+      let [errorMsg, redFields] = handleAuthError(err);
+      setRedFields(redFields);
+      setErrorMsg(errorMsg);
     }
   }
 
   const handleDOB = () => {
+    setLoading(true);
     {
       user.account_type == 'partner'
-        ? updateSafeInfoForPartner()
-        : updateSafeInfoForUser()
+        ? updateSafeInfoForPartner().then(() => setLoading(false))
+        : updateSafeInfoForUser().then(() => setLoading(false));
     }
-  }
+  };
 
   const wait = (timeout) => {
-    return new Promise(resolve => {
+    return new Promise((resolve) => {
       setTimeout(resolve, timeout);
     });
-  }
+  };
 
   // Gets new partner data from firestore
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
-    const user = new User()
-    const userDoc = await user.retrieveUser()
-    const gym = ( 
-      await user.retrievePartnerGyms()
-    ).map(it => it.getAll())[0]
+    const user = new User();
+    const userDoc = await user.retrieveUser();
+    const gym = (await user.retrievePartnerGyms()).map((it) => it.getAll())[0];
 
     const newUser = await firestore()
       .collection('partners')
       .doc(gym.partner_id)
       .get();
-    setUser(newUser.data())
+    setUser(newUser.data());
     wait(2000).then(() => setRefreshing(false));
-
   }, []);
 
   // if (!user || !gym || hasBankAccountAdded === undefined) return <View />
 
-  if (!user || isForeignUser === undefined) return <View />
+  if (!user || isForeignUser === undefined) return <View />;
 
   return (
-    <ProfileLayout
-      innerContainerStyle={{
-        paddingBottom: 10,
-      }}
-      buttonOptions={{
-        editPfp: {
-          show: true,
-        },
-      }}
-    >
-      {changing === "safeInfo"
-        ? <CustomButton
-          style={styles.button}
-          textStyle={styles.buttonText}
-          title="Change password"
-          onPress={() => change("password")}
-        />
-        : <CustomButton
-          style={styles.button}
-          textStyle={styles.buttonText}
-          title="Change profile data"
-          onPress={() => change("safeInfo")}
-        />}
-
-      {user.account_type == 'partner' &&
-        <>
+    <>
+      <Modal visible={loading} animationType={'fade'} transparent={true}>
+        <View
+          style={{
+            flex: 1,
+            backgroundColor: 'rgba(0,0,0,0.8)',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}>
+          <LottieView
+            source={require('../components/img/animations/cat-loading.json')}
+            style={{height: 100, width: 100}}
+            autoPlay
+            loop
+          />
+        </View>
+      </Modal>
+      <ProfileLayout
+        innerContainerStyle={{
+          paddingBottom: 10,
+        }}
+        buttonOptions={{
+          editPfp: {
+            show: true,
+          },
+        }}>
+        {changing === 'safeInfo' ? (
           <CustomButton
             style={styles.button}
             textStyle={styles.buttonText}
-            title='Custom Brodcasting'
-            onPress={() => props.navigation.navigate(
-              "customRTMP"
-            )}
+            title="Change password"
+            onPress={() => {
+              setErrorMsg('');
+              setSuccessMsg('');
+              change('password');
+            }}
           />
+        ) : (
           <CustomButton
             style={styles.button}
             textStyle={styles.buttonText}
-            title="Memberships"
-            onPress={() => navigation.navigate('PartnerUpdateMemberships')}
-          />
-
-        </>
-      }
-
-      {errorMsg
-        ? <Text style={{ color: "red" }}>{errorMsg}</Text>
-        : <Text style={{ color: "green" }}>{successMsg}</Text>}
-
-      {changing === "safeInfo"
-        ? <>
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("first")
-                ? "red" : undefined
+            title="Change profile data"
+            onPress={() => {
+              setErrorMsg('');
+              setSuccessMsg('');
+              change('safeInfo');
             }}
-            placeholder="First Name"
-            value={firstNameField}
-            onChangeText={setFirstNameField}
           />
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("last")
-                ? "red" : undefined
-            }}
-            placeholder="Last Name"
-            value={lastNameField}
-            onChangeText={setLastNameField}
-          />
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("email")
-                ? "red" : undefined
-            }}
-            placeholder="Email"
-            value={emailField}
-            onChangeText={setEmailField}
-          />
-
-        </>
-        : null}
-
-      {changing === "password"
-        ? <>
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("change_password")
-                ? "red" : undefined
-            }}
-            placeholder="Password"
-            value={changePasswordField}
-            onChangeText={setChangePasswordField}
-          />
-          <CustomTextInput
-            containerStyle={{
-              borderColor: redFields.includes("change_password_confirm")
-                ? "red" : undefined
-            }}
-            placeholder="Password Confirmation"
-            value={changePasswordFieldConfirm}
-            onChangeText={setChangePasswordFieldConfirm}
-          />
-        </>
-        : null}
-
-
-      {/* {!isForeignUser &&
+        )}
+        {user.account_type == 'partner' && (
+          <>
+            <CustomButton
+              style={styles.button}
+              textStyle={styles.buttonText}
+              title="Custom Brodcasting"
+              onPress={() => props.navigation.navigate('customRTMP')}
+            />
+            <CustomButton
+              style={styles.button}
+              textStyle={styles.buttonText}
+              title="Memberships"
+              onPress={() => navigation.navigate('PartnerUpdateMemberships')}
+            />
+          </>
+        )}
+        {errorMsg ? (
+          <Text style={{color: 'red', textAlign: 'center'}}>{errorMsg}</Text>
+        ) : (
+          <Text style={{color: 'green', textAlign: 'center'}}>
+            {successMsg}
+          </Text>
+        )}
+        {changing === 'safeInfo' ? (
+          <>
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('first') ? 'red' : undefined,
+              }}
+              placeholder="First Name"
+              value={firstNameField}
+              onChangeText={setFirstNameField}
+            />
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('last') ? 'red' : undefined,
+              }}
+              placeholder="Last Name"
+              value={lastNameField}
+              onChangeText={setLastNameField}
+            />
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('email') ? 'red' : undefined,
+              }}
+              placeholder="Email"
+              value={emailField}
+              onChangeText={setEmailField}
+            />
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('user_password')
+                  ? 'red'
+                  : undefined,
+              }}
+              placeholder="Current Password"
+              value={userPasswordField}
+              secureTextEntry={true}
+              onChangeText={setUserPasswordField}
+            />
+          </>
+        ) : null}
+        {changing === 'password' ? (
+          <>
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('user_password')
+                  ? 'red'
+                  : undefined,
+              }}
+              placeholder="Current Password"
+              value={passwordField}
+              secureTextEntry={true}
+              onChangeText={setPasswordField}
+            />
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('change_password')
+                  ? 'red'
+                  : undefined,
+              }}
+              placeholder="Password"
+              value={changePasswordField}
+              onChangeText={setChangePasswordField}
+            />
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('change_password_confirm')
+                  ? 'red'
+                  : undefined,
+              }}
+              placeholder="Password Confirmation"
+              value={changePasswordFieldConfirm}
+              onChangeText={setChangePasswordFieldConfirm}
+            />
+          </>
+        ) : null}
+        {/* {!isForeignUser &&
       <CustomTextInput
         containerStyle={{
           borderColor: redFields.includes("main_password")
@@ -587,14 +639,13 @@ export default function ProfileSettings(props) {
           setValue('password', text)
         }}
       />} */}
-      {/* <CustomTextInput
+        {/* <CustomTextInput
         placeholder="Confirm Password"
         value={confPasswordField}
         onChangeText={setConfPasswordField}
       /> */}
-
-      {/* Bank stuff */}
-      {/* <Text style={{
+        {/* Bank stuff */}
+        {/* <Text style={{
         paddingTop: 15,
         paddingBottom: 10,
         ...FONTS.subtitle,
@@ -614,14 +665,24 @@ export default function ProfileSettings(props) {
           <Text style={styles.confirmation}>Your bank account has been linked.</Text>
         </>
       } */}
-
-      <CustomButton
-        style={styles.button}
-        title="Save"
-        onPress={handleDOB}
-      />
-
-      {/* <CustomButton
+        {changing === 'safeInfo' ? (
+          <CustomButton
+            style={styles.button}
+            title="Save"
+            onPress={handleDOB}
+          />
+        ) : null}
+        {changing === 'password' ? (
+          <CustomButton
+            style={styles.button}
+            title="Update Password"
+            onPress={() => {
+              setLoading(true);
+              updatePassword().then(() => setLoading(false));
+            }}
+          />
+        ) : null}
+        {/* <CustomButton
         style={styles.button}
         title="Save"
         onPress={changing == 'safeInfo'
@@ -630,15 +691,16 @@ export default function ProfileSettings(props) {
               : handleSubmit(updateSafeInfoForUser)
           : () => updatePassword()}
       /> */}
-    </ProfileLayout>
-  )
+      </ProfileLayout>
+    </>
+  );
 }
 
 const styles = StyleSheet.create({
   button: {
     paddingVertical: 20,
     marginHorizontal: 5,
-    borderRadius: 35
+    borderRadius: 35,
   },
   buttonText: {
     fontSize: 14,
@@ -649,7 +711,7 @@ const styles = StyleSheet.create({
   },
   text: {
     paddingVertical: 8,
-    alignSelf: "center",
+    alignSelf: 'center',
     fontSize: 22,
   },
   textContainer: {
@@ -678,4 +740,4 @@ const styles = StyleSheet.create({
     // alignItems: 'center',
     // justifyContent: 'center',
   },
-})
+});

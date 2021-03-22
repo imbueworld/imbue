@@ -32,7 +32,7 @@ export default function ParticipantList(props) {
             let iconUriPromises = filteredPtcs.map(ptc => publicStorage(ptc.uid))
             let iconUris = await Promise.all(iconUriPromises)
             
-            let iconUriPromises2 = iconUris.map(uri => uri === "" ? publicStorage("imbueProfileLogo.png") : uri)
+            let iconUriPromises2 = iconUris.map(uri => uri === "" ? publicStorage("imbueProfileLogoBlack.png") : uri)
             iconUris = await Promise.all(iconUriPromises2)
 
             filteredPtcs.forEach((ptc, idx) => {

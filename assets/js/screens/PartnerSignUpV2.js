@@ -173,7 +173,7 @@ export default function PartnerSignUpV2(props) {
     // Create gym
     const gym = new Gym();
     await gym.create({
-      image_uri: 'imbueProfileLogo.png',
+      image_uri: 'imbueProfileLogoBlack.png',
       // name: form.company_name,
       name: form.first + ' ' + form.last,
       description: gym_description,
