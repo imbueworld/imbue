@@ -207,6 +207,8 @@ export default function ProfileSettings(props) {
                 containerStyle={styles.inputField}
                 placeholder="Date of Birth"
                 value={values.dob}
+                isMask={true}
+                mask={'[00]-[00]-[0000]'}
                 onChangeText={handleChange('dob')}
                 maxLength={10}
               />
@@ -237,6 +239,8 @@ export default function ProfileSettings(props) {
                 containerStyle={styles.inputField}
                 placeholder="Phone Number"
                 value={values.phone}
+                isMask={true}
+                mask={'[000]-[0000000]'}
                 onChangeText={handleChange('phone')}
               />
               {errors.phone && touched.phone && (

@@ -19,6 +19,7 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import functions from '@react-native-firebase/functions';
+import Share from 'react-native-share';
 
 export default function GymDescription(props) {
   const {id} = props.route.params;
@@ -120,11 +121,17 @@ export default function GymDescription(props) {
   return (
     <SafeAreaView
       style={{
-        flex: 0,
+        flex: 1,
         backgroundColor: colors.bg,
         paddingTop: Platform.OS === 'android' ? 25 : 0,
       }}>
       <GymLayout
+        shareButtonPress={() =>
+          Share.open({
+            title: gym.name,
+            message: `https://imbuefitness.com/influencer/${gym.id}`,
+          })
+        }
         innerContainerStyle={{
           paddingBottom: 10,
         }}

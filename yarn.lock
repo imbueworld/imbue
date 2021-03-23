@@ -6602,6 +6602,10 @@ react-native-screens@~2.9.0:
   version "2.9.0"
   resolved "https://registry.yarnpkg.com/react-native-screens/-/react-native-screens-2.9.0.tgz#ead2843107ba00fee259aa377582e457c74f1f3b"
 
+react-native-share@^5.1.6:
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/react-native-share/-/react-native-share-5.1.6.tgz#050916039feaf3ccbd7f9a71cb2a15b3a4553f06"
+
 react-native-svg-transformer@^0.14.3:
   version "0.14.3"
   resolved "https://registry.yarnpkg.com/react-native-svg-transformer/-/react-native-svg-transformer-0.14.3.tgz#43c8e176f5a11f16f39b87a64018e0ac090ffbdb"
@@ -6631,6 +6635,10 @@ react-native-swipe-gestures@^1.0.5:
 react-native-test-renderer@0.0.1:
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/react-native-test-renderer/-/react-native-test-renderer-0.0.1.tgz#bc2d385ff208410442d063a8979629ed496d4ebc"
+
+react-native-text-input-mask@^3.0.3:
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/react-native-text-input-mask/-/react-native-text-input-mask-3.0.3.tgz#e595e1baab2b27e6ea72f21a4b69af54c84aaa95"
 
 react-native-vector-icons@^7.0.0, react-native-vector-icons@^7.1.0:
   version "7.1.0"

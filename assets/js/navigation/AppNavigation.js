@@ -54,11 +54,11 @@ export const AppNavigation = () => {
   const ref = useRef();
 
   const {getInitialState} = useLinking(ref, {
-    prefixes: ['https://imbue.com', 'imbue://'],
+    prefixes: ['https://imbuefitness.com', 'imbuefitness://'],
     config: {
       screens: {
         GymDescription: {
-          path: 'gym/:id',
+          path: 'influencer/:id',
           pards: {
             id: String,
           },

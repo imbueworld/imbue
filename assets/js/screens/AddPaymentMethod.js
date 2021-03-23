@@ -9,6 +9,10 @@ import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
 import LottieView from 'lottie-react-native';
 import User from '../backend/storage/User';
+import {Formik} from 'formik';
+import * as yup from 'yup';
+import CustomTextInputV2 from '../components/CustomTextInputV2';
+import {FONTS} from '../contexts/Styles';
 
 // 4000000760000002 // Visa
 // 5555555555554444 // Mastercard
@@ -43,17 +47,17 @@ export default function AddPaymentMethod(props) {
     init();
   }, []);
 
-  async function validateAndProceed() {
+  async function validateAndProceed(values) {
     setLoading(true);
-    let [expMonth, expYear] = expireDateText.split(/[/\-\.]/);
+    let [expMonth, expYear] = values.date.split(/[/\-\.]/);
 
     let form = {
-      cardNumber: creditCardText,
+      cardNumber: values.card_number,
       expMonth,
       expYear,
-      cvc: CVCText,
-      name: holderNameText,
-      address_zip: zipCodeText,
+      cvc: values.ccv,
+      name: values.name,
+      address_zip: values.zip,
     };
 
     try {
@@ -73,15 +77,13 @@ export default function AddPaymentMethod(props) {
     }
   }
 
-  // adds hyphens in text input
-  const handleExp = (text) => {
-    if (text.length == 2) {
-      text = text += '-';
-      return text;
-    }
-
-    return text;
-  };
+  const paymentValidationSchema = yup.object().shape({
+    name: yup.string().required('Name of Holder is required.'),
+    card_number: yup.string().required('Credit Card Number is required.'),
+    date: yup.string().required('Expired date is required.'),
+    ccv: yup.string().required('CCV is required.'),
+    zip: yup.string().required('ZIP code is required.'),
+  });
 
   if (!user) return <View />;
 
@@ -104,44 +106,109 @@ export default function AddPaymentMethod(props) {
         </View>
       </Modal>
       <ProfileLayout innerContainerStyle={styles.innerContainer}>
-        <Text style={{color: 'red'}}>{errorMsg}</Text>
+        <Formik
+          validationSchema={paymentValidationSchema}
+          initialValues={{
+            name: '',
+            card_number: '',
+            date: '',
+            ccv: '',
+            zip: '',
+          }}
+          onSubmit={(values) => validateAndProceed(values)}>
+          {({handleChange, errors, touched, handleSubmit, values}) => (
+            <View style={{alignItems: 'center', flex: 1}}>
+              <Text style={{color: 'red'}}>{errorMsg}</Text>
 
-        <CustomTextInput
-          placeholder="Name of Holder"
-          multiline={true}
-          value={holderNameText}
-          onChangeText={(text) => setHolderNameText(text)}
-        />
-        <CustomTextInput
-          placeholder="Credit Card Number"
-          multiline={true}
-          value={creditCardText}
-          keyboardType="number-pad"
-          onChangeText={(text) =>
-            setCreditCard(text.replace(/\W/gi, '').replace(/(.{4})/g, '$1 '))
-          }
-        />
-        <CustomTextInput
-          placeholder="MM-YY"
-          multiline={true}
-          value={expireDateText}
-          onChangeText={(text) => setExpireDateText(handleExp(text))}
-        />
-        <CustomTextInput
-          multiline={true}
-          keyboardType="number-pad"
-          placeholder="CCV"
-          value={CVCText}
-          onChangeText={(text) => setCVCText(text)}
-        />
-        <CustomTextInput
-          multiline={true}
-          keyboardType="number-pad"
-          placeholder="ZIP"
-          value={zipCodeText}
-          onChangeText={(text) => setZipCodeText(text)}
-        />
-        <CustomButton title="Save" onPress={validateAndProceed} />
+              <CustomTextInputV2
+                containerStyle={styles.inputField}
+                placeholder="Name of Holder"
+                value={values.name}
+                style={{
+                  ...FONTS.textInput,
+                  fontSize: 12,
+                  width: '100%',
+                }}
+                containerStyle={{marginBottom: 10}}
+                onChangeText={handleChange('name')}
+              />
+              {errors.name && touched.name && (
+                <Text style={styles.errorText}>{errors.name}</Text>
+              )}
+              <CustomTextInputV2
+                containerStyle={styles.inputField}
+                placeholder="Credit Card Number"
+                value={values.card_number}
+                isMask={true}
+                mask={'[0000] [0000] [0000] [0000]'}
+                style={{
+                  ...FONTS.textInput,
+                  fontSize: 12,
+                  width: '100%',
+                }}
+                containerStyle={{marginBottom: 10}}
+                onChangeText={handleChange('card_number')}
+              />
+              {errors.card_number && touched.card_number && (
+                <Text style={styles.errorText}>{errors.card_number}</Text>
+              )}
+              <CustomTextInputV2
+                containerStyle={styles.inputField}
+                placeholder="MM/YY"
+                value={values.date}
+                isMask={true}
+                mask={'[00]/[00]'}
+                style={{
+                  ...FONTS.textInput,
+                  fontSize: 12,
+                  width: '100%',
+                }}
+                containerStyle={{marginBottom: 10}}
+                onChangeText={handleChange('date')}
+              />
+              {errors.date && touched.date && (
+                <Text style={styles.errorText}>{errors.date}</Text>
+              )}
+              <CustomTextInputV2
+                containerStyle={styles.inputField}
+                placeholder="CCV"
+                value={values.ccv}
+                keyboardType="number-pad"
+                style={{
+                  ...FONTS.textInput,
+                  fontSize: 12,
+                  width: '100%',
+                }}
+                containerStyle={{marginBottom: 10}}
+                onChangeText={handleChange('ccv')}
+              />
+              {errors.ccv && touched.ccv && (
+                <Text style={styles.errorText}>{errors.ccv}</Text>
+              )}
+              <CustomTextInputV2
+                containerStyle={styles.inputField}
+                placeholder="ZIP"
+                value={values.zip}
+                keyboardType="number-pad"
+                style={{
+                  ...FONTS.textInput,
+                  fontSize: 12,
+                  width: '100%',
+                }}
+                containerStyle={{marginBottom: 10}}
+                onChangeText={handleChange('zip')}
+              />
+              {errors.zip && touched.zip && (
+                <Text style={styles.errorText}>{errors.zip}</Text>
+              )}
+              <CustomButton
+                style={{width: '100%'}}
+                title="Save"
+                onPress={handleSubmit}
+              />
+            </View>
+          )}
+        </Formik>
       </ProfileLayout>
     </>
   );
@@ -150,5 +217,12 @@ export default function AddPaymentMethod(props) {
 const styles = StyleSheet.create({
   innerContainer: {
     paddingBottom: 10,
+  },
+  errorText: {
+    textAlign: 'center',
+    color: 'red',
+    ...FONTS.textInput,
+    fontSize: 12,
+    width: '100%',
   },
 });

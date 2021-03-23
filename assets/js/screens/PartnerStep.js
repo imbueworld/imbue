@@ -347,6 +347,9 @@ export const PartnerStep = () => {
                 <View style={{alignItems: 'center'}}>
                   <CustomTextInputV2
                     secureTextEntry={true}
+                    style={{
+                      ...FONTS.textInput,
+                    }}
                     containerStyle={styles.inputField}
                     placeholder="PASSWORD"
                     value={values.password}
@@ -357,6 +360,9 @@ export const PartnerStep = () => {
                   )}
                   <CustomTextInputV2
                     secureTextEntry={true}
+                    style={{
+                      ...FONTS.textInput,
+                    }}
                     containerStyle={styles.inputField}
                     placeholder="CONFIRM PASSWORD"
                     value={values.confirm_password}

@@ -45,7 +45,6 @@ export default function CreditCardBadge(props) {
         }}>
         <Icon
           containerStyle={{
-            flex: 1,
             flexDirection: 'column',
             justifyContent: 'center',
             alignItems: 'center',

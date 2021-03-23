@@ -3,6 +3,7 @@ import {StyleSheet, View} from 'react-native';
 import {TextInput} from 'react-native-gesture-handler';
 import {colors} from '../contexts/Colors';
 import {FONTS} from '../contexts/Styles';
+import TextInputMask from 'react-native-text-input-mask';
 
 /**
  * The only prop atm you cannot use with this Component is 'ref',
@@ -13,6 +14,8 @@ export default function CustomTextInputV2(props) {
     style = {},
     containerStyle = {},
     //
+    isMask = false,
+    mask,
     red = false,
     secureTextEntry,
     onBlur = () => {},
@@ -34,19 +37,36 @@ export default function CustomTextInputV2(props) {
           borderColor: isFocused ? colors.textInputFill : '#D6D9DC',
         },
       ]}>
-      <TextInput
-        placeholderTextColor={colors.textInputPlaceholder}
-        {...props}
-        style={{
-          ...FONTS.subtitle,
-          fontSize: 17,
-          textAlign: 'center',
-          ...style,
-        }}
-        onFocus={handleFocus}
-        onBlur={handleBlur}
-        ref={ref}
-      />
+      {isMask ? (
+        <TextInputMask
+          placeholderTextColor={colors.textInputPlaceholder}
+          {...props}
+          style={{
+            ...FONTS.subtitle,
+            fontSize: 17,
+            textAlign: 'center',
+            ...style,
+          }}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          ref={ref}
+          mask={mask}
+        />
+      ) : (
+        <TextInput
+          placeholderTextColor={colors.textInputPlaceholder}
+          {...props}
+          style={{
+            ...FONTS.subtitle,
+            fontSize: 17,
+            textAlign: 'center',
+            ...style,
+          }}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
+          ref={ref}
+        />
+      )}
     </View>
   );
 }
@@ -57,7 +77,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: 'white',
     overflow: 'hidden',
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0.8,
     width: '80%',
   },
 });

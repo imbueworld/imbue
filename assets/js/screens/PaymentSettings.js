@@ -1,4 +1,5 @@
 import React, {useState, useEffect} from 'react';
+import {Text} from 'react-native';
 import {StyleSheet, ScrollView, View} from 'react-native';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {useFocusEffect} from '@react-navigation/native';
@@ -10,8 +11,11 @@ import ProfileLayout from '../layouts/ProfileLayout';
 import User from '../backend/storage/User';
 import cache from '../backend/storage/cache';
 import firestore from '@react-native-firebase/firestore';
+import LottieView from 'lottie-react-native';
+import {FONTS} from '../contexts/Styles';
 
 export default function PaymentSettings(props) {
+  const [loading, setLoading] = useState(false);
   const [creditCards, setCreditCards] = useState([]);
   const [CreditCards, CreditCardsCreate] = useState(null);
   const [user, setUser] = useState(null);
@@ -39,6 +43,7 @@ export default function PaymentSettings(props) {
   );
 
   const getCreditCards = async (thisUser) => {
+    setLoading(true);
     let obje;
     await firestore()
       .collection('stripe_customers')
@@ -46,30 +51,16 @@ export default function PaymentSettings(props) {
       .collection('payment_methods')
       .get()
       .then((snap) => {
+        let resCreditCards = [];
         snap.forEach((doc) => {
-          console.log('test');
           obje = doc.data();
           obje.docId = doc.id;
-          setCreditCards((creditCards) => [...creditCards, obje]);
+          resCreditCards.push(obje);
         });
+        setCreditCards(resCreditCards);
+        setLoading(false);
       });
   };
-
-  useEffect(() => {
-    CreditCardsCreate(
-      creditCards.map(
-        ({brand, last4, exp_month, exp_year, docId, paymentMethodId}, idx) => (
-          <CreditCardBadge
-            key={`${exp_year}${last4}`}
-            data={{brand, last4, exp_month, exp_year}}
-            user={user}
-            paymentMethodId={docId}
-            onRemove={() => getCreditCards(user)}
-          />
-        ),
-      ),
-    );
-  }, [creditCards]);
 
   return (
     <KeyboardAwareScrollView
@@ -83,9 +74,30 @@ export default function PaymentSettings(props) {
           style={{
             borderRadius: 20,
             overflow: 'hidden',
+            alignItems: 'center',
+            justifyContent: 'center',
             maxHeight: 450,
           }}>
-          <ScrollView>{CreditCards}</ScrollView>
+          {loading ? (
+            <LottieView
+              source={require('../components/img/animations/cat-loading.json')}
+              style={{height: 100, width: 100}}
+              autoPlay
+              loop
+            />
+          ) : creditCards.length !== 0 ? (
+            creditCards.map(({brand, last4, exp_month, exp_year, docId}) => (
+              <CreditCardBadge
+                key={`${exp_year}${last4}`}
+                data={{brand, last4, exp_month, exp_year}}
+                user={user}
+                paymentMethodId={docId}
+                onRemove={() => getCreditCards(user)}
+              />
+            ))
+          ) : (
+            <Text style={styles.emptyListText}>No cards added before</Text>
+          )}
         </View>
 
         <CustomButton
@@ -121,5 +133,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: colors.gray,
     fontSize: 14,
+  },
+  emptyListText: {
+    ...FONTS.subtitle,
+    fontSize: 14,
+    marginTop: 30,
   },
 });

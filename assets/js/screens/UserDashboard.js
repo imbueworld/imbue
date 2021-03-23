@@ -31,11 +31,10 @@ import User from '../backend/storage/User';
 import cache from '../backend/storage/cache';
 import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay';
 import config from '../../../App.config';
-import ImbueMap from '../components/ImbueMap';
 //import { create } from 'react-test-renderer';
 import {FONTS} from '../contexts/Styles';
 import {colors} from '../contexts/Colors';
-import {ScrollView} from 'react-native-gesture-handler';
+import LottieView from 'lottie-react-native';
 
 export default function UserDashboard(props) {
   const navigation = useNavigation();
@@ -60,38 +59,42 @@ export default function UserDashboard(props) {
       user.retrieveClasses();
 
       // retrieving all partners
-      const partnersCollection = firestore()
+      firestore()
         .collection('partners')
         .get()
         .then((querySnapshot) => {
-          querySnapshot.forEach((documentSnapshot) => {
-            // converting icon_uris to download urls
-            // check if accepted
-            if (documentSnapshot.data().approved == true) {
-              perfectFeaturedPartnersList(documentSnapshot.data());
+          let resPartners = [];
+          let resFeaturePartners = [];
+          querySnapshot.forEach(async (documentSnapshot) => {
+            const partnersData = documentSnapshot.data();
+            if (partnersData.approved == true) {
+              // perfectFeaturedPartnersList(documentSnapshot.data());
+              const res = await publicStorage(partnersData.icon_uri);
+              const updatedPartners = {
+                ...partnersData,
+                icon_uri: res,
+              };
+              if (updatedPartners.featured) {
+                resFeaturePartners.push(updatedPartners);
+              }
+              resPartners.push(updatedPartners);
             }
           });
+          setPartners(resPartners);
+          setFeaturedPartners(resFeaturePartners);
         });
 
       // retrieving all gyms
-      const gymsCollection = firestore()
+      firestore()
         .collection('gyms')
         .get()
         .then((querySnapshot) => {
+          let resGyms = [];
           querySnapshot.forEach((documentSnapshot) => {
-            setGyms((prevArray) => [...prevArray, documentSnapshot.data()]);
+            resGyms.push(documentSnapshot.data());
           });
+          setGyms(resGyms);
         });
-    };
-    init();
-  }, []);
-
-  // Reset states
-  useEffect(() => {
-    const init = async () => {
-      // setFeaturedPartners([])
-      // setGyms([])
-      // setPartners([])
     };
     init();
   }, []);
@@ -134,21 +137,6 @@ export default function UserDashboard(props) {
     BackHandler.addEventListener('hardwareBackPress', onBack);
   }, [expanded]);
 
-  // does all asyncronous work on list so Flatlist can load data directly
-  const perfectFeaturedPartnersList = async (data) => {
-    let promises = [];
-    promises.push(publicStorage(data.icon_uri));
-    const res = await Promise.all(promises);
-    var profileImg = res[0];
-    data.icon_uri = profileImg;
-
-    //splitting partners into featured
-    if (data.featured === true) {
-      setFeaturedPartners((prevArray) => [...prevArray, data]);
-    }
-    setPartners((prevArray) => [...prevArray, data]);
-  };
-
   function sidePanelSlideIn() {
     Animated.timing(slidingAnim, {
       toValue: -1 * width - 25, // -25 to hide the added side in <ProfileLayout /> as well
@@ -174,16 +162,9 @@ export default function UserDashboard(props) {
   // render each card
   const Item = ({description, item, onPress}) => (
     <TouchableOpacity
+      activeOpacity={0.9}
       onPress={onPress}
-      style={{
-        flex: 1,
-        backgroundColor: '#242429',
-        borderRadius: 20,
-        padding: 10,
-        marginLeft: 5,
-        marginRight: 5,
-        width: 115,
-      }}>
+      style={styles.itemWrapper}>
       <Icon
         containerStyle={{
           width: cardIconLength,
@@ -193,47 +174,25 @@ export default function UserDashboard(props) {
         }}
         source={{uri: item.icon_uri}}
       />
-      <Text
-        style={{
-          color: '#F9F9F9',
-          textAlign: 'center',
-          ...FONTS.cardTitle,
-          paddingTop: 5,
-        }}>
-        {item.first}
-      </Text>
-      <Text
-        style={{
-          color: '#F9F9F9',
-          textAlign: 'center',
-          ...FONTS.cardBody,
-          paddingTop: 5,
-        }}>
-        {description}
-      </Text>
+      <Text style={styles.itemName}>{item.first}</Text>
+      <Text style={styles.itemDescription}>{description}</Text>
     </TouchableOpacity>
   );
 
   const renderItem = ({item}) => {
     var gymId = item.associated_gyms;
-    var description = '';
-    var thisGym;
-    gyms.map((data) => {
-      {
-        data.id === gymId[0]
-          ? ((description = data.description), (thisGym = data))
-          : null;
-      }
-    });
-    console.log(thisGym);
-    return (
-      <Item
-        description={description}
-        item={item}
-        onPress={() => navigation.navigate('GymDescription', thisGym)}
-        style={{backgroundColor: '#333', borderRadius: 30}}
-      />
-    );
+    const filterGyms = gyms.filter((data) => data.id === gymId[0]);
+
+    if (filterGyms.length !== 0) {
+      return (
+        <Item
+          description={filterGyms[0].description}
+          item={item}
+          onPress={() => navigation.navigate('GymDescription', filterGyms[0])}
+          style={{backgroundColor: '#333', borderRadius: 30}}
+        />
+      );
+    }
   };
 
   return (
@@ -293,34 +252,51 @@ export default function UserDashboard(props) {
          */}
 
         {/* featured partners */}
-        <View style={styles.cardContainer}>
-          <Text style={{flex: 1, textAlign: 'center', ...FONTS.heading}}>
-            featured
-          </Text>
-          <FlatList
-            horizontal
-            data={featuredPartners}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            style={{}}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+        {featuredPartners.length !== 0 && partners.length !== 0 ? (
+          <>
+            <View style={styles.cardContainer}>
+              <Text style={styles.listTitle}>featured</Text>
+              <FlatList
+                horizontal
+                data={featuredPartners}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                style={{}}
+                contentContainerStyle={{paddingHorizontal: 10}}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
 
-        {/* all partners */}
-        <View style={styles.cardContainer}>
-          <Text style={{flex: 1, textAlign: 'center', ...FONTS.heading}}>
-            all influencers
-          </Text>
-          <FlatList
-            horizontal
-            data={partners}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            style={{}}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
+            {/* all partners */}
+            <View style={styles.cardContainer}>
+              <Text style={styles.listTitle}>all influencers</Text>
+              <FlatList
+                horizontal
+                data={partners}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{paddingHorizontal: 10}}
+                style={{}}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+          </>
+        ) : (
+          <View
+            style={[
+              styles.cardContainer,
+              {
+                alignItems: 'center',
+              },
+            ]}>
+            <LottieView
+              source={require('../components/img/animations/cat-loading.json')}
+              style={{height: 100, width: 100}}
+              autoPlay
+              loop
+            />
+          </View>
+        )}
         <AlgoliaSearchAbsoluteOverlay
           style={{
             position: 'absolute',
@@ -434,7 +410,7 @@ export default function UserDashboard(props) {
 
 const styles = StyleSheet.create({
   scrollView: {
-    height: '130%',
+    height: '120%',
   },
   sa1: {
     flex: 1,
@@ -444,6 +420,36 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.bg,
     paddingTop: Platform.OS === 'android' ? 25 : 0,
+  },
+  listTitle: {
+    flex: 1,
+    marginBottom: 10,
+    textAlign: 'center',
+    ...FONTS.heading,
+  },
+  itemDescription: {
+    color: '#F9F9F9',
+    textAlign: 'center',
+    paddingHorizontal: 10,
+    ...FONTS.cardBody,
+    paddingTop: 5,
+  },
+  itemName: {
+    color: '#F9F9F9',
+    textAlign: 'center',
+    paddingHorizontal: 10,
+    ...FONTS.cardTitle,
+    paddingTop: 5,
+  },
+  itemWrapper: {
+    flex: 1,
+    backgroundColor: '#242429',
+    borderRadius: 20,
+    alignItems: 'center',
+    paddingVertical: 10,
+    marginLeft: 5,
+    marginRight: 5,
+    width: 115,
   },
   container: {
     // minHeight: "100%", // This breaks sidePanel within <Anmimated.View>; minHeight does not synergize well with child position: "absolute" 's ? ; Unless it's used for ScrollView containerStyle?
@@ -478,8 +484,6 @@ const styles = StyleSheet.create({
   cardContainer: {
     top: 200,
     height: 230,
-    marginLeft: 10,
-    marginRight: 10,
     marginTop: 30,
   },
 });
