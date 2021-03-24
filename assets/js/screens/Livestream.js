@@ -110,13 +110,6 @@ export default function Livestream(props) {
         gymImageUri={gymImage}
         gymName={gymName}
       />
-      {isInternetReachable && (
-        <View style={{position: 'absolute', top: top + 40, right: +40}}>
-          <Text style={{...FONTS.textInput, fontSize: 15}}>
-            Reconnecting...
-          </Text>
-        </View>
-      )}
       {/* Loader */}
       {isLive != true ? (
         <LottieView
