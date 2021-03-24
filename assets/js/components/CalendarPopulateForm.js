@@ -212,7 +212,10 @@ export default function CalendarPopulateForm(props) {
             }}
             items={dropDownClasses}
             placeholder="Select your class"
-            onChangeItem={(item) => setClassId(item.value)}
+            onChangeItem={(item) => {
+              console.log(item.value);
+              setClassId(item.value);
+            }}
           />
         ) : null}
 

@@ -20,12 +20,24 @@ import {
 } from 'react-native-responsive-screen';
 import functions from '@react-native-firebase/functions';
 import Share from 'react-native-share';
+import {
+  clockFromTimestamp,
+  dateStringFromTimestamp,
+  shortDateFromTimestamp,
+} from '../backend/HelperFunctions';
+import CalendarView from '../components/CalendarView';
+import ClassList from '../components/ClassList';
+import LottieView from 'lottie-react-native';
 
 export default function GymDescription(props) {
   const {id} = props.route.params;
   console.log(props.route.params);
   const [gymId, setGymId] = useState('');
-
+  const [calendarData, setCalendarData] = useState(null);
+  const [slctdDate, setSlctdDate] = useState(
+    dateStringFromTimestamp(Date.now()),
+  );
+  const [calendarLoading, setCalendarLoading] = useState(false);
   const [r, refresh] = useState(0);
   const [errorMsg, setErrorMsg] = useState(null);
   const [successMsg, setSuccessMsg] = useState(null);
@@ -67,6 +79,82 @@ export default function GymDescription(props) {
     };
     init();
   }, []);
+
+  function getFormatted(classItem) {
+    const processedClass = classItem; // avoid affecting cache
+    processedClass.active_times = processedClass.active_times.map(
+      (timeDoc) => ({...timeDoc}),
+    ); // avoid affecting cache
+    const {active_times} = processedClass;
+    const currentTs = Date.now();
+    let additionalFields;
+
+    active_times.forEach((timeDoc) => {
+      const {begin_time, end_time} = timeDoc;
+
+      // Add formatting to class,
+      // which is later used by <ScheduleViewer />, and potentially others.
+      additionalFields = {
+        dateString: dateStringFromTimestamp(begin_time),
+        formattedDate: shortDateFromTimestamp(begin_time),
+        formattedTime:
+          `${clockFromTimestamp(begin_time)} – ` +
+          `${clockFromTimestamp(end_time)}`,
+      };
+      Object.assign(timeDoc, additionalFields);
+
+      // Add functionality, same reasons
+      // ... not here, most likely!
+
+      // Add state identifiers~
+      timeDoc.livestreamState = 'offline'; // default
+      let timePassed = currentTs - begin_time; // Positive if class has started or already ended
+
+      // If time for class has come, but class has not ended yet
+      if (timePassed > 0 && currentTs < end_time) {
+        timeDoc.livestreamState = 'live';
+      }
+
+      // If livestream is starting soon (30min before)
+      if (timePassed > -30 * 60 * 1000 && currentTs < begin_time) {
+        timeDoc.livestreamState = 'soon';
+      }
+    });
+
+    return processedClass;
+  }
+
+  useEffect(() => {
+    async function getClasses() {
+      if (gymId) {
+        setCalendarLoading(true);
+        const gym = new Gym();
+        const {name} = await gym.retrieveGym(gymId);
+
+        //  get Gym's classes
+        await firestore()
+          .collection('classes')
+          .get()
+          .then((querySnapshot) => {
+            const classes = [];
+
+            querySnapshot.forEach((documentSnapshot) => {
+              if (documentSnapshot.data().gym_id == gymId) {
+                let formatted = getFormatted(documentSnapshot.data());
+                classes.push({
+                  ...formatted,
+                });
+              }
+            });
+            console.log('Classes:' + JSON.stringify(classes));
+            setCalendarData(classes);
+          });
+
+        setCalendarLoading(false);
+      }
+    }
+    getClasses();
+  }, [gymId]);
 
   useEffect(() => {
     const init = async () => {
@@ -139,7 +227,36 @@ export default function GymDescription(props) {
         {Name}
         {Genres}
         {Desc}
+        {calendarLoading ? (
+          <View style={{alignItems: 'center', marginVertical: 10}}>
+            <LottieView
+              source={require('../components/img/animations/cat-loading.json')}
+              style={{height: 100, width: 100}}
+              autoPlay
+              loop
+            />
+          </View>
+        ) : (
+          <View style={styles.capsule}>
+            <View style={styles.innerCapsule}>
+              <CalendarView
+                containerStyle={{
+                  borderWidth: 1,
+                  borderColor: colors.gray,
+                }}
+                data={calendarData}
+                slctdDate={slctdDate}
+                setSlctdDate={setSlctdDate}
+              />
 
+              <ClassList
+                containerStyle={styles.classListContainer}
+                data={calendarData}
+                dateString={slctdDate}
+              />
+            </View>
+          </View>
+        )}
         {/* <CustomButton
         style={{
           marginBottom: 0,
@@ -247,7 +364,7 @@ export default function GymDescription(props) {
               <>
                 <CustomButton
                   style={{
-                    marginBottom: 0,
+                    marginBottom: 20,
                   }}
                   title="Get Membership"
                   onPress={() => setPopup('buy')}
@@ -332,6 +449,27 @@ const styles = StyleSheet.create({
     borderColor: colors.gray,
     borderRadius: 30,
     marginBottom: hp('5%'),
+  },
+  capsule: {
+    paddingRight: 10,
+    paddingLeft: 10,
+  },
+  innerCapsule: {
+    width: '100%',
+    marginBottom: 20,
+    paddingBottom: 10,
+    alignSelf: 'center',
+    // backgroundColor: "#FFFFFF80",
+    backgroundColor: '#00000040',
+    // borderWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 40,
+  },
+  classListContainer: {
+    marginTop: 10,
   },
   nameContainer: {},
   nameText: {

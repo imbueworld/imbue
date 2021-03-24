@@ -12,25 +12,38 @@ import ProfileLayout from '../layouts/ProfileLayout';
 import CustomButton from '../components/CustomButton';
 import Icon from '../components/Icon';
 import CustomText from '../components/CustomText';
-
+import {
+  clockFromTimestamp,
+  dateStringFromTimestamp,
+  shortDateFromTimestamp,
+} from '../backend/HelperFunctions';
 import User from '../backend/storage/User';
 import {FONTS} from '../contexts/Styles';
 import {currencyFromZeroDecimal} from '../backend/HelperFunctions';
 import PlaidButton from '../components/PlaidButton';
 import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
 import config from '../../../App.config';
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import functions from '@react-native-firebase/functions';
 import firestore from '@react-native-firebase/firestore';
+import Gym from '../backend/storage/Gym';
+import CalendarView from '../components/CalendarView';
+import ClassList from '../components/ClassList';
+import {colors} from '../contexts/Colors';
+import LottieView from 'lottie-react-native';
 
 export default function PartnerDashboard(props) {
   const [user, setUser] = useState(null);
   const [gym, setGym] = useState(null);
+  const [loading, setLoading] = useState(false);
   const [hasBankAccountAdded, setHasBankAccountAdded] = useState();
+  const [calendarData, setCalendarData] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
-
+  const [slctdDate, setSlctdDate] = useState(
+    dateStringFromTimestamp(Date.now()),
+  );
   const [r, refresh] = useState(0);
 
   useEffect(() => {
@@ -56,13 +69,86 @@ export default function PartnerDashboard(props) {
       }
     }
     init();
-  }, [r]);
+  }, []);
+
+  useEffect(() => {
+    async function takeCalendarData() {
+      setLoading(true);
+      if (user.associated_gyms.length !== 0) {
+        console.log('test');
+        const gymId = user.associated_gyms[0];
+
+        await firestore()
+          .collection('classes')
+          .get()
+          .then((querySnapshot) => {
+            const classes = [];
+
+            querySnapshot.forEach((documentSnapshot) => {
+              if (documentSnapshot.data().gym_id == gymId) {
+                let formatted = getFormatted(documentSnapshot.data());
+                classes.push({
+                  ...formatted,
+                });
+              }
+            });
+            setCalendarData(classes);
+            setLoading(false);
+          });
+      }
+    }
+    takeCalendarData();
+  }, [user, r]);
 
   const wait = (timeout) => {
     return new Promise((resolve) => {
       setTimeout(resolve, timeout);
     });
   };
+
+  function getFormatted(classItem) {
+    const processedClass = classItem; // avoid affecting cache
+    processedClass.active_times = processedClass.active_times.map(
+      (timeDoc) => ({...timeDoc}),
+    ); // avoid affecting cache
+    const {active_times} = processedClass;
+    const currentTs = Date.now();
+    let additionalFields;
+
+    active_times.forEach((timeDoc) => {
+      const {begin_time, end_time} = timeDoc;
+
+      // Add formatting to class,
+      // which is later used by <ScheduleViewer />, and potentially others.
+      additionalFields = {
+        dateString: dateStringFromTimestamp(begin_time),
+        formattedDate: shortDateFromTimestamp(begin_time),
+        formattedTime:
+          `${clockFromTimestamp(begin_time)} – ` +
+          `${clockFromTimestamp(end_time)}`,
+      };
+      Object.assign(timeDoc, additionalFields);
+
+      // Add functionality, same reasons
+      // ... not here, most likely!
+
+      // Add state identifiers~
+      timeDoc.livestreamState = 'offline'; // default
+      let timePassed = currentTs - begin_time; // Positive if class has started or already ended
+
+      // If time for class has come, but class has not ended yet
+      if (timePassed > 0 && currentTs < end_time) {
+        timeDoc.livestreamState = 'live';
+      }
+
+      // If livestream is starting soon (30min before)
+      if (timePassed > -30 * 60 * 1000 && currentTs < begin_time) {
+        timeDoc.livestreamState = 'soon';
+      }
+    });
+
+    return processedClass;
+  }
 
   const onRefresh = React.useCallback(async () => {
     setRefreshing(true);
@@ -129,7 +215,50 @@ export default function PartnerDashboard(props) {
           {`$${currencyFromZeroDecimal(user.total_revenue)}`}
         </CustomText>
       </View>
+      {loading ? (
+        <View style={{alignItems: 'center', flex: 1}}>
+          <LottieView
+            source={require('../components/img/animations/cat-loading.json')}
+            style={{height: 100, width: 100}}
+            autoPlay
+            loop
+          />
+        </View>
+      ) : (
+        <>
+          <View style={styles.capsule}>
+            <CustomButton
+              style={{marginBottom: 0}}
+              title="Create Class"
+              onPress={() => props.navigation.navigate('PartnerCreateClass')}
+            />
+            <CustomButton
+              style={{marginBottom: 20}}
+              title="Schedule"
+              onPress={() => props.navigation.navigate('SchedulePopulate')}
+            />
+          </View>
+          <View style={styles.capsule}>
+            <View style={styles.innerCapsule}>
+              <CalendarView
+                containerStyle={{
+                  borderWidth: 1,
+                  borderColor: colors.gray,
+                }}
+                data={calendarData}
+                slctdDate={slctdDate}
+                setSlctdDate={setSlctdDate}
+              />
 
+              <ClassList
+                containerStyle={styles.classListContainer}
+                data={calendarData}
+                dateString={slctdDate}
+              />
+            </View>
+          </View>
+        </>
+      )}
       {/* <CustomText
           style={styles.text}
           containerStyle={styles.textContainer}
@@ -138,22 +267,22 @@ export default function PartnerDashboard(props) {
           ?
         </CustomText> */}
 
-      <CustomButton
-        // icon={
-        //   <Icon
-        //     source={require("../components/img/png/livestream.png")}
-        //   />
-        // }
+      {/* <CustomButton
+        icon={
+          <Icon
+            source={require("../components/img/png/livestream.png")}
+          />
+        }
         title="Go Live"
         onPress={() => {
           props.navigation.navigate('PreLiveChecklist');
 
-          // toggleStream,
-          // props.navigation.navigate(
-          //   "GoLive",
-          // )
+          toggleStream,
+          props.navigation.navigate(
+            "GoLive",
+          )
         }}
-      />
+      /> */}
       {/* <CustomButton
         icon={
           <Icon
@@ -170,29 +299,29 @@ export default function PartnerDashboard(props) {
         onPress={() => {props.navigation.navigate(
             "PartnerLivestreamDashboard")}}
       /> */}
-      <CustomButton
+      {/* <CustomButton
         title="Classes"
         onPress={() => {
           props.navigation.navigate('ScheduleViewer', {
             gymId: user.associated_gyms[0],
           });
         }}
-      />
+      /> */}
       {/* <CustomButton
         title='Revenue 💰'
         onPress={() => props.navigation.navigate(
           "PartnerRevenueInfo"
         )}
         /> */}
-      <CustomButton
-        // icon={
-        //   <Icon
-        //     source={require("../components/img/png/profile.png")}
-        //   />
-        // }
+      {/* <CustomButton
+        icon={
+          <Icon
+            source={require("../components/img/png/profile.png")}
+          />
+        }
         title="Edit Profile"
         onPress={() => props.navigation.navigate('ProfileSettings')}
-      />
+      /> */}
       {/* <CustomButton
         icon={
           <Icon
@@ -210,6 +339,27 @@ export default function PartnerDashboard(props) {
 }
 
 const styles = StyleSheet.create({
+  capsule: {
+    paddingRight: 10,
+    paddingLeft: 10,
+  },
+  innerCapsule: {
+    width: '100%',
+    marginBottom: 50,
+    paddingBottom: 10,
+    alignSelf: 'center',
+    // backgroundColor: "#FFFFFF80",
+    backgroundColor: '#00000040',
+    // borderWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 40,
+  },
+  classListContainer: {
+    marginTop: 10,
+  },
   text: {
     paddingVertical: 8,
     alignSelf: 'center',

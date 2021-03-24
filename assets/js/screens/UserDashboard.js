@@ -17,10 +17,12 @@ import {useDimensions} from '@react-native-community/hooks';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import ProfileLayout from '../layouts/ProfileLayout';
-
+import {
+  clockFromTimestamp,
+  dateStringFromTimestamp,
+  shortDateFromTimestamp,
+} from '../backend/HelperFunctions';
 import CustomButton from '../components/CustomButton';
-import CustomTextInput from '../components/CustomTextInput';
-
 import auth from '@react-native-firebase/auth';
 import Icon from '../components/Icon';
 import {simpleShadow} from '../contexts/Colors';
@@ -35,15 +37,21 @@ import config from '../../../App.config';
 import {FONTS} from '../contexts/Styles';
 import {colors} from '../contexts/Colors';
 import LottieView from 'lottie-react-native';
+import CalendarView from '../components/CalendarView';
+import ClassList from '../components/ClassList';
 
 export default function UserDashboard(props) {
   const navigation = useNavigation();
 
   const [expanded, setExpanded] = useState(null);
-
+  const [loading, setLoading] = useState(false);
   const {width, height} = useDimensions().window;
   const slidingAnim = useRef(new Animated.Value(-1 * width - 25)).current;
   const cardIconLength = width / 4;
+  const [calendarData, setCalendarData] = useState(null);
+  const [slctdDate, setSlctdDate] = useState(
+    dateStringFromTimestamp(Date.now()),
+  );
 
   const [user, setUser] = useState(null);
   const [featuredPartners, setFeaturedPartners] = useState([]);
@@ -53,10 +61,11 @@ export default function UserDashboard(props) {
 
   useEffect(() => {
     const init = async () => {
+      setLoading(true);
       const user = new User();
-      setUser(await user.retrieveUser());
+      const fireUser = await user.retrieveUser();
+      setUser(fireUser);
       // This acts as a prefetch for when user eventually navs to ScheduleViewer
-      user.retrieveClasses();
 
       // retrieving all partners
       firestore()
@@ -95,6 +104,21 @@ export default function UserDashboard(props) {
           });
           setGyms(resGyms);
         });
+
+      const classStuff = (await user.retrieveScheduledClasses()).map((it) => {
+        let data = it.getFormatted();
+        let activeDateForUser = [];
+        data.active_times.forEach((time) => {
+          if (fireUser.active_classes.some((el) => el.time_id === time.time_id))
+            activeDateForUser.push(time);
+        });
+        data.active_times = activeDateForUser;
+        return data;
+      });
+      console.log(classStuff[0].active_times);
+      console.log(fireUser);
+      setCalendarData(classStuff);
+      setLoading(false);
     };
     init();
   }, []);
@@ -199,131 +223,23 @@ export default function UserDashboard(props) {
     <SafeAreaView style={expanded == true ? styles.sa2 : styles.sa1}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={styles.scrollView}
-        keyboardShouldPersistTaps="handled"
-        // alwaysBounceVertical={false}
-      >
-        {/* <ImbueMap style={styles.map} /> */}
-
-        {/* <View style={{ top: 220, marginLeft: 50, marginRight: 50 }}>
-         <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>my classes</Text>
-          <CustomButton
-            icon={
-              <Icon
-                source={require("../components/img/png/my-classes.png")}
-              />
-            }
-            title="My Classes"
-            onPress={() => {
-              props.navigation.navigate("ScheduleViewer")
-            }}
-          />
-        </View> */}
-
-        {/* <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
-          <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>view your classes</Text>
-          <CustomButton
-              title="My Classes"
-              onPress={() => {
-                props.navigation.navigate("ScheduleViewer")
-              }}
-            />
-        </View> */}
-
-        {/* upcoming classes */}
-        {/* {classes.length ?
-        (<View style={styles.cardContainer}>
-          <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>upcoming classes</Text>
-          <FlatList
-            horizontal
-            data={partners}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            style={{}}
-            showsHorizontalScrollIndicator={false}
-          />
-        </View>
-        ) : (
-          <View style={{ top: 200, height: 80, marginLeft: 10, marginRight: 10, marginTop: 30, marginBottom: 30 }}>
-              <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>upcoming classes</Text>
-              <Text style={{ ...FONTS.subtitle, textAlign: "center" }}>you have no upcoming classes. Book some now</Text>
-          </View>
-          )}
-         */}
-
-        {/* featured partners */}
-        {featuredPartners.length !== 0 && partners.length !== 0 ? (
-          <>
-            <View style={styles.cardContainer}>
-              <Text style={styles.listTitle}>featured</Text>
-              <FlatList
-                horizontal
-                data={featuredPartners}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                style={{}}
-                contentContainerStyle={{paddingHorizontal: 10}}
-                showsHorizontalScrollIndicator={false}
-              />
-            </View>
-
-            {/* all partners */}
-            <View style={styles.cardContainer}>
-              <Text style={styles.listTitle}>all influencers</Text>
-              <FlatList
-                horizontal
-                data={partners}
-                renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{paddingHorizontal: 10}}
-                style={{}}
-                showsHorizontalScrollIndicator={false}
-              />
-            </View>
-          </>
-        ) : (
-          <View
-            style={[
-              styles.cardContainer,
-              {
-                alignItems: 'center',
-              },
-            ]}>
-            <LottieView
-              source={require('../components/img/animations/cat-loading.json')}
-              style={{height: 100, width: 100}}
-              autoPlay
-              loop
-            />
-          </View>
-        )}
-        <AlgoliaSearchAbsoluteOverlay
-          style={{
-            position: 'absolute',
-            top: 200,
-          }}
-        />
-
-        {!user ? null : expanded ? null : (
+        style={{flex: 1}}
+        contentContainerStyle={{paddingBottom: 20}}
+        keyboardShouldPersistTaps="handled">
+        {!user ? null : (
           <View
             style={{
               marginTop: 30,
               marginLeft: 15,
-              position: 'absolute',
               zIndex: 0,
             }}>
-            <TouchableHighlight
+            <TouchableOpacity
+              activeOpacity={0.9}
               style={{
                 borderRadius: 999,
               }}
               underlayColor="#000000C0"
-              onPress={() => setExpanded(!expanded)}
-              // [v DEBUG ONLY v]
-              onLongPress={
-                config.DEBUG ? () => setExpanded(!expanded) : undefined
-              }
-              // [^ DEBUG ONLY ^]
-            >
+              onPress={() => setExpanded(!expanded)}>
               <Icon
                 containerStyle={{
                   width: 64,
@@ -334,7 +250,7 @@ export default function UserDashboard(props) {
                 }}
                 source={{uri: user.icon_uri_full}}
               />
-            </TouchableHighlight>
+            </TouchableOpacity>
           </View>
         )}
 
@@ -403,14 +319,150 @@ export default function UserDashboard(props) {
             </ProfileLayout>
           </Animated.View>
         )}
+
+        <AlgoliaSearchAbsoluteOverlay />
+        {/* <ImbueMap style={styles.map} /> */}
+
+        {/* <View style={{ top: 220, marginLeft: 50, marginRight: 50 }}>
+         <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>my classes</Text>
+          <CustomButton
+            icon={
+              <Icon
+                source={require("../components/img/png/my-classes.png")}
+              />
+            }
+            title="My Classes"
+            onPress={() => {
+              props.navigation.navigate("ScheduleViewer")
+            }}
+          />
+        </View> */}
+
+        {/* <View style={{top: 200, height: 130, marginLeft: 10, marginRight: 10, marginTop: 30}}>
+          <Text style={{flex: 1, textAlign: "center", ...FONTS.heading }}>view your classes</Text>
+          <CustomButton
+              title="My Classes"
+              onPress={() => {
+                props.navigation.navigate("ScheduleViewer")
+              }}
+            />
+        </View> */}
+
+        {/* upcoming classes */}
+        {/* {classes.length ?
+        (<View style={styles.cardContainer}>
+          <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>upcoming classes</Text>
+          <FlatList
+            horizontal
+            data={partners}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            style={{}}
+            showsHorizontalScrollIndicator={false}
+          />
+        </View>
+        ) : (
+          <View style={{ top: 200, height: 80, marginLeft: 10, marginRight: 10, marginTop: 30, marginBottom: 30 }}>
+              <Text style={{ flex: 1, textAlign: "center", ...FONTS.heading }}>upcoming classes</Text>
+              <Text style={{ ...FONTS.subtitle, textAlign: "center" }}>you have no upcoming classes. Book some now</Text>
+          </View>
+          )}
+         */}
+
+        {/* featured partners */}
+        {featuredPartners.length !== 0 && partners.length !== 0 && !loading ? (
+          <>
+            <View style={styles.capsule}>
+              <View style={styles.innerCapsule}>
+                <CalendarView
+                  containerStyle={{
+                    borderWidth: 1,
+                    borderColor: colors.gray,
+                  }}
+                  data={calendarData}
+                  slctdDate={slctdDate}
+                  setSlctdDate={setSlctdDate}
+                />
+
+                <ClassList
+                  containerStyle={styles.classListContainer}
+                  data={calendarData}
+                  dateString={slctdDate}
+                />
+              </View>
+            </View>
+
+            <View style={styles.cardContainer}>
+              <Text style={styles.listTitle}>featured</Text>
+              <FlatList
+                horizontal
+                data={featuredPartners}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                style={{}}
+                contentContainerStyle={{paddingHorizontal: 10}}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+
+            {/* all partners */}
+            <View style={styles.cardContainer}>
+              <Text style={styles.listTitle}>all influencers</Text>
+              <FlatList
+                horizontal
+                data={partners}
+                renderItem={renderItem}
+                keyExtractor={(item) => item.id}
+                contentContainerStyle={{paddingHorizontal: 10}}
+                style={{}}
+                showsHorizontalScrollIndicator={false}
+              />
+            </View>
+          </>
+        ) : (
+          <View
+            style={[
+              styles.cardContainer,
+              {
+                alignItems: 'center',
+              },
+            ]}>
+            <LottieView
+              source={require('../components/img/animations/cat-loading.json')}
+              style={{height: 100, width: 100}}
+              autoPlay
+              loop
+            />
+          </View>
+        )}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  capsule: {
+    paddingRight: 10,
+    paddingLeft: 10,
+  },
+  innerCapsule: {
+    width: '100%',
+    paddingBottom: 10,
+    alignSelf: 'center',
+    // backgroundColor: "#FFFFFF80",
+    backgroundColor: '#00000040',
+    // borderWidth: 1,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderColor: colors.gray,
+    borderRadius: 40,
+  },
+  classListContainer: {
+    marginTop: 10,
+  },
   scrollView: {
-    height: '120%',
+    height: '200%',
   },
   sa1: {
     flex: 1,
@@ -482,7 +534,6 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   cardContainer: {
-    top: 200,
     height: 230,
     marginTop: 30,
   },
