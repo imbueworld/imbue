@@ -39,14 +39,14 @@
 			</array>
 		</dict>
 	</array>
-	<key>FacebookAdvertiserIDCollectionEnabled</key>
-	<string>TRUE</string>
-	<key>FacebookAutoLogAppEventsEnabled</key>
-	<string>TRUE</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>FacebookAdvertiserIDCollectionEnabled</key>
+	<string>TRUE</string>
 	<key>FacebookAppID</key>
 	<string>700483400823842</string>
+	<key>FacebookAutoLogAppEventsEnabled</key>
+	<string>TRUE</string>
 	<key>FacebookDispayName</key>
 	<string>Imbue</string>
 	<key>LSApplicationCategoryType</key>
@@ -70,6 +70,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Imbue requires access to the Calendar for seamless calendar sync</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Imbue requires access to your phone’s camera for adding profile pictures.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -78,8 +80,6 @@
 	<string>Imbue requires access to the photo library for livestreaming video.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Imbue requires access to the photo library for adding profile pictures.</string>
-	<key>NSCalendarsUsageDescription</key>
-	<string>Imbue requires access to the Calendar for seamless calendar sync</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>LuloClean-Bold.ttf</string>
