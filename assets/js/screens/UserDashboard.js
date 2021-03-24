@@ -44,7 +44,7 @@ export default function UserDashboard(props) {
   const navigation = useNavigation();
 
   const [expanded, setExpanded] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const {width, height} = useDimensions().window;
   const slidingAnim = useRef(new Animated.Value(-1 * width - 25)).current;
   const cardIconLength = width / 4;
@@ -59,67 +59,68 @@ export default function UserDashboard(props) {
   const [gyms, setGyms] = useState([]);
   const [classes, setClasses] = useState([]);
 
-  useEffect(() => {
-    const init = async () => {
-      setLoading(true);
-      const user = new User();
-      const fireUser = await user.retrieveUser();
-      setUser(fireUser);
-      // This acts as a prefetch for when user eventually navs to ScheduleViewer
+  const init = async () => {
+    const user = new User();
+    const fireUser = await user.retrieveUser();
+    setUser(fireUser);
+    // This acts as a prefetch for when user eventually navs to ScheduleViewer
 
-      // retrieving all partners
-      firestore()
-        .collection('partners')
-        .get()
-        .then((querySnapshot) => {
-          let resPartners = [];
-          let resFeaturePartners = [];
-          querySnapshot.forEach(async (documentSnapshot) => {
-            const partnersData = documentSnapshot.data();
-            if (partnersData.approved == true) {
-              // perfectFeaturedPartnersList(documentSnapshot.data());
-              const res = await publicStorage(partnersData.icon_uri);
-              const updatedPartners = {
-                ...partnersData,
-                icon_uri: res,
-              };
-              if (updatedPartners.featured) {
-                resFeaturePartners.push(updatedPartners);
-              }
-              resPartners.push(updatedPartners);
+    // retrieving all partners
+    firestore()
+      .collection('partners')
+      .get()
+      .then(async (querySnapshot) => {
+        let resPartners = [];
+        let resFeaturePartners = [];
+        querySnapshot.forEach(async (documentSnapshot) => {
+          const partnersData = documentSnapshot.data();
+          if (partnersData.approved == true) {
+            // perfectFeaturedPartnersList(documentSnapshot.data());
+            const res = await publicStorage(partnersData.icon_uri);
+            const updatedPartners = {
+              ...partnersData,
+              icon_uri: res,
+            };
+            if (updatedPartners.featured) {
+              resFeaturePartners.push(updatedPartners);
             }
+            resPartners.push(updatedPartners);
+          }
+        });
+        setPartners(resPartners);
+        setFeaturedPartners(resFeaturePartners);
+        firestore()
+          .collection('gyms')
+          .get()
+          .then((querySnapshot) => {
+            let resGyms = [];
+            querySnapshot.forEach((documentSnapshot) => {
+              resGyms.push(documentSnapshot.data());
+            });
+            setGyms(resGyms);
           });
-          setPartners(resPartners);
-          setFeaturedPartners(resFeaturePartners);
-        });
 
-      // retrieving all gyms
-      firestore()
-        .collection('gyms')
-        .get()
-        .then((querySnapshot) => {
-          let resGyms = [];
-          querySnapshot.forEach((documentSnapshot) => {
-            resGyms.push(documentSnapshot.data());
+        const classStuff = (await user.retrieveScheduledClasses()).map((it) => {
+          let data = it.getFormatted();
+          let activeDateForUser = [];
+          data.active_times.forEach((time) => {
+            if (
+              fireUser.active_classes.some((el) => el.time_id === time.time_id)
+            )
+              activeDateForUser.push(time);
           });
-          setGyms(resGyms);
+          data.active_times = activeDateForUser;
+          return data;
         });
-
-      const classStuff = (await user.retrieveScheduledClasses()).map((it) => {
-        let data = it.getFormatted();
-        let activeDateForUser = [];
-        data.active_times.forEach((time) => {
-          if (fireUser.active_classes.some((el) => el.time_id === time.time_id))
-            activeDateForUser.push(time);
-        });
-        data.active_times = activeDateForUser;
-        return data;
+        console.log(classStuff[0].active_times);
+        console.log(fireUser);
+        setCalendarData(classStuff);
+        console.log('New test async 2');
+        setLoading(false);
       });
-      console.log(classStuff[0].active_times);
-      console.log(fireUser);
-      setCalendarData(classStuff);
-      setLoading(false);
-    };
+  };
+
+  useEffect(() => {
     init();
   }, []);
 
@@ -370,7 +371,7 @@ export default function UserDashboard(props) {
          */}
 
         {/* featured partners */}
-        {featuredPartners.length !== 0 && partners.length !== 0 && !loading ? (
+        {!loading ? (
           <>
             <View style={styles.capsule}>
               <View style={styles.innerCapsule}>

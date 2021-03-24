@@ -3,6 +3,19 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
+use_frameworks! :linkage => :static
+pre_install do |installer|
+  installer.pod_targets.each do |pod|
+    if pod.name.eql?('RNPermissions') || pod.name.start_with?('Permission-')
+      def pod.build_type;
+        # Uncomment one line depending on your CocoaPods version
+        Pod::BuildType.static_library # >= 1.9
+        #Pod::Target::BuildType.static_library # < 1.9
+      end
+    end
+  end
+end
+
 target 'imbue' do
   # Added manually \/
   # rn_maps_path = '../node_modules/react-native-maps'
@@ -10,7 +23,6 @@ target 'imbue' do
   # pod 'GoogleMaps'
   # pod 'Google-Maps-iOS-Utils'
   # Added manually /\
-  
   config = use_native_modules!
 
   use_react_native!(:path => config["reactNativePath"])
