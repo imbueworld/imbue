@@ -342,7 +342,7 @@ export default function LivestreamLayout(props) {
           zIndex: 105,
           marginTop: 40,
         }}>
-        {isInternetReachable && (
+        {!isInternetReachable && (
           <View
             style={{
               position: 'absolute',
