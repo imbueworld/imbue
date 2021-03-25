@@ -375,6 +375,7 @@ export default function UserDashboard(props) {
           <>
             <View style={styles.capsule}>
               <View style={styles.innerCapsule}>
+              <Text style={styles.listTitle}>Your Classes</Text>
                 <CalendarView
                   containerStyle={{
                     borderWidth: 1,
