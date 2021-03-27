@@ -456,8 +456,7 @@ export default class User extends DataObject {
       const makePurchase = functions().httpsCallable(
         'purchaseClassWithPaymentMethod',
       );
-      // await makePurchase({paymentMethodId, classId, timeId});
-      console.log('Test');
+      await makePurchase({paymentMethodId, classId, timeId});
 
       // After successful charge, register it for user in their doc
       const {active_classes = [], scheduled_classes = []} = this.getAll();

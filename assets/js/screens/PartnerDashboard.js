@@ -1,13 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {
-  ActivityIndicator,
-  StyleSheet,
-  View,
-  RefreshControl,
-  Text,
-  ScrollView,
-} from 'react-native';
-
+import {StyleSheet, View} from 'react-native';
 import ProfileLayout from '../layouts/ProfileLayout';
 import CustomButton from '../components/CustomButton';
 import Icon from '../components/Icon';
@@ -31,12 +23,15 @@ import CalendarView from '../components/CalendarView';
 import ClassList from '../components/ClassList';
 import {colors} from '../contexts/Colors';
 import LottieView from 'lottie-react-native';
+import {observer} from 'mobx-react-lite';
+import useStore from '../store/RootStore';
 
-export default function PartnerDashboard(props) {
+const PartnerDashboard = observer((props) => {
+  const {partnerStore} = useStore();
   const [user, setUser] = useState(null);
   const [gym, setGym] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [hasBankAccountAdded, setHasBankAccountAdded] = useState();
+  const [hasBankAccountAdded, setHasBankAccountAdded] = useState(null);
   const [calendarData, setCalendarData] = useState(null);
   const [errorMsg, setErrorMsg] = useState('');
   const navigation = useNavigation();
@@ -47,28 +42,13 @@ export default function PartnerDashboard(props) {
   const [r, refresh] = useState(0);
 
   useEffect(() => {
-    async function init() {
-      const user = new User();
-      const userDoc = await user.retrieveUser();
-      const gym = (await user.retrievePartnerGyms()).map((it) =>
-        it.getAll(),
-      )[0];
-      setUser(userDoc);
-      setGym(gym);
-      setHasBankAccountAdded(Boolean(userDoc.stripe_bank_account_id));
-      // setHasBankAccountAdded(true)
+    setUser(partnerStore.user);
+    setGym(partnerStore.gym);
+    setHasBankAccountAdded(partnerStore.hasBankAccountAdded);
+  }, [partnerStore.user, partnerStore.gym, partnerStore.hasBankAccountAdded]);
 
-      console.log('user (useEffect): ', user);
-
-      // update Stripe balance revenue
-      if (gym) {
-        const updateStripeAccountRevenue = functions().httpsCallable(
-          'updateStripeAccountRevenue',
-        );
-        await updateStripeAccountRevenue(gym.id);
-      }
-    }
-    init();
+  useEffect(() => {
+    partnerStore.getPartnerData();
   }, []);
 
   useEffect(() => {
@@ -97,7 +77,7 @@ export default function PartnerDashboard(props) {
           });
       }
     }
-    takeCalendarData();
+    if (user !== null) takeCalendarData();
   }, [user, r]);
 
   const wait = (timeout) => {
@@ -227,18 +207,6 @@ export default function PartnerDashboard(props) {
       ) : (
         <>
           <View style={styles.capsule}>
-            <CustomButton
-              style={{marginBottom: 0}}
-              title="Create Class"
-              onPress={() => props.navigation.navigate('PartnerCreateClass')}
-            />
-            <CustomButton
-              style={{marginBottom: 20}}
-              title="Schedule"
-              onPress={() => props.navigation.navigate('SchedulePopulate')}
-            />
-          </View>
-          <View style={styles.capsule}>
             <View style={styles.innerCapsule}>
               <CalendarView
                 containerStyle={{
@@ -256,6 +224,23 @@ export default function PartnerDashboard(props) {
                 dateString={slctdDate}
               />
             </View>
+          </View>
+          <View style={styles.capsule}>
+            <CustomButton
+              style={{marginBottom: 0}}
+              title="Create Class"
+              onPress={() => props.navigation.navigate('PartnerCreateClass')}
+            />
+            <CustomButton
+              style={{marginBottom: 0}}
+              title="Schedule"
+              onPress={() => props.navigation.navigate('SchedulePopulate')}
+            />
+            <CustomButton
+              style={{marginBottom: 20}}
+              title="Settings"
+              onPress={() => props.navigation.navigate('ProfileSettings')}
+            />
           </View>
         </>
       )}
@@ -314,11 +299,7 @@ export default function PartnerDashboard(props) {
         )}
         /> */}
       {/* <CustomButton
-        icon={
-          <Icon
-            source={require("../components/img/png/profile.png")}
-          />
-        }
+        icon={<Icon source={require('../components/img/png/profile.png')} />}
         title="Edit Profile"
         onPress={() => props.navigation.navigate('ProfileSettings')}
       /> */}
@@ -336,16 +317,18 @@ export default function PartnerDashboard(props) {
       /> */}
     </ProfileLayout>
   );
-}
+});
+
+export default PartnerDashboard;
 
 const styles = StyleSheet.create({
   capsule: {
-    paddingRight: 10,
-    paddingLeft: 10,
+    // paddingRight: 10,
+    // paddingLeft: 10,
   },
   innerCapsule: {
     width: '100%',
-    marginBottom: 50,
+    marginBottom: 10,
     paddingBottom: 10,
     alignSelf: 'center',
     // backgroundColor: "#FFFFFF80",

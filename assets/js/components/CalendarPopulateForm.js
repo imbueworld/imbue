@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, AppState} from 'react-native';
 import DateSelector from './DateSelector';
 import ClockInput from './ClockInput';
 // import ClockInputDismissOverlay from './ClockInputDismissOverlay'
@@ -12,8 +12,12 @@ import Class from '../backend/storage/Class';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
 import functions from '@react-native-firebase/functions';
+import LottieView from 'lottie-react-native';
+import useStore from '../store/RootStore';
 
 export default function CalendarPopulateForm(props) {
+  const {partnerStore} = useStore();
+  const [loading, setLoading] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -200,126 +204,145 @@ export default function CalendarPopulateForm(props) {
           )}
         </View>
 
-        {edit != true ? (
-          <CustomDropDownPicker
-            containerStyle={{
-              ...styles.dropDownPickerContainerStyle,
-              ...styles.layoutMargin,
-            }}
-            style={{
-              ...styles.dropDownPicker,
-              borderColor: redFields.includes('class') ? 'red' : undefined,
-            }}
-            items={dropDownClasses}
-            placeholder="Select your class"
-            onChangeItem={(item) => {
-              console.log(item.value);
-              setClassId(item.value);
-            }}
-          />
-        ) : null}
+        {loading ? (
+          <View style={{alignItems: 'center'}}>
+            <LottieView
+              source={require('../components/img/animations/cat-loading.json')}
+              style={{height: 100, width: 100}}
+              autoPlay
+              loop
+            />
+          </View>
+        ) : (
+          <>
+            {edit != true ? (
+              <CustomDropDownPicker
+                containerStyle={{
+                  ...styles.dropDownPickerContainerStyle,
+                  ...styles.layoutMargin,
+                }}
+                style={{
+                  ...styles.dropDownPicker,
+                  borderColor: redFields.includes('class') ? 'red' : undefined,
+                }}
+                items={dropDownClasses}
+                placeholder="Select your class"
+                onChangeItem={(item) => {
+                  console.log(item.value);
+                  setClassId(item.value);
+                }}
+              />
+            ) : null}
+            <DateSelector
+              containerStyle={{
+                ...styles.calendarContainerStyle,
+                borderColor: redFields.includes('calendar') ? 'red' : undefined,
+              }}
+              innerContainerStyle={styles.calendarInnerContainerStyle}
+              onDayPress={(dates) => {
+                setDateStringList(dates);
+              }}
+            />
+            <View style={styles.layoutMargin}>
+              <ClockInput
+                containerStyle={{
+                  ...styles.clockInput,
+                  borderColor: redFields.includes('beginClock')
+                    ? 'red'
+                    : undefined,
+                }}
+                // forceClose={forceCloseClock}
+                // onOpen={() => setDismissOveraly(true)}
+                // onClose={() => setDismissOveraly(false)}
+                onChange={(h, m) => {
+                  setBeginClock([h, m]);
+                }}
+              />
 
-        <DateSelector
-          containerStyle={{
-            ...styles.calendarContainerStyle,
-            borderColor: redFields.includes('calendar') ? 'red' : undefined,
-          }}
-          innerContainerStyle={styles.calendarInnerContainerStyle}
-          onDayPress={(dates) => {
-            setDateStringList(dates);
-          }}
-        />
+              <ClockInput
+                containerStyle={{
+                  ...styles.clockInput,
+                  borderColor: redFields.includes('endClock')
+                    ? 'red'
+                    : undefined,
+                }}
+                // forceClose={forceCloseClock}
+                // onOpen={() => setDismissOveraly(true)}
+                // onClose={() => setDismissOveraly(false)}
+                onChange={(h, m) => {
+                  setEndClock([h, m]);
+                }}
+              />
 
-        <View style={styles.layoutMargin}>
-          <ClockInput
-            containerStyle={{
-              ...styles.clockInput,
-              borderColor: redFields.includes('beginClock') ? 'red' : undefined,
-            }}
-            // forceClose={forceCloseClock}
-            // onOpen={() => setDismissOveraly(true)}
-            // onClose={() => setDismissOveraly(false)}
-            onChange={(h, m) => {
-              setBeginClock([h, m]);
-            }}
-          />
+              <CustomButton
+                style={{marginTop: 20}}
+                title="Schedule"
+                onPress={async () => {
+                  setLoading(true);
+                  setRedFields([]);
+                  setErrorMsg('');
+                  setSuccessMsg('');
 
-          <ClockInput
-            containerStyle={{
-              ...styles.clockInput,
-              borderColor: redFields.includes('endClock') ? 'red' : undefined,
-            }}
-            // forceClose={forceCloseClock}
-            // onOpen={() => setDismissOveraly(true)}
-            // onClose={() => setDismissOveraly(false)}
-            onChange={(h, m) => {
-              setEndClock([h, m]);
-            }}
-          />
+                  const classObj = new Class();
+                  await classObj.initByUid(class_id);
 
-          <CustomButton
-            style={{marginTop: 20}}
-            title="Schedule"
-            onPress={async () => {
-              setRedFields([]);
-              setErrorMsg('');
-              setSuccessMsg('');
+                  // Do not allow the spawning of more class entities that have come
+                  // from Mindbody Integration.
+                  // Why? Because those classes are meant to have only one active_time,
+                  // it's just how they are managed. As well as, Mindbody classes should
+                  // only be managed from Mindbody console or such.
+                  if (classObj.getAll().mindbody_integration) {
+                    setErrorMsg(
+                      "You mustn't populate a class that has been integrated through Mindbody.",
+                    );
+                    return;
+                  }
 
-              const classObj = new Class();
-              await classObj.initByUid(class_id);
+                  try {
+                    validate();
+                    let active_times = format();
 
-              // Do not allow the spawning of more class entities that have come
-              // from Mindbody Integration.
-              // Why? Because those classes are meant to have only one active_time,
-              // it's just how they are managed. As well as, Mindbody classes should
-              // only be managed from Mindbody console or such.
-              if (classObj.getAll().mindbody_integration) {
-                setErrorMsg(
-                  "You mustn't populate a class that has been integrated through Mindbody.",
-                );
-                return;
-              }
+                    {
+                      edit == true ? await cleanUpClassTime() : null;
+                    }
 
-              try {
-                validate();
-                let active_times = format();
+                    await classObj.populate({
+                      activeTimes: active_times,
+                      classId: class_id,
+                      timeId: timeId,
+                    });
 
-                {
-                  edit == true ? await cleanUpClassTime() : null;
-                }
+                    // SendGrid Scheduled Class
+                    try {
+                      // initiate SendGrid email
+                      console.log('gymId: ', gymId);
+                      const sendGridScheduledClass = functions().httpsCallable(
+                        'sendGridScheduledClass',
+                      );
+                      await sendGridScheduledClass(gymId);
+                    } catch (err) {
+                      setErrorMsg('Email could not be sent');
+                    }
 
-                await classObj.populate({
-                  activeTimes: active_times,
-                  classId: class_id,
-                  timeId: timeId,
-                });
-
-                // SendGrid Scheduled Class
-                try {
-                  // initiate SendGrid email
-                  console.log('gymId: ', gymId);
-                  const sendGridScheduledClass = functions().httpsCallable(
-                    'sendGridScheduledClass',
-                  );
-                  await sendGridScheduledClass(gymId);
-                } catch (err) {
-                  setErrorMsg('Email could not be sent');
-                }
-
-                setSuccessMsg('Successfully scheduled class!');
-                navigation.navigate('SuccessScreen', {
-                  successMessageType: 'ClassScheduled',
-                });
-                // navigate after successful class creation
-                setTimeout(() => {
-                  navigation.navigate('PartnerDashboard');
-                }, 3000);
-              } catch (err) {
-                setErrorMsg(err.message);
-              }
-            }}
-          />
-        </View>
+                    setSuccessMsg('Successfully scheduled class!');
+                    navigation.navigate('SuccessScreen', {
+                      successMessageType: 'ClassScheduled',
+                    });
+                    // navigate after successful class creation
+                    setTimeout(() => {
+                      navigation.navigate('PartnerDashboard');
+                    }, 3000);
+                  } catch (err) {
+                    setErrorMsg(err.message);
+                  } finally {
+                    partnerStore.getPartnerData();
+                    setLoading(false);
+                  }
+                }}
+              />
+            </View>
+          </>
+        )}
       </View>
     </>
   );

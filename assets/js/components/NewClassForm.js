@@ -16,9 +16,11 @@ import ImagePicker from 'react-native-image-picker';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
 import functions from '@react-native-firebase/functions';
+import LottieView from 'lottie-react-native';
 
 export default function NewClassForm(props) {
   const [initialized, setInitialized] = useState(false);
+  const [loading, setLoading] = useState(false);
   // const [dropDown, setDropDown] = useState(false)
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -250,7 +252,170 @@ export default function NewClassForm(props) {
       ) : (
         <Text style={{color: 'green'}}>{successMsg}</Text>
       )}
+      {loading ? (
+        <View style={{alignItems: 'center'}}>
+          <LottieView
+            source={require('../components/img/animations/cat-loading.json')}
+            style={{height: 100, width: 100}}
+            autoPlay
+            loop
+          />
+        </View>
+      ) : (
+        <>
+          <CustomTextInput
+            containerStyle={{
+              borderColor: redFields.includes('name') ? 'red' : undefined,
+            }}
+            placeholder="Class Name"
+            value={name}
+            onChangeText={setName}
+          />
+          <CustomTextInput
+            containerStyle={{
+              height: undefined,
+              maxHeight: 400,
+              borderColor: redFields.includes('description')
+                ? 'red'
+                : undefined,
+            }}
+            style={{
+              fontSize: 15,
+              textAlign: 'left',
+              textAlignVertical: 'top',
+              paddingVertical: 8,
+              paddingHorizontal: 10,
+            }}
+            multiline
+            numberOfLines={5}
+            placeholder="Description of the class..."
+            value={description}
+            onChangeText={setDescription}
+          />
 
+          {/* <DropDownPicker
+        style={[styles.picker, {
+          borderColor: redFields.includes("genres") ? "red" : undefined,
+        }]}
+        itemStyle={styles.pickerItem}
+        labelStyle={styles.pickerLabel}
+        dropDownStyle={styles.pickerDropDown}
+        items={GENRES}
+        defaultValue={genres}
+        max={5}
+        multiple
+        multipleText={"%d items have been selected."}
+        dropDownMaxHeight={335}
+        searchable
+        placeholder={"Select at least 2 genres,\nup to 5 maximum"}
+        onChangeItem={array => setGenres(array)}
+        onOpen={() => setDropDown(true)}
+        onClose={() => setDropDown(false)}
+      /> */}
+
+          {/* in order to give some space for the drop down menu */}
+          <View
+            style={
+              {
+                // height: dropDown ? 150 : 0,
+              }
+            }
+          />
+
+          {/* <CustomSelectButton
+        containerStyle={{
+          // Should never happen, unless code bugged
+          backgroundBorder: redFields.includes("type") ? "red" : undefined,
+        }}
+        options={{ studio: "In Studio", online: "Online" }}
+        value={type}
+        onChange={type => setType(type)}
+      /> */}
+
+          {/* Paid or Free Class */}
+          <CustomSelectButton
+            containerStyle={{
+              // Should never happen, unless code bugged
+              backgroundBorder: redFields.includes('priceType')
+                ? 'red'
+                : undefined,
+            }}
+            options={{free: 'free', paid: 'paid'}}
+            value={priceType}
+            onChange={(priceType) => setPriceType(priceType)}
+          />
+
+          {priceType == 'paid' ? (
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('price') ? 'red' : undefined,
+              }}
+              placeholder="Price"
+              value={price}
+              onChangeText={(text) => {
+                let newText = text;
+                let signs = text.match(/[$]/g);
+                let commas = text.match(/[.]/g);
+                let letters = text.match(/[A-Za-z]/g);
+                if (signs && signs.length !== 1) newText = price;
+                if (commas && commas.length > 1) newText = price;
+                if (letters) newText = price;
+                setPrice(newText);
+              }}
+            />
+          ) : null}
+
+          <CustomButton
+            title="Create Class"
+            onPress={async () => {
+              setLoading(true);
+              setRedFields([]);
+              setErrorMsg('');
+              setSuccessMsg('');
+
+              try {
+                // validate()
+
+                let form = format({
+                  name,
+                  description,
+                  type,
+                  gym_id,
+                  price,
+                  priceType,
+                });
+
+                const classObj = new Class();
+                classObj.create(form);
+
+                try {
+                  // initiate SendGrid email
+                  const sendGridCreateClass = functions().httpsCallable(
+                    'sendGridCreateClass',
+                  );
+                  await sendGridCreateClass(gym_id);
+                } catch (err) {
+                  setErrorMsg('Email could not be sent');
+                }
+                setSuccessMsg('Successfully created class.');
+
+                navigation.navigate('SuccessScreen', {
+                  successMessageType: 'ClassCreated',
+                });
+
+                // navigate after successful class
+                setTimeout(() => {
+                  navigation.navigate('PartnerDashboard');
+                }, 5000);
+              } catch (err) {
+                setErrorMsg(err.message);
+              } finally {
+                setLoading(false);
+              }
+            }}
+          />
+        </>
+      )}
       {/* <DropDownPicker
         style={{
           ...styles.picker,
@@ -279,150 +444,6 @@ export default function NewClassForm(props) {
         title="Add Photo"
         onPress={editClassPhoto}
       />  */}
-      <CustomTextInput
-        containerStyle={{
-          borderColor: redFields.includes('name') ? 'red' : undefined,
-        }}
-        placeholder="Class Name"
-        value={name}
-        onChangeText={setName}
-      />
-      <CustomTextInput
-        containerStyle={{
-          height: undefined,
-          maxHeight: 400,
-          borderColor: redFields.includes('description') ? 'red' : undefined,
-        }}
-        style={{
-          fontSize: 15,
-          textAlign: 'left',
-          textAlignVertical: 'top',
-          paddingVertical: 8,
-          paddingHorizontal: 10,
-        }}
-        multiline
-        numberOfLines={5}
-        placeholder="Description of the class..."
-        value={description}
-        onChangeText={setDescription}
-      />
-
-      {/* <DropDownPicker
-        style={[styles.picker, {
-          borderColor: redFields.includes("genres") ? "red" : undefined,
-        }]}
-        itemStyle={styles.pickerItem}
-        labelStyle={styles.pickerLabel}
-        dropDownStyle={styles.pickerDropDown}
-        items={GENRES}
-        defaultValue={genres}
-        max={5}
-        multiple
-        multipleText={"%d items have been selected."}
-        dropDownMaxHeight={335}
-        searchable
-        placeholder={"Select at least 2 genres,\nup to 5 maximum"}
-        onChangeItem={array => setGenres(array)}
-        onOpen={() => setDropDown(true)}
-        onClose={() => setDropDown(false)}
-      /> */}
-
-      {/* in order to give some space for the drop down menu */}
-      <View
-        style={
-          {
-            // height: dropDown ? 150 : 0,
-          }
-        }
-      />
-
-      {/* <CustomSelectButton
-        containerStyle={{
-          // Should never happen, unless code bugged
-          backgroundBorder: redFields.includes("type") ? "red" : undefined,
-        }}
-        options={{ studio: "In Studio", online: "Online" }}
-        value={type}
-        onChange={type => setType(type)}
-      /> */}
-
-      {/* Paid or Free Class */}
-      <CustomSelectButton
-        containerStyle={{
-          // Should never happen, unless code bugged
-          backgroundBorder: redFields.includes('priceType') ? 'red' : undefined,
-        }}
-        options={{free: 'free', paid: 'paid'}}
-        value={priceType}
-        onChange={(priceType) => setPriceType(priceType)}
-      />
-
-      {priceType == 'paid' ? (
-        <CustomTextInput
-          containerStyle={{
-            borderColor: redFields.includes('price') ? 'red' : undefined,
-          }}
-          placeholder="Price"
-          value={price}
-          onChangeText={(text) => {
-            let newText = text;
-            let signs = text.match(/[$]/g);
-            let commas = text.match(/[.]/g);
-            let letters = text.match(/[A-Za-z]/g);
-            if (signs && signs.length !== 1) newText = price;
-            if (commas && commas.length > 1) newText = price;
-            if (letters) newText = price;
-            setPrice(newText);
-          }}
-        />
-      ) : null}
-
-      <CustomButton
-        title="Create Class"
-        onPress={async () => {
-          setRedFields([]);
-          setErrorMsg('');
-          setSuccessMsg('');
-
-          try {
-            // validate()
-
-            let form = format({
-              name,
-              description,
-              type,
-              gym_id,
-              price,
-              priceType,
-            });
-
-            const classObj = new Class();
-            classObj.create(form);
-
-            try {
-              // initiate SendGrid email
-              const sendGridCreateClass = functions().httpsCallable(
-                'sendGridCreateClass',
-              );
-              await sendGridCreateClass(gym_id);
-            } catch (err) {
-              setErrorMsg('Email could not be sent');
-            }
-            setSuccessMsg('Successfully created class.');
-
-            navigation.navigate('SuccessScreen', {
-              successMessageType: 'ClassCreated',
-            });
-
-            // navigate after successful class
-            setTimeout(() => {
-              navigation.navigate('PartnerDashboard');
-            }, 5000);
-          } catch (err) {
-            setErrorMsg(err.message);
-          }
-        }}
-      />
     </View>
   );
 }
