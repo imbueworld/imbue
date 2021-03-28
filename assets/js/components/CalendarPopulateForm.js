@@ -14,6 +14,7 @@ import {useNavigation} from '@react-navigation/native';
 import functions from '@react-native-firebase/functions';
 import LottieView from 'lottie-react-native';
 import useStore from '../store/RootStore';
+import {ClockInputV2} from './ClockInputV2';
 
 export default function CalendarPopulateForm(props) {
   const {partnerStore} = useStore();
@@ -30,7 +31,7 @@ export default function CalendarPopulateForm(props) {
 
   const [dropDownClasses, setDropDownClasses] = useState(null);
 
-  const [beginClock, setBeginClock] = useState([0, 0]);
+  const [beginClock, setBeginClock] = useState([`00`, `00`]);
   const [endClock, setEndClock] = useState([0, 0]);
   const [dateStringList, setDateStringList] = useState([]);
 
@@ -244,32 +245,17 @@ export default function CalendarPopulateForm(props) {
               }}
             />
             <View style={styles.layoutMargin}>
-              <ClockInput
-                containerStyle={{
-                  ...styles.clockInput,
-                  borderColor: redFields.includes('beginClock')
-                    ? 'red'
-                    : undefined,
-                }}
-                // forceClose={forceCloseClock}
-                // onOpen={() => setDismissOveraly(true)}
-                // onClose={() => setDismissOveraly(false)}
-                onChange={(h, m) => {
+              <ClockInputV2
+                containerStyle={{marginTop: 20}}
+                value={beginClock}
+                onChangeText={(h, m) => {
                   setBeginClock([h, m]);
                 }}
               />
-
-              <ClockInput
-                containerStyle={{
-                  ...styles.clockInput,
-                  borderColor: redFields.includes('endClock')
-                    ? 'red'
-                    : undefined,
-                }}
-                // forceClose={forceCloseClock}
-                // onOpen={() => setDismissOveraly(true)}
-                // onClose={() => setDismissOveraly(false)}
-                onChange={(h, m) => {
+              <ClockInputV2
+                containerStyle={{marginTop: 20}}
+                value={beginClock}
+                onChangeText={(h, m) => {
                   setEndClock([h, m]);
                 }}
               />

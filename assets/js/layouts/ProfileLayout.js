@@ -30,9 +30,10 @@ import {GoogleSignin} from '@react-native-community/google-signin';
 import {LoginManager} from 'react-native-fbsdk';
 import User from '../backend/storage/User';
 import config from '../../../App.config';
+import Share from 'react-native-share';
 
 export default function ProfileLayout(props) {
-  const {onNextButton} = props;
+  const {onNextButton, gym} = props;
   const navigation = useNavigation();
   const {top, bottom} = useSafeAreaInsets();
   const [errorMsg, setErrorMsg] = useState('');
@@ -151,9 +152,10 @@ export default function ProfileLayout(props) {
           {buttonOptions.logOut.show ? (
             <LogOutButton
               containerStyle={{
-                position: 'absolute',
-                top: 0,
-                right: 0,
+                alignSelf: 'center',
+                width: 30,
+                height: 30,
+                marginLeft: 10,
               }}
               onPress={buttonOptions.logOut.onPress}
               onLongPress={buttonOptions.logOut.onLongPress}
@@ -162,23 +164,43 @@ export default function ProfileLayout(props) {
 
           <TouchableOpacity
             onPress={() => navigation.navigate('help')}
-            containerStyle={{
+            style={{
               alignSelf: 'center',
               width: 30,
               height: 30,
-              marginLeft: 10,
             }}>
             <Icon
               containerStyle={{
                 width: 30,
                 height: 30,
-                position: 'absolute',
-                top: 10,
-                right: 0,
               }}
               source={require('../components/img/png/question-mark.png')}
             />
           </TouchableOpacity>
+          {gym ? (
+            <TouchableOpacity
+              onPress={() =>
+                Share.open({
+                  title: gym.name,
+                  message: `imbuefitness://influencer/${gym.id}`,
+                })
+              }
+              activeOpacity={0.2}
+              style={{
+                alignSelf: 'center',
+                width: 30,
+                height: 30,
+                marginRight: 10,
+              }}>
+              <Icon
+                containerStyle={{
+                  width: 30,
+                  height: 30,
+                }}
+                source={require('../components/img/share.png')}
+              />
+            </TouchableOpacity>
+          ) : null}
         </View>
         {onNextButton && (
           <View

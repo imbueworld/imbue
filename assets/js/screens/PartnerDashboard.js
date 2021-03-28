@@ -48,12 +48,12 @@ const PartnerDashboard = observer((props) => {
   }, [partnerStore.user, partnerStore.gym, partnerStore.hasBankAccountAdded]);
 
   useEffect(() => {
+    setLoading(true);
     partnerStore.getPartnerData();
   }, []);
 
   useEffect(() => {
     async function takeCalendarData() {
-      setLoading(true);
       if (user.associated_gyms.length !== 0) {
         console.log('test');
         const gymId = user.associated_gyms[0];
@@ -130,20 +130,6 @@ const PartnerDashboard = observer((props) => {
     return processedClass;
   }
 
-  const onRefresh = React.useCallback(async () => {
-    setRefreshing(true);
-    const user = new User();
-    const userDoc = await user.retrieveUser();
-    const gym = (await user.retrievePartnerGyms()).map((it) => it.getAll())[0];
-
-    const newUser = await firestore()
-      .collection('partners')
-      .doc(gym.partner_id)
-      .get();
-    setUser(newUser.data());
-    wait(2000).then(() => setRefreshing(false));
-  }, []);
-
   if (!user || !gym || hasBankAccountAdded === undefined) return <View />;
 
   const toggleStream = async () => {
@@ -172,6 +158,7 @@ const PartnerDashboard = observer((props) => {
       innerContainerStyle={{
         padding: 10,
       }}
+      gym={gym}
       hideBackButton={true}
       buttonOptions={{
         logOut: {

@@ -214,12 +214,6 @@ export default function GymDescription(props) {
         paddingTop: Platform.OS === 'android' ? 25 : 0,
       }}>
       <GymLayout
-        shareButtonPress={() =>
-          Share.open({
-            title: gym.name,
-            message: `https://imbuefitness.com/influencer/${gym.id}`,
-          })
-        }
         innerContainerStyle={{
           paddingBottom: 10,
         }}
