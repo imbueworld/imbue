@@ -22,6 +22,7 @@ import functions from '@react-native-firebase/functions';
 import Share from 'react-native-share';
 import {
   clockFromTimestamp,
+  currencyFromZeroDecimal,
   dateStringFromTimestamp,
   shortDateFromTimestamp,
 } from '../backend/HelperFunctions';
@@ -292,7 +293,13 @@ export default function GymDescription(props) {
                     </Text>
                   </Text>
                 }
-                price={<Text>{`$${gym.membership_price_online} `}</Text>}
+                price={
+                  <Text>{`$${
+                    gym.membership_price_online
+                      ? currencyFromZeroDecimal(gym.membership_price_online)
+                      : 0
+                  } `}</Text>
+                }
                 onX={() => setPopup(null)}
                 onCardSelect={async (paymentMethodId) => {
                   try {
