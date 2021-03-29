@@ -10,8 +10,8 @@
 	</array>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>applinks:imbuefitness.com</string>
-		<string>webcredentials:imbuefitness.com</string>
+		<string>applinks:n511t.app.link</string>
+		<string>webcredentials:n511t.app.link</string>
 	</array>
 </dict>
 </plist>

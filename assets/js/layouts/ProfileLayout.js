@@ -182,7 +182,7 @@ export default function ProfileLayout(props) {
               onPress={() =>
                 Share.open({
                   title: gym.name,
-                  message: `imbuefitness://influencer/${gym.id}`,
+                  message: `https:/n511t.app.link/influencer/${gym.id}`,
                 })
               }
               activeOpacity={0.2}
