@@ -1,5 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {StyleSheet, View, Text, TextInput} from 'react-native';
+import {StyleSheet, View, Text, TextInput, Platform} from 'react-native';
 import TextInputMask from 'react-native-text-input-mask';
 
 export const ClockInputV2 = ({onChangeText, containerStyle}) => {
@@ -28,10 +28,15 @@ export const ClockInputV2 = ({onChangeText, containerStyle}) => {
   }, [hourFirst, hourSecond, minuteFirst, minuteSecond]);
 
   return (
-    <View style={[styles.inputContainer, containerStyle]}>
+    <View
+      style={[
+        styles.inputContainer,
+        containerStyle,
+        Platform.OS === 'ios' && {paddingVertical: 10},
+      ]}>
       <TextInput
         ref={hourFirstRef}
-        style={styles.input}
+        style={[styles.input, Platform.OS === 'ios' && {marginRight: 8}]}
         placeholder={'0'}
         onChangeText={(text) => {
           const hourFirstReg = /^[0-2]$/;
@@ -47,7 +52,7 @@ export const ClockInputV2 = ({onChangeText, containerStyle}) => {
       />
       <TextInput
         ref={hourSecondRef}
-        style={styles.input}
+        style={[styles.input, Platform.OS === 'ios' && {marginRight: 8}]}
         placeholder={'0'}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace' && hourSecond === '') {
@@ -74,7 +79,7 @@ export const ClockInputV2 = ({onChangeText, containerStyle}) => {
       <Text style={styles.seperator}>:</Text>
       <TextInput
         ref={minuteFirstRef}
-        style={styles.input}
+        style={[styles.input, Platform.OS === 'ios' && {marginRight: 8}]}
         placeholder={'0'}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace' && minuteFirst === '') {
@@ -96,7 +101,7 @@ export const ClockInputV2 = ({onChangeText, containerStyle}) => {
       />
       <TextInput
         ref={minuteSecondRef}
-        style={styles.input}
+        style={[styles.input, Platform.OS === 'ios' && {marginRight: 8}]}
         placeholder={'0'}
         onKeyPress={({nativeEvent}) => {
           if (nativeEvent.key === 'Backspace' && minuteSecond === '') {
@@ -131,5 +136,6 @@ const styles = StyleSheet.create({
   },
   seperator: {
     marginRight: 8,
+    fontSize: 20,
   },
 });

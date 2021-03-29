@@ -41,11 +41,13 @@ import moment from 'moment';
 import RNCalendarEvents from 'react-native-calendar-events';
 import AppBackground from '../components/AppBackground';
 import LottieView from 'lottie-react-native';
+import useStore from '../store/RootStore';
 
 export default function ClassDescription(props) {
   const {classId, timeId} = props.route.params;
   const navigation = useNavigation();
 
+  const {userStore} = useStore();
   const [r, refresh] = useState(0);
   const [errorMsg, setErrorMsg] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -461,6 +463,7 @@ export default function ClassDescription(props) {
                           });
 
                           refresh(r + 1);
+                          userStore.getUserClasses();
                           navigation.navigate('SuccessScreen', {
                             successMessageType: 'UserPurchasedClass',
                           });
@@ -624,7 +627,7 @@ export default function ClassDescription(props) {
                                 } catch (err) {
                                   setErrorMsg('Email could not be sent');
                                 }
-
+                                userStore.getUserClasses();
                                 refresh(r + 1);
                               } catch (err) {
                                 console.log(err);

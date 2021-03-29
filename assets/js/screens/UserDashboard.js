@@ -39,8 +39,11 @@ import {colors} from '../contexts/Colors';
 import LottieView from 'lottie-react-native';
 import CalendarView from '../components/CalendarView';
 import ClassList from '../components/ClassList';
+import useStore from '../store/RootStore';
+import {observer} from 'mobx-react-lite';
 
-export default function UserDashboard(props) {
+const UserDashboard = observer((props) => {
+  const {userStore} = useStore();
   const navigation = useNavigation();
 
   const [expanded, setExpanded] = useState(null);
@@ -100,25 +103,14 @@ export default function UserDashboard(props) {
             setGyms(resGyms);
           });
 
-        const classStuff = (await user.retrieveScheduledClasses()).map((it) => {
-          let data = it.getFormatted();
-          let activeDateForUser = [];
-          data.active_times.forEach((time) => {
-            if (
-              fireUser.active_classes.some((el) => el.time_id === time.time_id)
-            )
-              activeDateForUser.push(time);
-          });
-          data.active_times = activeDateForUser;
-          return data;
-        });
-        console.log(classStuff[0].active_times);
-        console.log(fireUser);
-        setCalendarData(classStuff);
-        console.log('New test async 2');
+        userStore.getUserClasses();
         setLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (userStore.classes !== null) setCalendarData(userStore.classes);
+  }, [userStore.classes]);
 
   useEffect(() => {
     init();
@@ -371,11 +363,11 @@ export default function UserDashboard(props) {
          */}
 
         {/* featured partners */}
-        {!loading ? (
+        {!loading && calendarData !== null ? (
           <>
             <View style={styles.capsule}>
               <View style={styles.innerCapsule}>
-              <Text style={styles.listTitle}>Your Classes</Text>
+                <Text style={styles.listTitle}>Your Classes</Text>
                 <CalendarView
                   containerStyle={{
                     borderWidth: 1,
@@ -440,7 +432,9 @@ export default function UserDashboard(props) {
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
-}
+});
+
+export default UserDashboard;
 
 const styles = StyleSheet.create({
   capsule: {
