@@ -1,10 +1,13 @@
 import React, {FC, createContext, useContext} from 'react';
 import {PartnerStore} from './PartnerStore';
+import {UserStore} from './UserStore';
 
 export class RootStore {
   partnerStore;
+  userStore;
   constructor() {
     this.partnerStore = new PartnerStore(this);
+    this.userStore = new UserStore(this);
   }
 }
 
