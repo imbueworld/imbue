@@ -71,17 +71,6 @@ export const AppNavigation = () => {
 
   const linking = {
     prefixes: ['https://n511t.app.link', 'imbuefitness://'],
-    async getInitialURL() {
-      const url = await Linking.getInitialURL();
-
-      if (url != null) {
-        return url;
-      }
-
-      const params = branch.getFirstReferringParams();
-
-      return params?.$canonical_url;
-    },
     subscribe(listener) {
       const onReceiveURL = ({url}) => listener(url);
       Linking.addEventListener('url', onReceiveURL);
@@ -104,9 +93,7 @@ export const AppNavigation = () => {
       });
 
       return () => {
-        // Clean up the event listeners
         Linking.removeEventListener('url', onReceiveURL);
-        branch.unsubscribe();
       };
     },
     config: {
