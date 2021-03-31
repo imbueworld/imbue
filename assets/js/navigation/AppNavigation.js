@@ -71,10 +71,40 @@ export const AppNavigation = () => {
 
   const linking = {
     prefixes: ['https://n511t.app.link', 'imbuefitness://'],
+
+    // Custom function to get the URL which was used to open the app
+    async getInitialURL() {
+      // First, you may want to do the default deep link handling
+      // Check if app was opened from a deep link
+      const url = await Linking.getInitialURL();
+
+      if (url != null) {
+        return url;
+      }
+
+      // Next, you would need to get the initial URL from your third-party integration
+      // It depends on the third-party SDK you use
+      // For example, to get to get the initial URL for branch.io:
+      const params = branch.getFirstReferringParams();
+      console.log(url);
+      return params?.$canonical_url;
+    },
+
+    // Custom function to subscribe to incoming links
     subscribe(listener) {
-      const onReceiveURL = ({url}) => listener(url);
+      // First, you may want to do the default deep link handling
+      const onReceiveURL = ({url}) => {
+        console.log('Linking: ' + url);
+        listener(url);
+      };
+
+      // Listen to incoming links from deep linking
       Linking.addEventListener('url', onReceiveURL);
+
+      // Next, you would need to subscribe to incoming links from your third-party integration
+      // For example, to get to subscribe to incoming links from branch.io:
       branch.subscribe(({error, params, uri}) => {
+        console.log(uri);
         if (error) {
           console.error('Error from Branch: ' + error);
           return;
@@ -82,17 +112,23 @@ export const AppNavigation = () => {
 
         if (params['+non_branch_link']) {
           const nonBranchUrl = params['+non_branch_link'];
+          // Route non-Branch URL if appropriate.
           return;
         }
-        if (!params['+clicked_branch_link']) {
-          return;
-        }
-        const url = params.$canonical_url;
 
+        if (!params['+clicked_branch_link']) {
+          // Indicates initialization success and some other conditions.
+          // No link was opened.
+          return;
+        }
+
+        // A Branch link was opened
+        const url = params.$canonical_url;
         listener(url);
       });
 
       return () => {
+        // Clean up the event listeners
         Linking.removeEventListener('url', onReceiveURL);
       };
     },
@@ -323,6 +359,4 @@ export const AppNavigation = () => {
       </Stack.Navigator>
     </NavigationContainer>
   );
-
-  return null;
 };

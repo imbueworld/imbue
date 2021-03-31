@@ -36,7 +36,7 @@ target 'imbue' do
   pod 'RNPermissions', :path => '../node_modules/react-native-permissions'
   permissions_path = '../node_modules/react-native-permissions/ios'
   pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
-
+  pod 'react-native-branch', path: '../node_modules/react-native-branch'
   pod 'Plaid', '~> 2.0.6'
 
   target 'imbueTests' do

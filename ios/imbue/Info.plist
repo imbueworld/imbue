@@ -27,6 +27,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>imbuefitness</string>
 				<string>com.googleusercontent.apps.736868821-kf9o1qalpaee63uo1bkd9m5hh52g660l</string>
 			</array>
 		</dict>
@@ -132,5 +133,9 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>branch_app_domain</key>
+	<string>n511t.test-app.link</string>
+	<key>branch_key</key>
+	<string>key_live_lo5lVnY6Ktl6nWNvoX4tRoecCvd17Ppm</string>
 </dict>
 </plist>
