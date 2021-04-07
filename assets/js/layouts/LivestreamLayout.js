@@ -1,5 +1,14 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, BackHandler, PanResponder} from 'react-native';
+import {
+  View,
+  Text,
+  BackHandler,
+  PanResponder,
+  ImageBackground,
+  StyleSheet,
+  TouchableOpacity,
+  Image,
+} from 'react-native';
 
 import database from '@react-native-firebase/database';
 
@@ -21,10 +30,6 @@ import config from '../../../App.config';
 import User from '../backend/storage/User';
 import {simpleShadow} from '../contexts/Colors';
 import Icon from '../components/Icon';
-import {
-  TouchableHighlight,
-  TouchableOpacity,
-} from 'react-native-gesture-handler';
 import {FONTS} from '../contexts/Styles';
 import firestore from '@react-native-firebase/firestore';
 import CustomButton from '../components/CustomButton';
@@ -68,7 +73,6 @@ const buttonOptions = {
 export default function LivestreamLayout(props) {
   // const [gymId, setGymId] = useState(null)
   // const [user, setUser] = useState(null)
-
   const gymId = props.gymId;
   const user = props.user;
   const isLive = props.isLive;
@@ -78,7 +82,7 @@ export default function LivestreamLayout(props) {
   const {width, height} = useDimensions().window;
   const cardIconLength = width / 4;
   const {isInternetReachable} = useNetInfo();
-  const {top} = useSafeAreaInsets();
+  const {top, bottom} = useSafeAreaInsets();
   if (!gymId) throw new Error('prop gymId must be provided');
   if (!user) throw new Error('prop user must be provided');
   let navigation = useNavigation();
@@ -295,7 +299,7 @@ export default function LivestreamLayout(props) {
   useEffect(() => {
     setDeck('open');
   }, []);
-
+  console.log(gymName);
   // Disable native device return button, to prevent accidental touch
   useEffect(() => {
     const goBack = () => true;
@@ -340,7 +344,6 @@ export default function LivestreamLayout(props) {
           height: '100%',
           position: 'absolute',
           zIndex: 105,
-          marginTop: 40,
         }}>
         {!isInternetReachable && (
           <View
@@ -358,8 +361,53 @@ export default function LivestreamLayout(props) {
             </Text>
           </View>
         )}
+        {user.account_type === 'partner' && (
+          <View style={styles.background}>
+            <View style={styles.info}>
+              <Text style={styles.className}>{gymName}</Text>
+            </View>
+            <View style={styles.info}>
+              <Image
+                style={styles.userPhoto}
+                source={{uri: user.icon_uri_full}}
+              />
+              <Text
+                style={styles.userName}>{`${user.first} ${user.last}`}</Text>
+            </View>
+            <ImageBackground
+              imageStyle={{
+                resizeMode: 'stretch',
+              }}
+              source={require('../components/img/stream_background.png')}
+              style={[styles.backgroundMenu]}>
+              <TouchableOpacity style={styles.menuButton}>
+                <Icon
+                  containerStyle={styles.buttonIcon}
+                  imageStyle={styles.buttonIconChat}
+                  source={require('../components/img/png/chat.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.menuButton}>
+                <Icon
+                  containerStyle={styles.buttonIcon}
+                  imageStyle={styles.buttonIconPlay}
+                  source={require('../components/img/png/play.png')}
+                />
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.menuButton}>
+                <Icon
+                  containerStyle={styles.buttonIcon}
+                  imageStyle={styles.buttonIconChat}
+                  source={require('../components/img/png/chat.png')}
+                />
+              </TouchableOpacity>
+            </ImageBackground>
+            <View style={[styles.backgroundBottom, {height: bottom}]} />
+          </View>
+        )}
+
         {/* { buttonOptions.goBack.show  ? */}
-        {buttonOptions.viewChat.state !== 'open' &&
+        {/* {buttonOptions.viewChat.state !== 'open' &&
           buttonOptions.viewParticipants.state !== 'open' && (
             <View
               style={{
@@ -392,7 +440,7 @@ export default function LivestreamLayout(props) {
                 </TouchableOpacity>
               </View>
             </View>
-          )}
+          )} */}
         {/* // : null } */}
 
         {/* {user.account_type == "partner" ? 
@@ -422,7 +470,7 @@ export default function LivestreamLayout(props) {
 
         {/* { liveStatus == 'video.live_stream.connected' ? */}
 
-        <View
+        {/* <View
           style={{
             width: '100%',
             paddingHorizontal: 15,
@@ -452,14 +500,14 @@ export default function LivestreamLayout(props) {
                 refresh((r) => r + 1);
               }}
             />
-          ) : null}
+          ) : null} */}
 
-          {user.account_type == 'partner' ? (
+        {/* {user.account_type == 'partner' ? (
             <View>
-              {/* <CancelButton
+              <CancelButton
             title="Leave"
             onPress={() => navigation.goBack()} 
-          /> */}
+          />
               <GoLiveButton
                 title={
                   buttonOptions.goLive.state === 'streaming'
@@ -497,10 +545,10 @@ export default function LivestreamLayout(props) {
                 }}
               />
             </View>
-          ) : null}
+          ) : null} */}
 
-          {/* {buttonOptions.viewParticipants.show ? */}
-          {user.account_type == 'partner' ? (
+        {/* {buttonOptions.viewParticipants.show ? */}
+        {/* {user.account_type == 'partner' ? (
             <ListButton
               onPress={() => {
                 let ptcState, chatState;
@@ -521,10 +569,10 @@ export default function LivestreamLayout(props) {
               }}
             />
           ) : null}
-        </View>
+        </View> */}
         {/* : null} */}
 
-        {buttonOptions.viewChat.state === 'open' ? (
+        {/* {buttonOptions.viewChat.state === 'open' ? (
           <Chat
             containerStyle={{
               width: '94%',
@@ -561,8 +609,74 @@ export default function LivestreamLayout(props) {
               zIndex: 110,
             }}
           />
-        ) : null}
+        ) : null} */}
       </View>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  background: {
+    position: 'absolute',
+    bottom: 0,
+    width: '100%',
+  },
+  info: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 14,
+    marginLeft: 30,
+  },
+  className: {
+    fontSize: 22,
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  userName: {
+    fontSize: 14,
+    color: '#fff',
+    fontWeight: '400',
+  },
+  userPhoto: {
+    width: 24,
+    height: 24,
+    borderRadius: 12,
+    marginRight: 5,
+  },
+  backgroundBottom: {
+    width: '100%',
+    backgroundColor: '#fff',
+  },
+  backgroundMenu: {
+    width: '100%',
+    height: 100,
+    alignItems: 'flex-end',
+    justifyContent: 'space-around',
+    overflow: 'hidden',
+    flexDirection: 'row',
+    paddingHorizontal: 40,
+    borderTopRightRadius: 40,
+    borderTopLeftRadius: 40,
+    paddingBottom: 20,
+  },
+  menuButton: {
+    height: 50,
+    width: 50,
+    borderRadius: 20,
+    backgroundColor: '#ADD7F1',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonIcon: {
+    height: 24,
+    width: 24,
+  },
+  buttonIconChat: {
+    height: 24,
+    width: 24,
+  },
+  buttonIconPlay: {
+    height: 20,
+    width: 20,
+  },
+});

@@ -9,6 +9,7 @@ import cache from '../backend/storage/cache';
 import User from '../backend/storage/User';
 import {requestPermissions} from '../backend/HelperFunctions';
 import {colors} from '../contexts/Colors';
+import firestore from '@react-native-firebase/firestore';
 
 async function checkPermissionsiOS() {
   let hasAllPermissionsiOS = false;
@@ -43,6 +44,7 @@ async function checkPermissionsiOS() {
 export default function GoLive(props) {
   const [user, setUser] = useState(null);
   const [gymId, setGymId] = useState(null);
+  const [gymName, setGymName] = useState(null);
 
   // android permissions
   const [hasAllPermissions, setHasAllPermisions] = useState(false);
@@ -59,8 +61,20 @@ export default function GoLive(props) {
       const {associated_gyms = []} = partnerDoc;
       const gymIds = associated_gyms[0];
 
-      setUser(partnerDoc);
-      setGymId(gymIds);
+      await firestore()
+        .collection('classes')
+        .where('gym_id', '==', gymIds)
+        .get()
+        .then((querySnapshot) => {
+          setUser(partnerDoc);
+          setGymId(gymIds);
+          let classes = [];
+          querySnapshot.forEach((doc) => {
+            classes.push(doc.data());
+          });
+          console.log(classes);
+          setGymName(classes[0].name);
+        });
 
       // Hiding obstructing bars
       StatusBar.setBackgroundColor('#00000000');
@@ -153,6 +167,7 @@ export default function GoLive(props) {
       <LivestreamLayout
         user={user}
         gymId={gymId}
+        gymName={gymName}
         buttonOptions={{
           leaveLivestream: {
             show: false,
