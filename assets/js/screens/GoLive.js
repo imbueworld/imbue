@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {View, Platform, StatusBar, Text} from 'react-native';
 
 import {PERMISSIONS} from 'react-native-permissions';
@@ -14,7 +14,7 @@ import firestore from '@react-native-firebase/firestore';
 async function checkPermissionsiOS() {
   let hasAllPermissionsiOS = false;
   check(PERMISSIONS.IOS.CAMERA)
-    .then((result) => {
+    .then(result => {
       switch (result) {
         case RESULTS.UNAVAILABLE:
           console.log(
@@ -35,13 +35,14 @@ async function checkPermissionsiOS() {
           return hasAllPermissionsiOS;
       }
     })
-    .catch((error) => {
+    .catch(error => {
       console.error(err);
       return false;
     });
 }
 
 export default function GoLive(props) {
+  const cameraRef = useRef();
   const [user, setUser] = useState(null);
   const [gymId, setGymId] = useState(null);
   const [gymName, setGymName] = useState(null);
@@ -65,11 +66,11 @@ export default function GoLive(props) {
         .collection('classes')
         .where('gym_id', '==', gymIds)
         .get()
-        .then((querySnapshot) => {
+        .then(querySnapshot => {
           setUser(partnerDoc);
           setGymId(gymIds);
           let classes = [];
-          querySnapshot.forEach((doc) => {
+          querySnapshot.forEach(doc => {
             classes.push(doc.data());
           });
           console.log(classes);
@@ -165,6 +166,7 @@ export default function GoLive(props) {
   return (
     <>
       <LivestreamLayout
+        cameraRef={cameraRef}
         user={user}
         gymId={gymId}
         gymName={gymName}
@@ -196,8 +198,8 @@ export default function GoLive(props) {
               // zIndex: -100,
               // position: "absolute",
             }}
-            ref={(vb) => {
-              // stream = vb
+            ref={vb => {
+              // vb.swirtchCamera();
               cache('streamRef').set(vb);
             }}
             outputUrl={`${base}${streamKey}`}

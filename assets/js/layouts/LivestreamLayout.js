@@ -35,6 +35,13 @@ import firestore from '@react-native-firebase/firestore';
 import CustomButton from '../components/CustomButton';
 import {useNetInfo} from '@react-native-community/netinfo';
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import Play from '../components/img/svg/play.svg';
+import ShareIcon from '../components/img/svg/share.svg';
+import ChatIcon from '../components/img/svg/chat.svg';
+import HomeIcon from '../components/img/svg/home_outline.svg';
+import LiveStream from '../components/img/svg/live_stream.svg';
+import {LivestreamModal} from '../components/LivestreamModal';
+import Share from 'react-native-share';
 
 const layoutOptions = {
   viewerCount: {
@@ -73,6 +80,7 @@ const buttonOptions = {
 export default function LivestreamLayout(props) {
   // const [gymId, setGymId] = useState(null)
   // const [user, setUser] = useState(null)
+  const cameraRef = props.cameraRef;
   const gymId = props.gymId;
   const user = props.user;
   const isLive = props.isLive;
@@ -83,6 +91,7 @@ export default function LivestreamLayout(props) {
   const cardIconLength = width / 4;
   const {isInternetReachable} = useNetInfo();
   const {top, bottom} = useSafeAreaInsets();
+  const [streamModal, setStreamModal] = useState(false);
   if (!gymId) throw new Error('prop gymId must be provided');
   if (!user) throw new Error('prop user must be provided');
   let navigation = useNavigation();
@@ -130,7 +139,7 @@ export default function LivestreamLayout(props) {
       //   }
       // })
 
-      chatNodeRef.limitToLast(1).on('child_added', (snap) => {
+      chatNodeRef.limitToLast(1).on('child_added', snap => {
         const message = snap.val();
 
         // Don't show very first message, because it is most likely not a live message
@@ -143,7 +152,7 @@ export default function LivestreamLayout(props) {
         let existingMessages = cache('livestream/chat').get() || [];
 
         // Do not add, if an exact same message is already in chat
-        let x = existingMessages.map((msg) => `${msg.timestamp}${msg.message}`);
+        let x = existingMessages.map(msg => `${msg.timestamp}${msg.message}`);
         let y = `${message.timestamp}${message.message}`;
         if (x.includes(y)) return;
 
@@ -163,11 +172,44 @@ export default function LivestreamLayout(props) {
     // }
   }, []);
 
+  const liveStreamPress = () => {
+    switch (buttonOptions.goLive.state) {
+      case 'streaming':
+        navigation.navigate('SuccessScreen', {
+          successMessageType: 'PartnerLiveStreamCompleted',
+        });
+        // register didPressEnd
+        firestore()
+          .collection('partners')
+          .doc(user.id)
+          .update({
+            didPressEnd: true,
+          });
+        firestore();
+
+        buttonOptions.goLive.state = 'idle';
+        buttonOptions.goBack.show = true;
+        setTimeout(() => {
+          navigation.navigate('PartnerDashboard');
+        }, 6000);
+
+        console.log('streaming');
+        break;
+      case 'idle':
+        buttonOptions.goLive.state = 'streaming';
+        buttonOptions.goBack.show = false;
+        console.log('idle');
+        break;
+    }
+    refresh(r => r + 1);
+    buttonOptions.goLive.onPress();
+  };
+
   useEffect(() => {
     const ptcsNodeRef = database().ref(`livestreams/participants/${gymId}`);
 
     const init = async () => {
-      await ptcsNodeRef.once('value', async (snap) => {
+      await ptcsNodeRef.once('value', async snap => {
         const users = snap.val();
         if (users) {
           let ptcs = Object.entries(users).map(([uid, userData]) => {
@@ -178,9 +220,9 @@ export default function LivestreamLayout(props) {
           // render of this component is irrelevant and to be overwritten
           cache('livestream/participants').set(ptcs);
 
-          let liveCount = ptcs.filter((ptc) => ptc.here).length;
+          let liveCount = ptcs.filter(ptc => ptc.here).length;
           cache('livestream/viewerCount').set(liveCount);
-          refresh((r) => r + 1);
+          refresh(r => r + 1);
         }
       });
 
@@ -189,19 +231,19 @@ export default function LivestreamLayout(props) {
        * update their 'here' status,
        * update cache and certain Child Components.
        */
-      ptcsNodeRef.on('child_changed', (snap) => {
+      ptcsNodeRef.on('child_changed', snap => {
         const user = {...snap.val(), uid: snap.key};
         let existingPtcs = cache('livestream/participants').get() || [];
         const newSetOfPtcs = [user, ...existingPtcs];
 
         // child_changed can provide an entirely new user, or an update to an existing one
         // let's distinguish..
-        let existingUids = existingPtcs.map((ptc) => ptc.uid);
+        let existingUids = existingPtcs.map(ptc => ptc.uid);
         const action = existingUids.includes(user.uid) ? 'update' : 'creation';
 
         // Update existingPtcs to meet current state
         if (action === 'update') {
-          existingPtcs.forEach((ptc) => {
+          existingPtcs.forEach(ptc => {
             if (ptc.uid === user.uid) {
               for (let key in user) {
                 ptc[key] = user[key];
@@ -216,11 +258,11 @@ export default function LivestreamLayout(props) {
         // Update <LiveViewerCountBadge />
         let liveCount;
         if (action === 'update') {
-          liveCount = existingPtcs.filter((user) => user.here).length;
+          liveCount = existingPtcs.filter(user => user.here).length;
           // Update cache
           cache('livestream/participants').set(existingPtcs);
         } else if (action === 'creation') {
-          liveCount = newSetOfPtcs.filter((user) => user.here).length;
+          liveCount = newSetOfPtcs.filter(user => user.here).length;
           // Update cache
           cache('livestream/participants').set(newSetOfPtcs);
         }
@@ -249,9 +291,12 @@ export default function LivestreamLayout(props) {
         if (typeof setPtcsList === 'function') setPtcsList(newSetOfPtcs);
       });
 
-      ptcsNodeRef.child(user.id).onDisconnect().update({
-        here: false,
-      });
+      ptcsNodeRef
+        .child(user.id)
+        .onDisconnect()
+        .update({
+          here: false,
+        });
     };
     init();
 
@@ -267,7 +312,7 @@ export default function LivestreamLayout(props) {
     // [v DEBUG ONLY v]
     if (config.DEBUG) {
       buttonOptions.viewButtonPanel.state = 'open';
-      refresh((r) => r + 1);
+      refresh(r => r + 1);
     }
     // [^ DEBUG ONLY ^]
 
@@ -286,12 +331,12 @@ export default function LivestreamLayout(props) {
           }
 
           buttonOptions.viewButtonPanel.state = 'closed';
-          refresh((r) => r + 1);
+          refresh(r => r + 1);
         }, 4500);
         buttonOptions.viewButtonPanel.data = timeout;
       }
 
-      refresh((r) => r + 1);
+      refresh(r => r + 1);
     }
     // [^ DISABLED DURING DEBUG ^]
   }
@@ -310,30 +355,29 @@ export default function LivestreamLayout(props) {
 
   return (
     <>
+      <LivestreamModal
+        user={user}
+        gymId={gymId}
+        visible={streamModal}
+        close={() => setStreamModal(false)}
+      />
       <View
         style={{
           position: 'absolute',
           backgroundColor: 'black',
           width: '100%',
           height: '100%',
-          // zIndex: 999,
         }}
       />
 
-      {/* {buttonOptions.viewButtonPanel.show 
-    ?  */}
-      <TouchableWithoutFeedback
-        style={{
-          width: '100%',
-          height: '100%',
-          zIndex: -10,
-        }}
-        onPress={() =>
-          setDeck(
-            buttonOptions.viewButtonPanel.state === 'open' ? 'closed' : 'open',
-          )
-        }
-      />
+      {buttonOptions.goLive.state === 'streaming' ? (
+        !isInternetReachable ? null : (
+          <View style={[styles.liveStreamStatus, {top: top + 10}]}>
+            <LiveStream width={12} height={12} />
+            <Text style={styles.liveText}>Live</Text>
+          </View>
+        )
+      ) : null}
       {/* : null} */}
 
       {/* {buttonOptions.viewButtonPanel.state === "open" 
@@ -361,50 +405,63 @@ export default function LivestreamLayout(props) {
             </Text>
           </View>
         )}
-        {user.account_type === 'partner' && (
-          <View style={styles.background}>
-            <View style={styles.info}>
-              <Text style={styles.className}>{gymName}</Text>
-            </View>
-            <View style={styles.info}>
-              <Image
-                style={styles.userPhoto}
-                source={{uri: user.icon_uri_full}}
-              />
-              <Text
-                style={styles.userName}>{`${user.first} ${user.last}`}</Text>
-            </View>
-            <ImageBackground
-              imageStyle={{
-                resizeMode: 'stretch',
-              }}
-              source={require('../components/img/stream_background.png')}
-              style={[styles.backgroundMenu]}>
-              <TouchableOpacity style={styles.menuButton}>
-                <Icon
-                  containerStyle={styles.buttonIcon}
-                  imageStyle={styles.buttonIconChat}
-                  source={require('../components/img/png/chat.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.menuButton}>
-                <Icon
-                  containerStyle={styles.buttonIcon}
-                  imageStyle={styles.buttonIconPlay}
-                  source={require('../components/img/png/play.png')}
-                />
-              </TouchableOpacity>
-              <TouchableOpacity style={styles.menuButton}>
-                <Icon
-                  containerStyle={styles.buttonIcon}
-                  imageStyle={styles.buttonIconChat}
-                  source={require('../components/img/png/chat.png')}
-                />
-              </TouchableOpacity>
-            </ImageBackground>
-            <View style={[styles.backgroundBottom, {height: bottom}]} />
+        <TouchableOpacity
+          style={[styles.homeButton, {top: top + 10}]}
+          onPress={() => {
+            if (user.account_type === 'partner')
+              navigation.navigate('PartnerDashboard');
+            else navigation.navigate('UserDashboard');
+          }}>
+          <HomeIcon width={35} height={35} />
+        </TouchableOpacity>
+        <View style={styles.background}>
+          <View style={styles.info}>
+            <Text style={styles.className}>{gymName}</Text>
           </View>
-        )}
+          <View style={styles.info}>
+            <Image
+              style={styles.userPhoto}
+              source={{uri: user.icon_uri_full}}
+            />
+            <Text style={styles.userName}>{`${user.first} ${user.last}`}</Text>
+          </View>
+          <ImageBackground
+            imageStyle={{
+              resizeMode: 'stretch',
+            }}
+            source={require('../components/img/stream_background.png')}
+            style={[styles.backgroundMenu]}>
+            <TouchableOpacity
+              onPress={() => setStreamModal(true)}
+              style={[styles.menuButton, {backgroundColor: '#929294'}]}>
+              <ChatIcon width={30} height={30} />
+            </TouchableOpacity>
+            {user.account_type === 'partner' && (
+              <TouchableOpacity
+                style={[styles.menuButton, {backgroundColor: '#000'}]}
+                onPress={() => liveStreamPress()}>
+                {buttonOptions.goLive.state === 'streaming' ? (
+                  <View style={styles.stopButton} />
+                ) : (
+                  <Play width={24} height={24} />
+                )}
+              </TouchableOpacity>
+            )}
+            {user.account_type === 'partner' && (
+              <TouchableOpacity
+                onPress={() =>
+                  Share.open({
+                    title: gymName,
+                    message: `https:/imbuefitness.app.link/influencer/${gymId}`,
+                  })
+                }
+                style={[styles.menuButton, {backgroundColor: '#929294'}]}>
+                <ShareIcon width={24} height={24} />
+              </TouchableOpacity>
+            )}
+          </ImageBackground>
+          <View style={[styles.backgroundBottom, {height: bottom}]} />
+        </View>
 
         {/* { buttonOptions.goBack.show  ? */}
         {/* {buttonOptions.viewChat.state !== 'open' &&
@@ -663,7 +720,6 @@ const styles = StyleSheet.create({
     height: 50,
     width: 50,
     borderRadius: 20,
-    backgroundColor: '#ADD7F1',
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -678,5 +734,35 @@ const styles = StyleSheet.create({
   buttonIconPlay: {
     height: 20,
     width: 20,
+  },
+  stopButton: {
+    height: 22,
+    width: 22,
+    borderRadius: 6,
+    backgroundColor: 'white',
+  },
+  homeButton: {
+    position: 'absolute',
+    left: 10,
+    backgroundColor: 'white',
+    width: 65,
+    height: 65,
+    borderRadius: 33,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  liveStreamStatus: {
+    position: 'absolute',
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1,
+  },
+  liveText: {
+    marginLeft: 5,
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
   },
 });

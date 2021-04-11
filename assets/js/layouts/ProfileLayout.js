@@ -123,7 +123,7 @@ export default function ProfileLayout(props) {
     const user = new User();
     try {
       await user.changeIcon();
-      refresh((r) => r + 1);
+      refresh(r => r + 1);
     } catch (errorMsg) {
       setErrorMsg(errorMsg);
     }
@@ -182,7 +182,7 @@ export default function ProfileLayout(props) {
               onPress={() =>
                 Share.open({
                   title: gym.name,
-                  message: `https:/n511t.app.link/influencer/${gym.id}`,
+                  message: `https:/imbuefitness.app.link/influencer/${gym.id}`,
                 })
               }
               activeOpacity={0.2}

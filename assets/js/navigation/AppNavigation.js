@@ -56,7 +56,7 @@ export const AppNavigation = () => {
   const ref = useRef();
 
   // const {getInitialState} = useLinking(ref, {
-  //   prefixes: ['https://n511t.app.link', 'imbuefitness://'],
+  //   prefixes: ['https://imbuefitness.app.link', 'imbuefitness://'],
   //   config: {
   //     screens: {
   //       GymDescription: {
@@ -70,7 +70,7 @@ export const AppNavigation = () => {
   // });
 
   const linking = {
-    prefixes: ['https://n511t.app.link', 'imbuefitness://'],
+    prefixes: ['https://imbuefitness.app.link', 'imbuefitness://'],
 
     // Custom function to get the URL which was used to open the app
     async getInitialURL() {
@@ -87,7 +87,7 @@ export const AppNavigation = () => {
       // For example, to get to get the initial URL for branch.io:
       const params = branch.getFirstReferringParams();
       console.log(url);
-      return params?.$canonical_url;
+      return params.$canonical_url;
     },
 
     // Custom function to subscribe to incoming links

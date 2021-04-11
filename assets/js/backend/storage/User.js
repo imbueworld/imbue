@@ -319,15 +319,15 @@ export default class User extends DataObject {
     if (data.length) return data;
 
     // Retrieve from database
-    const paymentMethods = (
-      await this._getPaymentMethodsDbRef().get()
-    ).docs.map((doc) => {
-      // Scuffed, but only one that uses this extra
-      // property is <CreditCardSelectionV2 />
-      let data = doc.data();
-      data.paymentMethodId = doc.id;
-      return data;
-    });
+    const paymentMethods = (await this._getPaymentMethodsDbRef().get()).docs.map(
+      doc => {
+        // Scuffed, but only one that uses this extra
+        // property is <CreditCardSelectionV2 />
+        let data = doc.data();
+        data.paymentMethodId = doc.id;
+        return data;
+      },
+    );
 
     // Cache it
     cacheObj.set(paymentMethods);
@@ -346,7 +346,7 @@ export default class User extends DataObject {
 
     // Retrieve from database, where applicable
     if (!paymentsAreCached) {
-      let payments = (await this._getPaymentsDbRef().get()).docs.map((doc) =>
+      let payments = (await this._getPaymentsDbRef().get()).docs.map(doc =>
         doc.data(),
       );
 
@@ -354,9 +354,7 @@ export default class User extends DataObject {
       cacheObjPayments.set(payments);
     }
     if (!subsAreCached) {
-      let subs = (await this._getSubsDbRef().get()).docs.map((doc) =>
-        doc.data(),
-      );
+      let subs = (await this._getSubsDbRef().get()).docs.map(doc => doc.data());
 
       // Cache it
       cacheObjSubs.set(subs);
@@ -386,8 +384,8 @@ export default class User extends DataObject {
         relevantClasses = associated_classes;
       } else {
         // Extract the class_id from an Array of Objects containing class_id and time_id
-        let classIdsActive = active_classes.map((it) => it.class_id);
-        let classIdsScheduled = scheduled_classes.map((it) => it.class_id);
+        let classIdsActive = active_classes.map(it => it.class_id);
+        let classIdsScheduled = scheduled_classes.map(it => it.class_id);
         // Combine and remove duplicates
         relevantClasses = [
           ...new Set([...classIdsActive, ...classIdsScheduled]),
@@ -410,7 +408,7 @@ export default class User extends DataObject {
     const {scheduled_classes = []} = this.getAll();
 
     // Extract the class_id from an Array of Objects containing class_id and time_id
-    let classIds = scheduled_classes.map((it) => it.class_id);
+    let classIds = scheduled_classes.map(it => it.class_id);
     const classes = await collection.retrieveWhere('id', 'in', classIds);
     return classes;
   }
@@ -456,7 +454,7 @@ export default class User extends DataObject {
       const makePurchase = functions().httpsCallable(
         'purchaseClassWithPaymentMethod',
       );
-      await makePurchase({paymentMethodId, classId, timeId});
+      // await makePurchase({paymentMethodId, classId, timeId});
 
       // After successful charge, register it for user in their doc
       const {active_classes = [], scheduled_classes = []} = this.getAll();
@@ -485,11 +483,11 @@ export default class User extends DataObject {
     await firestore()
       .collection('classes')
       .get()
-      .then((querySnapshot) => {
-        querySnapshot.forEach((documentSnapshot) => {
+      .then(querySnapshot => {
+        querySnapshot.forEach(documentSnapshot => {
           if (documentSnapshot.data().id == classId) {
             // map through active times
-            documentSnapshot.data().active_times.forEach((clss) => {
+            documentSnapshot.data().active_times.forEach(clss => {
               // update relevant attendees count
               if (clss.time_id == timeId) {
                 clss.attendees += 1;
@@ -501,9 +499,12 @@ export default class User extends DataObject {
       });
 
     // update active_times with new array (which has the updated attendees count)
-    await firestore().collection('classes').doc(classId).update({
-      active_times: updatedActiveTimes,
-    });
+    await firestore()
+      .collection('classes')
+      .doc(classId)
+      .update({
+        active_times: updatedActiveTimes,
+      });
 
     // After successful charge, register it for user in their doc
     const {active_classes = [], scheduled_classes = []} = this.getAll();
@@ -657,7 +658,7 @@ export default class User extends DataObject {
       const {active_memberships = []} = this.getAll();
       this.mergeItems({
         active_memberships: active_memberships.filter(
-          (gym_id) => gym_id != gymId,
+          gym_id => gym_id != gymId,
         ),
       });
       await this.push();
@@ -687,7 +688,7 @@ export default class User extends DataObject {
         let {stream_key: streamKey} = this.getAll();
 
         if (streamKey) return streamKey;
-        await new Promise((r) => setTimeout(r, 3500)); // sleep
+        await new Promise(r => setTimeout(r, 3500)); // sleep
       }
     });
   }
@@ -707,7 +708,7 @@ export default class User extends DataObject {
       }
 
       // Do the image stuff
-      ImagePicker.showImagePicker({}, async (res) => {
+      ImagePicker.showImagePicker({}, async res => {
         if (res.didCancel) {
           if (config.DEBUG)
             console.log('Photo selection canceled:', res.didCancel);
@@ -756,9 +757,12 @@ export default class User extends DataObject {
           console.log('gymId: ', gymId);
 
           // update game image_uri
-          await firestore().collection('gyms').doc(gymId).update({
-            image_uri: userId,
-          });
+          await firestore()
+            .collection('gyms')
+            .doc(gymId)
+            .update({
+              image_uri: userId,
+            });
 
           await this.push();
           resolve('Success.');

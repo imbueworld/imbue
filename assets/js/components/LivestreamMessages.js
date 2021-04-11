@@ -27,7 +27,7 @@ export default function LivestreamMessages(props) {
    * which would cause problems, like keyboard going down when typing
    */
   useEffect(() => {
-    cache('livestream/functions/setParticipants').set(setPtcs);
+    cache('livestream/participants').set(setPtcs);
     cache('livestream/functions/setChat').set(setChat);
   }, []);
 
@@ -47,7 +47,7 @@ export default function LivestreamMessages(props) {
     return ts1 - ts2;
   });
   newChat.forEach((message, idx) => {
-    ptcs.forEach((ptc) => {
+    ptcs.forEach(ptc => {
       if (message.uid === ptc.uid) {
         message.icon_uri = ptc.icon_uri;
         message.name = ptc.name;
@@ -60,7 +60,7 @@ export default function LivestreamMessages(props) {
   });
   const sortedChat = newChat;
 
-  const Message = (props) => {
+  const Message = props => {
     const [iconUri, setIconUri] = useState(null);
     useEffect(() => {
       const init = async () => {
