@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
@@ -15,11 +15,11 @@ import database from '@react-native-firebase/database';
 import ChatButton from '../components/ChatButton';
 import CancelButton from '../components/CancelButton';
 import ListButton from '../components/ListButton';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
-import {useDimensions} from '@react-native-community/hooks';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
+import { useDimensions } from '@react-native-community/hooks';
 
-import {useNavigation} from '@react-navigation/native';
-import {registerParticipant, sendMessage} from '../backend/LivestreamFunctions';
+import { useNavigation } from '@react-navigation/native';
+import { registerParticipant, sendMessage } from '../backend/LivestreamFunctions';
 import ParticipantList from '../components/ParticipantList';
 import Chat from '../components/Chat';
 import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge';
@@ -28,19 +28,20 @@ import GoLiveButton from '../components/buttons/GoLiveButton';
 import GoBackButton from '../components/buttons/GoBackButton';
 import config from '../../../App.config';
 import User from '../backend/storage/User';
-import {simpleShadow} from '../contexts/Colors';
+import { simpleShadow } from '../contexts/Colors';
 import Icon from '../components/Icon';
-import {FONTS} from '../contexts/Styles';
+import { FONTS } from '../contexts/Styles';
 import firestore from '@react-native-firebase/firestore';
 import CustomButton from '../components/CustomButton';
-import {useNetInfo} from '@react-native-community/netinfo';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Play from '../components/img/svg/play.svg';
 import ShareIcon from '../components/img/svg/share.svg';
 import ChatIcon from '../components/img/svg/chat.svg';
 import HomeIcon from '../components/img/svg/home_outline.svg';
 import LiveStream from '../components/img/svg/live_stream.svg';
-import {LivestreamModal} from '../components/LivestreamModal';
+import SwitchCamera from '../components/img/svg/switch_camera.svg';
+import { LivestreamModal } from '../components/LivestreamModal';
 import Share from 'react-native-share';
 
 const layoutOptions = {
@@ -57,7 +58,7 @@ const buttonOptions = {
     show: false,
     state: 'idle' || 'streaming',
     navigate: 'SuccessScreen',
-    onPress: () => {},
+    onPress: () => { },
   },
   leaveLivestream: {
     show: true,
@@ -87,10 +88,11 @@ export default function LivestreamLayout(props) {
   const gymImage = props.gymImageUri;
   const gymName = props.gymName;
   const liveStatus = props.liveStatus;
-  const {width, height} = useDimensions().window;
+  const switchCamera = props.switchCamera;
+  const { width, height } = useDimensions().window;
   const cardIconLength = width / 4;
-  const {isInternetReachable} = useNetInfo();
-  const {top, bottom} = useSafeAreaInsets();
+  const { isInternetReachable } = useNetInfo();
+  const { top, bottom } = useSafeAreaInsets();
   const [streamModal, setStreamModal] = useState(false);
   if (!gymId) throw new Error('prop gymId must be provided');
   if (!user) throw new Error('prop user must be provided');
@@ -232,7 +234,7 @@ export default function LivestreamLayout(props) {
        * update cache and certain Child Components.
        */
       ptcsNodeRef.on('child_changed', snap => {
-        const user = {...snap.val(), uid: snap.key};
+        const user = { ...snap.val(), uid: snap.key };
         let existingPtcs = cache('livestream/participants').get() || [];
         const newSetOfPtcs = [user, ...existingPtcs];
 
@@ -372,7 +374,7 @@ export default function LivestreamLayout(props) {
 
       {buttonOptions.goLive.state === 'streaming' ? (
         !isInternetReachable ? null : (
-          <View style={[styles.liveStreamStatus, {top: top + 10}]}>
+          <View style={[styles.liveStreamStatus, { top: top + 10 }]}>
             <LiveStream width={12} height={12} />
             <Text style={styles.liveText}>Live</Text>
           </View>
@@ -400,19 +402,25 @@ export default function LivestreamLayout(props) {
               paddingHorizontal: 30,
               borderRadius: 99,
             }}>
-            <Text style={{...FONTS.textInput, fontSize: 15, color: 'red'}}>
+            <Text style={{ ...FONTS.textInput, fontSize: 15, color: 'red' }}>
               Reconnecting...
             </Text>
           </View>
         )}
         <TouchableOpacity
-          style={[styles.homeButton, {top: top + 10}]}
+          style={[styles.homeButton, { top: top + 10 }]}
           onPress={() => {
+            liveStreamPress()
             if (user.account_type === 'partner')
               navigation.navigate('PartnerDashboard');
             else navigation.navigate('UserDashboard');
           }}>
           <HomeIcon width={35} height={35} />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.switchButton, { top: top + 10 }]}
+          onPress={() => switchCamera()}>
+          <SwitchCamera width={30} height={30} />
         </TouchableOpacity>
         <View style={styles.background}>
           <View style={styles.info}>
@@ -421,7 +429,7 @@ export default function LivestreamLayout(props) {
           <View style={styles.info}>
             <Image
               style={styles.userPhoto}
-              source={{uri: user.icon_uri_full}}
+              source={{ uri: user.icon_uri_full }}
             />
             <Text style={styles.userName}>{`${user.first} ${user.last}`}</Text>
           </View>
@@ -433,18 +441,18 @@ export default function LivestreamLayout(props) {
             style={[styles.backgroundMenu]}>
             <TouchableOpacity
               onPress={() => setStreamModal(true)}
-              style={[styles.menuButton, {backgroundColor: '#929294'}]}>
+              style={[styles.menuButton, { backgroundColor: '#929294' }]}>
               <ChatIcon width={30} height={30} />
             </TouchableOpacity>
             {user.account_type === 'partner' && (
               <TouchableOpacity
-                style={[styles.menuButton, {backgroundColor: '#000'}]}
+                style={[styles.menuButton, { backgroundColor: '#000' }]}
                 onPress={() => liveStreamPress()}>
                 {buttonOptions.goLive.state === 'streaming' ? (
                   <View style={styles.stopButton} />
                 ) : (
-                  <Play width={24} height={24} />
-                )}
+                    <Play width={24} height={24} />
+                  )}
               </TouchableOpacity>
             )}
             {user.account_type === 'partner' && (
@@ -455,12 +463,12 @@ export default function LivestreamLayout(props) {
                     message: `https:/imbuefitness.app.link/influencer/${gymId}`,
                   })
                 }
-                style={[styles.menuButton, {backgroundColor: '#929294'}]}>
+                style={[styles.menuButton, { backgroundColor: '#929294' }]}>
                 <ShareIcon width={24} height={24} />
               </TouchableOpacity>
             )}
           </ImageBackground>
-          <View style={[styles.backgroundBottom, {height: bottom}]} />
+          <View style={[styles.backgroundBottom, { height: bottom }]} />
         </View>
 
         {/* { buttonOptions.goBack.show  ? */}
@@ -744,6 +752,16 @@ const styles = StyleSheet.create({
   homeButton: {
     position: 'absolute',
     left: 10,
+    backgroundColor: 'white',
+    width: 65,
+    height: 65,
+    borderRadius: 33,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  switchButton: {
+    position: 'absolute',
+    right: 10,
     backgroundColor: 'white',
     width: 65,
     height: 65,

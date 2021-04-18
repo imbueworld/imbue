@@ -1,14 +1,14 @@
-import React, {useState, useEffect, useRef} from 'react';
-import {View, Platform, StatusBar, Text} from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { View, Platform, StatusBar, Text } from 'react-native';
 
-import {PERMISSIONS} from 'react-native-permissions';
-import {NodeCameraView} from 'react-native-nodemediaclient';
+import { PERMISSIONS } from 'react-native-permissions';
+import { NodeCameraView } from 'react-native-nodemediaclient';
 import LivestreamLayout from '../layouts/LivestreamLayout';
 
 import cache from '../backend/storage/cache';
 import User from '../backend/storage/User';
-import {requestPermissions} from '../backend/HelperFunctions';
-import {colors} from '../contexts/Colors';
+import { requestPermissions } from '../backend/HelperFunctions';
+import { colors } from '../contexts/Colors';
 import firestore from '@react-native-firebase/firestore';
 
 async function checkPermissionsiOS() {
@@ -53,13 +53,18 @@ export default function GoLive(props) {
   const [hasAllPermissionsiOS, setHasAllPermisionsiOS] = useState(false);
   const [streamKey, setStreamKey] = useState(null);
 
+  useEffect(() => {
+    if (cameraRef.current) {
+      cache('streamRef').set(cameraRef.current);
+    }
+  }, [cameraRef])
   // Init
   useEffect(() => {
     const init = async () => {
       const partner = new User();
       const partnerDoc = await partner.retrieveUser();
 
-      const {associated_gyms = []} = partnerDoc;
+      const { associated_gyms = [] } = partnerDoc;
       const gymIds = associated_gyms[0];
 
       await firestore()
@@ -122,8 +127,8 @@ export default function GoLive(props) {
   // }} />
 
   const settings = {
-    camera: {cameraId: 1, cameraFrontMirror: true},
-    audio: {bitrate: 32000, profile: 1, samplerate: 44100},
+    camera: { cameraId: 1, cameraFrontMirror: true },
+    audio: { bitrate: 32000, profile: 1, samplerate: 44100 },
     video: {
       bitrate: 400000,
       // preset: 24,
@@ -152,8 +157,8 @@ export default function GoLive(props) {
     }
 
     const partnerObj = new User();
-    await partnerObj.createLivestream({gymId}); // Will not create livestream, if it already has been
-    const {stream_key} = await partnerObj.retrieveUser();
+    await partnerObj.createLivestream({ gymId }); // Will not create livestream, if it already has been
+    const { stream_key } = await partnerObj.retrieveUser();
     console.log('stream_key: ' + stream_key);
     setStreamKey(stream_key);
 
@@ -170,6 +175,7 @@ export default function GoLive(props) {
         user={user}
         gymId={gymId}
         gymName={gymName}
+        switchCamera={() => cameraRef.current.switchCamera()}
         buttonOptions={{
           leaveLivestream: {
             show: false,
@@ -198,16 +204,13 @@ export default function GoLive(props) {
               // zIndex: -100,
               // position: "absolute",
             }}
-            ref={vb => {
-              // vb.swirtchCamera();
-              cache('streamRef').set(vb);
-            }}
+            ref={cameraRef}
             outputUrl={`${base}${streamKey}`}
             camera={settings.camera}
             audio={settings.audio}
             video={settings.video}
             autopreview
-            switchCameraswitchCamera
+          // switchCamera
           />
         )}
       </View>
