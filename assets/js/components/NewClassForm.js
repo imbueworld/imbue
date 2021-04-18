@@ -55,14 +55,14 @@ export default function NewClassForm(props) {
       setGymId(newClassForm.gym_id || null);
 
       const user = new User();
-      const gyms = (await user.retrievePartnerGyms()).map((it) => it.getAll());
+      const gyms = (await user.retrievePartnerGyms()).map(it => it.getAll());
 
       console.log('gyms: ', gyms[0].id);
 
       // as of now each partner only has one associted gym. We automatically set this gymId
       setGymId(gyms[0].id);
 
-      let dropDownGyms = gyms.map((gym) => ({
+      let dropDownGyms = gyms.map(gym => ({
         label: gym.description,
         value: gym.id,
       }));
@@ -182,7 +182,7 @@ export default function NewClassForm(props) {
       }
 
       // Do the image stuff
-      ImagePicker.showImagePicker({}, async (res) => {
+      ImagePicker.showImagePicker({}, async res => {
         if (res.didCancel) {
           // ...
           if (config.DEBUG)
@@ -200,7 +200,9 @@ export default function NewClassForm(props) {
         // } = res
 
         const source = {uri: res.uri};
-        const id = Math.random().toString(36).substring(7);
+        const id = Math.random()
+          .toString(36)
+          .substring(7);
         // const img = source.uri
 
         // 8MB of file size limit
@@ -213,9 +215,9 @@ export default function NewClassForm(props) {
           // await fileRef.putFile(filePath)
           await fileRef.putFile(source.uri);
 
-          const url = await (
-            await storage().ref(id).getDownloadURL()
-          ).toString();
+          const url = await (await storage()
+            .ref(id)
+            .getDownloadURL()).toString();
 
           console.log('imgUser: ' + url);
 
@@ -342,7 +344,7 @@ export default function NewClassForm(props) {
             }}
             options={{free: 'free', paid: 'paid'}}
             value={priceType}
-            onChange={(priceType) => setPriceType(priceType)}
+            onChange={priceType => setPriceType(priceType)}
           />
 
           {priceType == 'paid' ? (
@@ -352,7 +354,7 @@ export default function NewClassForm(props) {
               }}
               placeholder="Price"
               value={price}
-              onChangeText={(text) => {
+              onChangeText={text => {
                 let newText = text;
                 let signs = text.match(/[$]/g);
                 let commas = text.match(/[.]/g);
@@ -466,7 +468,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#ffffff00',
   },
   pickerDropDown: {
-    ...simpleShadow,
+    // ...simpleShadow,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },

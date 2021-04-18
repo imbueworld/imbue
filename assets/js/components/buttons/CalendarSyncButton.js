@@ -1,6 +1,6 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react'
 import { View } from 'react-native'
-import {TouchableOpacity } from 'react-native-gesture-handler'
+import { TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from '../Icon'
 import { useNavigation } from '@react-navigation/native'
 import moment from 'moment';
@@ -16,12 +16,12 @@ export default function CalendarSyncButton(props) {
   const type = props.type
 
   const checkForPermissions = async () => {
-    if (await RNCalendarEvents.checkPermissions() != "authorized"){
-        RNCalendarEvents.requestPermissions();
-    }       
+    if (await RNCalendarEvents.checkPermissions() != "authorized") {
+      RNCalendarEvents.requestPermissions();
+    }
   }
 
-  const addAllClassesToCalendar = async() => {
+  const addAllClassesToCalendar = async () => {
     calendarData.forEach(doc => {
       let active_times = doc.active_times
 
@@ -38,7 +38,7 @@ export default function CalendarSyncButton(props) {
           .doc(classId)
           .get()
 
-        let calendarId =  updatedClass.data().calendarId
+        let calendarId = updatedClass.data().calendarId
         console.log("calendarId: ", calendarId)
 
         // Take care of duplicate entries
@@ -57,7 +57,7 @@ export default function CalendarSyncButton(props) {
           endDate: end_time,
           notes: 'Open the Imbue app at class time to join'
 
-        }) 
+        })
 
         // update firestore
         firestore()
@@ -71,7 +71,7 @@ export default function CalendarSyncButton(props) {
   }
 
 
-  const addSingleClassToCalendar = async() => {
+  const addSingleClassToCalendar = async () => {
     let beg_time = classDoc.begin_time
     let end_time = classDoc.end_time
 
@@ -81,22 +81,22 @@ export default function CalendarSyncButton(props) {
       .doc(classDoc.id)
       .get()
 
-    let calendarId =  updatedClass.data().calendarId
+    let calendarId = updatedClass.data().calendarId
 
     // Take care of duplicate entries
     if (calendarId) {
       RNCalendarEvents.removeEvent(calendarId);
     }
 
-     // add to calendar
-     let response = await RNCalendarEvents.saveEvent(classDoc.name + ' Imbue Class', {
-       startDate: beg_time,
-       endDate: end_time,
-       notes: 'Open the Imbue app at class time to join'
-     }) 
+    // add to calendar
+    let response = await RNCalendarEvents.saveEvent(classDoc.name + ' Imbue Class', {
+      startDate: beg_time,
+      endDate: end_time,
+      notes: 'Open the Imbue app at class time to join'
+    })
 
-     // update firestore
-     firestore()
+    // update firestore
+    firestore()
       .collection('classes')
       .doc(classDoc.id)
       .update({
@@ -105,11 +105,11 @@ export default function CalendarSyncButton(props) {
   }
 
   const {
-    containerStyle={},
-    imageContainerStyle={},
-    imageStyle={},
+    containerStyle = {},
+    imageContainerStyle = {},
+    imageStyle = {},
     //
-    onPress = async() => {
+    onPress = async () => {
       checkForPermissions()
 
       if (type == "singleSync") {
@@ -120,7 +120,7 @@ export default function CalendarSyncButton(props) {
 
       showSuccess()
 
-    } 
+    }
   } = props
 
 

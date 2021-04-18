@@ -49,87 +49,42 @@ import {PartnerStep} from '../screens/PartnerStep';
 import auth from '@react-native-firebase/auth';
 import {Linking} from 'react-native';
 import branch from 'react-native-branch';
+import cache from '../backend/storage/cache';
+import User from '../backend/storage/User';
+import {RegisterWithBuy} from '../screens/RegisterWithBuy';
 
 const Stack = createStackNavigator();
 
 export const AppNavigation = () => {
   const ref = useRef();
-
-  // const {getInitialState} = useLinking(ref, {
-  //   prefixes: ['https://imbuefitness.app.link', 'imbuefitness://'],
-  //   config: {
-  //     screens: {
-  //       GymDescription: {
-  //         path: 'influencer/:id',
-  //         pards: {
-  //           id: String,
-  //         },
-  //       },
-  //     },
-  //   },
-  // });
+  const [initialState, setInitialState] = useState(null);
 
   const linking = {
-    prefixes: ['https://imbuefitness.app.link', 'imbuefitness://'],
-
-    // Custom function to get the URL which was used to open the app
-    async getInitialURL() {
-      // First, you may want to do the default deep link handling
-      // Check if app was opened from a deep link
-      const url = await Linking.getInitialURL();
-
-      if (url != null) {
-        return url;
-      }
-
-      // Next, you would need to get the initial URL from your third-party integration
-      // It depends on the third-party SDK you use
-      // For example, to get to get the initial URL for branch.io:
-      const params = branch.getFirstReferringParams();
-      console.log(url);
-      return params.$canonical_url;
-    },
-
-    // Custom function to subscribe to incoming links
+    prefixes: ['https://imbuefitness.app.link/', 'imbuefitness://'],
     subscribe(listener) {
-      // First, you may want to do the default deep link handling
-      const onReceiveURL = ({url}) => {
-        console.log('Linking: ' + url);
-        listener(url);
-      };
-
-      // Listen to incoming links from deep linking
-      Linking.addEventListener('url', onReceiveURL);
-
-      // Next, you would need to subscribe to incoming links from your third-party integration
-      // For example, to get to subscribe to incoming links from branch.io:
       branch.subscribe(({error, params, uri}) => {
-        console.log(uri);
         if (error) {
           console.error('Error from Branch: ' + error);
           return;
         }
-
+        // https://imbuefitness.app.link/UFilFKH3nfb
         if (params['+non_branch_link']) {
           const nonBranchUrl = params['+non_branch_link'];
-          // Route non-Branch URL if appropriate.
           return;
         }
 
         if (!params['+clicked_branch_link']) {
-          // Indicates initialization success and some other conditions.
-          // No link was opened.
           return;
         }
 
         // A Branch link was opened
-        const url = params.$canonical_url;
+        const url = params.$desktop_url;
+        console.log(url);
         listener(url);
       });
 
       return () => {
-        // Clean up the event listeners
-        Linking.removeEventListener('url', onReceiveURL);
+        // branch.unsubscribe();
       };
     },
     config: {
@@ -144,219 +99,286 @@ export const AppNavigation = () => {
     },
   };
 
-  const [initialState, setInitialState] = useState(null);
+  const bootWithUser = async () => {
+    const user = new User();
+    // console.log("await user.retrieveUser(): ", await user.retrieveUser())
+    const {account_type} = await user.retrieveUser();
+    const {approved} = await user.retrieveUser();
+    const {phone} = await user.retrieveUser();
+    const {associated_classes} = await user.retrieveUser();
+    const userDoc = await user.retrieveUser();
 
-  // useEffect(() => {
-  //   getInitialState().then((state) => {
-  //     console.log('State: ' + state);
-  //     console.log(auth().currentUser);
-  //     if (state !== undefined && auth().currentUser) {
-  //       setInitialState(state);
-  //     } else {
-  //       setInitialState({routes: [{name: 'Boot'}]});
-  //     }
-  //   });
-  // }, []);
+    switch (account_type) {
+      case 'user':
+        if (userDoc.dob) {
+          setInitialState({routes: [{name: 'UserDashboard'}]});
+          break;
+        } else if (!userDoc.dob) {
+          setInitialState({routes: [{name: 'UserOnboard'}]});
+          break;
+        }
+      case 'partner':
+        if (!approved) {
+          setInitialState({
+            routes: [{name: 'postApplicationUnverifiedPartner'}],
+          });
+          break;
+        } else if (approved && !phone) {
+          // add to SendGrid accepted influencers
+          try {
+            let listName = 'accepted influencer';
+            let email = userDoc.email;
+            let first = userDoc.first;
+            let last = userDoc.last;
 
-  // if (initialState)
-  return (
-    <NavigationContainer linking={linking}>
-      <Stack.Navigator
-        screenOptions={{
-          headerShown: false,
-        }}>
-        <Stack.Screen name="Boot" component={Boot} initialParams={{}} />
-        <Stack.Screen name="Landing" component={Landing} initialParams={{}} />
-        <Stack.Screen
-          name="MemberHome"
-          component={MemberHome}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerHome"
-          component={PartnerHome}
-          initialParams={{}}
-        />
-        <Stack.Screen name="SignUp" component={SignUp} initialParams={{}} />
-        <Stack.Screen name="Login" component={Login} initialParams={{}} />
-        <Stack.Screen
-          name="LoginPartner"
-          component={LoginPartner}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="UserDashboard"
-          component={UserDashboard}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="UserMemberships"
-          component={UserMemberships}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="ProfileSettings"
-          component={ProfileSettings}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PaymentSettings"
-          component={PaymentSettings}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="GymDescription"
-          component={GymDescription}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerSignUp"
-          component={PartnerSignUpV2}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerDashboard"
-          component={PartnerDashboard}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerGymSettings"
-          component={PartnerGymSettings}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerUpdateMemberships"
-          component={PartnerUpdateMemberships}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerRevenueInfo"
-          component={PartnerRevenueInfo}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PurchaseUnlimited"
-          component={PurchaseUnlimited}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="Livestream"
-          component={Livestream}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="LivestreamWaitScreen"
-          component={LivestreamWaitScreen}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="LivestreamDisconnectedScreen"
-          component={LivestreamDisconnectedScreen}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="SuccessScreen"
-          component={SuccessScreen}
-          initialParams={{}}
-        />
-        <Stack.Screen name="GoLive" component={GoLive} initialParams={{}} />
-        <Stack.Screen
-          name="AddPaymentMethod"
-          component={AddPaymentMethod}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="ScheduleViewer"
-          component={ScheduleViewer}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="ClassDescription"
-          component={ClassDescription}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerCreateClass"
-          component={PartnerCreateClass}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerEditClasses"
-          component={PartnerEditClasses}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="EditClassForm"
-          component={EditClassForm}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="SchedulePopulate"
-          component={SchedulePopulate}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="Test"
-          component={_TestingGrounds}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PasswordReset"
-          component={PasswordReset}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="MindbodyActivation"
-          component={MindbodyActivation}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="customRTMP"
-          component={customRTMP}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="postApplicationUnverifiedPartner"
-          component={postApplicationUnverifiedPartner}
-          initialParams={{}}
-        />
-        <Stack.Screen name="help" component={help} initialParams={{}} />
-        <Stack.Screen
-          name="PartnerApply"
-          component={PartnerApply}
-          initialParams={{}}
-        />
-        <Stack.Screen name={'PartnerStep'} component={PartnerStep} />
-        <Stack.Screen
-          name="PartnerOnboard"
-          component={PartnerOnboard}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerOnboardPhoto"
-          component={PartnerOnboardPhoto}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerOnboardStripe"
-          component={PartnerOnboardStripe}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PartnerOnboardStripeQuestions"
-          component={PartnerOnboardStripeQuestions}
-        />
-        <Stack.Screen
-          name="UserOnboard"
-          component={UserOnboard}
-          initialParams={{}}
-        />
-        <Stack.Screen
-          name="PreLiveChecklist"
-          component={PreLiveChecklist}
-          initialParams={{}}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
+            // Remove fromt Sendgrid
+            const removeFromSendGrid = functions().httpsCallable(
+              'removeFromSendGrid',
+            );
+            await removeFromSendGrid({email, first, last, listName});
+
+            // add to new list
+            const addToSendGrid = functions().httpsCallable('addToSendGrid');
+            await addToSendGrid({email, first, last, listName});
+          } catch (err) {
+            console.log("addToSendGrid didn't work: ", err);
+          }
+
+          // remove from SendGrid applied influencers
+
+          setInitialState({routes: [{name: 'PartnerOnboard'}]});
+          break;
+        } else if (approved && associated_classes) {
+          setInitialState({routes: [{name: 'PartnerDashboard'}]});
+          break;
+        } else if (approved && phone) {
+          setInitialState({routes: [{name: 'PartnerDashboard'}]});
+          break;
+        }
+      default:
+        setInitialState({routes: [{name: 'Landing'}]});
+        break;
+    }
+  };
+
+  useEffect(() => {
+    cache()._resetCache();
+
+    const init = async () => {
+      if (auth().currentUser) {
+        await bootWithUser();
+      } else {
+        console.log('else');
+        setInitialState({routes: [{name: 'Landing'}]});
+      }
+    };
+    init();
+  }, []);
+
+  if (initialState)
+    return (
+      <NavigationContainer
+        linking={linking}
+        initialState={initialState}
+        fallback={() => <Text>Loading...</Text>}>
+        <Stack.Navigator
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen name="Boot" component={Boot} initialParams={{}} />
+          <Stack.Screen name="Landing" component={Landing} initialParams={{}} />
+          <Stack.Screen
+            name="MemberHome"
+            component={MemberHome}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerHome"
+            component={PartnerHome}
+            initialParams={{}}
+          />
+          <Stack.Screen name="SignUp" component={SignUp} initialParams={{}} />
+          <Stack.Screen name="Login" component={Login} initialParams={{}} />
+          <Stack.Screen
+            name="LoginPartner"
+            component={LoginPartner}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="UserDashboard"
+            component={UserDashboard}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="UserMemberships"
+            component={UserMemberships}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="ProfileSettings"
+            component={ProfileSettings}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PaymentSettings"
+            component={PaymentSettings}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="GymDescription"
+            component={GymDescription}
+            initialParams={{}}
+          />
+          <Stack.Screen name={'RegisterWithBuy'} component={RegisterWithBuy} />
+          <Stack.Screen
+            name="PartnerSignUp"
+            component={PartnerSignUpV2}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerDashboard"
+            component={PartnerDashboard}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerGymSettings"
+            component={PartnerGymSettings}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerUpdateMemberships"
+            component={PartnerUpdateMemberships}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerRevenueInfo"
+            component={PartnerRevenueInfo}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PurchaseUnlimited"
+            component={PurchaseUnlimited}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="Livestream"
+            component={Livestream}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="LivestreamWaitScreen"
+            component={LivestreamWaitScreen}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="LivestreamDisconnectedScreen"
+            component={LivestreamDisconnectedScreen}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="SuccessScreen"
+            component={SuccessScreen}
+            initialParams={{}}
+          />
+          <Stack.Screen name="GoLive" component={GoLive} initialParams={{}} />
+          <Stack.Screen
+            name="AddPaymentMethod"
+            component={AddPaymentMethod}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="ScheduleViewer"
+            component={ScheduleViewer}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="ClassDescription"
+            component={ClassDescription}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerCreateClass"
+            component={PartnerCreateClass}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerEditClasses"
+            component={PartnerEditClasses}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="EditClassForm"
+            component={EditClassForm}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="SchedulePopulate"
+            component={SchedulePopulate}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="Test"
+            component={_TestingGrounds}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PasswordReset"
+            component={PasswordReset}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="MindbodyActivation"
+            component={MindbodyActivation}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="customRTMP"
+            component={customRTMP}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="postApplicationUnverifiedPartner"
+            component={postApplicationUnverifiedPartner}
+            initialParams={{}}
+          />
+          <Stack.Screen name="help" component={help} initialParams={{}} />
+          <Stack.Screen
+            name="PartnerApply"
+            component={PartnerApply}
+            initialParams={{}}
+          />
+          <Stack.Screen name={'PartnerStep'} component={PartnerStep} />
+          <Stack.Screen
+            name="PartnerOnboard"
+            component={PartnerOnboard}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerOnboardPhoto"
+            component={PartnerOnboardPhoto}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerOnboardStripe"
+            component={PartnerOnboardStripe}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PartnerOnboardStripeQuestions"
+            component={PartnerOnboardStripeQuestions}
+          />
+          <Stack.Screen
+            name="UserOnboard"
+            component={UserOnboard}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="PreLiveChecklist"
+            component={PreLiveChecklist}
+            initialParams={{}}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    );
+  return null;
 };

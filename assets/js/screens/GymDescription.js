@@ -56,17 +56,7 @@ export default function GymDescription(props) {
   const [popup, setPopup] = useState(false);
 
   const [hasMembership, setHasMembership] = useState(null);
-
-  // useEffect(() => {
-  //   const init = async () => {
-  //     const user = new User()
-  //     setUser(await user.retrieveUser())
-
-  //     const gym = new Gym()
-  //     setGym(await gym.retrieveGym(gymId))
-  //     console.log("gym (description): ", gym)
-  //   }; init()
-  // }, [popup])
+  ``;
 
   useEffect(() => {
     setGymId(id);
@@ -80,17 +70,17 @@ export default function GymDescription(props) {
     };
     init();
   }, []);
-
+  // https://imbuefitness.app.link/aEImCZ8ksfb
   function getFormatted(classItem) {
     const processedClass = classItem; // avoid affecting cache
-    processedClass.active_times = processedClass.active_times.map(
-      (timeDoc) => ({...timeDoc}),
-    ); // avoid affecting cache
+    processedClass.active_times = processedClass.active_times.map(timeDoc => ({
+      ...timeDoc,
+    })); // avoid affecting cache
     const {active_times} = processedClass;
     const currentTs = Date.now();
     let additionalFields;
 
-    active_times.forEach((timeDoc) => {
+    active_times.forEach(timeDoc => {
       const {begin_time, end_time} = timeDoc;
 
       // Add formatting to class,
@@ -136,10 +126,10 @@ export default function GymDescription(props) {
         await firestore()
           .collection('classes')
           .get()
-          .then((querySnapshot) => {
+          .then(querySnapshot => {
             const classes = [];
 
-            querySnapshot.forEach((documentSnapshot) => {
+            querySnapshot.forEach(documentSnapshot => {
               if (documentSnapshot.data().gym_id == gymId) {
                 let formatted = getFormatted(documentSnapshot.data());
                 classes.push({
@@ -301,7 +291,7 @@ export default function GymDescription(props) {
                   } `}</Text>
                 }
                 onX={() => setPopup(null)}
-                onCardSelect={async (paymentMethodId) => {
+                onCardSelect={async paymentMethodId => {
                   try {
                     setErrorMsg('');
                     setSuccessMsg('');

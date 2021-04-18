@@ -72,9 +72,9 @@ export default function ScheduleViewer(props) {
         if (classIds) {
           console.log(1111);
 
-          classStuff = (
-            await classes.retrieveWhere('id', 'in', classIds)
-          ).map((it) => it.getFormatted());
+          classStuff = (await classes.retrieveWhere('id', 'in', classIds)).map(
+            it => it.getFormatted(),
+          );
 
           setCalendarData(classStuff);
 
@@ -89,10 +89,10 @@ export default function ScheduleViewer(props) {
           const getGymClasses = await firestore()
             .collection('classes')
             .get()
-            .then((querySnapshot) => {
+            .then(querySnapshot => {
               const classes = [];
 
-              querySnapshot.forEach((documentSnapshot) => {
+              querySnapshot.forEach(documentSnapshot => {
                 if (documentSnapshot.data().gym_id == gymId) {
                   let formatted = getFormatted(documentSnapshot.data());
                   classes.push({
@@ -108,22 +108,18 @@ export default function ScheduleViewer(props) {
         } else {
           console.log(3333);
 
-          const classStuff = (await user.retrieveScheduledClasses()).map(
-            (it) => {
-              let data = it.getFormatted();
-              let activeDateForUser = [];
-              data.active_times.forEach((time) => {
-                if (
-                  fireUser.active_classes.some(
-                    (el) => el.time_id === time.time_id,
-                  )
-                )
-                  activeDateForUser.push(time);
-              });
-              data.active_times = activeDateForUser;
-              return data;
-            },
-          );
+          const classStuff = (await user.retrieveScheduledClasses()).map(it => {
+            let data = it.getFormatted();
+            let activeDateForUser = [];
+            data.active_times.forEach(time => {
+              if (
+                fireUser.active_classes.some(el => el.time_id === time.time_id)
+              )
+                activeDateForUser.push(time);
+            });
+            data.active_times = activeDateForUser;
+            return data;
+          });
 
           setCalendarData(classStuff);
           // if (user.accountType == 'user') classData = await filterUserClasses()
@@ -197,14 +193,14 @@ export default function ScheduleViewer(props) {
 
   function getFormatted(classItem) {
     const processedClass = classItem; // avoid affecting cache
-    processedClass.active_times = processedClass.active_times.map(
-      (timeDoc) => ({...timeDoc}),
-    ); // avoid affecting cache
+    processedClass.active_times = processedClass.active_times.map(timeDoc => ({
+      ...timeDoc,
+    })); // avoid affecting cache
     const {active_times} = processedClass;
     const currentTs = Date.now();
     let additionalFields;
 
-    active_times.forEach((timeDoc) => {
+    active_times.forEach(timeDoc => {
       const {begin_time, end_time} = timeDoc;
 
       // Add formatting to class,
@@ -441,7 +437,7 @@ const styles = StyleSheet.create({
     color: '#f9f9f9',
   },
   pickerDropDown: {
-    ...simpleShadow,
+    // ...simpleShadow,
     borderBottomLeftRadius: 30,
     borderBottomRightRadius: 30,
   },

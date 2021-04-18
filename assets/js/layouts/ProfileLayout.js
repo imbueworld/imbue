@@ -31,6 +31,7 @@ import {LoginManager} from 'react-native-fbsdk';
 import User from '../backend/storage/User';
 import config from '../../../App.config';
 import Share from 'react-native-share';
+import branch from 'react-native-branch';
 
 export default function ProfileLayout(props) {
   const {onNextButton, gym} = props;
@@ -179,12 +180,36 @@ export default function ProfileLayout(props) {
           </TouchableOpacity>
           {gym ? (
             <TouchableOpacity
-              onPress={() =>
+              onPress={async () => {
+                let branchUniversalObject = await branch.createBranchUniversalObject(
+                  'canonicalIdentifier',
+                  {
+                    locallyIndex: true,
+                    contentMetadata: {
+                      customMetadata: {
+                        influencer: gym.id,
+                      },
+                    },
+                  },
+                );
+                let linkProperties = {
+                  feature: 'share',
+                };
+
+                let controlParams = {
+                  $desktop_url: `https:/imbuefitness.app.link/influencer/${gym.id}`,
+                };
+
+                let {url} = await branchUniversalObject.generateShortUrl(
+                  linkProperties,
+                  controlParams,
+                );
+                console.log(url);
                 Share.open({
                   title: gym.name,
-                  message: `https:/imbuefitness.app.link/influencer/${gym.id}`,
-                })
-              }
+                  message: url,
+                });
+              }}
               activeOpacity={0.2}
               style={{
                 alignSelf: 'center',

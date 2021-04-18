@@ -96,7 +96,7 @@ export default function LoginPartner(props) {
               imageStyle={{
                 width: 48,
                 height: 48,
-                simpleShadow,
+                // simpleShadow,
               }}
             />
           </TouchableHighlight>

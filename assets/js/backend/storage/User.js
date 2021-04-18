@@ -2,13 +2,13 @@ import DataObject from './DataObject';
 import ClassesCollection from './ClassesCollection';
 import GymsCollection from './GymsCollection';
 import cache from './cache';
-import {Platform} from 'react-native';
+import { Platform } from 'react-native';
 
 import auth from '@react-native-firebase/auth';
 import firestore from '@react-native-firebase/firestore';
 import functions from '@react-native-firebase/functions';
 import storage from '@react-native-firebase/storage';
-import {geocodeAddress, publicStorage} from '../BackendFunctions';
+import { geocodeAddress, publicStorage } from '../BackendFunctions';
 import {
   ClassAlreadyBoughtError,
   ClassAlreadyScheduledError,
@@ -23,7 +23,7 @@ import ImagePicker from 'react-native-image-picker';
 import Class from './Class';
 import config from '../../../../App.config';
 import Gym from './Gym';
-import {add} from 'react-native-reanimated';
+import { add } from 'react-native-reanimated';
 const p = console.log;
 
 /**
@@ -42,7 +42,7 @@ export default class User extends DataObject {
 
     // When instantiating the user could be signed in, could also not be
     if (firebaseUser) {
-      const {displayName} = firebaseUser;
+      const { displayName } = firebaseUser;
       // console.log('firebaseUser', firebaseUser) // DEBUG
       // console.log('displayName', displayName) // DEBUG
       if (displayName) {
@@ -68,9 +68,11 @@ export default class User extends DataObject {
    * (avoiding wasteful computation).
    */
   async init() {
-    const {uid} = this.firebaseUser || {};
+    const { uid } = this.firebaseUser || {};
+    if (uid === undefined) {
+      return;
+    }
     await this.initByUid(uid);
-
     // If data is missing (about user's uid) from database,
     // then assume the user has been deleted, and log out
     if (!this._getCacheObj().get()) {
@@ -172,7 +174,7 @@ export default class User extends DataObject {
         icon_uri_foreign = null;
       } else {
         // Sign up through socials
-        const {accountType, user} = options;
+        const { accountType, user } = options;
 
         account_type = accountType;
         uid = user.uid;
@@ -405,7 +407,7 @@ export default class User extends DataObject {
   async retrieveScheduledClasses() {
     await this.init();
     const collection = new ClassesCollection();
-    const {scheduled_classes = []} = this.getAll();
+    const { scheduled_classes = [] } = this.getAll();
 
     // Extract the class_id from an Array of Objects containing class_id and time_id
     let classIds = scheduled_classes.map(it => it.class_id);
@@ -419,7 +421,7 @@ export default class User extends DataObject {
   async retrievePartnerGyms() {
     await this.init();
     const collection = new GymsCollection();
-    const {associated_gyms = []} = this.getAll();
+    const { associated_gyms = [] } = this.getAll();
 
     if (this.accountType != 'partner') return;
 
@@ -429,8 +431,8 @@ export default class User extends DataObject {
 
   async addPaymentMethod(form) {
     await this.init();
-    let {cardNumber, expMonth, expYear, cvc, cardHolderName, zip} = form;
-
+    let { cardNumber, expMonth, expYear, cvc, cardHolderName, zip } = form;
+    console.log(form);
     // Add the payment method through Google Cloud Function
     const addPaymentMethod = functions().httpsCallable('addPaymentMethod');
     const paymentMethod = (await addPaymentMethod(form)).data;
@@ -439,6 +441,7 @@ export default class User extends DataObject {
     const cacheObj = cache(`${this.collection}/${this.uid}/payment_methods`);
     const data = cacheObj.get() || [];
     cacheObj.set([...data, paymentMethod]);
+    return paymentMethod;
   }
 
   /**
@@ -448,17 +451,17 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper('purchaseClass', async () => {
       await this.init();
 
-      let {paymentMethodId, classId, timeId} = details;
+      let { paymentMethodId, classId, timeId } = details;
 
       // Charge user
       const makePurchase = functions().httpsCallable(
         'purchaseClassWithPaymentMethod',
       );
-      // await makePurchase({paymentMethodId, classId, timeId});
+      await makePurchase({ paymentMethodId, classId, timeId });
 
       // After successful charge, register it for user in their doc
-      const {active_classes = [], scheduled_classes = []} = this.getAll();
-      let newEntry = {class_id: classId, time_id: timeId};
+      const { active_classes = [], scheduled_classes = [] } = this.getAll();
+      let newEntry = { class_id: classId, time_id: timeId };
       this.mergeItems({
         active_classes: [...active_classes, newEntry],
         scheduled_classes: [...scheduled_classes, newEntry],
@@ -474,7 +477,7 @@ export default class User extends DataObject {
     await this.init();
     console.log('called');
 
-    let {classId, timeId} = details;
+    let { classId, timeId } = details;
 
     //get active_times and update relevant attendees
     let int = 0;
@@ -507,8 +510,8 @@ export default class User extends DataObject {
       });
 
     // After successful charge, register it for user in their doc
-    const {active_classes = [], scheduled_classes = []} = this.getAll();
-    let newEntry = {class_id: classId, time_id: timeId};
+    const { active_classes = [], scheduled_classes = [] } = this.getAll();
+    let newEntry = { class_id: classId, time_id: timeId };
     this.mergeItems({
       active_classes: [...active_classes, newEntry],
       scheduled_classes: [...scheduled_classes, newEntry],
@@ -523,12 +526,12 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper('scheduleClass', async () => {
       await this.init();
 
-      let {classId, timeId} = details;
+      let { classId, timeId } = details;
 
       // Validate that it hasn't, for whatever reason, already been scheduled.
       await this._forcePull();
-      const {scheduled_classes = []} = this.getAll();
-      scheduled_classes.forEach(({class_id, time_id}) => {
+      const { scheduled_classes = [] } = this.getAll();
+      scheduled_classes.forEach(({ class_id, time_id }) => {
         if (class_id == classId && time_id == timeId)
           throw 'Class already scheduled.';
       });
@@ -538,16 +541,16 @@ export default class User extends DataObject {
       // if it is, try to sign up for it as a Mindbody Client.
       // If that fails, return
       const classObj = new Class();
-      let {mindbody_integration} = await classObj.retrieveClass(classId);
+      let { mindbody_integration } = await classObj.retrieveClass(classId);
       if (mindbody_integration) {
         const addClient = functions().httpsCallable('addMindbodyClientToClass');
-        const {error} = (await addClient({classId})).data || {};
+        const { error } = (await addClient({ classId })).data || {};
         if (error) throw error;
       }
 
       // Add to schedule, push it to user doc,
       // and let the Google Cloud .onUpdate function do the rest.
-      let newEntry = {class_id: classId, time_id: timeId};
+      let newEntry = { class_id: classId, time_id: timeId };
       this.mergeItems({
         scheduled_classes: [...scheduled_classes, newEntry],
       });
@@ -562,12 +565,12 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper('unscheduleClass', async () => {
       await this.init();
 
-      let {classId, timeId} = details;
+      let { classId, timeId } = details;
 
       // Filter out of the list of scheduled classes
-      const {scheduled_classes = []} = this.getAll();
+      const { scheduled_classes = [] } = this.getAll();
       const filteredClasses = scheduled_classes.filter(
-        ({class_id, time_id}) => {
+        ({ class_id, time_id }) => {
           if (class_id == classId && time_id == timeId) return;
           return true;
         },
@@ -575,7 +578,7 @@ export default class User extends DataObject {
 
       // Push new list to user doc,
       // and let the Google Cloud .onUpdate function do the rest.
-      this.mergeItems({scheduled_classes: filteredClasses});
+      this.mergeItems({ scheduled_classes: filteredClasses });
       await this.push();
 
       // [ Mindbody ]
@@ -584,12 +587,12 @@ export default class User extends DataObject {
       // because it is more important that local membership instances
       // get updated
       const classObj = new Class();
-      let {mindbody_integration} = await classObj.retrieveClass(classId);
+      let { mindbody_integration } = await classObj.retrieveClass(classId);
       if (mindbody_integration) {
         const removeClient = functions().httpsCallable(
           'removeMindbodyClientFromClass',
         );
-        await removeClient({classId});
+        await removeClient({ classId });
       }
     });
   }
@@ -602,16 +605,16 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper('purchaseGymMembership', async () => {
       await this.init();
 
-      let {user, paymentMethodId, gymId} = details;
+      let { user, paymentMethodId, gymId } = details;
 
       console.log('details: ', details);
 
       // Charge user
       const makePurchase = functions().httpsCallable('purchaseMembership');
-      await makePurchase({paymentMethodId, gymId});
+      await makePurchase({ paymentMethodId, gymId });
 
       // After a successful charge, register the membership
-      const {active_memberships = []} = this.getAll();
+      const { active_memberships = [] } = this.getAll();
       this.mergeItems({
         active_memberships: [...active_memberships, gymId],
       });
@@ -626,14 +629,14 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper('purchaseImbueMembership', async () => {
       await this.init();
 
-      let {paymentMethodId} = details;
+      let { paymentMethodId } = details;
 
       // Charge user
       const makePurchase = functions().httpsCallable('purchaseImbueMembership');
-      await makePurchase({paymentMethodId});
+      await makePurchase({ paymentMethodId });
 
       // After a successful charge, register the membership
-      const {active_memberships = []} = this.getAll();
+      const { active_memberships = [] } = this.getAll();
       this.mergeItems({
         active_memberships: [...active_memberships, 'imbue'],
       });
@@ -648,14 +651,14 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper('cancelMembership', async () => {
       await this.init();
 
-      let {gymId} = details;
+      let { gymId } = details;
 
       // Cancel it
       const cancelMembership = functions().httpsCallable('cancelMembership');
-      await cancelMembership({gymId});
+      await cancelMembership({ gymId });
 
       // After successfully cancelling the membership, update user doc
-      const {active_memberships = []} = this.getAll();
+      const { active_memberships = [] } = this.getAll();
       this.mergeItems({
         active_memberships: active_memberships.filter(
           gym_id => gym_id != gymId,
@@ -672,20 +675,20 @@ export default class User extends DataObject {
   async createLivestream(details) {
     return await this._BusyErrorWrapper('createLivestream', async () => {
       await this.init();
-      let {gymId} = details;
-      const {stream_key} = this.getAll();
+      let { gymId } = details;
+      const { stream_key } = this.getAll();
 
       if (stream_key) return stream_key;
 
       // Call Google Cloud Function, which creates LS & assigns it to user
       const createLivestream = functions().httpsCallable('createLivestream');
-      await createLivestream({gymId});
+      await createLivestream({ gymId });
 
       // Attempt many times to get it from the field, because it may not be
       // there instantly, or in the worst case – at all
       for (let i = 0; i < 15; i++) {
         await this._forcePull();
-        let {stream_key: streamKey} = this.getAll();
+        let { stream_key: streamKey } = this.getAll();
 
         if (streamKey) return streamKey;
         await new Promise(r => setTimeout(r, 3500)); // sleep
@@ -726,12 +729,12 @@ export default class User extends DataObject {
         //   fileSize,
         // } = res
         console.log(res);
-        const source = {uri: res.uri};
+        const source = { uri: res.uri };
 
         console.log('source: ' + JSON.stringify(source));
         // console.log("uri: " + source)
 
-        const {id: userId} = this.getAll();
+        const { id: userId } = this.getAll();
 
         // 8MB of file size limit
         // if (fileSize > 8 * 1024 * 1024) {
@@ -884,7 +887,7 @@ export default class User extends DataObject {
     return await this._BusyErrorWrapper(
       'requestMindbodyActivation',
       async () => {
-        let {siteId} = details;
+        let { siteId } = details;
         const requestActivation = functions().httpsCallable(
           'getMindbodyActivationCode',
         );
@@ -943,7 +946,7 @@ export default class User extends DataObject {
     // }
     //
     if (formatted_address) {
-      const {address} =
+      const { address } =
         pfGeocodeAddress || (await geocodeAddress(formatted_address)) || {};
       if (config.DEBUG) p('address', address);
       // Do not continue, if provided address is invalid.

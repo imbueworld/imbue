@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -12,9 +12,9 @@ import {
   Image,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import {publicStorage} from '../backend/BackendFunctions';
-import {useDimensions} from '@react-native-community/hooks';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { publicStorage } from '../backend/BackendFunctions';
+import { useDimensions } from '@react-native-community/hooks';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 import ProfileLayout from '../layouts/ProfileLayout';
 import {
@@ -25,30 +25,30 @@ import {
 import CustomButton from '../components/CustomButton';
 import auth from '@react-native-firebase/auth';
 import Icon from '../components/Icon';
-import {simpleShadow} from '../contexts/Colors';
-import {GoogleSignin} from '@react-native-community/google-signin';
-import {LoginManager} from 'react-native-fbsdk';
-import {useNavigation} from '@react-navigation/native';
+import { simpleShadow } from '../contexts/Colors';
+import { GoogleSignin } from '@react-native-community/google-signin';
+import { LoginManager } from 'react-native-fbsdk';
+import { useNavigation } from '@react-navigation/native';
 import User from '../backend/storage/User';
 import cache from '../backend/storage/cache';
 import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay';
 import config from '../../../App.config';
 //import { create } from 'react-test-renderer';
-import {FONTS} from '../contexts/Styles';
-import {colors} from '../contexts/Colors';
+import { FONTS } from '../contexts/Styles';
+import { colors } from '../contexts/Colors';
 import LottieView from 'lottie-react-native';
 import CalendarView from '../components/CalendarView';
 import ClassList from '../components/ClassList';
 import useStore from '../store/RootStore';
-import {observer} from 'mobx-react-lite';
+import { observer } from 'mobx-react-lite';
 
-const UserDashboard = observer((props) => {
-  const {userStore} = useStore();
+const UserDashboard = observer(props => {
+  const { userStore } = useStore();
   const navigation = useNavigation();
 
   const [expanded, setExpanded] = useState(null);
   const [loading, setLoading] = useState(true);
-  const {width, height} = useDimensions().window;
+  const { width, height } = useDimensions().window;
   const slidingAnim = useRef(new Animated.Value(-1 * width - 25)).current;
   const cardIconLength = width / 4;
   const [calendarData, setCalendarData] = useState(null);
@@ -72,10 +72,10 @@ const UserDashboard = observer((props) => {
     firestore()
       .collection('partners')
       .get()
-      .then(async (querySnapshot) => {
+      .then(async querySnapshot => {
         let resPartners = [];
         let resFeaturePartners = [];
-        querySnapshot.forEach(async (documentSnapshot) => {
+        querySnapshot.forEach(async documentSnapshot => {
           const partnersData = documentSnapshot.data();
           if (partnersData.approved == true) {
             // perfectFeaturedPartnersList(documentSnapshot.data());
@@ -95,9 +95,9 @@ const UserDashboard = observer((props) => {
         firestore()
           .collection('gyms')
           .get()
-          .then((querySnapshot) => {
+          .then(querySnapshot => {
             let resGyms = [];
-            querySnapshot.forEach((documentSnapshot) => {
+            querySnapshot.forEach(documentSnapshot => {
               resGyms.push(documentSnapshot.data());
             });
             setGyms(resGyms);
@@ -121,7 +121,7 @@ const UserDashboard = observer((props) => {
    */
   useEffect(() => {
     cache('UserDashboard/toggleMenu').set(() =>
-      setExpanded((expanded) => !expanded),
+      setExpanded(expanded => !expanded),
     );
 
     // Takes control or releases it upon each toggle of the side menu
@@ -177,7 +177,7 @@ const UserDashboard = observer((props) => {
   }, [expanded]);
 
   // render each card
-  const Item = ({description, item, onPress}) => (
+  const Item = ({ description, item, onPress }) => (
     <TouchableOpacity
       activeOpacity={0.9}
       onPress={onPress}
@@ -189,16 +189,16 @@ const UserDashboard = observer((props) => {
           borderRadius: 50,
           overflow: 'hidden',
         }}
-        source={{uri: item.icon_uri}}
+        source={{ uri: item.icon_uri }}
       />
       <Text style={styles.itemName}>{item.first}</Text>
       <Text style={styles.itemDescription}>{description}</Text>
     </TouchableOpacity>
   );
 
-  const renderItem = ({item}) => {
+  const renderItem = ({ item }) => {
     var gymId = item.associated_gyms;
-    const filterGyms = gyms.filter((data) => data.id === gymId[0]);
+    const filterGyms = gyms.filter(data => data.id === gymId[0]);
 
     if (filterGyms.length !== 0) {
       return (
@@ -206,7 +206,7 @@ const UserDashboard = observer((props) => {
           description={filterGyms[0].description}
           item={item}
           onPress={() => navigation.navigate('GymDescription', filterGyms[0])}
-          style={{backgroundColor: '#333', borderRadius: 30}}
+          style={{ backgroundColor: '#333', borderRadius: 30 }}
         />
       );
     }
@@ -216,8 +216,8 @@ const UserDashboard = observer((props) => {
     <SafeAreaView style={expanded == true ? styles.sa2 : styles.sa1}>
       <KeyboardAwareScrollView
         showsVerticalScrollIndicator={false}
-        style={{flex: 1}}
-        contentContainerStyle={{paddingBottom: 20}}
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
         keyboardShouldPersistTaps="handled">
         {!user ? null : (
           <View
@@ -239,16 +239,16 @@ const UserDashboard = observer((props) => {
                   height: 64,
                   borderRadius: 999,
                   overflow: 'hidden',
-                  ...simpleShadow,
+                  // ...simpleShadow,
                 }}
-                source={{uri: user.icon_uri_full}}
+                source={{ uri: user.icon_uri_full }}
               />
             </TouchableOpacity>
           </View>
         )}
 
         {!user ? null : (
-          <Animated.View style={[styles.sidePanel, {left: slidingAnim}]}>
+          <Animated.View style={[styles.sidePanel, { left: slidingAnim }]}>
             <ProfileLayout
               innerContainerStyle={{
                 paddingBottom: 10,
@@ -265,7 +265,7 @@ const UserDashboard = observer((props) => {
                     if (expanded) setExpanded(false);
                     navigation.reset({
                       index: 0,
-                      routes: [{name: 'Boot'}],
+                      routes: [{ name: 'Boot' }],
                     });
                   },
                 },
@@ -392,9 +392,9 @@ const UserDashboard = observer((props) => {
                 horizontal
                 data={featuredPartners}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
+                keyExtractor={item => item.id}
                 style={{}}
-                contentContainerStyle={{paddingHorizontal: 10}}
+                contentContainerStyle={{ paddingHorizontal: 10 }}
                 showsHorizontalScrollIndicator={false}
               />
             </View>
@@ -406,29 +406,29 @@ const UserDashboard = observer((props) => {
                 horizontal
                 data={partners}
                 renderItem={renderItem}
-                keyExtractor={(item) => item.id}
-                contentContainerStyle={{paddingHorizontal: 10}}
+                keyExtractor={item => item.id}
+                contentContainerStyle={{ paddingHorizontal: 10 }}
                 style={{}}
                 showsHorizontalScrollIndicator={false}
               />
             </View>
           </>
         ) : (
-          <View
-            style={[
-              styles.cardContainer,
-              {
-                alignItems: 'center',
-              },
-            ]}>
-            <LottieView
-              source={require('../components/img/animations/cat-loading.json')}
-              style={{height: 100, width: 100}}
-              autoPlay
-              loop
-            />
-          </View>
-        )}
+            <View
+              style={[
+                styles.cardContainer,
+                {
+                  alignItems: 'center',
+                },
+              ]}>
+              <LottieView
+                source={require('../components/img/animations/cat-loading.json')}
+                style={{ height: 100, width: 100 }}
+                autoPlay
+                loop
+              />
+            </View>
+          )}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );
