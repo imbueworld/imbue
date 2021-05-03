@@ -174,15 +174,15 @@ export default function ClassDescription(props) {
 
       const { id: imbueId } = await imbue.retrieveGym('imbue');
 
-      let activeTimeIds = user.active_classes.map(active => active.time_id);
+      let activeTimeIds = user.active_classes.map((active) => active.time_id);
 
       let hasMembership = user.active_memberships.includes(imbueId)
         ? 'imbue'
         : user.active_memberships.includes(gym.id)
-          ? 'gym'
-          : activeTimeIds.includes(timeId)
-            ? 'class'
-            : false;
+        ? 'gym'
+        : activeTimeIds.includes(timeId)
+        ? 'class'
+        : false;
 
       setHasMembership(hasMembership);
     };
@@ -278,7 +278,7 @@ export default function ClassDescription(props) {
   // helper variable
   const classIsAddedToCalendar =
     user.account_type == 'user'
-      ? user.scheduled_classes.map(it => it.time_id).includes(timeId)
+      ? user.scheduled_classes.map((it) => it.time_id).includes(timeId)
       : null;
 
   function getGoToLivestreamButton() {
@@ -302,11 +302,11 @@ export default function ClassDescription(props) {
     await firestore()
       .collection('classes')
       .get()
-      .then(querySnapshot => {
-        querySnapshot.forEach(documentSnapshot => {
+      .then((querySnapshot) => {
+        querySnapshot.forEach((documentSnapshot) => {
           if (documentSnapshot.data().id == classId) {
             // map through active times
-            documentSnapshot.data().active_times.forEach(clss => {
+            documentSnapshot.data().active_times.forEach((clss) => {
               // find relevant time, don't add back to lis
               if (clss.time_id == timeId) {
               } else {
@@ -318,12 +318,9 @@ export default function ClassDescription(props) {
       });
 
     // push updated times to firebase
-    firestore()
-      .collection('classes')
-      .doc(classId)
-      .update({
-        active_times: newTimes,
-      });
+    firestore().collection('classes').doc(classId).update({
+      active_times: newTimes,
+    });
 
     setSuccessMsg('Successfully removed class.');
 
@@ -416,7 +413,9 @@ export default function ClassDescription(props) {
           {Content}
 
           {errorMsg ? (
-            <Text style={{ color: 'red', textAlign: 'center' }}>{errorMsg}</Text>
+            <Text style={{ color: 'red', textAlign: 'center' }}>
+              {errorMsg}
+            </Text>
           ) : null}
           {successMsg ? (
             <Text style={{ color: 'green', textAlign: 'center' }}>
@@ -451,7 +450,7 @@ export default function ClassDescription(props) {
                         </Text>
                       }
                       onX={() => setPopup(null)}
-                      onCardSelect={async paymentMethodId => {
+                      onCardSelect={async (paymentMethodId) => {
                         try {
                           setErrorMsg('');
                           setSuccessMsg('');
@@ -507,6 +506,7 @@ export default function ClassDescription(props) {
                             marginTop: 5,
                             ...FONTS.body,
                             fontSize: 12,
+                            textAlign: 'center',
                           }}>
                           You must enter your Date of birth before you can book
                           a class
@@ -515,6 +515,7 @@ export default function ClassDescription(props) {
                           style={{
                             ...FONTS.body,
                             fontSize: 8,
+                            textAlign: 'center',
                           }}>
                           Your birhday is needed for stripe, our payment
                           processor
@@ -528,134 +529,137 @@ export default function ClassDescription(props) {
                       />
                     </>
                   ) : (
-                          <View>
-                            {buttonDisabled ? (
-                              <View style={{ alignItems: 'center' }}>
-                                <LottieView
-                                  source={require('../components/img/animations/cat-loading.json')}
-                                  style={{ height: 100, width: 100 }}
-                                  autoPlay
-                                  loop
-                                />
-                              </View>
-                            ) : (
-                                <CustomButton
-                                  style={{
-                                    marginBottom: 0,
-                                  }}
-                                  title="Add to Calendar"
-                                  onPress={async () => {
-                                    setButtonDisabled(true);
-                                    console.log('test');
-                                    // enable after 10 second
+                    <View>
+                      {buttonDisabled ? (
+                        <View style={{ alignItems: 'center' }}>
+                          <LottieView
+                            source={require('../components/img/animations/cat-loading.json')}
+                            style={{ height: 100, width: 100 }}
+                            autoPlay
+                            loop
+                          />
+                        </View>
+                      ) : (
+                        <CustomButton
+                          style={{
+                            marginBottom: 0,
+                          }}
+                          title="Add to Calendar"
+                          onPress={async () => {
+                            setButtonDisabled(true);
+                            console.log('test');
+                            // enable after 10 second
 
-                                    if (buttonDisabled != true) {
-                                      try {
-                                        setErrorMsg('');
-                                        setSuccessMsg('');
+                            if (buttonDisabled != true) {
+                              try {
+                                setErrorMsg('');
+                                setSuccessMsg('');
 
-                                        const { id: classId, time_id: timeId } = classDoc;
+                                const {
+                                  id: classId,
+                                  time_id: timeId,
+                                } = classDoc;
 
-                                        // add class to user's native calendar
-                                        console.log('classDoc: ', classDoc);
+                                // add class to user's native calendar
+                                console.log('classDoc: ', classDoc);
 
-                                        let beg_time = classDoc.begin_time;
-                                        let end_time = classDoc.end_time;
+                                let beg_time = classDoc.begin_time;
+                                let end_time = classDoc.end_time;
 
-                                        // Get event ID from firestore
-                                        const updatedClass = await firestore()
-                                          .collection('classes')
-                                          .doc(classDoc.id)
-                                          .get();
+                                // Get event ID from firestore
+                                const updatedClass = await firestore()
+                                  .collection('classes')
+                                  .doc(classDoc.id)
+                                  .get();
 
-                                        let calendarId = updatedClass.data().calendarId;
+                                let calendarId = updatedClass.data().calendarId;
 
-                                        ///// Take care of duplicate entries
-                                        if (calendarId) {
-                                          RNCalendarEvents.removeEvent(calendarId);
-                                        }
+                                ///// Take care of duplicate entries
+                                if (calendarId) {
+                                  RNCalendarEvents.removeEvent(calendarId);
+                                }
 
-                                        // add to calendar
-                                        await RNCalendarEvents.requestPermissions();
-                                        let response = await RNCalendarEvents.saveEvent(
-                                          classDoc.name + ' Imbue Class',
-                                          {
-                                            startDate: beg_time,
-                                            endDate: end_time,
-                                            notes:
-                                              'Open the Imbue app at class time to join',
-                                          },
-                                        );
+                                // add to calendar
+                                await RNCalendarEvents.requestPermissions();
+                                let response = await RNCalendarEvents.saveEvent(
+                                  classDoc.name + ' Imbue Class',
+                                  {
+                                    startDate: beg_time,
+                                    endDate: end_time,
+                                    notes:
+                                      'Open the Imbue app at class time to join',
+                                  },
+                                );
 
-                                        // update firestore
-                                        firestore()
-                                          .collection('classes')
-                                          .doc(classDoc.id)
-                                          .update({
-                                            calendarId: response,
-                                          });
-                                        ///// end add class to user's native calendar
+                                // update firestore
+                                firestore()
+                                  .collection('classes')
+                                  .doc(classDoc.id)
+                                  .update({
+                                    calendarId: response,
+                                  });
+                                ///// end add class to user's native calendar
 
-                                        const user = new User();
-                                        await user.addClassToCalender({
-                                          classId,
-                                          timeId,
-                                        });
+                                const user = new User();
+                                await user.addClassToCalender({
+                                  classId,
+                                  timeId,
+                                });
 
-                                        // sendGrid somebody joined your class
-                                        try {
-                                          // initiate SendGrid email
-                                          console.log(
-                                            'sendGridMemberPurchasedClass???',
-                                          );
-                                          console.log('gymUid: ', gymUid);
-                                          const sendGridMemberPurchasedClass = functions().httpsCallable(
-                                            'sendGridMemberPurchasedClass',
-                                          );
-                                          await sendGridMemberPurchasedClass(gymUid);
-                                        } catch (err) {
-                                          setErrorMsg('Email could not be sent');
-                                        }
+                                // sendGrid somebody joined your class
+                                try {
+                                  // initiate SendGrid email
+                                  console.log(
+                                    'sendGridMemberPurchasedClass???',
+                                  );
+                                  console.log('gymUid: ', gymUid);
+                                  const sendGridMemberPurchasedClass = functions().httpsCallable(
+                                    'sendGridMemberPurchasedClass',
+                                  );
+                                  await sendGridMemberPurchasedClass(gymUid);
+                                } catch (err) {
+                                  setErrorMsg('Email could not be sent');
+                                }
 
-                                        // sendGrid you joined a class
-                                        try {
-                                          console.log('IDDDD: ', userId);
+                                // sendGrid you joined a class
+                                try {
+                                  console.log('IDDDD: ', userId);
 
-                                          // initiate SendGrid email
-                                          console.log('user.id: ', userId);
-                                          const sendGridMemberAddedClass = functions().httpsCallable(
-                                            'sendGridMemberAddedClass',
-                                          );
-                                          await sendGridMemberAddedClass(userId);
-                                        } catch (err) {
-                                          setErrorMsg('Email could not be sent');
-                                        }
-                                        userStore.getUserClasses();
-                                        refresh(r + 1);
-                                      } catch (err) {
-                                        console.log(err);
-                                        switch (err.code) {
-                                          case 'busy':
-                                            setErrorMsg(err.message);
-                                            break;
-                                          case 'class-already-added':
-                                            setSuccessMsg(err.message);
-                                            break;
-                                          default:
-                                            setErrorMsg(
-                                              'Something prevented the action.',
-                                            );
-                                            break;
-                                        }
-                                      } finally {
-                                        setButtonDisabled(false);
-                                      }
-                                    }
-                                  }}
-                                />
-                              )}
-                          </View>
-                        )}
+                                  // initiate SendGrid email
+                                  console.log('user.id: ', userId);
+                                  const sendGridMemberAddedClass = functions().httpsCallable(
+                                    'sendGridMemberAddedClass',
+                                  );
+                                  await sendGridMemberAddedClass(userId);
+                                } catch (err) {
+                                  setErrorMsg('Email could not be sent');
+                                }
+                                userStore.getUserClasses();
+                                refresh(r + 1);
+                              } catch (err) {
+                                console.log(err);
+                                switch (err.code) {
+                                  case 'busy':
+                                    setErrorMsg(err.message);
+                                    break;
+                                  case 'class-already-added':
+                                    setSuccessMsg(err.message);
+                                    break;
+                                  default:
+                                    setErrorMsg(
+                                      'Something prevented the action.',
+                                    );
+                                    break;
+                                }
+                              } finally {
+                                setButtonDisabled(false);
+                              }
+                            }
+                          }}
+                        />
+                      )}
+                    </View>
+                  )}
                 </>
               )}
 
@@ -747,7 +751,10 @@ export default function ClassDescription(props) {
                   title="Go Live"
                   style={styles.customButtonContainer}
                   onPress={() => {
-                    props.navigation.navigate('PreLiveChecklist');
+                    props.navigation.navigate('PreLiveChecklist', {
+                      classId: classDoc.id,
+                      timeId: classDoc.time_id,
+                    });
                   }}
                 />
                 {/* Edit Class */}
@@ -799,7 +806,7 @@ export default function ClassDescription(props) {
             </>
           ) : null}
 
-          {Object.keys(user).length === 0 ?
+          {Object.keys(user).length === 0 ? (
             classDoc.priceType === 'free' ? (
               <TouchableHighlight
                 style={styles.buttonContainer}
@@ -812,17 +819,18 @@ export default function ClassDescription(props) {
                 <Text style={styles.buttonText}>Reserve One Time Class</Text>
               </TouchableHighlight>
             ) : (
-                <TouchableHighlight
-                  style={styles.buttonContainer}
-                  onPress={() =>
-                    navigation.navigate('RegisterWithBuy', {
-                      step: 'card',
-                      classData: classDoc,
-                    })
-                  }>
-                  <Text style={styles.buttonText}>Buy One Time Class</Text>
-                </TouchableHighlight>
-              ) : null}
+              <TouchableHighlight
+                style={styles.buttonContainer}
+                onPress={() =>
+                  navigation.navigate('RegisterWithBuy', {
+                    step: 'card',
+                    classData: classDoc,
+                  })
+                }>
+                <Text style={styles.buttonText}>Buy One Time Class</Text>
+              </TouchableHighlight>
+            )
+          ) : null}
         </GymLayout>
       </View>
     </ScrollView>

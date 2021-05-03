@@ -10,11 +10,12 @@ import User from '../backend/storage/User';
 import { requestPermissions } from '../backend/HelperFunctions';
 import { colors } from '../contexts/Colors';
 import firestore from '@react-native-firebase/firestore';
+import { useRoute } from '@react-navigation/core';
 
 async function checkPermissionsiOS() {
   let hasAllPermissionsiOS = false;
   check(PERMISSIONS.IOS.CAMERA)
-    .then(result => {
+    .then((result) => {
       switch (result) {
         case RESULTS.UNAVAILABLE:
           console.log(
@@ -35,13 +36,15 @@ async function checkPermissionsiOS() {
           return hasAllPermissionsiOS;
       }
     })
-    .catch(error => {
+    .catch((error) => {
       console.error(err);
       return false;
     });
 }
 
 export default function GoLive(props) {
+  const route = useRoute();
+  const { classId, timeId } = route.params;
   const cameraRef = useRef();
   const [user, setUser] = useState(null);
   const [gymId, setGymId] = useState(null);
@@ -57,7 +60,7 @@ export default function GoLive(props) {
     if (cameraRef.current) {
       cache('streamRef').set(cameraRef.current);
     }
-  }, [cameraRef])
+  }, [cameraRef]);
   // Init
   useEffect(() => {
     const init = async () => {
@@ -70,15 +73,16 @@ export default function GoLive(props) {
       await firestore()
         .collection('classes')
         .where('gym_id', '==', gymIds)
+        .where('id', '==', classId)
         .get()
-        .then(querySnapshot => {
+        .then((querySnapshot) => {
           setUser(partnerDoc);
           setGymId(gymIds);
           let classes = [];
-          querySnapshot.forEach(doc => {
+          querySnapshot.forEach((doc) => {
             classes.push(doc.data());
           });
-          console.log(classes);
+          console.log('Class: ' + JSON.stringify(classes));
           setGymName(classes[0].name);
         });
 
@@ -174,6 +178,8 @@ export default function GoLive(props) {
         cameraRef={cameraRef}
         user={user}
         gymId={gymId}
+        classId={classId}
+        timeId={timeId}
         gymName={gymName}
         switchCamera={() => cameraRef.current.switchCamera()}
         buttonOptions={{
@@ -210,7 +216,7 @@ export default function GoLive(props) {
             audio={settings.audio}
             video={settings.video}
             autopreview
-          // switchCamera
+            // switchCamera
           />
         )}
       </View>

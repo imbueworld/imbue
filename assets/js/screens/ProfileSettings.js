@@ -1,5 +1,5 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, Keyboard, Modal} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Keyboard, Modal } from 'react-native';
 
 import ProfileLayout from '../layouts/ProfileLayout';
 
@@ -7,19 +7,19 @@ import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
 
 import auth from '@react-native-firebase/auth';
-import {FONTS} from '../contexts/Styles';
+import { FONTS } from '../contexts/Styles';
 import moment from 'moment';
-import {useNavigation} from '@react-navigation/native';
-import {handleAuthError} from '../backend/HelperFunctions';
+import { useNavigation } from '@react-navigation/native';
+import { handleAuthError } from '../backend/HelperFunctions';
 import User from '../backend/storage/User';
 import CustomTextInputV2 from '../components/CustomTextInputV2';
 import config from '../../../App.config';
-import {useForm} from 'react-hook-form';
-import {geocodeAddress} from '../backend/BackendFunctions';
+import { useForm } from 'react-hook-form';
+import { geocodeAddress } from '../backend/BackendFunctions';
 import Gym from '../backend/storage/Gym';
 import PlaidButton from '../components/PlaidButton';
 import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
-import {currencyFromZeroDecimal} from '../backend/HelperFunctions';
+import { currencyFromZeroDecimal } from '../backend/HelperFunctions';
 import functions from '@react-native-firebase/functions';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
@@ -71,7 +71,7 @@ export default function ProfileSettings(props) {
     setFirstNameField(user.first);
     setLastNameField(user.last);
     setEmailField(user.email);
-    let {day, month, year} = user.dob || {};
+    let { day, month, year } = user.dob || {};
     let dobString = user.dob ? `${month}-${day}-${year}` : '';
     setDob(dobString);
     //
@@ -96,7 +96,7 @@ export default function ProfileSettings(props) {
   const [passwordField, setPasswordField] = useState('');
   //
   const [dob, setDob] = useState('');
-  const {register, handleSubmit, setValue, errors} = useForm();
+  const { register, handleSubmit, setValue, errors } = useForm();
 
   useEffect(() => {
     const rules = {
@@ -202,7 +202,7 @@ export default function ProfileSettings(props) {
     if (lastNameField.length === 0) redFields.push('last');
     if (emailField.length === 0) redFields.push('email');
     // if (passwordField.length === 0 && !isForeignUser) redFields.push("main_password")
-    // if (dob.split('-').length != 3) redFields.push('dob');
+    if (dob.split('-').length != 3) redFields.push('dob');
 
     if (redFields.length) {
       setRedFields(redFields);
@@ -210,16 +210,16 @@ export default function ProfileSettings(props) {
       return;
     }
 
-    // const DateMoment = moment(dob, 'MM-DD-YYYY');
+    const DateMoment = moment(dob, 'MM-DD-YYYY');
 
     try {
       // if (!isForeignUser) await auth().signInWithEmailAndPassword(user.email, passwordField)
       let updatables = {
-        // dob: {
-        //   day: DateMoment.date(),
-        //   month: DateMoment.month() + 1,
-        //   year: DateMoment.year(),
-        // },
+        dob: {
+          day: DateMoment.date(),
+          month: DateMoment.month() + 1,
+          year: DateMoment.year(),
+        },
       };
 
       if (firstNameField !== user.first) {
@@ -490,7 +490,7 @@ export default function ProfileSettings(props) {
           }}>
           <LottieView
             source={require('../components/img/animations/cat-loading.json')}
-            style={{height: 100, width: 100}}
+            style={{ height: 100, width: 100 }}
             autoPlay
             loop
           />
@@ -545,9 +545,9 @@ export default function ProfileSettings(props) {
           </>
         )}
         {errorMsg ? (
-          <Text style={{color: 'red', textAlign: 'center'}}>{errorMsg}</Text>
+          <Text style={{ color: 'red', textAlign: 'center' }}>{errorMsg}</Text>
         ) : (
-          <Text style={{color: 'green', textAlign: 'center'}}>
+          <Text style={{ color: 'green', textAlign: 'center' }}>
             {successMsg}
           </Text>
         )}
@@ -576,6 +576,17 @@ export default function ProfileSettings(props) {
               placeholder="Email"
               value={emailField}
               onChangeText={setEmailField}
+            />
+            <CustomTextInput
+              containerStyle={{
+                borderColor: redFields.includes('dob') ? 'red' : undefined,
+              }}
+              placeholder="Date of Birth"
+              isMask={true}
+              keyboardType={'number-pad'}
+              mask={'[00]-[00]-[0000]'}
+              value={dob}
+              onChangeText={setDob}
             />
             <CustomTextInput
               containerStyle={{

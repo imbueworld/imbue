@@ -1,6 +1,6 @@
-import React, {useRef, useEffect, useState} from 'react';
-import {NavigationContainer, useLinking} from '@react-navigation/native';
-import {createStackNavigator} from '@react-navigation/stack';
+import React, { useRef, useEffect, useState } from 'react';
+import { NavigationContainer, useLinking } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 
 import _TestingGrounds from '../screens/_TestingGrounds';
 import Boot from '../screens/Boot';
@@ -45,13 +45,13 @@ import PartnerOnboardStripe from '../screens/PartnerOnboardStripe';
 import PartnerOnboardStripeQuestions from '../screens/PartnerOnboardStripeQuestions';
 import UserOnboard from '../screens/UserOnboard';
 import PreLiveChecklist from '../screens/PreLiveChecklist';
-import {PartnerStep} from '../screens/PartnerStep';
+import { PartnerStep } from '../screens/PartnerStep';
 import auth from '@react-native-firebase/auth';
-import {Linking} from 'react-native';
+import { Linking } from 'react-native';
 import branch from 'react-native-branch';
 import cache from '../backend/storage/cache';
 import User from '../backend/storage/User';
-import {RegisterWithBuy} from '../screens/RegisterWithBuy';
+import { RegisterWithBuy } from '../screens/RegisterWithBuy';
 
 const Stack = createStackNavigator();
 
@@ -62,7 +62,8 @@ export const AppNavigation = () => {
   const linking = {
     prefixes: ['https://imbuefitness.app.link/', 'imbuefitness://'],
     subscribe(listener) {
-      branch.subscribe(({error, params, uri}) => {
+      branch.subscribe(({ error, params, uri }) => {
+        console.log(params);
         if (error) {
           console.error('Error from Branch: ' + error);
           return;
@@ -95,6 +96,13 @@ export const AppNavigation = () => {
             id: String,
           },
         },
+        ClassDescription: {
+          path: 'class/:classId/:timeId',
+          pards: {
+            classId: String,
+            timeId: String,
+          },
+        },
       },
     },
   };
@@ -102,25 +110,20 @@ export const AppNavigation = () => {
   const bootWithUser = async () => {
     const user = new User();
     // console.log("await user.retrieveUser(): ", await user.retrieveUser())
-    const {account_type} = await user.retrieveUser();
-    const {approved} = await user.retrieveUser();
-    const {phone} = await user.retrieveUser();
-    const {associated_classes} = await user.retrieveUser();
+    const { account_type } = await user.retrieveUser();
+    const { approved } = await user.retrieveUser();
+    const { phone } = await user.retrieveUser();
+    const { associated_classes } = await user.retrieveUser();
     const userDoc = await user.retrieveUser();
 
     switch (account_type) {
       case 'user':
-        if (userDoc.dob) {
-          setInitialState({routes: [{name: 'UserDashboard'}]});
-          break;
-        } else if (!userDoc.dob) {
-          setInitialState({routes: [{name: 'UserOnboard'}]});
-          break;
-        }
+        setInitialState({ routes: [{ name: 'UserDashboard' }] });
+        break;
       case 'partner':
         if (!approved) {
           setInitialState({
-            routes: [{name: 'postApplicationUnverifiedPartner'}],
+            routes: [{ name: 'postApplicationUnverifiedPartner' }],
           });
           break;
         } else if (approved && !phone) {
@@ -135,28 +138,28 @@ export const AppNavigation = () => {
             const removeFromSendGrid = functions().httpsCallable(
               'removeFromSendGrid',
             );
-            await removeFromSendGrid({email, first, last, listName});
+            await removeFromSendGrid({ email, first, last, listName });
 
             // add to new list
             const addToSendGrid = functions().httpsCallable('addToSendGrid');
-            await addToSendGrid({email, first, last, listName});
+            await addToSendGrid({ email, first, last, listName });
           } catch (err) {
             console.log("addToSendGrid didn't work: ", err);
           }
 
           // remove from SendGrid applied influencers
 
-          setInitialState({routes: [{name: 'PartnerOnboard'}]});
+          setInitialState({ routes: [{ name: 'PartnerOnboard' }] });
           break;
         } else if (approved && associated_classes) {
-          setInitialState({routes: [{name: 'PartnerDashboard'}]});
+          setInitialState({ routes: [{ name: 'PartnerDashboard' }] });
           break;
         } else if (approved && phone) {
-          setInitialState({routes: [{name: 'PartnerDashboard'}]});
+          setInitialState({ routes: [{ name: 'PartnerDashboard' }] });
           break;
         }
       default:
-        setInitialState({routes: [{name: 'Landing'}]});
+        setInitialState({ routes: [{ name: 'Landing' }] });
         break;
     }
   };
@@ -169,7 +172,7 @@ export const AppNavigation = () => {
         await bootWithUser();
       } else {
         console.log('else');
-        setInitialState({routes: [{name: 'Landing'}]});
+        setInitialState({ routes: [{ name: 'Landing' }] });
       }
     };
     init();

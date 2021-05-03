@@ -14,6 +14,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* imbueTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* imbueTests.m */; };
+		5674A67A26384F7E00AF6D09 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5674A67926384F7E00AF6D09 /* File.swift */; };
 		56C40BC326125DB600FD75C8 /* imbue.entitlements in Resources */ = {isa = PBXBuildFile; fileRef = AA030E34251A9E3A001BEAEF /* imbue.entitlements */; };
 		5B904313D66B4B739D1D68E0 /* LuloCleanThin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 86EDD30B6BA945CBB5300405 /* LuloCleanThin.ttf */; };
 		5D3F1775FE7C7892440CDEE2 /* Pods_imbue_tvOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 110A1EFDD9DEDD95FD3EEE58 /* Pods_imbue_tvOSTests.framework */; };
@@ -87,6 +88,7 @@
 		49FFD4A8CA4A405F9997AE2B /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		4BF63932ABF99113572CDD0C /* Pods-imbue.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue.debug.xcconfig"; path = "Target Support Files/Pods-imbue/Pods-imbue.debug.xcconfig"; sourceTree = "<group>"; };
 		531553C96F6E4F8C8C7B6DD1 /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
+		5674A67926384F7E00AF6D09 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		5A8DA25602D3487B9321DA8F /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		5A96DE6184D15C480B5EC26F /* Pods-imbue-imbueTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-imbueTests.debug.xcconfig"; path = "Target Support Files/Pods-imbue-imbueTests/Pods-imbue-imbueTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5DF24790B4A1095F17FACB40 /* Pods-imbue-tvOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-imbue-tvOS.release.xcconfig"; path = "Target Support Files/Pods-imbue-tvOS/Pods-imbue-tvOS.release.xcconfig"; sourceTree = "<group>"; };
@@ -317,6 +319,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				5674A67926384F7E00AF6D09 /* File.swift */,
 				AA9647872528EA5F00891376 /* LuloClean-Bold.ttf */,
 				AA9647862528EA5F00891376 /* PlayfairDisplay-Black.ttf */,
 				AA9647882528EA5F00891376 /* PlayfairDisplay-Medium.ttf */,
@@ -932,6 +935,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5674A67A26384F7E00AF6D09 /* File.swift in Sources */,
 				AA98BCBA253CE36F00F17827 /* AppDelegate.h in Sources */,
 				AA98BCB5253CE36800F17827 /* AppDelegate.m in Sources */,
 				AABCC65525169CE60020D3BF /* File.swift in Sources */,

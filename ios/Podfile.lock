@@ -551,6 +551,8 @@ PODS:
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
   - React-jsinspector (0.63.3)
+  - react-native-airplay-button (1.0.4):
+    - React-Core
   - react-native-branch (5.0.0):
     - Branch (= 0.35.0)
     - React
@@ -732,6 +734,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
+  - react-native-airplay-button (from `../node_modules/react-native-airplay-button`)
   - react-native-branch (from `../node_modules/react-native-branch`)
   - react-native-fbsdk (from `../node_modules/react-native-fbsdk`)
   - react-native-image-picker (from `../node_modules/react-native-image-picker`)
@@ -846,6 +849,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsiexecutor"
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
+  react-native-airplay-button:
+    :path: "../node_modules/react-native-airplay-button"
   react-native-branch:
     :path: "../node_modules/react-native-branch"
   react-native-fbsdk:
@@ -979,6 +984,7 @@ SPEC CHECKSUMS:
   React-jsi: df07aa95b39c5be3e41199921509bfa929ed2b9d
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
+  react-native-airplay-button: 8ebb150ef920d1dba2a17dd13509540f1f68a341
   react-native-branch: 8bda99ca8dc5a16d32bd81c8a8d937cb3d2c5e0c
   react-native-fbsdk: 00c15d138bba6d4efa628670886fc58cec858c19
   react-native-image-picker: c6d75c4ab2cf46f9289f341242b219cb3c1180d3

@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 
 import database from '@react-native-firebase/database';
-
+import branch from 'react-native-branch';
 import ChatButton from '../components/ChatButton';
 import CancelButton from '../components/CancelButton';
 import ListButton from '../components/ListButton';
@@ -19,7 +19,10 @@ import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { useDimensions } from '@react-native-community/hooks';
 
 import { useNavigation } from '@react-navigation/native';
-import { registerParticipant, sendMessage } from '../backend/LivestreamFunctions';
+import {
+  registerParticipant,
+  sendMessage,
+} from '../backend/LivestreamFunctions';
 import ParticipantList from '../components/ParticipantList';
 import Chat from '../components/Chat';
 import LiveViewerCountBadge from '../components/badges/LiveViewerCountBadge';
@@ -43,6 +46,7 @@ import LiveStream from '../components/img/svg/live_stream.svg';
 import SwitchCamera from '../components/img/svg/switch_camera.svg';
 import { LivestreamModal } from '../components/LivestreamModal';
 import Share from 'react-native-share';
+import AirPlayButton from 'react-native-airplay-button';
 
 const layoutOptions = {
   viewerCount: {
@@ -58,7 +62,7 @@ const buttonOptions = {
     show: false,
     state: 'idle' || 'streaming',
     navigate: 'SuccessScreen',
-    onPress: () => { },
+    onPress: () => {},
   },
   leaveLivestream: {
     show: true,
@@ -83,6 +87,8 @@ export default function LivestreamLayout(props) {
   // const [user, setUser] = useState(null)
   const cameraRef = props.cameraRef;
   const gymId = props.gymId;
+  const classId = props.classId;
+  const timeId = props.timeId;
   const user = props.user;
   const isLive = props.isLive;
   const gymImage = props.gymImageUri;
@@ -141,7 +147,7 @@ export default function LivestreamLayout(props) {
       //   }
       // })
 
-      chatNodeRef.limitToLast(1).on('child_added', snap => {
+      chatNodeRef.limitToLast(1).on('child_added', (snap) => {
         const message = snap.val();
 
         // Don't show very first message, because it is most likely not a live message
@@ -154,7 +160,7 @@ export default function LivestreamLayout(props) {
         let existingMessages = cache('livestream/chat').get() || [];
 
         // Do not add, if an exact same message is already in chat
-        let x = existingMessages.map(msg => `${msg.timestamp}${msg.message}`);
+        let x = existingMessages.map((msg) => `${msg.timestamp}${msg.message}`);
         let y = `${message.timestamp}${message.message}`;
         if (x.includes(y)) return;
 
@@ -181,12 +187,9 @@ export default function LivestreamLayout(props) {
           successMessageType: 'PartnerLiveStreamCompleted',
         });
         // register didPressEnd
-        firestore()
-          .collection('partners')
-          .doc(user.id)
-          .update({
-            didPressEnd: true,
-          });
+        firestore().collection('partners').doc(user.id).update({
+          didPressEnd: true,
+        });
         firestore();
 
         buttonOptions.goLive.state = 'idle';
@@ -203,7 +206,7 @@ export default function LivestreamLayout(props) {
         console.log('idle');
         break;
     }
-    refresh(r => r + 1);
+    refresh((r) => r + 1);
     buttonOptions.goLive.onPress();
   };
 
@@ -211,7 +214,7 @@ export default function LivestreamLayout(props) {
     const ptcsNodeRef = database().ref(`livestreams/participants/${gymId}`);
 
     const init = async () => {
-      await ptcsNodeRef.once('value', async snap => {
+      await ptcsNodeRef.once('value', async (snap) => {
         const users = snap.val();
         if (users) {
           let ptcs = Object.entries(users).map(([uid, userData]) => {
@@ -222,9 +225,9 @@ export default function LivestreamLayout(props) {
           // render of this component is irrelevant and to be overwritten
           cache('livestream/participants').set(ptcs);
 
-          let liveCount = ptcs.filter(ptc => ptc.here).length;
+          let liveCount = ptcs.filter((ptc) => ptc.here).length;
           cache('livestream/viewerCount').set(liveCount);
-          refresh(r => r + 1);
+          refresh((r) => r + 1);
         }
       });
 
@@ -233,19 +236,19 @@ export default function LivestreamLayout(props) {
        * update their 'here' status,
        * update cache and certain Child Components.
        */
-      ptcsNodeRef.on('child_changed', snap => {
+      ptcsNodeRef.on('child_changed', (snap) => {
         const user = { ...snap.val(), uid: snap.key };
         let existingPtcs = cache('livestream/participants').get() || [];
         const newSetOfPtcs = [user, ...existingPtcs];
 
         // child_changed can provide an entirely new user, or an update to an existing one
         // let's distinguish..
-        let existingUids = existingPtcs.map(ptc => ptc.uid);
+        let existingUids = existingPtcs.map((ptc) => ptc.uid);
         const action = existingUids.includes(user.uid) ? 'update' : 'creation';
 
         // Update existingPtcs to meet current state
         if (action === 'update') {
-          existingPtcs.forEach(ptc => {
+          existingPtcs.forEach((ptc) => {
             if (ptc.uid === user.uid) {
               for (let key in user) {
                 ptc[key] = user[key];
@@ -260,11 +263,11 @@ export default function LivestreamLayout(props) {
         // Update <LiveViewerCountBadge />
         let liveCount;
         if (action === 'update') {
-          liveCount = existingPtcs.filter(user => user.here).length;
+          liveCount = existingPtcs.filter((user) => user.here).length;
           // Update cache
           cache('livestream/participants').set(existingPtcs);
         } else if (action === 'creation') {
-          liveCount = newSetOfPtcs.filter(user => user.here).length;
+          liveCount = newSetOfPtcs.filter((user) => user.here).length;
           // Update cache
           cache('livestream/participants').set(newSetOfPtcs);
         }
@@ -293,12 +296,9 @@ export default function LivestreamLayout(props) {
         if (typeof setPtcsList === 'function') setPtcsList(newSetOfPtcs);
       });
 
-      ptcsNodeRef
-        .child(user.id)
-        .onDisconnect()
-        .update({
-          here: false,
-        });
+      ptcsNodeRef.child(user.id).onDisconnect().update({
+        here: false,
+      });
     };
     init();
 
@@ -314,7 +314,7 @@ export default function LivestreamLayout(props) {
     // [v DEBUG ONLY v]
     if (config.DEBUG) {
       buttonOptions.viewButtonPanel.state = 'open';
-      refresh(r => r + 1);
+      refresh((r) => r + 1);
     }
     // [^ DEBUG ONLY ^]
 
@@ -333,12 +333,12 @@ export default function LivestreamLayout(props) {
           }
 
           buttonOptions.viewButtonPanel.state = 'closed';
-          refresh(r => r + 1);
+          refresh((r) => r + 1);
         }, 4500);
         buttonOptions.viewButtonPanel.data = timeout;
       }
 
-      refresh(r => r + 1);
+      refresh((r) => r + 1);
     }
     // [^ DISABLED DURING DEBUG ^]
   }
@@ -410,18 +410,22 @@ export default function LivestreamLayout(props) {
         <TouchableOpacity
           style={[styles.homeButton, { top: top + 10 }]}
           onPress={() => {
-            liveStreamPress()
+            if (buttonOptions.goLive.state === 'streaming') liveStreamPress();
             if (user.account_type === 'partner')
               navigation.navigate('PartnerDashboard');
             else navigation.navigate('UserDashboard');
           }}>
           <HomeIcon width={35} height={35} />
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.switchButton, { top: top + 10 }]}
-          onPress={() => switchCamera()}>
-          <SwitchCamera width={30} height={30} />
-        </TouchableOpacity>
+
+        {switchCamera && (
+          <TouchableOpacity
+            style={[styles.switchButton, { top: top + 10 }]}
+            onPress={() => switchCamera()}>
+            <SwitchCamera width={30} height={30} />
+          </TouchableOpacity>
+        )}
+
         <View style={styles.background}>
           <View style={styles.info}>
             <Text style={styles.className}>{gymName}</Text>
@@ -444,6 +448,17 @@ export default function LivestreamLayout(props) {
               style={[styles.menuButton, { backgroundColor: '#929294' }]}>
               <ChatIcon width={30} height={30} />
             </TouchableOpacity>
+            {user.account_type !== 'partner' && (
+              <TouchableOpacity
+                onPress={() => console.log(true)}
+                style={[styles.menuButton, { backgroundColor: '#929294' }]}>
+                <AirPlayButton
+                  activeTintColor="red"
+                  tintColor="white"
+                  style={{ width: 36, height: 36 }}
+                />
+              </TouchableOpacity>
+            )}
             {user.account_type === 'partner' && (
               <TouchableOpacity
                 style={[styles.menuButton, { backgroundColor: '#000' }]}
@@ -451,18 +466,44 @@ export default function LivestreamLayout(props) {
                 {buttonOptions.goLive.state === 'streaming' ? (
                   <View style={styles.stopButton} />
                 ) : (
-                    <Play width={24} height={24} />
-                  )}
+                  <Play width={24} height={24} />
+                )}
               </TouchableOpacity>
             )}
             {user.account_type === 'partner' && (
               <TouchableOpacity
-                onPress={() =>
+                onPress={async () => {
+                  let branchUniversalObject = await branch.createBranchUniversalObject(
+                    'canonicalIdentifier',
+                    {
+                      locallyIndex: true,
+                      contentMetadata: {
+                        customMetadata: {
+                          classId: classId,
+                          timeId: timeId,
+                        },
+                      },
+                    },
+                  );
+                  let linkProperties = {
+                    feature: 'share',
+                    classId: classId,
+                    timeId: timeId,
+                  };
+
+                  let controlParams = {
+                    $desktop_url: `https:/imbuefitness.app.link/class/${classId}/${timeId}`,
+                  };
+
+                  let { url } = await branchUniversalObject.generateShortUrl(
+                    linkProperties,
+                    controlParams,
+                  );
                   Share.open({
                     title: gymName,
-                    message: `https:/imbuefitness.app.link/influencer/${gymId}`,
-                  })
-                }
+                    message: url,
+                  });
+                }}
                 style={[styles.menuButton, { backgroundColor: '#929294' }]}>
                 <ShareIcon width={24} height={24} />
               </TouchableOpacity>
