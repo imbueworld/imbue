@@ -13,7 +13,7 @@ export default function GymBadge(props) {
         style={{
           padding: 12,
           backgroundColor: '#FFFFFF',
-          borderRadius: 40,
+          borderRadius: 25,
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
         }}>

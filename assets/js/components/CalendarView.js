@@ -65,7 +65,7 @@ export default function CalendarView(props) {
           textSectionTitleDisabledColor: '#242429',
           selectedDayBackgroundColor: '#242429',
           dotColor: '#242429',
-          selectedDotColor: '#f9f9f9',
+          selectedDotColor: '#FFFFFF',
           arrowColor: '#242429',
           monthTextColor: '#242429', 
           indicatorColor: '#242429',
@@ -89,7 +89,12 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     padding: 12,
     backgroundColor: "white",
-    borderRadius: 30,
+    borderTopLeftRadius: 24,
+    borderTopWidth: 0,
+    borderLeftWidth: 0,
+    borderRightWidth: 0,
+  
+    borderBottomColor: "#242429"
   },
 })
 

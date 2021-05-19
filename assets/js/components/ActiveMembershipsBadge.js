@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center",
-        borderRadius: 30,
+        borderRadius: 25,
         borderWidth: 1,
         // borderColor: colors.gray,
         borderColor: colors.buttonFill,

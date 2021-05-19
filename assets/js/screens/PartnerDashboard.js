@@ -310,6 +310,7 @@ export default PartnerDashboard;
 
 const styles = StyleSheet.create({
   capsule: {
+    backgroundColor: '#ffffff',
     // paddingRight: 10,
     // paddingLeft: 10,
   },
@@ -319,13 +320,12 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     alignSelf: 'center',
     // backgroundColor: "#FFFFFF80",
-    backgroundColor: '#00000040',
-    // borderWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.gray,
-    borderRadius: 40,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    // borderLeftWidth: 1,
+    // borderRightWidth: 1,
+    // borderBottomWidth: 1,
+    borderRadius: 25,
   },
   classListContainer: {
     marginTop: 10,

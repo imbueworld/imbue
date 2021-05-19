@@ -71,7 +71,7 @@ export default function ClassList(props) {
           <TouchableHighlight
             style={{
               ...styles.listItem,
-              borderRadius: 30,
+              borderRadius: 20,
               borderWidth: 1,
               // borderColor: "lightgreen",
             }}

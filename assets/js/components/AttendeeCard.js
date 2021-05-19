@@ -27,7 +27,7 @@ export default function AttendeeCard({ icon_uri, first, last }) {
             alignItems: "center",
             backgroundColor: colors.buttonFill,
             borderWidth: 1,
-            borderRadius: 40,
+            borderRadius: 25,
         }}>
             <Icon
                 containerStyle={{

@@ -418,7 +418,7 @@ const styles = StyleSheet.create({
     borderRightWidth: 1,
     borderBottomWidth: 1,
     borderColor: colors.gray,
-    borderRadius: 40,
+    borderRadius: 25,
   },
   classListContainer: {
     marginTop: 10,

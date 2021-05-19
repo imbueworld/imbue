@@ -85,7 +85,7 @@ const buttonOptions = {
 export default function LivestreamLayout(props) {
   // const [gymId, setGymId] = useState(null)
   // const [user, setUser] = useState(null)
-  const cameraRef = props.cameraRef;
+  // const cameraRef = props.cameraRef;
   const gymId = props.gymId;
   const classId = props.classId;
   const timeId = props.timeId;

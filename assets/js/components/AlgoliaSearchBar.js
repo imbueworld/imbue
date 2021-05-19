@@ -46,7 +46,7 @@ export default function AlgoliaSearchBar(props) {
       alignItems: 'center',
       flexDirection: 'row',
       backgroundColor: colors.textInputFill,
-      borderRadius: 15,
+      borderRadius: 25,
       paddingLeft: 15,
       overflow: 'hidden',
       

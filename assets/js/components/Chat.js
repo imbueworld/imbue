@@ -31,7 +31,7 @@ export default function Chat(props) {
         borderWidth: 1,
         // borderColor: colors.gray,
         borderColor: colors.buttonFill,
-        borderRadius: 40,
+        borderRadius: 25,
         ...props.containerStyle,
       }}>
         <View style={{
