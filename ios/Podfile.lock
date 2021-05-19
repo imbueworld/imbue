@@ -248,41 +248,41 @@ PODS:
     - FBSDKShareKit/Share (= 7.1.1)
   - FBSDKShareKit/Share (7.1.1):
     - FBSDKCoreKit (~> 7.1.1)
-  - Firebase/Auth (7.0.0):
+  - Firebase/Auth (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (~> 7.0.0)
-  - Firebase/CoreOnly (7.0.0):
-    - FirebaseCore (= 7.0.0)
-  - Firebase/Database (7.0.0):
+    - FirebaseAuth (~> 6.9.2)
+  - Firebase/CoreOnly (6.34.0):
+    - FirebaseCore (= 6.10.4)
+  - Firebase/Database (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseDatabase (~> 7.0.0)
-  - Firebase/Firestore (7.0.0):
+    - FirebaseDatabase (~> 6.6.0)
+  - Firebase/Firestore (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseFirestore (~> 7.0.0)
-  - Firebase/Functions (7.0.0):
+    - FirebaseFirestore (~> 1.19.0)
+  - Firebase/Functions (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseFunctions (~> 7.0.0)
-  - Firebase/Storage (7.0.0):
+    - FirebaseFunctions (~> 2.9.0)
+  - Firebase/Storage (6.34.0):
     - Firebase/CoreOnly
-    - FirebaseStorage (~> 7.0.0)
-  - FirebaseAuth (7.0.0):
-    - FirebaseCore (~> 7.0)
-    - GoogleUtilities/AppDelegateSwizzler (~> 7.0)
-    - GoogleUtilities/Environment (~> 7.0)
-    - GTMSessionFetcher/Core (~> 1.4)
-  - FirebaseCore (7.0.0):
-    - FirebaseCoreDiagnostics (~> 7.0)
-    - GoogleUtilities/Environment (~> 7.0)
-    - GoogleUtilities/Logger (~> 7.0)
-  - FirebaseCoreDiagnostics (7.3.0):
-    - GoogleDataTransport (~> 8.0)
-    - GoogleUtilities/Environment (~> 7.0)
-    - GoogleUtilities/Logger (~> 7.0)
-    - nanopb (~> 2.30906.0)
-  - FirebaseDatabase (7.0.0):
-    - FirebaseCore (~> 7.0)
+    - FirebaseStorage (~> 3.9.1)
+  - FirebaseAuth (6.9.2):
+    - FirebaseCore (~> 6.10)
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - FirebaseCore (6.10.4):
+    - FirebaseCoreDiagnostics (~> 1.6)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GoogleUtilities/Logger (~> 6.7)
+  - FirebaseCoreDiagnostics (1.7.0):
+    - GoogleDataTransport (~> 7.4)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GoogleUtilities/Logger (~> 6.7)
+    - nanopb (~> 1.30906.0)
+  - FirebaseDatabase (6.6.0):
+    - FirebaseCore (~> 6.10)
     - leveldb-library (~> 1.22)
-  - FirebaseFirestore (7.0.0):
+  - FirebaseFirestore (1.19.0):
     - abseil/algorithm (= 0.20200225.0)
     - abseil/base (= 0.20200225.0)
     - abseil/memory (= 0.20200225.0)
@@ -290,16 +290,16 @@ PODS:
     - abseil/strings/strings (= 0.20200225.0)
     - abseil/time (= 0.20200225.0)
     - abseil/types (= 0.20200225.0)
-    - FirebaseCore (~> 7.0)
+    - FirebaseCore (~> 6.10)
     - "gRPC-C++ (~> 1.28.0)"
     - leveldb-library (~> 1.22)
-    - nanopb (~> 2.30906.0)
-  - FirebaseFunctions (7.0.0):
-    - FirebaseCore (~> 7.0)
-    - GTMSessionFetcher/Core (~> 1.4)
-  - FirebaseStorage (7.0.0):
-    - FirebaseCore (~> 7.0)
-    - GTMSessionFetcher/Core (~> 1.4)
+    - nanopb (~> 1.30906.0)
+  - FirebaseFunctions (2.9.0):
+    - FirebaseCore (~> 6.10)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - FirebaseStorage (3.9.1):
+    - FirebaseCore (~> 6.10)
+    - GTMSessionFetcher/Core (~> 1.1)
   - Folly (2020.01.13.00):
     - boost-for-react-native
     - DoubleConversion
@@ -310,26 +310,26 @@ PODS:
     - DoubleConversion
     - glog
   - glog (0.3.5)
-  - GoogleDataTransport (8.1.0):
-    - nanopb (~> 2.30906.0)
+  - GoogleDataTransport (7.5.1):
+    - nanopb (~> 1.30906.0)
   - GoogleSignIn (5.0.2):
     - AppAuth (~> 1.2)
     - GTMAppAuth (~> 1.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - GoogleUtilities/AppDelegateSwizzler (7.3.1):
+  - GoogleUtilities/AppDelegateSwizzler (6.7.2):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (7.3.1):
+  - GoogleUtilities/Environment (6.7.2):
     - PromisesObjC (~> 1.2)
-  - GoogleUtilities/Logger (7.3.1):
+  - GoogleUtilities/Logger (6.7.2):
     - GoogleUtilities/Environment
-  - GoogleUtilities/Network (7.3.1):
+  - GoogleUtilities/Network (6.7.2):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (7.3.1)"
-  - GoogleUtilities/Reachability (7.3.1):
+  - "GoogleUtilities/NSData+zlib (6.7.2)"
+  - GoogleUtilities/Reachability (6.7.2):
     - GoogleUtilities/Logger
   - "gRPC-C++ (1.28.2)":
     - "gRPC-C++/Implementation (= 1.28.2)"
@@ -355,32 +355,28 @@ PODS:
     - BoringSSL-GRPC (= 0.0.7)
     - gRPC-Core/Interface (= 1.28.2)
   - gRPC-Core/Interface (1.28.2)
-  - GTMAppAuth (1.1.0):
+  - GTMAppAuth (1.2.2):
     - AppAuth/Core (~> 1.4)
-    - GTMSessionFetcher (~> 1.4)
-  - GTMSessionFetcher (1.5.0):
-    - GTMSessionFetcher/Full (= 1.5.0)
+    - GTMSessionFetcher/Core (~> 1.5)
   - GTMSessionFetcher/Core (1.5.0)
-  - GTMSessionFetcher/Full (1.5.0):
-    - GTMSessionFetcher/Core (= 1.5.0)
   - InputMask (6.1.0)
   - leveldb-library (1.22.1)
   - lottie-ios (3.1.8)
   - lottie-react-native (3.5.0):
     - lottie-ios (~> 3.1.8)
     - React
-  - Mixpanel-swift (2.8.2):
-    - Mixpanel-swift/Complete (= 2.8.2)
-  - Mixpanel-swift/Complete (2.8.2)
-  - MixpanelReactNative (1.1.0):
-    - Mixpanel-swift (= 2.8.2)
+  - Mixpanel-swift (2.8.1):
+    - Mixpanel-swift/Complete (= 2.8.1)
+  - Mixpanel-swift/Complete (2.8.1)
+  - MixpanelReactNative (1.0.0):
+    - Mixpanel-swift (= 2.8.1)
     - React
-  - nanopb (2.30906.0):
-    - nanopb/decode (= 2.30906.0)
-    - nanopb/encode (= 2.30906.0)
-  - nanopb/decode (2.30906.0)
-  - nanopb/encode (2.30906.0)
-  - NodeMediaClient (2.9.2)
+  - nanopb (1.30906.0):
+    - nanopb/decode (= 1.30906.0)
+    - nanopb/encode (= 1.30906.0)
+  - nanopb/decode (1.30906.0)
+  - nanopb/encode (1.30906.0)
+  - NodeMediaClient (2.9.5)
   - Permission-Camera (2.2.2):
     - RNPermissions
   - Plaid (2.0.11)
@@ -551,7 +547,7 @@ PODS:
     - React-cxxreact (= 0.63.3)
     - React-jsi (= 0.63.3)
   - React-jsinspector (0.63.3)
-  - react-native-airplay-button (1.0.4):
+  - react-native-airplay-button (1.0.5):
     - React-Core
   - react-native-branch (5.0.0):
     - Branch (= 0.35.0)
@@ -578,19 +574,19 @@ PODS:
     - React-Core
   - react-native-network-info (5.2.1):
     - React
-  - react-native-nodemediaclient (0.2.14):
-    - NodeMediaClient (= 2.9.2)
+  - react-native-nodemediaclient (0.2.16):
+    - NodeMediaClient (= 2.9.5)
     - React
-    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.2.14)
-  - react-native-nodemediaclient/RCTNodeMediaClient (0.2.14):
-    - NodeMediaClient (= 2.9.2)
+    - react-native-nodemediaclient/RCTNodeMediaClient (= 0.2.16)
+  - react-native-nodemediaclient/RCTNodeMediaClient (0.2.16):
+    - NodeMediaClient (= 2.9.5)
     - React
-  - react-native-plaid-link-sdk (6.0.4):
-    - Plaid (~> 2.0.8)
+  - react-native-plaid-link-sdk (6.0.3):
+    - Plaid (~> 2.0.6)
     - React
   - react-native-safe-area-context (3.2.0):
     - React-Core
-  - react-native-text-input-mask (3.0.3):
+  - react-native-text-input-mask (3.1.4):
     - InputMask (~> 6.1.0)
     - React-Core
     - React-RCTText
@@ -669,27 +665,27 @@ PODS:
     - React-Core
   - RNCMaskedView (0.1.10):
     - React
-  - RNFBApp (9.0.0):
-    - Firebase/CoreOnly (~> 7.0.0)
+  - RNFBApp (8.4.7):
+    - Firebase/CoreOnly (~> 6.34.0)
     - React-Core
-  - RNFBAuth (9.3.5):
-    - Firebase/Auth (~> 7.0.0)
-    - React-Core
-    - RNFBApp
-  - RNFBDatabase (7.5.15):
-    - Firebase/Database (~> 7.0.0)
+  - RNFBAuth (9.3.2):
+    - Firebase/Auth (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBFirestore (7.10.3):
-    - Firebase/Firestore (~> 7.0.0)
+  - RNFBDatabase (7.5.13):
+    - Firebase/Database (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBFunctions (7.4.12):
-    - Firebase/Functions (~> 7.0.0)
+  - RNFBFirestore (7.9.1):
+    - Firebase/Firestore (~> 6.34.0)
     - React-Core
     - RNFBApp
-  - RNFBStorage (7.4.14):
-    - Firebase/Storage (~> 7.0.0)
+  - RNFBFunctions (7.4.10):
+    - Firebase/Functions (~> 6.34.0)
+    - React-Core
+    - RNFBApp
+  - RNFBStorage (7.4.11):
+    - Firebase/Storage (~> 6.34.0)
     - React-Core
     - RNFBApp
   - RNGestureHandler (1.6.1):
@@ -703,7 +699,7 @@ PODS:
     - React
   - RNScreens (2.9.0):
     - React
-  - RNShare (5.1.6):
+  - RNShare (5.3.0):
     - React-Core
   - RNSVG (12.1.0):
     - React
@@ -946,31 +942,31 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: b46507dc8b8cefed31d644e74d7cc30e2a715ef8
   FBSDKLoginKit: 1a61d79e2b25e2fc0d03dccab1e34b38bbdf2546
   FBSDKShareKit: 00a055c1999b099596e00212dd1c0600c6697019
-  Firebase: 50be68416f50eb4eb2ecb0e78acab9a051ef95df
-  FirebaseAuth: 228dd0faa5b5263eaa8c63518b16faef438289a3
-  FirebaseCore: cf3122185fce1cf71cedbbc498ea84d2b3e7cb69
-  FirebaseCoreDiagnostics: d50e11039e5984d92c8a512be2395f13df747350
-  FirebaseDatabase: 2481b48ebfd233ef591095d79d76720ea85cde74
-  FirebaseFirestore: 969dd448250bee681d0e2d0af89cbb76ef955bb0
-  FirebaseFunctions: 571aee227a021debe3e1092aa079f751623e233a
-  FirebaseStorage: ea52bc7a1cb540406ed1e1acfc2bf3946621ed34
+  Firebase: c23a36d9e4cdf7877dfcba8dd0c58add66358999
+  FirebaseAuth: c92d49ada7948d1a23466e3db17bc4c2039dddc3
+  FirebaseCore: d3a978a3cfa3240bf7e4ba7d137fdf5b22b628ec
+  FirebaseCoreDiagnostics: 770ac5958e1372ce67959ae4b4f31d8e127c3ac1
+  FirebaseDatabase: 13a865a4b85897462b930eb683bda8f52583713f
+  FirebaseFirestore: 9b2f1b9b9a6f2f0b6fb7484b9e32ab7e39243554
+  FirebaseFunctions: 27518fdd14d8b3a849e2443f921cd1b471ab7acd
+  FirebaseStorage: 15e0f15ef3c7fec3d1899d68623e47d4447066b4
   Folly: b73c3869541e86821df3c387eb0af5f65addfab4
   glog: 40a13f7840415b9a77023fbcae0f1e6f43192af3
-  GoogleDataTransport: 116c84c4bdeb76be2a7a46de51244368f9794eab
+  GoogleDataTransport: f56af7caa4ed338dc8e138a5d7c5973e66440833
   GoogleSignIn: 7137d297ddc022a7e0aa4619c86d72c909fa7213
-  GoogleUtilities: e1d9ed4e544fc32a93e00e721400cbc3f377200d
+  GoogleUtilities: 7f2f5a07f888cdb145101d6042bc4422f57e70b3
   "gRPC-C++": 13d8ccef97d5c3c441b7e3c529ef28ebee86fad2
   gRPC-Core: 4afa11bfbedf7cdecd04de535a9e046893404ed5
-  GTMAppAuth: 197a8dabfea5d665224aa00d17f164fc2248dab9
+  GTMAppAuth: ad5c2b70b9a8689e1a04033c9369c4915bfcbe89
   GTMSessionFetcher: b3503b20a988c4e20cc189aa798fd18220133f52
   InputMask: 71d291dc54d2deaeac6512afb6ec2304228c0bb7
   leveldb-library: 50c7b45cbd7bf543c81a468fe557a16ae3db8729
   lottie-ios: 48fac6be217c76937e36e340e2d09cf7b10b7f5f
   lottie-react-native: 1fb4ce21d6ad37dab8343eaff8719df76035bd93
-  Mixpanel-swift: ef37387899c8967fa95d492887f4bcc980041aa0
-  MixpanelReactNative: b89fb3356f9c6cf703e11661a500d1731c6d7769
-  nanopb: 1bf24dd71191072e120b83dd02d08f3da0d65e53
-  NodeMediaClient: 595811d347cfc02dfcda26bb611faf4c7f2be9c5
+  Mixpanel-swift: 9d3a2597ef015f187abae0bfa5fda5997d5e4429
+  MixpanelReactNative: 36ee8ab038c4afab2f538e0c5432eeca590f03d8
+  nanopb: 59317e09cf1f1a0af72f12af412d54edf52603fc
+  NodeMediaClient: 296bdebb9de9913a0c93bdc3e04136e091ed9775
   Permission-Camera: 5d2aaf95592660b6dcb5e8d1d90ed5d0156cad02
   Plaid: 5e387a65c712ce0019fb19a80dbec5c815a1d19c
   PromisesObjC: 3113f7f76903778cf4a0586bd1ab89329a0b7b97
@@ -984,17 +980,17 @@ SPEC CHECKSUMS:
   React-jsi: df07aa95b39c5be3e41199921509bfa929ed2b9d
   React-jsiexecutor: b56c03e61c0dd5f5801255f2160a815f4a53d451
   React-jsinspector: 8e68ffbfe23880d3ee9bafa8be2777f60b25cbe2
-  react-native-airplay-button: 8ebb150ef920d1dba2a17dd13509540f1f68a341
+  react-native-airplay-button: 1cbcdd520ae9cfbb12c3990d94d19d39aaeee957
   react-native-branch: 8bda99ca8dc5a16d32bd81c8a8d937cb3d2c5e0c
   react-native-fbsdk: 00c15d138bba6d4efa628670886fc58cec858c19
   react-native-image-picker: c6d75c4ab2cf46f9289f341242b219cb3c1180d3
   react-native-maps: f4b89da81626ad7f151a8bfcb79733295d31ce5c
   react-native-netinfo: e849fc21ca2f4128a5726c801a82fc6f4a6db50d
   react-native-network-info: d1290ffc0bd0709e11436f5b8d7f605dcc5c4530
-  react-native-nodemediaclient: eeb78d795f2fc3d772b2b95f460aa45018d03119
-  react-native-plaid-link-sdk: 1f6baa6a5ce0dbd41c8c5012c7a696fc06a166c2
+  react-native-nodemediaclient: beb495badb7d204d13129e5f9e630e79314a82c5
+  react-native-plaid-link-sdk: 4bd75e2a4cdfc6533d31348b4fcddc27f08497aa
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
-  react-native-text-input-mask: 4909e91db0224812881d7091ee7705e3df96c520
+  react-native-text-input-mask: 36a546b378fadd2efe1b7484a859d34bc2c80395
   react-native-video: eee541262ada11bc7ffe8ec5508e6a877937c462
   React-RCTActionSheet: 53ea72699698b0b47a6421cb1c8b4ab215a774aa
   React-RCTAnimation: 1befece0b5183c22ae01b966f5583f42e69a83c2
@@ -1011,18 +1007,18 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: b03032fdbdb725bea0bd9e5ec5a7272865ae7398
   RNCCheckbox: d1749e6a92178ce5dbc31e63becd1f34f0c76bbd
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
-  RNFBApp: 2810471bdc092151f20f16a9f8915b1ad70325b2
-  RNFBAuth: 005fc073e59f272bac33a5b5a2f9ffd77dbeebc9
-  RNFBDatabase: 612a5c86fe5ce01f64ea37a959c71e2b21f1d16b
-  RNFBFirestore: be5e266c0134a30766bf0568e258e6692c50294a
-  RNFBFunctions: 12f68da879806d1acab0b5dce1041d3e72eb0341
-  RNFBStorage: 79d66023b614b79bc360e2e0fa7d3067f6728827
+  RNFBApp: 804b98033f45c3a3e35b56de8c894f85ef5e4388
+  RNFBAuth: 4cfe4dabd91775346ee41f0bde60262e827033c5
+  RNFBDatabase: 3da203db04cb0b16664d1e6102fe3169d6a2fe44
+  RNFBFirestore: 3fe90c352fdbbff5a822c43f571cf8d9fdf38029
+  RNFBFunctions: e6338d738828fb03f0c33242fc69ea6e584ed1c1
+  RNFBStorage: 70f4fd4eaf43de4563498fc97c8479cb12ffdf60
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNGoogleSignin: ccf71ee4b6cfd324fd788a41e457e2043838c0d9
   RNPermissions: 5df468064df661a4c8c017e2791ce90d7695eea5
   RNReanimated: b5ccb50650ba06f6e749c7c329a1bc3ae0c88b43
   RNScreens: c526239bbe0e957b988dacc8d75ac94ec9cb19da
-  RNShare: 2db8b0346a4859f83d15528602ed5b6120a0452a
+  RNShare: 4df87d1791f50a2c7b1d89432fb9bbb7c02a9c9a
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   RNVectorIcons: bc69e6a278b14842063605de32bec61f0b251a59
   Yoga: 7d13633d129fd179e01b8953d38d47be90db185a
