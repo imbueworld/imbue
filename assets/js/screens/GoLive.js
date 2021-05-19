@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Platform, StatusBar, Text } from 'react-native';
+  
+import React, { useState, useEffect } from 'react'
+import { View, Platform, StatusBar, Text } from 'react-native'
 
-import { PERMISSIONS } from 'react-native-permissions';
-import { NodeCameraView } from 'react-native-nodemediaclient';
-import LivestreamLayout from '../layouts/LivestreamLayout';
+import {PERMISSIONS} from 'react-native-permissions';
+import { NodeCameraView } from "react-native-nodemediaclient"
+import LivestreamLayout from '../layouts/LivestreamLayout'
 
-import cache from '../backend/storage/cache';
-import User from '../backend/storage/User';
-import { requestPermissions } from '../backend/HelperFunctions';
-import { colors } from '../contexts/Colors';
-import firestore from '@react-native-firebase/firestore';
-import { useRoute } from '@react-navigation/core';
+import cache from '../backend/storage/cache'
+import User from '../backend/storage/User'
+import { requestPermissions } from '../backend/HelperFunctions'
+import { colors } from '../contexts/Colors' 
 
 async function checkPermissionsiOS() {
-  let hasAllPermissionsiOS = false;
-  check(PERMISSIONS.IOS.CAMERA)
+  let hasAllPermissionsiOS = false
+  check(PERMISSIONS.IOS.CAMERA) 
     .then((result) => {
       switch (result) {
         case RESULTS.UNAVAILABLE:
@@ -22,107 +21,89 @@ async function checkPermissionsiOS() {
             'This feature is not available (on this device / in this context)',
           );
           return hasAllPermissionsiOS;
+          break;
         case RESULTS.DENIED:
           console.log(
             'The permission has not been requested / is denied but requestable',
           );
           return hasAllPermissionsiOS;
+          break;
         case RESULTS.GRANTED:
           console.log('The permission is granted');
-          hasAllPermissionsiOS = true;
+          hasAllPermissionsiOS = true
           return hasAllPermissionsiOS;
+          break;
         case RESULTS.BLOCKED:
           console.log('The permission is denied and not requestable anymore');
           return hasAllPermissionsiOS;
+          break;
       }
     })
     .catch((error) => {
-      console.error(err);
-      return false;
+      console.error(err) 
+      return false
     });
 }
 
+
 export default function GoLive(props) {
-  const route = useRoute();
-  const { classId, timeId } = route.params;
-  const cameraRef = useRef();
-  const [user, setUser] = useState(null);
-  const [gymId, setGymId] = useState(null);
-  const [gymName, setGymName] = useState(null);
+  const [user, setUser] = useState(null)
+  const [gymId, setGymId] = useState(null)
 
   // android permissions
-  const [hasAllPermissions, setHasAllPermisions] = useState(false);
+  const [hasAllPermissions, setHasAllPermisions] = useState(false) 
   // ios permissions
-  const [hasAllPermissionsiOS, setHasAllPermisionsiOS] = useState(false);
-  const [streamKey, setStreamKey] = useState(null);
+  const [hasAllPermissionsiOS, setHasAllPermisionsiOS] = useState(false)
+  const [streamKey, setStreamKey] = useState(null)
 
-  useEffect(() => {
-    if (cameraRef.current) {
-      cache('streamRef').set(cameraRef.current);
-    }
-  }, [cameraRef]);
   // Init
   useEffect(() => {
     const init = async () => {
-      const partner = new User();
-      const partnerDoc = await partner.retrieveUser();
+      const partner = new User()
+      const partnerDoc = await partner.retrieveUser()
 
-      const { associated_gyms = [] } = partnerDoc;
-      const gymIds = associated_gyms[0];
+      const { associated_gyms=[] } = partnerDoc
+      const gymIds = associated_gyms[0]
 
-      await firestore()
-        .collection('classes')
-        .where('gym_id', '==', gymIds)
-        .where('id', '==', classId)
-        .get()
-        .then((querySnapshot) => {
-          setUser(partnerDoc);
-          setGymId(gymIds);
-          let classes = [];
-          querySnapshot.forEach((doc) => {
-            classes.push(doc.data());
-          });
-          console.log('Class: ' + JSON.stringify(classes));
-          setGymName(classes[0].name);
-        });
+      setUser(partnerDoc)
+      setGymId(gymIds)
 
       // Hiding obstructing bars
-      StatusBar.setBackgroundColor('#00000000');
-      if (Platform.OS === 'android') StatusBar.setTranslucent(true);
-    };
-    init();
+      StatusBar.setBackgroundColor('#00000000')
+      StatusBar.setTranslucent(true)
+    }; init()
 
     return () => {
-      StatusBar.setBackgroundColor(colors.bg);
-      if (Platform.OS === 'android') StatusBar.setTranslucent(false);
-    };
-  }, []);
+      StatusBar.setBackgroundColor(colors.bg)
+      StatusBar.setTranslucent(false)
+    }
+  }, [])
 
   useEffect(() => {
     const init = async () => {
-      if (Platform.OS === 'android') {
+      if (Platform.OS === "android") {
         // let has = await checkPermissions()
         // setHasAllPermisions(has)
-      } else if (Platform.OS === 'ios') {
-        let has = await checkPermissionsiOS();
-        setHasAllPermisionsiOS(has);
+      } else if (Platform.OS === "ios") {
+        let has = await checkPermissionsiOS()
+        setHasAllPermisionsiOS(has)
       }
-    };
-    init();
+    }; init()
 
     const perms = async () => {
       let unfulfilledPerms = await requestPermissions([
         'CAMERA',
         'RECORD_AUDIO',
         'WRITE_EXTERNAL_STORAGE',
-      ]);
+      ])
 
-      setHasAllPermisions(!Boolean(unfulfilledPerms));
-    };
-    perms();
-  }, []);
+      setHasAllPermisions(!Boolean(unfulfilledPerms))
+    }; perms()
+  }, [])
 
-  if (!user || !gymId) return <View />;
+
+
+  if (!user || !gymId) return <View />
   // if (Platform.OS === "android" && !hasAllPermissions) return <View style={{
   //   backgroundColor: "black",
   //   width: "100%",
@@ -143,45 +124,41 @@ export default function GoLive(props) {
       profile: 1,
       fps: 30,
       videoFrontMirror: false,
-    },
-  };
+    }
+  }
 
-  const base = 'rtmps://global-live.mux.com:443/app/';
+  const base = 'rtmps://global-live.mux.com:443/app/'
   // const base = "rtmp://global-live.mux.com:443/app/"
 
   const toggleStream = async () => {
-    console.log('pressed');
-    const stream = cache('streamRef').get();
-    const isStreaming = cache('isStreaming').get();
+    console.log("pressed")
+    const stream = cache("streamRef").get()
+    const isStreaming = cache("isStreaming").get()
 
     if (isStreaming) {
-      stream.stop();
-      cache('isStreaming').set(false);
-      return;
-    }
+      stream.stop()
+      cache("isStreaming").set(false)
+      return
+    } 
 
-    const partnerObj = new User();
-    await partnerObj.createLivestream({ gymId }); // Will not create livestream, if it already has been
-    const { stream_key } = await partnerObj.retrieveUser();
-    console.log('stream_key: ' + stream_key);
-    setStreamKey(stream_key);
+    const partnerObj = new User() 
+    await partnerObj.createLivestream({ gymId }) // Will not create livestream, if it already has been
+    const { stream_key } = await partnerObj.retrieveUser()
+    console.log("stream_key: " + stream_key)
+    setStreamKey(stream_key)
 
-    stream.start();
-    cache('isStreaming').set(true);
-  };
+    stream.start()
+    cache("isStreaming").set(true)
 
-  console.log('link: ' + `${base}${streamKey}`);
+  }
+
+  console.log("link: " + `${base}${streamKey}`)
 
   return (
     <>
-      <LivestreamLayout
-        cameraRef={cameraRef}
+      <LivestreamLayout 
         user={user}
         gymId={gymId}
-        classId={classId}
-        timeId={timeId}
-        gymName={gymName}
-        switchCamera={() => cameraRef.current.switchCamera()}
         buttonOptions={{
           leaveLivestream: {
             show: false,
@@ -195,31 +172,34 @@ export default function GoLive(props) {
           },
         }}
       />
-      <View
-        style={{
-          width: '100%',
-          height: '100%',
-          position: 'absolute',
-          // zIndex: -100,
-        }}>
-        {(hasAllPermissions || hasAllPermissionsiOS) && (
+      <View style={{
+        width: "100%",
+        height: "100%",
+        position: "absolute",
+        // zIndex: -100,
+      }}>
+        {
+          (hasAllPermissions || hasAllPermissionsiOS) &&
           <NodeCameraView
             style={{
-              width: '100%',
-              height: '100%',
+              width: "100%",
+              height: "100%",
               // zIndex: -100,
               // position: "absolute",
             }}
-            ref={cameraRef}
+            ref={vb => {
+              // stream = vb
+              cache("streamRef").set(vb)
+            }}
             outputUrl={`${base}${streamKey}`}
             camera={settings.camera}
             audio={settings.audio}
             video={settings.video}
             autopreview
-            // switchCamera
+            switchCameraswitchCamera
           />
-        )}
+        }
       </View>
     </>
-  );
+  )
 }
