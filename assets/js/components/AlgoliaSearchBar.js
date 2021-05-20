@@ -58,12 +58,11 @@ export default function AlgoliaSearchBar(props) {
       }}>
         <TextInput
           style={{
-            color: "#000",
+            color: colors.textInputPlaceholderLight,
             flex: 1,
             ...FONTS.body,
             fontSize: 8,
             ...textStyle,
-            color: "#000",
             
           }}
           placeholder={'Search for an influencer...'}

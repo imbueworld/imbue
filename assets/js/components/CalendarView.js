@@ -90,6 +90,7 @@ const styles = StyleSheet.create({
     padding: 12,
     backgroundColor: "white",
     borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth: 0,

@@ -124,7 +124,7 @@ export default function Livestream(props) {
       {isLive != true ? (
         <Text
           style={{
-            color: colors.textInputPlaceholderLight,
+            color: colors.textInputPlaceholderDark,
             ...FONTS.body,
             textAlign: 'center',
             flex: 1,

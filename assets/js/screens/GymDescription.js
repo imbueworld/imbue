@@ -444,18 +444,16 @@ const styles = StyleSheet.create({
   capsule: {
     paddingRight: 10,
     paddingLeft: 10,
+    backgroundColor: '#ffffff',
   },
+  
   innerCapsule: {
     width: '100%',
     marginBottom: 20,
     paddingBottom: 10,
     alignSelf: 'center',
-    // backgroundColor: "#FFFFFF80",
-    backgroundColor: '#00000040',
-    // borderWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
     borderColor: colors.gray,
     borderRadius: 25,
   },

@@ -23,7 +23,7 @@ export default function AlgoliaSearchAbsoluteOverlay(props) {
           containerStyle={{
             marginHorizontal: 10,
             marginVertical: 5,
-            backgroundColor: colors.bg,
+            backgroundColor: "#242429",
             marginVertical: 20,
           }}
           onX={() => setResultPanelIsOpen(false)}

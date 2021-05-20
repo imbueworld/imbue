@@ -231,7 +231,7 @@ const UserDashboard = observer(props => {
               style={{
                 borderRadius: 999,
               }}
-              underlayColor="#000000C0"
+              underlayColor="#ffffff"
               onPress={() => setExpanded(!expanded)}>
               <Icon
                 containerStyle={{
@@ -439,6 +439,7 @@ export default UserDashboard;
 const styles = StyleSheet.create({
   capsule: {
     paddingRight: 10,
+    backgroundColor: '#ffffff',
     paddingLeft: 10,
   },
   innerCapsule: {
@@ -446,11 +447,11 @@ const styles = StyleSheet.create({
     paddingBottom: 10,
     alignSelf: 'center',
     // backgroundColor: "#FFFFFF80",
-    backgroundColor: '#00000040',
-    // borderWidth: 1,
-    borderLeftWidth: 1,
-    borderRightWidth: 1,
-    borderBottomWidth: 1,
+    backgroundColor: '#ffffff',
+    borderWidth: 1,
+    // borderLeftWidth: 1,
+    // borderRightWidth: 1,
+    // borderBottomWidth: 1,
     borderColor: colors.gray,
     borderRadius: 25,
   },
@@ -462,6 +463,7 @@ const styles = StyleSheet.create({
   },
   sa1: {
     flex: 1,
+    backgroundColor: colors.bg,
     paddingTop: Platform.OS === 'android' ? 25 : 0,
   },
   sa2: {

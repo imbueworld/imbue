@@ -10,7 +10,8 @@ export const colors = {
   darkButtonText: '#242429',
   textInputFill: '#242429',
   textInputPlaceholder: '#3C3C439A',
-  textInputPlaceholderLight: '#242426',
+  textInputPlaceholderDark: '#242426',
+  textInputPlaceholderLight: '#ffffff',
   textInputBorder: '#242426', // same as buttonFill
   title: '#242426', // same as buttonFill
 
