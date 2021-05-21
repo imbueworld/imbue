@@ -6,18 +6,26 @@ import {
   TextInput,
   StyleSheet,
   FlatList,
+  StatusBar,
+  Image
 } from 'react-native';
 import Modal from 'react-native-modal';
+import {LivestreamUserModal} from './LivestreamUserModal';
 import SendIcon from '../components/img/svg/send.svg';
 import cache from '../backend/storage/cache';
 import {sendMessage} from '../backend/LivestreamFunctions';
 import SoundOn from '../components/img/svg/sound_on.svg';
-import SoundOff from '../components/img/svg/sound_off.svg';
+import Back from '../components/img/svg/back.svg';
+import SoundOff from '../components/img/svg/sound_off_black.svg';
 import Location from '../components/img/svg/location.svg';
+import Close from '../components/img/svg/x.svg';
+import Search from '../components/img/svg/search.svg';
 
 export const LivestreamModal = ({visible, close, gymId, user}) => {
   const [state, setState] = useState('chat');
   const [message, setMessage] = useState('');
+  const [searchText, setSearchText] = useState('');
+  const [streamUserModal, setStreamUserModal] = useState(false);
 
   const [ptcs, setPtcs] = useState([]);
   const [chat, setChat] = useState([]);
@@ -60,9 +68,15 @@ export const LivestreamModal = ({visible, close, gymId, user}) => {
     return time < 10 ? `0${time}` : time;
   };
 
-  console.log(ptcs);
+  //console.log(ptcs);
 
   return (
+    <>
+    <LivestreamUserModal
+        user={user}
+        visible={streamUserModal}
+        close={() => setStreamUserModal(false)}
+      />
     <Modal
       isVisible={visible}
       style={styles.modal}
@@ -70,10 +84,13 @@ export const LivestreamModal = ({visible, close, gymId, user}) => {
       onSwipeComplete={() => close()}
       propagateSwipe={true}>
       <View style={styles.background}>
+        <StatusBar color="black"/>
         <View style={styles.header}>
-          <View style={styles.closeModal} />
-          <Text style={styles.courseName}>ABS & CORE</Text>
-          <Text style={styles.courseTime}>13:05 - 14:05</Text>
+          <Back width="10" height="10" style={{...styles.switchButton,marginLeft:5}} onPress={()=>close()}/>
+          <View style={styles.headerText}>
+            <Text style={styles.courseName}>ABS & CORE</Text>
+            <Text style={styles.courseTime}>13:05 - 14:05</Text>
+          </View>
         </View>
         <View style={styles.content}>
           <View style={styles.buttonHeader}>
@@ -99,6 +116,19 @@ export const LivestreamModal = ({visible, close, gymId, user}) => {
                 Users
               </Text>
             </TouchableOpacity>
+            <View style={styles.chatList}/>
+            <SoundOff width="25" height="25"/>
+          </View>
+          <View style={styles.searchbar}>
+            <Image style={styles.searchIcon} source={require('./img/png/search.png')} />
+            <View style={styles.searchLine} />
+            <TextInput
+              style={styles.searchInput}
+              value={searchText}
+              onChangeText={text => setSearchText(text)}
+            />
+            <Image style={styles.searchIcon} source={require('./img/png/x.png')} />
+
           </View>
           {state === 'chat' ? (
             <View style={styles.chat}>
@@ -182,6 +212,8 @@ export const LivestreamModal = ({visible, close, gymId, user}) => {
           ) : (
             <View style={styles.users} onStartShouldSetResponder={() => true}>
               <FlatList
+                numColumns={2}
+                horizontal={false}
                 data={ptcs
                   .filter(el => el.here)
                   .concat(ptcs.filter(el => !el.here))}
@@ -194,17 +226,15 @@ export const LivestreamModal = ({visible, close, gymId, user}) => {
                   console.log(index);
                   return (
                     <TouchableOpacity
-                      disabled={!item.here || user.account_type !== 'partner'}
-                      style={styles.user}>
-                      <View style={styles.userRight}>
+                      //disabled={!item.here || user.account_type !== 'partner'}
+                      style={styles.user}
+                      onPress={()=>setStreamUserModal(true)}>
+                      <Image style={styles.userImage} source={{uri:'https://firebasestorage.googleapis.com/v0/b/spring-ranger-281214.appspot.com/o/'+item.icon_uri+'?alt=media&token=60675c9d-f2e4-49ee-a879-13308e16439c'}}/>
+                      <View style={styles.userItem}>
                         <Text style={styles.userInfo}>{item.name}</Text>
-                        <View style={styles.userLocation}>
-                          <Location width={25} height={25} />
-                          <Text style={styles.locationText}>USA</Text>
+                        <View style={styles.userLeft}>
+                          <SoundOn width={28} height={28} />
                         </View>
-                      </View>
-                      <View style={styles.userLeft}>
-                        <SoundOn width={28} height={28} />
                       </View>
                     </TouchableOpacity>
                   );
@@ -215,6 +245,7 @@ export const LivestreamModal = ({visible, close, gymId, user}) => {
         </View>
       </View>
     </Modal>
+    </>
   );
 };
 
@@ -226,6 +257,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: '100%',
     backgroundColor: 'black',
+    paddingTop:5
   },
   closeModal: {
     width: '40%',
@@ -234,9 +266,13 @@ const styles = StyleSheet.create({
     marginVertical: 14,
   },
   header: {
-    marginHorizontal: 50,
+    marginHorizontal: 10,
     marginBottom: 20,
-    alignItems: 'center',
+    flexDirection:'row'
+  },
+  headerText:{
+    flex:1,
+    marginLeft:8
   },
   courseName: {
     fontSize: 18,
@@ -245,28 +281,54 @@ const styles = StyleSheet.create({
   },
   courseTime: {
     fontSize: 30,
-    fontWeight: 'bold',
     color: '#BCC1CD',
   },
   content: {
     flex: 1,
-    backgroundColor: 'white',
+    backgroundColor: '#F9F9F9',
     borderTopRightRadius: 20,
     borderTopLeftRadius: 20,
   },
   buttonHeader: {
     paddingVertical: 6,
     flexDirection: 'row',
-    paddingHorizontal: 20,
+    paddingHorizontal: 25,
+    alignItems:'center'
+  },
+  searchbar:{
+    marginVertical:8,
+    marginHorizontal:30,
+    backgroundColor:'white',
+    borderRadius:15,
+    padding:5,
+    flexDirection:'row',
+    alignItems:'center'
+  },
+  searchIcon:{
+    width:25,
+    height:25,
+    marginHorizontal:10,
+  },
+  searchLine:{
+    height:30,
+    width:1,
+    backgroundColor:'gray'
+  },
+  searchInput:{
+    flex:1,
+    marginHorizontal:5,
+    color:'black',
+    fontSize:12,
   },
   switchButton: {
-    paddingHorizontal: 15,
+    paddingHorizontal: 12,
     paddingVertical: 5,
+    marginTop:5
   },
   switchButtonText: {
-    color: '#878789',
-    fontWeight: 'bold',
+    color: '#c0c0c0',
     fontSize: 16,
+    fontWeight:'200'
   },
   chat: {
     flex: 1,
@@ -361,21 +423,41 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   user: {
-    width: '100%',
+    width: '50%',
+    height:200,
     backgroundColor: 'black',
-    paddingVertical: 14,
-    paddingHorizontal: 20,
     marginVertical: 8,
     borderRadius: 15,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
+  userItem:{
+    position:'absolute',
+    width:'100%',
+    flexDirection:'row',
+    bottom:0,
+    alignItems:'center',
+    paddingHorizontal:15,
+    paddingVertical:8,
+    borderRadius:15,
+    backgroundColor:'#rgba(36, 36, 41, 0.5)'
+  },
+  userImage:{
+    width:'100%',
+    height:'100%',
+    flex:1,
+    resizeMode:'cover',
+    backgroundColor: 'black',
+    borderRadius: 15,
+  },
   userInfo: {
     fontSize: 16,
-    fontWeight: 'bold',
+    fontWeight: '400',
     color: 'white',
     marginBottom: 6,
+    paddingRight:20,
+    flex:1,
   },
   userLocation: {
     flexDirection: 'row',

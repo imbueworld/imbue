@@ -18,7 +18,6 @@ class Mindbody {
     this.base = 'https://api.mindbodyonline.com'
     this.endpoints = {
       'GET ActivationCode': `/public/v${this._version}/site/activationcode`,
-
       'POST UserToken': `/public/v${this._version}/usertoken/issue`,
       'GET RequiredClientFields': `/public/v${this._version}/client/requiredclientfields`,
       'GET Classes': `/public/v${this._version}/class/classes`,
