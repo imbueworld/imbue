@@ -185,6 +185,7 @@ export const AppNavigation = () => {
         initialState={initialState}
         fallback={() => <Text>Loading...</Text>}>
         <Stack.Navigator
+        initialRouteName="Boot"
           screenOptions={{
             headerShown: false,
           }}>
