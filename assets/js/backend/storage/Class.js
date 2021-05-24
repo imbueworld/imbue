@@ -114,6 +114,10 @@ export default class Class extends DataObject {
       if (timePassed > -30 * 60 * 1000 && currentTs < begin_time) {
         timeDoc.livestreamState = 'soon'
       }
+
+      if (timePassed > 720) {
+        timeDoc.livestreamState = 'passed'
+      }
     })
 
     return processedClass
