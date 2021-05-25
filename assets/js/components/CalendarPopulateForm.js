@@ -73,7 +73,7 @@ export default function CalendarPopulateForm(props) {
 
   useEffect(() => {
     const init = async () => {
-      setGymId(user.associated_gyms[0]);
+      setGymId(user ? user.associated_gyms[0]: null);
     };
     init();
   }, [user]);

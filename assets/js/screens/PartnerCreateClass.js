@@ -22,7 +22,7 @@ export default function PartnerCreateClass(props) {
 
       setUser(userDoc);
       setClasses(classes);
-      console.log('classDoc: ' + JSON.stringify(classDoc));
+      //console.log('classDoc: ' + JSON.stringify(classDoc));
     };
     init();
   }, []);
