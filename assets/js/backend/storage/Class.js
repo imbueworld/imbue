@@ -115,7 +115,7 @@ export default class Class extends DataObject {
         timeDoc.livestreamState = 'soon'
       }
 
-      if (timePassed > 720) {
+      if (timePassed > 1800) {
         timeDoc.livestreamState = 'passed'
       }
     })
