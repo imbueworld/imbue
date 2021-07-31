@@ -9,25 +9,25 @@ import {
   ScrollView,
 } from 'react-native';
 
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../../../components/CustomButton';
 // import CustomPopup from "../components/CustomPopup"
-import MembershipApprovalBadge from '../components/MembershipApprovalBadge';
-import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue';
-import ClassApprovalBadge from '../components/ClassApprovalBadge';
+import MembershipApprovalBadge from '../../../components/MembershipApprovalBadge';
+import MembershipApprovalBadgeImbue from '../../../components/MembershipApprovalBadgeImbue';
+import ClassApprovalBadge from '../../../components/ClassApprovalBadge';
 import { useFocusEffect } from '@react-navigation/native';
 
-import GymLayout from '../layouts/GymLayout';
-import { colors } from '../contexts/Colors';
-import { FONTS } from '../contexts/Styles';
-import CreditCardSelectionV2 from '../components/CreditCardSelectionV2';
+import GymLayout from '../../../constants/GymLayout';
+import { colors } from '../../../constants/Colors';
+import { FONTS } from '../../../constants/Styles';
+import CreditCardSelectionV2 from '../../../components/CreditCardSelectionV2';
 import {
   classType,
   currencyFromZeroDecimal,
   representDatabaseField,
-} from '../backend/HelperFunctions';
-import User from '../backend/storage/User';
-import Gym from '../backend/storage/Gym';
-import Class from '../backend/storage/Class';
+} from '../../../backend/HelperFunctions';
+import User from '../../../backend/storage/User';
+import Gym from '../../../backend/storage/Gym';
+import Class from '../../../backend/storage/Class';
 import config from '../../../App.config';
 import { StackActions, useNavigation } from '@react-navigation/native';
 import {
@@ -35,13 +35,13 @@ import {
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import firestore from '@react-native-firebase/firestore';
-import CalendarPopulateForm from '../components/CalendarPopulateForm';
+import CalendarPopulateForm from '../../../components/CalendarPopulateForm';
 import functions from '@react-native-firebase/functions';
 import moment from 'moment';
 import RNCalendarEvents from 'react-native-calendar-events';
-import AppBackground from '../components/AppBackground';
+import AppBackground from '../../../components/AppBackground';
 import LottieView from 'lottie-react-native';
-import useStore from '../store/RootStore';
+import useStore from '../../../store/RootStore';
 
 export default function ClassDescription(props) {
   const { classId, timeId } = props.route.params;
@@ -63,7 +63,7 @@ export default function ClassDescription(props) {
   const [hasMembership, setHasMembership] = useState(null);
   const [classHasPassed, setClassHasPassed] = useState();
   const [dob, setDob] = useState('');
-  const { data: calendarData } = props
+  const { data: calendarData } = props;
 
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -84,20 +84,22 @@ export default function ClassDescription(props) {
   };
 
   useEffect(() => {
-    if (!(calendarData instanceof Array)) return
+    if (!(calendarData instanceof Array)) return;
 
-    let filteredCalendarData = []
+    let filteredCalendarData = [];
     if (props.dateString) {
-      calendarData.forEach(doc => {
-        let filteredData = { ...doc }
-        filteredData.active_times = doc.active_times.filter(({ dateString }) => {
-          return dateString === props.dateString
-        })
-        filteredCalendarData.push(filteredData)
-      })
-    } else filteredCalendarData = calendarData
-    setClasses(filteredCalendarData)
-  }, [calendarData, props.dateString])
+      calendarData.forEach((doc) => {
+        let filteredData = { ...doc };
+        filteredData.active_times = doc.active_times.filter(
+          ({ dateString }) => {
+            return dateString === props.dateString;
+          },
+        );
+        filteredCalendarData.push(filteredData);
+      });
+    } else filteredCalendarData = calendarData;
+    setClasses(filteredCalendarData);
+  }, [calendarData, props.dateString]);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -196,10 +198,10 @@ export default function ClassDescription(props) {
       let hasMembership = user.active_memberships.includes(imbueId)
         ? 'imbue'
         : user.active_memberships.includes(gym.id)
-          ? 'gym'
-          : activeTimeIds.includes(timeId)
-            ? 'class'
-            : false;
+        ? 'gym'
+        : activeTimeIds.includes(timeId)
+        ? 'class'
+        : false;
 
       setHasMembership(hasMembership);
     };
@@ -503,7 +505,9 @@ export default function ClassDescription(props) {
                         }
                       }}
                     />
-                  ) : priceType === 'paid' && user.dob && classDoc.livestreamState !== 'passed' ? (
+                  ) : priceType === 'paid' &&
+                    user.dob &&
+                    classDoc.livestreamState !== 'passed' ? (
                     <>
                       <CustomButton
                         style={{
@@ -548,14 +552,13 @@ export default function ClassDescription(props) {
                   ) : (
                     <View>
                       {classDoc.livestreamState == 'passed' ? (
-                        <View>
-                        </View>
+                        <View></View>
                       ) : (
                         <>
-                          { buttonDisabled ? (
-                            <View style={{ alignItems: 'center' }} >
+                          {buttonDisabled ? (
+                            <View style={{ alignItems: 'center' }}>
                               <LottieView
-                                source={require('../components/img/animations/cat-loading.json')}
+                                source={require('../../../components/img/animations/cat-loading.json')}
                                 style={{ height: 100, width: 100 }}
                                 autoPlay
                                 loop
@@ -594,7 +597,8 @@ export default function ClassDescription(props) {
                                       .doc(classDoc.id)
                                       .get();
 
-                                    let calendarId = updatedClass.data().calendarId;
+                                    let calendarId = updatedClass.data()
+                                      .calendarId;
 
                                     // Take care of duplicate entries
                                     if (calendarId) {
@@ -638,7 +642,9 @@ export default function ClassDescription(props) {
                                       const sendGridMemberPurchasedClass = functions().httpsCallable(
                                         'sendGridMemberPurchasedClass',
                                       );
-                                      await sendGridMemberPurchasedClass(gymUid);
+                                      await sendGridMemberPurchasedClass(
+                                        gymUid,
+                                      );
                                     } catch (err) {
                                       setErrorMsg('Email could not be sent');
                                     }
@@ -698,8 +704,7 @@ export default function ClassDescription(props) {
               {hasMembership !== 'gym' ? null : (
                 <>
                   {classDoc.livestreamState == 'passed' ? (
-                    <View>
-                    </View>
+                    <View></View>
                   ) : (
                     <View>
                       <CustomButton
@@ -708,10 +713,13 @@ export default function ClassDescription(props) {
                         }}
                         title="Join Class"
                         onPress={() => {
-                          const pushAction = StackActions.push('LivestreamWaitScreen', {
-                            gymId: gym.id,
-                            classDoc: classDoc,
-                          });
+                          const pushAction = StackActions.push(
+                            'LivestreamWaitScreen',
+                            {
+                              gymId: gym.id,
+                              classDoc: classDoc,
+                            },
+                          );
                           navigation.dispatch(pushAction);
                           // getGoToLivestreamButton()
                         }}
@@ -729,7 +737,7 @@ export default function ClassDescription(props) {
               {hasMembership !== 'class' ? null : (
                 <>
                   {classDoc.livestreamState == 'passed' ? (
-                    <View/>
+                    <View />
                   ) : (
                     <View>
                       <CustomButton
@@ -870,7 +878,7 @@ export default function ClassDescription(props) {
           ) : null}
         </GymLayout>
       </View>
-    </ScrollView >
+    </ScrollView>
   );
 }
 

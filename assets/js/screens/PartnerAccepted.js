@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   SafeAreaView,
   StyleSheet,
@@ -7,17 +7,17 @@ import {
   View,
   Platform,
 } from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import AppBackground from '../components/AppBackground';
 import CompanyLogo from '../components/CompanyLogo';
 import CustomTextInput from '../components/CustomTextInput';
 import CustomButton from '../components/CustomButton';
 import CustomCapsule from '../components/CustomCapsule';
-import {StackActions, useNavigation} from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import BackButton from '../components/BackButton';
 import auth from '@react-native-firebase/auth';
-import {FONTS} from '../contexts/Styles';
-import {colors, simpleShadow} from '../contexts/Colors';
+import { FONTS } from '../../../constants/Styles';
+import { colors, simpleShadow } from '../../../constants/Colors';
 import ForwardButton from '../components/ForwardButton';
 import User from '../backend/storage/User';
 
@@ -101,9 +101,9 @@ export default function PartnerApply(props) {
         /> */}
 
           {errorMsg ? (
-            <Text style={{color: 'red'}}>{errorMsg}</Text>
+            <Text style={{ color: 'red' }}>{errorMsg}</Text>
           ) : (
-            <Text style={{color: 'green'}}>{successMsg}</Text>
+            <Text style={{ color: 'green' }}>{successMsg}</Text>
           )}
           {/* : <Text style={{ color: "green" }}>{successMsg}</Text>} */}
 
@@ -115,7 +115,7 @@ export default function PartnerApply(props) {
             </Text>
           </View>
 
-          <View style={{marginTop: 150}}></View>
+          <View style={{ marginTop: 150 }}></View>
         </CustomCapsule>
         <TouchableHighlight
           style={styles.forwardButtonContainer}

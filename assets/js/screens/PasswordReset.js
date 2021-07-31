@@ -1,17 +1,17 @@
-import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
 import LottieView from 'lottie-react-native';
-import {StyleSheet, Text, Modal, View} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import User from '../backend/storage/User';
-import AppBackground from '../components/AppBackground';
-import GoBackButton from '../components/buttons/GoBackButton';
-import CompanyLogo from '../components/CompanyLogo';
-import CustomButton from '../components/CustomButton';
-import CustomTextInputV2 from '../components/CustomTextInputV2';
-import FormStatusMessageV2 from '../components/FormStatusMessageV2';
-import {colors} from '../contexts/Colors';
-import {FONTS} from '../contexts/Styles';
+import { StyleSheet, Text, Modal, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import User from '../../../backend/storage/User';
+import AppBackground from '../../../components/AppBackground';
+import GoBackButton from '../../../components/buttons/GoBackButton';
+import CompanyLogo from '../../../components/CompanyLogo';
+import CustomButton from '../../../components/CustomButton';
+import CustomTextInputV2 from '../../../components/CustomTextInputV2';
+import FormStatusMessageV2 from '../../../components/FormStatusMessageV2';
+import { colors } from '../../../constants/Colors';
+import { FONTS } from '../../../constants/Styles';
 
 export default function PasswordReset(props) {
   const navigation = useNavigation();
@@ -75,15 +75,15 @@ export default function PasswordReset(props) {
             justifyContent: 'center',
           }}>
           <LottieView
-            source={require('../components/img/animations/cat-loading.json')}
-            style={{height: 100, width: 100}}
+            source={require('../../../components/img/animations/cat-loading.json')}
+            style={{ height: 100, width: 100 }}
             autoPlay
             loop
           />
         </View>
       </Modal>
       <KeyboardAwareScrollView
-        contentContainerStyle={{minHeight: '100%'}}
+        contentContainerStyle={{ minHeight: '100%' }}
         keyboardShouldPersistTaps="handled">
         <AppBackground />
         <CompanyLogo />

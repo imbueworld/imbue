@@ -12,37 +12,31 @@ import {
   Image,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
-import { publicStorage } from '../backend/BackendFunctions';
+import { publicStorage } from '../../../backend/BackendFunctions';
 import { useDimensions } from '@react-native-community/hooks';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import ProfileLayout from '../layouts/ProfileLayout';
-import {
-  clockFromTimestamp,
-  dateStringFromTimestamp,
-  shortDateFromTimestamp,
-} from '../backend/HelperFunctions';
-import CustomButton from '../components/CustomButton';
+import ProfileLayout from '../../../constants/ProfileLayout';
+import { dateStringFromTimestamp } from '../../../backend/HelperFunctions';
+import CustomButton from '../../../components/CustomButton';
 import auth from '@react-native-firebase/auth';
-import Icon from '../components/Icon';
-import { simpleShadow } from '../contexts/Colors';
+import Icon from '../../../components/Icon';
 import { GoogleSignin } from '@react-native-community/google-signin';
 import { LoginManager } from 'react-native-fbsdk';
 import { useNavigation } from '@react-navigation/native';
-import User from '../backend/storage/User';
-import cache from '../backend/storage/cache';
-import AlgoliaSearchAbsoluteOverlay from '../components/AlgoliaSearchAbsoluteOverlay';
-import config from '../../../App.config';
+import User from '../../../backend/storage/User';
+import cache from '../../../backend/storage/cache';
+import AlgoliaSearchAbsoluteOverlay from '../../../components/AlgoliaSearchAbsoluteOverlay';
 //import { create } from 'react-test-renderer';
-import { FONTS } from '../contexts/Styles';
-import { colors } from '../contexts/Colors';
+import { FONTS } from '../../../constants/Styles';
+import { colors } from '../../../constants/Colors';
 import LottieView from 'lottie-react-native';
-import CalendarView from '../components/CalendarView';
-import ClassList from '../components/ClassList';
-import useStore from '../store/RootStore';
+import CalendarView from '../../../components/CalendarView';
+import ClassList from '../../../components/ClassList';
+import useStore from '../../../store/RootStore';
 import { observer } from 'mobx-react-lite';
 
-const UserDashboard = observer(props => {
+const UserDashboard = observer((props) => {
   const { userStore } = useStore();
   const navigation = useNavigation();
 
@@ -72,10 +66,10 @@ const UserDashboard = observer(props => {
     firestore()
       .collection('partners')
       .get()
-      .then(async querySnapshot => {
+      .then(async (querySnapshot) => {
         let resPartners = [];
         let resFeaturePartners = [];
-        querySnapshot.forEach(async documentSnapshot => {
+        querySnapshot.forEach(async (documentSnapshot) => {
           const partnersData = documentSnapshot.data();
           if (partnersData.approved == true) {
             // perfectFeaturedPartnersList(documentSnapshot.data());
@@ -95,9 +89,9 @@ const UserDashboard = observer(props => {
         firestore()
           .collection('gyms')
           .get()
-          .then(querySnapshot => {
+          .then((querySnapshot) => {
             let resGyms = [];
-            querySnapshot.forEach(documentSnapshot => {
+            querySnapshot.forEach((documentSnapshot) => {
               resGyms.push(documentSnapshot.data());
             });
             setGyms(resGyms);
@@ -121,7 +115,7 @@ const UserDashboard = observer(props => {
    */
   useEffect(() => {
     cache('UserDashboard/toggleMenu').set(() =>
-      setExpanded(expanded => !expanded),
+      setExpanded((expanded) => !expanded),
     );
 
     // Takes control or releases it upon each toggle of the side menu
@@ -198,7 +192,7 @@ const UserDashboard = observer(props => {
 
   const renderItem = ({ item }) => {
     var gymId = item.associated_gyms;
-    const filterGyms = gyms.filter(data => data.id === gymId[0]);
+    const filterGyms = gyms.filter((data) => data.id === gymId[0]);
 
     if (filterGyms.length !== 0) {
       return (
@@ -392,7 +386,7 @@ const UserDashboard = observer(props => {
                 horizontal
                 data={featuredPartners}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => item.id}
                 style={{}}
                 contentContainerStyle={{ paddingHorizontal: 10 }}
                 showsHorizontalScrollIndicator={false}
@@ -406,7 +400,7 @@ const UserDashboard = observer(props => {
                 horizontal
                 data={partners}
                 renderItem={renderItem}
-                keyExtractor={item => item.id}
+                keyExtractor={(item) => item.id}
                 contentContainerStyle={{ paddingHorizontal: 10 }}
                 style={{}}
                 showsHorizontalScrollIndicator={false}
@@ -414,21 +408,21 @@ const UserDashboard = observer(props => {
             </View>
           </>
         ) : (
-            <View
-              style={[
-                styles.cardContainer,
-                {
-                  alignItems: 'center',
-                },
-              ]}>
-              <LottieView
-                source={require('../components/img/animations/cat-loading.json')}
-                style={{ height: 100, width: 100 }}
-                autoPlay
-                loop
-              />
-            </View>
-          )}
+          <View
+            style={[
+              styles.cardContainer,
+              {
+                alignItems: 'center',
+              },
+            ]}>
+            <LottieView
+              source={require('../../../components/img/animations/cat-loading.json')}
+              style={{ height: 100, width: 100 }}
+              autoPlay
+              loop
+            />
+          </View>
+        )}
       </KeyboardAwareScrollView>
     </SafeAreaView>
   );

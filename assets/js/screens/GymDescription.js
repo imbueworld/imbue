@@ -1,18 +1,18 @@
-import React, {useState, useEffect} from 'react';
-import {SafeAreaView, StyleSheet, Text, View, Platform} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { SafeAreaView, StyleSheet, Text, View, Platform } from 'react-native';
 
-import CustomButton from '../components/CustomButton';
-import MembershipApprovalBadge from '../components/MembershipApprovalBadge';
-import MembershipApprovalBadgeImbue from '../components/MembershipApprovalBadgeImbue';
+import CustomButton from '../../../components/CustomButton';
+import MembershipApprovalBadge from '../../../components/MembershipApprovalBadge';
+import MembershipApprovalBadgeImbue from '../../../components/MembershipApprovalBadgeImbue';
 import firestore from '@react-native-firebase/firestore';
 
-import {colors} from '../contexts/Colors';
-import GymLayout from '../layouts/GymLayout';
-import {FONTS} from '../contexts/Styles';
-import CreditCardSelectionV2 from '../components/CreditCardSelectionV2';
-import Icon from '../components/Icon';
-import User from '../backend/storage/User';
-import Gym from '../backend/storage/Gym';
+import { colors } from '../../../constants/Colors';
+import GymLayout from '../../../constants/GymLayout';
+import { FONTS } from '../../../constants/Styles';
+import CreditCardSelectionV2 from '../../../components/CreditCardSelectionV2';
+// import Icon from '../components/Icon';
+import User from '../../../backend/storage/User';
+import Gym from '../../../backend/storage/Gym';
 import config from '../../../App.config';
 import {
   widthPercentageToDP as wp,
@@ -25,13 +25,13 @@ import {
   currencyFromZeroDecimal,
   dateStringFromTimestamp,
   shortDateFromTimestamp,
-} from '../backend/HelperFunctions';
-import CalendarView from '../components/CalendarView';
-import ClassList from '../components/ClassList';
+} from '../../../backend/HelperFunctions';
+import CalendarView from '../../../components/CalendarView';
+import ClassList from '../../../components/ClassList';
 import LottieView from 'lottie-react-native';
 
 export default function GymDescription(props) {
-  const {id} = props.route.params;
+  const { id } = props.route.params;
   console.log(props.route.params);
   const [gymId, setGymId] = useState('');
   const [calendarData, setCalendarData] = useState(null);
@@ -73,15 +73,17 @@ export default function GymDescription(props) {
   // https://imbuefitness.app.link/aEImCZ8ksfb
   function getFormatted(classItem) {
     const processedClass = classItem; // avoid affecting cache
-    processedClass.active_times = processedClass.active_times.map(timeDoc => ({
-      ...timeDoc,
-    })); // avoid affecting cache
-    const {active_times} = processedClass;
+    processedClass.active_times = processedClass.active_times.map(
+      (timeDoc) => ({
+        ...timeDoc,
+      }),
+    ); // avoid affecting cache
+    const { active_times } = processedClass;
     const currentTs = Date.now();
     let additionalFields;
 
-    active_times.forEach(timeDoc => {
-      const {begin_time, end_time} = timeDoc;
+    active_times.forEach((timeDoc) => {
+      const { begin_time, end_time } = timeDoc;
 
       // Add formatting to class,
       // which is later used by <ScheduleViewer />, and potentially others.
@@ -120,16 +122,16 @@ export default function GymDescription(props) {
       if (gymId) {
         setCalendarLoading(true);
         const gym = new Gym();
-        const {name} = await gym.retrieveGym(gymId);
+        const { name } = await gym.retrieveGym(gymId);
 
         //  get Gym's classes
         await firestore()
           .collection('classes')
           .get()
-          .then(querySnapshot => {
+          .then((querySnapshot) => {
             const classes = [];
 
-            querySnapshot.forEach(documentSnapshot => {
+            querySnapshot.forEach((documentSnapshot) => {
               if (documentSnapshot.data().gym_id == gymId) {
                 let formatted = getFormatted(documentSnapshot.data());
                 classes.push({
@@ -153,7 +155,7 @@ export default function GymDescription(props) {
       if (!user) return;
       const imbue = new Gym();
 
-      const {id: imbueId} = await imbue.retrieveGym('imbue');
+      const { id: imbueId } = await imbue.retrieveGym('imbue');
 
       let hasMembership = user.active_memberships.includes(imbueId)
         ? 'imbue'
@@ -192,7 +194,7 @@ export default function GymDescription(props) {
   }, [gym]);
 
   function openClassesSchedule() {
-    props.navigation.navigate('ScheduleViewer', {gymId});
+    props.navigation.navigate('ScheduleViewer', { gymId });
   }
 
   if (!gym) return <View />;
@@ -213,10 +215,10 @@ export default function GymDescription(props) {
         {Genres}
         {Desc}
         {calendarLoading ? (
-          <View style={{alignItems: 'center', marginVertical: 10}}>
+          <View style={{ alignItems: 'center', marginVertical: 10 }}>
             <LottieView
-              source={require('../components/img/animations/cat-loading.json')}
-              style={{height: 100, width: 100}}
+              source={require('../../../components/img/animations/cat-loading.json')}
+              style={{ height: 100, width: 100 }}
               autoPlay
               loop
             />
@@ -261,8 +263,10 @@ export default function GymDescription(props) {
         />
          */}
 
-        {errorMsg ? <Text style={{color: 'red'}}>{errorMsg}</Text> : null}
-        {successMsg ? <Text style={{color: 'green'}}>{successMsg}</Text> : null}
+        {errorMsg ? <Text style={{ color: 'red' }}>{errorMsg}</Text> : null}
+        {successMsg ? (
+          <Text style={{ color: 'green' }}>{successMsg}</Text>
+        ) : null}
 
         {/* if null, it means it hasn't been initialized yet. */}
         {hasMembership === null ? (
@@ -291,12 +295,12 @@ export default function GymDescription(props) {
                   } `}</Text>
                 }
                 onX={() => setPopup(null)}
-                onCardSelect={async paymentMethodId => {
+                onCardSelect={async (paymentMethodId) => {
                   try {
                     setErrorMsg('');
                     setSuccessMsg('');
 
-                    const {id: gymId} = gym;
+                    const { id: gymId } = gym;
 
                     const user = new User();
                     await user.purchaseGymMembership({
@@ -446,7 +450,7 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     backgroundColor: '#ffffff',
   },
-  
+
   innerCapsule: {
     width: '100%',
     marginBottom: 20,

@@ -8,17 +8,16 @@ import {
 } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
-import ProfileLayout from '../layouts/ProfileLayout';
-import { FONTS } from '../contexts/Styles';
+import { FONTS } from '../../../constants/Styles';
 import { useNavigation, useRoute } from '@react-navigation/native';
-import User from '../backend/storage/User';
-import config from '../../../App.config';
+import User from '../../../backend/storage/User';
+// import config from '../App.config';
 import CheckBox from '@react-native-community/checkbox';
-import CustomButton from '../components/CustomButton';
-import { colors, simpleShadow } from '../contexts/Colors';
-import AppBackground from '../components/AppBackground';
-import BackButton from '../components/BackButton';
-import Icon from '../components/Icon';
+import CustomButton from '../../../components/CustomButton';
+import { colors, simpleShadow } from '../../../constants/Colors';
+import AppBackground from '../../../components/AppBackground';
+import BackButton from '../../../components/BackButton';
+import Icon from '../../../components/Icon';
 
 export default function PreLiveChecklist(props) {
   const route = useRoute();
@@ -132,7 +131,7 @@ export default function PreLiveChecklist(props) {
                 top: 10,
                 right: 0,
               }}
-              source={require('../components/img/png/question-mark.png')}
+              source={require('../../../components/img/png/question-mark.png')}
             />
           </TouchableOpacity>
         </View>

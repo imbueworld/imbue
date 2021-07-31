@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -8,13 +8,13 @@ import {
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 
-import ProfileLayout from '../layouts/ProfileLayout';
-import CustomButton from '../components/CustomButton';
-import Icon from '../components/Icon';
-import GoBackButton from '../components/buttons/GoBackButton';
+import ProfileLayout from '../../../constants/ProfileLayout';
+// import CustomButton from '../components/CustomButton';
+// import Icon from '../components/Icon';
+// import GoBackButton from '../components/buttons/GoBackButton';
 
-import User from '../backend/storage/User';
-import {FONTS} from '../contexts/Styles';
+// import User from '../backend/storage/User';
+import { FONTS } from '../../../constants/Styles';
 
 export default function PartnerDashboard(props) {
   const [user, setUser] = useState(null);
