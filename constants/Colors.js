@@ -2,7 +2,7 @@ export const colors = {
   gray: '#242426', // same as buttonFill
   grayInactive: '#696461',
   checkmarkgreen: '#cbe558', // "#b2c94b"
-
+  black: '#000000',
   bg: '#ffffff',
   bgIcon: '#ffffff',
   buttonFill: '#242429',
@@ -14,8 +14,9 @@ export const colors = {
   textInputPlaceholderLight: '#ffffff',
   textInputBorder: '#242426', // same as buttonFill
   title: '#242426', // same as buttonFill
-
+  white: '#fff',
   accent: '#242426', // The shade of black that is iconic for this App
+  error: 'red',
 };
 
 export const simpleShadow = {

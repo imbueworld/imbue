@@ -15,6 +15,12 @@ import firestore from '@react-native-firebase/firestore';
 import { publicStorage } from '../../../backend/BackendFunctions';
 import { useDimensions } from '@react-native-community/hooks';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import {
+  Button,
+  ButtonsContainer,
+  ButtonText,
+} from '../../../components/Button';
+import { Title } from '../../../features/home/member/MemberStyled';
 
 import ProfileLayout from '../../../constants/ProfileLayout';
 import { dateStringFromTimestamp } from '../../../backend/HelperFunctions';
@@ -42,9 +48,9 @@ const UserDashboard = observer((props) => {
 
   const [expanded, setExpanded] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { width, height } = useDimensions().window;
+  const { width } = useDimensions().window;
   const slidingAnim = useRef(new Animated.Value(-1 * width - 25)).current;
-  const cardIconLength = width / 4;
+  // const cardIconLength = width / 3;
   const [calendarData, setCalendarData] = useState(null);
   const [slctdDate, setSlctdDate] = useState(
     dateStringFromTimestamp(Date.now()),
@@ -54,7 +60,6 @@ const UserDashboard = observer((props) => {
   const [featuredPartners, setFeaturedPartners] = useState([]);
   const [partners, setPartners] = useState([]);
   const [gyms, setGyms] = useState([]);
-  const [classes, setClasses] = useState([]);
 
   const init = async () => {
     const user = new User();
@@ -178,10 +183,11 @@ const UserDashboard = observer((props) => {
       style={styles.itemWrapper}>
       <Icon
         containerStyle={{
-          width: cardIconLength,
-          height: cardIconLength,
-          borderRadius: 50,
+          width: 95,
+          height: 95,
+          borderRadius: 30,
           overflow: 'hidden',
+          marginHorizontal: 19,
         }}
         source={{ uri: item.icon_uri }}
       />
@@ -229,10 +235,12 @@ const UserDashboard = observer((props) => {
               onPress={() => setExpanded(!expanded)}>
               <Icon
                 containerStyle={{
-                  width: 64,
-                  height: 64,
+                  width: 80,
+                  height: 80,
                   borderRadius: 999,
                   overflow: 'hidden',
+                  borderColor: 'white',
+                  borderWidth: 1,
                   // ...simpleShadow,
                 }}
                 source={{ uri: user.icon_uri_full }}
@@ -359,7 +367,17 @@ const UserDashboard = observer((props) => {
         {/* featured partners */}
         {!loading && calendarData !== null ? (
           <>
-            <View style={styles.capsule}>
+            <Title>Your booked classes</Title>
+            <ButtonsContainer containerWidth={300}>
+              <Button
+                onPress={() => {
+                  console.log('must navigate to the shcudlescreen');
+                }}>
+                <ButtonText color={'#000'}>find a class</ButtonText>
+              </Button>
+            </ButtonsContainer>
+            <Title>classes today</Title>
+            {/* <View style={styles.capsule}>
               <View style={styles.innerCapsule}>
                 <Text style={styles.listTitle}>Your Classes</Text>
                 <CalendarView
@@ -378,10 +396,10 @@ const UserDashboard = observer((props) => {
                   dateString={slctdDate}
                 />
               </View>
-            </View>
+            </View> */}
 
             <View style={styles.cardContainer}>
-              <Text style={styles.listTitle}>featured</Text>
+              {/* <Text style={styles.listTitle}>featured</Text> */}
               <FlatList
                 horizontal
                 data={featuredPartners}
@@ -395,7 +413,7 @@ const UserDashboard = observer((props) => {
 
             {/* all partners */}
             <View style={styles.cardContainer}>
-              <Text style={styles.listTitle}>all influencers</Text>
+              <Title>All influencers</Title>
               <FlatList
                 horizontal
                 data={partners}
@@ -457,7 +475,7 @@ const styles = StyleSheet.create({
   },
   sa1: {
     flex: 1,
-    backgroundColor: colors.bg,
+    backgroundColor: colors.buttonFill,
     paddingTop: Platform.OS === 'android' ? 25 : 0,
   },
   sa2: {
@@ -472,28 +490,30 @@ const styles = StyleSheet.create({
     ...FONTS.heading,
   },
   itemDescription: {
-    color: '#F9F9F9',
+    color: '#000',
     textAlign: 'center',
     paddingHorizontal: 10,
     ...FONTS.cardBody,
-    paddingTop: 5,
+    paddingBottom: 15,
   },
   itemName: {
-    color: '#F9F9F9',
+    color: '#000',
     textAlign: 'center',
     paddingHorizontal: 10,
-    ...FONTS.cardTitle,
-    paddingTop: 5,
+    ...FONTS.cardBody,
+    paddingTop: 10,
+    paddingBottom: 10,
+    fontSize: 8,
   },
   itemWrapper: {
     flex: 1,
-    backgroundColor: '#242429',
-    borderRadius: 20,
+    backgroundColor: '#fff',
+    borderRadius: 25,
     alignItems: 'center',
     paddingVertical: 10,
     marginLeft: 5,
     marginRight: 5,
-    width: 115,
+    width: 130,
   },
   container: {
     // minHeight: "100%", // This breaks sidePanel within <Anmimated.View>; minHeight does not synergize well with child position: "absolute" 's ? ; Unless it's used for ScrollView containerStyle?
@@ -525,8 +545,9 @@ const styles = StyleSheet.create({
     marginBottom: 40,
     bottom: 0,
   },
+  // this one is for the white card
   cardContainer: {
-    height: 230,
-    marginTop: 30,
+    // height: 230,
+    // marginTop: 30,
   },
 });

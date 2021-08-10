@@ -11,7 +11,12 @@ import PartnerHome from '../assets/js/screens/PartnerHome';
 import SignUp from '../features/auth/SignUp';
 import Login from '../features/auth/Login';
 import LoginPartner from '../features/auth/LoginPartner';
+// Main Screen UserDashboard
 import UserDashboard from '../assets/js/screens/UserDashboard';
+// Video Screnn should navigate to the video Player Screen
+import { VideoScreen } from '../features/boarding/partner/Video/VideoScreen';
+// ScheduleClass Screem
+import { ScheduleClass } from '../features/scheduleClass/ScheduleClass';
 import ProfileSettings from '../assets/js/screens/ProfileSettings';
 import PaymentSettings from '../assets/js/screens/PaymentSettings';
 import AddPaymentMethod from '../features/payment/AddPaymentMethod';
@@ -136,9 +141,8 @@ export const AppNavigation = () => {
             let last = userDoc.last;
 
             // Remove fromt Sendgrid
-            const removeFromSendGrid = functions().httpsCallable(
-              'removeFromSendGrid',
-            );
+            const removeFromSendGrid =
+              functions().httpsCallable('removeFromSendGrid');
             await removeFromSendGrid({ email, first, last, listName });
 
             // add to new list
@@ -209,11 +213,13 @@ export const AppNavigation = () => {
             component={LoginPartner}
             initialParams={{}}
           />
+          {/* HERE you have to put UserDashboard */}
           <Stack.Screen
             name="UserDashboard"
-            component={UserDashboard}
+            component={ScheduleClass}
             initialParams={{}}
           />
+          {/* ^^^^^^^^^ */}
           <Stack.Screen
             name="UserMemberships"
             component={UserMemberships}
