@@ -106,6 +106,8 @@ export const ClassButtonContaianer = styled.TouchableOpacity`
   margin: 8px;
   /* width: 400px; */
 `;
+// TODO: refactor this to styled component once you add the icon.
+// and understand how it works
 export const ClassesButton = () => (
   <ClassButtonContaianer>
     <View>

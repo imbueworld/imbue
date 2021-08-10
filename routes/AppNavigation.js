@@ -17,6 +17,9 @@ import UserDashboard from '../assets/js/screens/UserDashboard';
 import { VideoScreen } from '../features/boarding/partner/Video/VideoScreen';
 // ScheduleClass Screem
 import { ScheduleClass } from '../features/scheduleClass/ScheduleClass';
+// Create a Class screen
+import { CreateClass } from '../features/scheduleClass/createClass/CreateClass';
+
 import ProfileSettings from '../assets/js/screens/ProfileSettings';
 import PaymentSettings from '../assets/js/screens/PaymentSettings';
 import AddPaymentMethod from '../features/payment/AddPaymentMethod';
@@ -216,7 +219,7 @@ export const AppNavigation = () => {
           {/* HERE you have to put UserDashboard */}
           <Stack.Screen
             name="UserDashboard"
-            component={ScheduleClass}
+            component={CreateClass}
             initialParams={{}}
           />
           {/* ^^^^^^^^^ */}

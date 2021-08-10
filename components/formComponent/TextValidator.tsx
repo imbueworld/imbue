@@ -23,11 +23,12 @@ export const TextInputValidator = styled(TextInput) <{
   margin-bottom: 0px;
   height: 50px;
   color: ${props => (props.fontColor ? props.fontColor : colors.white)};
-  border: 1px solid #ffff;
+  border-bottom-width: 1px;
+  border-bottom-color: ${colors.white};
   border-radius: ${props => (props.radius ? props.radius : 50)}px;
   background-color: ${props =>
     props.background ? colors.white : 'transparent'};
-  /* width: 330px; */
+    font-family: 'LuloCleanW01-One';
 `;
 
 type Props = React.ComponentProps<typeof TextInput> & {
@@ -76,6 +77,7 @@ const TextValidator: React.FC<Props> = props => {
       <TextInputValidator
         fontColor={fontColor}
         background={background}
+        autoCorrect={false}
         radius={radius}
         ref={inputRef}
         {...restOfProps}
@@ -89,7 +91,7 @@ const TextValidator: React.FC<Props> = props => {
           onFocus?.(event);
         }}
       />
-
+      {/* Label animation */}
       <TouchableWithoutFeedback onPress={() => inputRef.current?.focus()}>
         <Animated.View
           style={[
@@ -150,6 +152,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     paddingHorizontal: 20,
     marginBottom: 30,
+    alignSelf: 'center',
     // height: 100
     // backgroundColor: 'rgba(221,221,221,0.1)',
   },

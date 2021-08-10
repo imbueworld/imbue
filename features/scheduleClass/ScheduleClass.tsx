@@ -9,15 +9,15 @@ import { Calendar, ClassesButton, ClassTitle, DateList, MainBackground, Schedule
 import { View } from 'react-native';
 import { Body } from '../../components/Body';
 
-interface IBookingProp {
+interface ISheduleProp {
 
   month: string;
 }
 
-export const ScheduleClass: React.FC<IBookingProp> = () => {
+export const ScheduleClass: React.FC<ISheduleProp> = () => {
   const navigation = useNavigation();
   const [dates1, setDates1] = useState([]);
-  const bookingMethods = useForm<IBookingProp>({
+  const bookingMethods = useForm<ISheduleProp>({
     defaultValues: {
       month: ''
     },
@@ -38,7 +38,7 @@ export const ScheduleClass: React.FC<IBookingProp> = () => {
   const onSelectDate = (date: any) => {
     setSelectedDate(date);
   };
-  function onSubmit(model: IBookingProp) {
+  function onSubmit(model: ISheduleProp) {
     console.warn('form submitted', model);
   }
   return (
