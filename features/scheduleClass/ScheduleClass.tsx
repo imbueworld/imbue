@@ -40,6 +40,7 @@ export const ScheduleClass: React.FC<ISheduleProp> = () => {
   };
   function onSubmit(model: ISheduleProp) {
     console.warn('form submitted', model);
+    navigation.navigate('createClass')
   }
   return (
     <ScheduleContainer>

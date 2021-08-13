@@ -15,6 +15,8 @@ import LoginPartner from '../features/auth/LoginPartner';
 import UserDashboard from '../assets/js/screens/UserDashboard';
 // Video Screnn should navigate to the video Player Screen
 import { VideoScreen } from '../features/boarding/partner/Video/VideoScreen';
+import { VideoPlayScreen } from '../features/boarding/partner/Video/VideoPlayer';
+
 // ScheduleClass Screem
 import { ScheduleClass } from '../features/scheduleClass/ScheduleClass';
 // Create a Class screen
@@ -219,7 +221,22 @@ export const AppNavigation = () => {
           {/* HERE you have to put UserDashboard */}
           <Stack.Screen
             name="UserDashboard"
-            component={CreateClass}
+            component={ScheduleClass}
+            initialParams={{}}
+          />
+          {/* <Stack.Screen
+            name="ScheduleClass"
+            component={ScheduleClass}
+            initialParams={{}}
+          /> */}
+          <Stack.Screen
+            name="createClass"
+            component={VideoScreen}
+            initialParams={{}}
+          />
+          <Stack.Screen
+            name="videoPlay"
+            component={VideoPlayScreen}
             initialParams={{}}
           />
           {/* ^^^^^^^^^ */}

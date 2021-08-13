@@ -26,8 +26,8 @@ export type IHeaderTypeProp = {
   headetTitle?: string;
   onPress?: () => void;
 }
-export const Header: React.FC<IHeaderTypeProp> = ({ headetTitle }) => (
-  <HeaderContainer>
+export const Header: React.FC<IHeaderTypeProp> = ({ headetTitle, onPress }) => (
+  <HeaderContainer onPress={onPress}>
     <BackIcon source={require('../../../assets/icons/back.png')} resizeMode={FastImage.resizeMode.center} />
     <HeaderTitle>{headetTitle}</HeaderTitle>
   </HeaderContainer>
