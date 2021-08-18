@@ -1,11 +1,11 @@
 import React, { useRef, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Video from 'react-native-video';
 import
 MediaControls, { PLAYER_STATES }
   from 'react-native-media-controls';
 
-export const VideoPlayScreen: React.FC = ({ route }: any) => {
+export const VideoPlayScreen: React.FC = ({ route, navigation }: any) => {
   const { videoURL } = route.params;
   const videoPlayer = useRef(null);
   const [currentTime, setCurrentTime] = useState(0);
@@ -67,6 +67,9 @@ export const VideoPlayScreen: React.FC = ({ route }: any) => {
   // It's a typo in the video player, it should be seeked
   return (
     <View style={{ flex: 1 }}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={{ zIndex: 99999, paddingTop: 20, position: 'absolute', right: 10, top: 50 }}>
+        <Text style={{ color: 'white', fontSize: 30 }}>X</Text>
+      </TouchableOpacity>
       <Video
         onEnd={onEnd}
         onLoad={onLoad}
@@ -76,10 +79,7 @@ export const VideoPlayScreen: React.FC = ({ route }: any) => {
         ref={videoPlayer}
         resizeMode={screenType}
         onFullScreen={isFullScreen}
-        source={{
-          uri:
-            videoURL,
-        }}
+        source={videoURL}
         style={styles.mediaPlayer}
         volume={10}
       />

@@ -66,3 +66,16 @@ export const AddedClassesArea: React.FC<ICreateClassTypeProp> = ({ name, descrip
     <ClassDescription>{description}</ClassDescription>
   </AreaPlaceholder>
 );
+export const ModalContentContainer = styled.View`
+  width: 100%;
+  padding: 20px;
+  /* flex:1; */
+  /* height: 400px; */
+  border-radius: 20px;
+  /* border-top-right-radius: 20px; */
+  /* position: relative; */
+  /* top:-100px; */
+  /* z-index: 99999999; */
+  /* bottom:300px; */
+  background-color: #c2c2c2;
+`;

@@ -28,6 +28,7 @@ const FormTextField: React.FC<Props> = props => {
     fontColor,
     radius,
     items,
+    BottomColor,
     ...restOfProps
   } = props;
   const { control, errors } = useFormContext();
@@ -61,6 +62,7 @@ const FormTextField: React.FC<Props> = props => {
       control={control}
       render={({ onChange, onBlur, value }) => (
         <TextValidator
+          BottomColor={BottomColor}
           background={background}
           color={color}
           fontColor={fontColor}

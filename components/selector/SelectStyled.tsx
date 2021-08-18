@@ -66,7 +66,7 @@ const KeyboardViewStyled = styled(KeyboardPlatformView)`
   bottom: 0;
   position: absolute;
   width: 100%;
-  max-height: 400px;
+  /* max-height: 500px; */
 `;
 export const KeyboardView = (props: any) => (
   <KeyboardViewStyled behavior={'position'} enabled {...props} />

@@ -15,6 +15,7 @@ export const TextInputValidator = styled(TextInput) <{
   background?: string;
   fontColor?: string;
   radius?: number;
+  BottomColor?: string;
 }>`
   margin-vertical: 9px;
   padding-horizontal: 19px;
@@ -24,7 +25,7 @@ export const TextInputValidator = styled(TextInput) <{
   height: 50px;
   color: ${props => (props.fontColor ? props.fontColor : colors.white)};
   border-bottom-width: 1px;
-  border-bottom-color: ${colors.white};
+  border-bottom-color: ${props => props.BottomColor ? props.BottomColor : colors.white};
   border-radius: ${props => (props.radius ? props.radius : 50)}px;
   background-color: ${props =>
     props.background ? colors.white : 'transparent'};
@@ -38,6 +39,7 @@ type Props = React.ComponentProps<typeof TextInput> & {
   color?: string;
   fontColor?: string;
   radius?: number;
+  BottomColor?: string;
 };
 
 const TextValidator: React.FC<Props> = props => {
@@ -51,6 +53,7 @@ const TextValidator: React.FC<Props> = props => {
     background,
     fontColor,
     radius,
+    BottomColor,
     ...restOfProps
   } = props;
   const [isFocused, setIsFocused] = useState(false);
@@ -67,7 +70,7 @@ const TextValidator: React.FC<Props> = props => {
     }).start();
   }, [focusAnim, isFocused, value]);
 
-  let color = isFocused ? '#fff' : '#fff';
+  let color = isFocused ? '#fff' : '#fff' || isFocused ? fontColor : '#24242980';
   if (errorText) {
     color = '#B00020';
   }
@@ -75,6 +78,7 @@ const TextValidator: React.FC<Props> = props => {
   return (
     <View style={style}>
       <TextInputValidator
+        BottomColor={BottomColor}
         fontColor={fontColor}
         background={background}
         autoCorrect={false}

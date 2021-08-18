@@ -40,7 +40,7 @@ export const ScheduleClass: React.FC<ISheduleProp> = () => {
   };
   function onSubmit(model: ISheduleProp) {
     console.warn('form submitted', model);
-    navigation.navigate('createClass')
+    navigation.navigate('createClass');
   }
   return (
     <ScheduleContainer>
@@ -92,6 +92,7 @@ export const ScheduleClass: React.FC<ISheduleProp> = () => {
           </DateList>
         </View>
         <Body>
+
           <View style={{ height: 2, backgroundColor: 'white', width: '100%' }} />
           <ButtonsContainer style={{ paddingHorizontal: 20 }}>
             <Button

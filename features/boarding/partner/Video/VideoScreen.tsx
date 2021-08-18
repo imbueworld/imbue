@@ -5,12 +5,13 @@ import { VideoContainer, VideoTile, VideoWelcomingText } from './VideoStyled';
 // TODO: Add ALEX Video here
 export const VideoScreen: React.FC = () => {
   const navigation = useNavigation();
+  const videoURL = require('../../../../assets/AlVideo/amazingAl.mp4');
   return (
     <VideoContainer>
       <VideoWelcomingText>Imbue</VideoWelcomingText>
       <VideoWelcomingText>welcome video</VideoWelcomingText>
       <VideoTile VideoImage={require('../../../../assets/icons/1024.png')}
-        onPress={() => navigation.navigate('videoPlay', { videoURL: 'https://assets.mixkit.co/videos/download/mixkit-countryside-meadow-4075.mp4' })}
+        onPress={() => navigation.navigate('videoPlay', { videoURL })}
       />
       <ButtonsContainer >
         <Button
