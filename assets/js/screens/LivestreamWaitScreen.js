@@ -9,21 +9,21 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import { useDimensions } from '@react-native-community/hooks';
-import CustomButton from '../components/CustomButton';
+import CustomButton from '../../../components/CustomButton';
 
 import { useNavigation } from '@react-navigation/native';
-import GoBackButton from '../components/buttons/GoBackButton';
+import GoBackButton from '../../../components/buttons/GoBackButton';
 import config from '../../../App.config';
-import User from '../backend/storage/User';
-import Icon from '../components/Icon';
-import { colors } from '../contexts/Colors';
-import { FONTS } from '../contexts/Styles';
+import User from '../../../backend/storage/User';
+import Icon from '../../../components/Icon';
+import { colors } from '../../../constants/Colors';
+import { FONTS } from '../../../constants/Styles';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import firestore from '@react-native-firebase/firestore';
-import { publicStorage } from '../backend/BackendFunctions';
+import { publicStorage } from '../../../backend/BackendFunctions';
 
 export default function LivestreamWaitScreen(props) {
   const { gymId } = props.route.params;

@@ -1,33 +1,32 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import ProfileLayout from '../layouts/ProfileLayout';
-import CustomButton from '../components/CustomButton';
-import Icon from '../components/Icon';
-import CustomText from '../components/CustomText';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import ProfileLayout from '../../../constants/ProfileLayout';
+import CustomButton from '../../../components/CustomButton';
+import CustomText from '../../../components/CustomText';
 import {
   clockFromTimestamp,
   dateStringFromTimestamp,
   shortDateFromTimestamp,
-} from '../backend/HelperFunctions';
-import User from '../backend/storage/User';
-import {FONTS} from '../contexts/Styles';
-import {currencyFromZeroDecimal} from '../backend/HelperFunctions';
-import PlaidButton from '../components/PlaidButton';
-import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
+} from '../../../backend/HelperFunctions';
+// import User from '../../../backend/storage/User';
+// import { FONTS } from '../../../constants/Styles';
+import { currencyFromZeroDecimal } from '../../../backend/HelperFunctions';
+// import PlaidButton from '../components/PlaidButton';
+// import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
 import config from '../../../App.config';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import functions from '@react-native-firebase/functions';
+import { useNavigation, useRoute } from '@react-navigation/native';
+// import functions from '@react-native-firebase/functions';
 import firestore from '@react-native-firebase/firestore';
-import Gym from '../backend/storage/Gym';
-import CalendarView from '../components/CalendarView';
-import ClassList from '../components/ClassList';
-import {colors} from '../contexts/Colors';
+// import Gym from '../backend/storage/Gym';
+import CalendarView from '../../../components/CalendarView';
+import ClassList from '../../../components/ClassList';
+import { colors } from '../../../constants/Colors';
 import LottieView from 'lottie-react-native';
-import {observer} from 'mobx-react-lite';
-import useStore from '../store/RootStore';
+import { observer } from 'mobx-react-lite';
+import useStore from '../../../store/RootStore';
 
 const PartnerDashboard = observer((props) => {
-  const {partnerStore} = useStore();
+  const { partnerStore } = useStore();
   const [user, setUser] = useState(null);
   const [gym, setGym] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -89,14 +88,14 @@ const PartnerDashboard = observer((props) => {
   function getFormatted(classItem) {
     const processedClass = classItem; // avoid affecting cache
     processedClass.active_times = processedClass.active_times.map(
-      (timeDoc) => ({...timeDoc}),
+      (timeDoc) => ({ ...timeDoc }),
     ); // avoid affecting cache
-    const {active_times} = processedClass;
+    const { active_times } = processedClass;
     const currentTs = Date.now();
     let additionalFields;
 
     active_times.forEach((timeDoc) => {
-      const {begin_time, end_time} = timeDoc;
+      const { begin_time, end_time } = timeDoc;
 
       // Add formatting to class,
       // which is later used by <ScheduleViewer />, and potentially others.
@@ -144,8 +143,8 @@ const PartnerDashboard = observer((props) => {
     }
 
     const partnerObj = new User();
-    await partnerObj.createLivestream({gymId}); // Will not create livestream, if it already has been
-    const {stream_key} = await partnerObj.retrieveUser();
+    await partnerObj.createLivestream({ gymId }); // Will not create livestream, if it already has been
+    const { stream_key } = await partnerObj.retrieveUser();
     console.log('stream_key: ' + stream_key);
     setStreamKey(stream_key);
 
@@ -166,7 +165,7 @@ const PartnerDashboard = observer((props) => {
         },
       }}>
       {/* Current Balance */}
-      <View style={{flex: 1, flexDirection: 'row'}}>
+      <View style={{ flex: 1, flexDirection: 'row' }}>
         <CustomText
           style={styles.text}
           containerStyle={styles.textContainer}
@@ -183,10 +182,10 @@ const PartnerDashboard = observer((props) => {
         </CustomText>
       </View>
       {loading ? (
-        <View style={{alignItems: 'center', flex: 1}}>
+        <View style={{ alignItems: 'center', flex: 1 }}>
           <LottieView
-            source={require('../components/img/animations/cat-loading.json')}
-            style={{height: 100, width: 100}}
+            source={require('../../../components/img/animations/cat-loading.json')}
+            style={{ height: 100, width: 100 }}
             autoPlay
             loop
           />
@@ -214,17 +213,17 @@ const PartnerDashboard = observer((props) => {
           </View>
           <View style={styles.capsule}>
             <CustomButton
-              style={{marginBottom: 0}}
+              style={{ marginBottom: 0 }}
               title="Create Class"
               onPress={() => props.navigation.navigate('PartnerCreateClass')}
             />
             <CustomButton
-              style={{marginBottom: 0}}
+              style={{ marginBottom: 0 }}
               title="Schedule"
               onPress={() => props.navigation.navigate('SchedulePopulate')}
             />
             <CustomButton
-              style={{marginBottom: 20}}
+              style={{ marginBottom: 20 }}
               title="Settings"
               onPress={() => props.navigation.navigate('ProfileSettings')}
             />

@@ -1,33 +1,33 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, Text, View, Keyboard} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet, Text, View, Keyboard } from 'react-native';
 
-import ProfileLayout from '../layouts/ProfileLayout';
+import ProfileLayout from '../../../constants/ProfileLayout';
 
-import CustomTextInput from '../components/CustomTextInput';
-import CustomButton from '../components/CustomButton';
+// import CustomTextInput from '../components/CustomTextInput';
+// import CustomButton from '../components/CustomButton';
 
-import auth from '@react-native-firebase/auth';
-import {FONTS} from '../contexts/Styles';
+// import auth from '@react-native-firebase/auth';
+import { FONTS } from '../../../constants/Styles';
 import moment from 'moment';
-import {useNavigation, useRoute} from '@react-navigation/native';
-import {handleAuthError} from '../backend/HelperFunctions';
-import User from '../backend/storage/User';
-import CustomTextInputV2 from '../components/CustomTextInputV2';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import { handleAuthError } from '../../../backend/HelperFunctions';
+import User from '../../../backend/storage/User';
+import CustomTextInputV2 from '../../../components/CustomTextInputV2';
 import config from '../../../App.config';
-import {useForm} from 'react-hook-form';
-import {geocodeAddress} from '../backend/BackendFunctions';
-import Gym from '../backend/storage/Gym';
-import PlaidButton from '../components/PlaidButton';
-import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
-import functions from '@react-native-firebase/functions';
-import firestore from '@react-native-firebase/firestore';
-import {Formik} from 'formik';
+// import { useForm } from 'react-hook-form';
+import { geocodeAddress } from '../../../backend/BackendFunctions';
+import Gym from '../../../backend/storage/Gym';
+// import PlaidButton from '../components/PlaidButton';
+// import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
+// import functions from '@react-native-firebase/functions';
+// import firestore from '@react-native-firebase/firestore';
+import { Formik } from 'formik';
 import * as yup from 'yup';
 const p = console.log;
 
 export default function ProfileSettings(props) {
-  const {params} = useRoute();
-  const {form, type} = params;
+  const { params } = useRoute();
+  const { form, type } = params;
   const [user, setUser] = useState(null);
   const [isForeignUser, setIsForeignUser] = useState();
   const navigation = useNavigation();
@@ -89,7 +89,7 @@ export default function ProfileSettings(props) {
       let pfGeocodeAddress;
       if (form.address) pfGeocodeAddress = await geocodeAddress(form.address);
       if (pfGeocodeAddress) {
-        const {address, formatted_address} = pfGeocodeAddress;
+        const { address, formatted_address } = pfGeocodeAddress;
 
         updatables.address = address;
         updatables.formatted_address = formatted_address;
@@ -115,7 +115,7 @@ export default function ProfileSettings(props) {
         // (ones that weren't added during Partner Sign Up).
 
         // userObj.updateStripeAccount(updatables, { pfGeocodeAddress, pfGeocodeCompanyAddress }),
-        userObj.updateStripeAccount(updatables, {pfGeocodeAddress}),
+        userObj.updateStripeAccount(updatables, { pfGeocodeAddress }),
         navigation.navigate('SuccessScreen', {
           successMessageType: 'PartnerAccountCreated',
           userName: user.name,
@@ -176,7 +176,7 @@ export default function ProfileSettings(props) {
             form: values,
           })
         }>
-        {({handleChange, errors, touched, handleSubmit, values}) => (
+        {({ handleChange, errors, touched, handleSubmit, values }) => (
           <ProfileLayout
             hideBackButton={true}
             buttonOptions={{
@@ -202,7 +202,11 @@ export default function ProfileSettings(props) {
               </Text>
             </View>
             <View
-              style={{width: '100%', alignItems: 'center', marginBottom: 100}}>
+              style={{
+                width: '100%',
+                alignItems: 'center',
+                marginBottom: 100,
+              }}>
               <CustomTextInputV2
                 containerStyle={styles.inputField}
                 placeholder="Date of Birth"
@@ -324,8 +328,8 @@ export default function ProfileSettings(props) {
           routing: '',
           account: '',
         }}
-        onSubmit={(values) => updateSafeInfoForPartner({...form, ...values})}>
-        {({handleChange, errors, touched, handleSubmit, values}) => (
+        onSubmit={(values) => updateSafeInfoForPartner({ ...form, ...values })}>
+        {({ handleChange, errors, touched, handleSubmit, values }) => (
           <ProfileLayout
             hideBackButton={true}
             buttonOptions={{
@@ -339,11 +343,11 @@ export default function ProfileSettings(props) {
             </View>
             {errorMsg ? (
               <Text
-                style={{color: 'red', textAlign: 'center', marginBottom: 10}}>
+                style={{ color: 'red', textAlign: 'center', marginBottom: 10 }}>
                 {errorMsg}
               </Text>
             ) : (
-              <Text style={{color: 'green'}}>{successMsg}</Text>
+              <Text style={{ color: 'green' }}>{successMsg}</Text>
             )}
             <View>
               <Text
@@ -357,7 +361,7 @@ export default function ProfileSettings(props) {
                 finally, connect your bank account
               </Text>
             </View>
-            <View style={{width: '100%', alignItems: 'center'}}>
+            <View style={{ width: '100%', alignItems: 'center' }}>
               <CustomTextInputV2
                 containerStyle={styles.inputField}
                 placeholder="routing #"

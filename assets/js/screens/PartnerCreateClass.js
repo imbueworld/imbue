@@ -1,12 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View, Text, TouchableHighlight} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View, Text, TouchableHighlight } from 'react-native';
 
-import ProfileLayout from '../layouts/ProfileLayout';
-import NewClassForm from '../components/NewClassForm';
-import CustomSmallButton from '../components/CustomSmallButton';
-import {colors} from '../contexts/Colors';
-import {FONTS} from '../contexts/Styles';
-import User from '../backend/storage/User';
+import ProfileLayout from '../../../constants/ProfileLayout';
+import NewClassForm from '../../../components/NewClassForm';
+import { colors } from '../../../constants/Colors';
+import { FONTS } from '../../../constants/Styles';
+import User from '../../../backend/storage/User';
 
 export default function PartnerCreateClass(props) {
   const [page, setPage] = useState('overview');

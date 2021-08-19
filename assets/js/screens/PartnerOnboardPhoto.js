@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
   StyleSheet,
@@ -8,21 +8,21 @@ import {
   ScrollView,
 } from 'react-native';
 
-import ProfileLayout from '../layouts/ProfileLayout';
-import CustomButton from '../components/CustomButton';
-import Icon from '../components/Icon';
-import CustomText from '../components/CustomText';
-import {TouchableHighlight} from 'react-native-gesture-handler';
-import ForwardButton from '../components/ForwardButton';
-import {simpleShadow, colors} from '../contexts/Colors';
+import ProfileLayout from '../../../constants/ProfileLayout';
+import CustomButton from '../../../components/CustomButton';
+// import Icon from '../components/Icon';
+// import CustomText from '../components/CustomText';
+// import { TouchableHighlight } from 'react-native-gesture-handler';
+// import ForwardButton from '../components/ForwardButton';
+// import { simpleShadow, colors } from '../../../constants/Colors';
 import LottieView from 'lottie-react-native';
-import User from '../backend/storage/User';
-import {FONTS} from '../contexts/Styles';
-import {currencyFromZeroDecimal} from '../backend/HelperFunctions';
-import PlaidButton from '../components/PlaidButton';
-import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
+import User from '../../../backend/storage/User';
+import { FONTS } from '../../../constants/Styles';
+// import { currencyFromZeroDecimal } from '../backend/HelperFunctions';
+// import PlaidButton from '../components/PlaidButton';
+// import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
 import config from '../../../App.config';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import functions from '@react-native-firebase/functions';
 import firestore from '@react-native-firebase/firestore';
 
@@ -138,10 +138,10 @@ export default function PartnerDashboard(props) {
           </Text>
         </View>
         {loading ? (
-          <View style={{alignItems: 'center', marginTop: 10}}>
+          <View style={{ alignItems: 'center', marginTop: 10 }}>
             <LottieView
-              source={require('../components/img/animations/cat-loading.json')}
-              style={{height: 100, width: 100}}
+              source={require('../../../components/img/animations/cat-loading.json')}
+              style={{ height: 100, width: 100 }}
               autoPlay
               loop
             />

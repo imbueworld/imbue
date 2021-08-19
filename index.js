@@ -7,20 +7,20 @@ import 'react-native-gesture-handler';
  * @format
  */
 
-import {AppRegistry, Platform, StatusBar} from 'react-native';
+import { AppRegistry, Platform, StatusBar } from 'react-native';
 import App from './App';
-import {name as appName} from './app.json';
+import { name as appName } from './app.json';
 
 AppRegistry.registerComponent(appName, () => App);
 
-import {colors} from './assets/js/contexts/Colors';
+import { colors } from './constants/Colors';
 
 // StatusBar.setBackgroundColor(colors.bg)
 StatusBar.setBackgroundColor(`${colors.bg}00`); // 00 stands for alpha channel, making it completely transparent
 StatusBar.setBarStyle('dark-content');
 if (Platform.OS === 'android') StatusBar.setTranslucent(true);
 
-import {GoogleSignin} from '@react-native-community/google-signin';
+import { GoogleSignin } from '@react-native-community/google-signin';
 
 GoogleSignin.configure({
   webClientId:

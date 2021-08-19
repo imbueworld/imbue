@@ -1,21 +1,27 @@
-import React, {useState, useEffect} from 'react';
-import {StyleSheet, View, Text, ScrollView, RefreshControl} from 'react-native';
-import LivestreamLayout from '../layouts/LivestreamLayout';
+import React, { useState, useEffect } from 'react';
+import {
+  StyleSheet,
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+} from 'react-native';
+import LivestreamLayout from '../../../constants/LivestreamLayout';
 import firestore from '@react-native-firebase/firestore';
-import {useDimensions} from '@react-native-community/hooks';
-import {publicStorage} from '../backend/BackendFunctions';
+import { useDimensions } from '@react-native-community/hooks';
+import { publicStorage } from '../../../backend/BackendFunctions';
 import Video from 'react-native-video';
-import User from '../backend/storage/User';
-import Gym from '../backend/storage/Gym';
+import User from '../../../backend/storage/User';
+import Gym from '../../../backend/storage/Gym';
 import config from '../../../App.config';
-import {get} from 'react-hook-form';
-import GoBackButton from '../components/buttons/GoBackButton';
-import {useNavigation} from '@react-navigation/native';
+import { get } from 'react-hook-form';
+// import GoBackButton from '../components/buttons/GoBackButton';
+import { useNavigation } from '@react-navigation/native';
 import LottieView from 'lottie-react-native';
-import {FONTS} from '../contexts/Styles';
-import {colors} from '../contexts/Colors';
-import {useNetInfo} from '@react-native-community/netinfo';
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import { FONTS } from '../../../constants/Styles';
+import { colors } from '../../../constants/Colors';
+import { useNetInfo } from '@react-native-community/netinfo';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function getPlaybackLink(playbackId) {
   // return `rtmps://global-live.mux.com:443/app/88e75daa-9fd8-d94e-e161-cf2d304d10c7`
@@ -25,9 +31,9 @@ function getPlaybackLink(playbackId) {
 
 // (m3u8, webm, mp4) are guarantted to work with <Video />
 export default function Livestream(props) {
-  const {gymId} = props.route.params;
-  const {classDoc} = props.route.params;
-  const {isInternetReachable} = useNetInfo();
+  const { gymId } = props.route.params;
+  const { classDoc } = props.route.params;
+  const { isInternetReachable } = useNetInfo();
   const [user, setUser] = useState(null);
   const [userId, setUserId] = useState(null);
   const [playbackLink, setPlaybackLink] = useState(null);
@@ -39,8 +45,8 @@ export default function Livestream(props) {
   const [gymImage, setGymImage] = useState(null);
   const [refreshing, setRefreshing] = React.useState(false);
 
-  const {top} = useSafeAreaInsets();
-  const {width, height} = useDimensions().window;
+  const { top } = useSafeAreaInsets();
+  const { width, height } = useDimensions().window;
 
   const [pageWidth, setPageWidth] = useState(width);
   let navigation = useNavigation();
@@ -113,8 +119,8 @@ export default function Livestream(props) {
       {/* Loader */}
       {isLive != true ? (
         <LottieView
-          source={require('../components/img/animations/loading-dots.json')}
-          style={{marginRight: 100, marginLeft: 50}}
+          source={require('../../../components/img/animations/loading-dots.json')}
+          style={{ marginRight: 100, marginLeft: 50 }}
           autoPlay
           loop
         />
@@ -136,7 +142,7 @@ export default function Livestream(props) {
       {playbackLink ? (
         <Video
           style={styles.video}
-          source={{uri: playbackLink}}
+          source={{ uri: playbackLink }}
           refreshing={refreshing}
           onReadyForDisplay={() => {
             setIsLive(true);

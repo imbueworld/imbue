@@ -1,13 +1,11 @@
 // import React, { useEffect, useState } from 'react'
 // import { StyleSheet, Text, View } from 'react-native'
 // import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-// import config from '../../../App.config'
+// import config from '../App.config'
 // import User from '../backend/storage/User'
 // import AppBackground from '../components/AppBackground'
 // import LogOutButton from '../components/buttons/LogOutButton'
 // import CompanyLogo from '../components/CompanyLogo'
-
-
 
 // // export default function Waitlist(props) {
 // //   const [waitlistStatus, setWaitlistStatus] = useState()
@@ -19,8 +17,6 @@
 // //       setWaitlistStatus(await user.retrieveWaitlistStatus())
 // //     }; init()
 // //   }, [])
-
-
 
 // //   const {
 // //     referral_token,

@@ -1,18 +1,17 @@
-import React, {useState, useEffect} from 'react';
-import {Text} from 'react-native';
-import {StyleSheet, ScrollView, View} from 'react-native';
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import {useFocusEffect} from '@react-navigation/native';
+import React, { useState, useEffect } from 'react';
+import { Text } from 'react-native';
+import { StyleSheet, ScrollView, View } from 'react-native';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import { useFocusEffect } from '@react-navigation/native';
 
-import CustomButton from '../components/CustomButton';
-import CreditCardBadge from '../components/CreditCardBadge';
-import {colors} from '../contexts/Colors';
-import ProfileLayout from '../layouts/ProfileLayout';
-import User from '../backend/storage/User';
-import cache from '../backend/storage/cache';
+import CustomButton from '../../../components/CustomButton';
+import CreditCardBadge from '../../../components/CreditCardBadge';
+import { colors } from '../../../constants/Colors';
+import ProfileLayout from '../../../constants/ProfileLayout';
+import User from '../../../backend/storage/User';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
-import {FONTS} from '../contexts/Styles';
+import { FONTS } from '../../../constants/Styles';
 
 export default function PaymentSettings(props) {
   const [loading, setLoading] = useState(false);
@@ -65,8 +64,8 @@ export default function PaymentSettings(props) {
   return (
     <KeyboardAwareScrollView
       showsVerticalScrollIndicator={false}
-      style={{backgroundColor: '#fff'}}
-      resetScrollToCoords={{x: 0, y: 0}}
+      style={{ backgroundColor: '#fff' }}
+      resetScrollToCoords={{ x: 0, y: 0 }}
       contentContainerStyle={styles.container}
       scrollEnabled={false}>
       <ProfileLayout>
@@ -80,16 +79,16 @@ export default function PaymentSettings(props) {
           }}>
           {loading ? (
             <LottieView
-              source={require('../components/img/animations/cat-loading.json')}
-              style={{height: 100, width: 100}}
+              source={require('../../../components/img/animations/cat-loading.json')}
+              style={{ height: 100, width: 100 }}
               autoPlay
               loop
             />
           ) : creditCards.length !== 0 ? (
-            creditCards.map(({brand, last4, exp_month, exp_year, docId}) => (
+            creditCards.map(({ brand, last4, exp_month, exp_year, docId }) => (
               <CreditCardBadge
                 key={`${exp_year}${last4}`}
-                data={{brand, last4, exp_month, exp_year}}
+                data={{ brand, last4, exp_month, exp_year }}
                 user={user}
                 paymentMethodId={docId}
                 onRemove={() => getCreditCards(user)}

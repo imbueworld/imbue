@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,37 +7,37 @@ import {
   SafeAreaView,
   Platform,
 } from 'react-native';
-import {useFocusEffect} from '@react-navigation/native';
-import AppBackground from '../components/AppBackground';
+import { useFocusEffect } from '@react-navigation/native';
+import AppBackground from '../../../components/AppBackground';
 import firestore from '@react-native-firebase/firestore';
 import {
   clockFromTimestamp,
   dateStringFromTimestamp,
   shortDateFromTimestamp,
-} from '../backend/HelperFunctions';
+} from '../../../backend/HelperFunctions';
 
-import CalendarView from '../components/CalendarView';
-import ClassList from '../components/ClassList';
-import Icon from '../components/Icon';
+import CalendarView from '../../../components/CalendarView';
+import ClassList from '../../../components/ClassList';
+// import Icon from '../components/Icon';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 
-import {filterUserClasses} from '../backend/HelperFunctions';
-import {FONTS} from '../contexts/Styles';
-import {colors, simpleShadow} from '../contexts/Colors';
-import CustomCapsule from '../components/CustomCapsule';
-import GoBackButton from '../components/buttons/GoBackButton';
-import CustomButton from '../components/CustomButton';
-import PlusButton from '../components/buttons/PlusButton';
-import User from '../backend/storage/User';
-import Gym from '../backend/storage/Gym';
-import ClassesCollection from '../backend/storage/ClassesCollection';
-import CalendarSyncButton from '../components/buttons/CalendarSyncButton';
+// import { filterUserClasses } from '../backend/HelperFunctions';
+import { FONTS } from '../../../constants/Styles';
+import { colors, simpleShadow } from '../../../constants/Colors';
+import CustomCapsule from '../../../components/CustomCapsule';
+import GoBackButton from '../../../components/buttons/GoBackButton';
+import CustomButton from '../../../components/CustomButton';
+// import PlusButton from '../components/buttons/PlusButton';
+import User from '../../../backend/storage/User';
+import Gym from '../../../backend/storage/Gym';
+import ClassesCollection from '../../../backend/storage/ClassesCollection';
+// import CalendarSyncButton from '../components/buttons/CalendarSyncButton';
 
 export default function ScheduleViewer(props) {
-  const {classIds, gymId} = props.route.params;
+  const { classIds, gymId } = props.route.params;
 
   const [calendarData, setCalendarData] = useState(null);
   const [dataIsFormatted, setDataIsFormatted] = useState(false);
@@ -72,9 +72,9 @@ export default function ScheduleViewer(props) {
         if (classIds) {
           console.log(1111);
 
-          classStuff = (await classes.retrieveWhere('id', 'in', classIds)).map(
-            it => it.getFormatted(),
-          );
+          classStuff = (
+            await classes.retrieveWhere('id', 'in', classIds)
+          ).map((it) => it.getFormatted());
 
           setCalendarData(classStuff);
 
@@ -83,16 +83,16 @@ export default function ScheduleViewer(props) {
           console.log(2222);
 
           const gym = new Gym();
-          const {name} = await gym.retrieveGym(gymId);
+          const { name } = await gym.retrieveGym(gymId);
 
           //  get Gym's classes
           const getGymClasses = await firestore()
             .collection('classes')
             .get()
-            .then(querySnapshot => {
+            .then((querySnapshot) => {
               const classes = [];
 
-              querySnapshot.forEach(documentSnapshot => {
+              querySnapshot.forEach((documentSnapshot) => {
                 if (documentSnapshot.data().gym_id == gymId) {
                   let formatted = getFormatted(documentSnapshot.data());
                   classes.push({
@@ -108,18 +108,22 @@ export default function ScheduleViewer(props) {
         } else {
           console.log(3333);
 
-          const classStuff = (await user.retrieveScheduledClasses()).map(it => {
-            let data = it.getFormatted();
-            let activeDateForUser = [];
-            data.active_times.forEach(time => {
-              if (
-                fireUser.active_classes.some(el => el.time_id === time.time_id)
-              )
-                activeDateForUser.push(time);
-            });
-            data.active_times = activeDateForUser;
-            return data;
-          });
+          const classStuff = (await user.retrieveScheduledClasses()).map(
+            (it) => {
+              let data = it.getFormatted();
+              let activeDateForUser = [];
+              data.active_times.forEach((time) => {
+                if (
+                  fireUser.active_classes.some(
+                    (el) => el.time_id === time.time_id,
+                  )
+                )
+                  activeDateForUser.push(time);
+              });
+              data.active_times = activeDateForUser;
+              return data;
+            },
+          );
 
           setCalendarData(classStuff);
           // if (user.accountType == 'user') classData = await filterUserClasses()
@@ -193,15 +197,17 @@ export default function ScheduleViewer(props) {
 
   function getFormatted(classItem) {
     const processedClass = classItem; // avoid affecting cache
-    processedClass.active_times = processedClass.active_times.map(timeDoc => ({
-      ...timeDoc,
-    })); // avoid affecting cache
-    const {active_times} = processedClass;
+    processedClass.active_times = processedClass.active_times.map(
+      (timeDoc) => ({
+        ...timeDoc,
+      }),
+    ); // avoid affecting cache
+    const { active_times } = processedClass;
     const currentTs = Date.now();
     let additionalFields;
 
-    active_times.forEach(timeDoc => {
-      const {begin_time, end_time} = timeDoc;
+    active_times.forEach((timeDoc) => {
+      const { begin_time, end_time } = timeDoc;
 
       // Add formatting to class,
       // which is later used by <ScheduleViewer />, and potentially others.
@@ -350,11 +356,11 @@ export default function ScheduleViewer(props) {
         {user.account_type === 'partner' ? (
           <View style={styles.capsule}>
             <CustomButton
-              style={{marginBottom: 0}}
+              style={{ marginBottom: 0 }}
               title="Create Class"
               onPress={() => props.navigation.navigate('PartnerCreateClass')}
             />
-            <View style={{flex: 1, flexDirection: 'row', marginBottom: 10}}>
+            <View style={{ flex: 1, flexDirection: 'row', marginBottom: 10 }}>
               <CustomButton
                 style={{
                   marginBottom: 0,
@@ -366,7 +372,7 @@ export default function ScheduleViewer(props) {
                 onPress={() => props.navigation.navigate('PartnerEditClasses')}
               />
               <CustomButton
-                style={{marginBottom: 0, marginLeftt: 5, width: wp('47%')}}
+                style={{ marginBottom: 0, marginLeftt: 5, width: wp('47%') }}
                 title="Schedule"
                 onPress={() => props.navigation.navigate('SchedulePopulate')}
               />

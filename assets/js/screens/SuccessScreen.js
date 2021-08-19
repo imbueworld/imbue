@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,20 +8,20 @@ import {
   Platform,
 } from 'react-native';
 
-import {useNavigation} from '@react-navigation/native';
-import User from '../backend/storage/User';
-import {FONTS} from '../contexts/Styles';
-import {
-  widthPercentageToDP as wp,
-  heightPercentageToDP as hp,
-} from 'react-native-responsive-screen';
+import { useNavigation } from '@react-navigation/native';
+// import User from '../backend/storage/User';
+import { FONTS } from '../../../constants/Styles';
+// import {
+//   widthPercentageToDP as wp,
+//   heightPercentageToDP as hp,
+// } from 'react-native-responsive-screen';
 import LottieView from 'lottie-react-native';
-import CustomButton from '../components/CustomButton';
-import {colors} from '../contexts/Colors';
-import ProfileLayout from '../layouts/ProfileLayout';
+import CustomButton from '../../../components/CustomButton';
+import { colors } from '../../../constants/Colors';
+import ProfileLayout from '../../../constants/ProfileLayout';
 
 export default function SuccessScreen(props) {
-  const {successMessageType, userName} = props.route.params;
+  const { successMessageType, userName } = props.route.params;
   let navigation = useNavigation();
 
   useEffect(() => {
@@ -47,8 +47,8 @@ export default function SuccessScreen(props) {
       {successMessageType === 'UserLiveStreamCompleted' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />
@@ -78,8 +78,8 @@ export default function SuccessScreen(props) {
       ) : successMessageType === 'PartnerLiveStreamCompleted' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />
@@ -98,8 +98,8 @@ export default function SuccessScreen(props) {
       ) : successMessageType === 'PartnerApplicationSubmitted' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />
@@ -130,8 +130,8 @@ export default function SuccessScreen(props) {
       ) : successMessageType === 'MemberSignUp' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />
@@ -150,8 +150,8 @@ export default function SuccessScreen(props) {
       ) : successMessageType === 'UserPurchasedMembership' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />
@@ -169,8 +169,8 @@ export default function SuccessScreen(props) {
       ) : successMessageType === 'UserPurchasedClass' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />
@@ -261,7 +261,7 @@ export default function SuccessScreen(props) {
                   onPress={() =>
                     navigation.reset({
                       index: 0,
-                      routes: [{name: 'PartnerDashboard'}],
+                      routes: [{ name: 'PartnerDashboard' }],
                     })
                   }
                   title="GO TO DASHBOARD"
@@ -273,8 +273,8 @@ export default function SuccessScreen(props) {
       ) : successMessageType === 'ClassCreated' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />
@@ -293,8 +293,8 @@ export default function SuccessScreen(props) {
       ) : successMessageType === 'ClassScheduled' ? (
         <>
           <LottieView
-            source={require('../components/img/animations/black-check-animation.json')}
-            style={{width: 250, height: 250}}
+            source={require('../../../components/img/animations/black-check-animation.json')}
+            style={{ width: 250, height: 250 }}
             autoPlay
             loop
           />

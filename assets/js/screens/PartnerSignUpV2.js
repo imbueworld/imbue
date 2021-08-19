@@ -1,30 +1,29 @@
-import React, {useEffect, useState} from 'react';
-import {SafeAreaView, StyleSheet, Text, View, Platform} from 'react-native';
-import {useForm} from 'react-hook-form';
-import {FONTS} from '../contexts/Styles';
-import {colors} from '../contexts/Colors';
-import {NetworkInfo} from 'react-native-network-info';
+import React, { useEffect, useState } from 'react';
+import { SafeAreaView, StyleSheet, Text, View, Platform } from 'react-native';
+import { useForm } from 'react-hook-form';
+import { FONTS } from '../../../constants/Styles';
+import { colors } from '../../../constants/Colors';
+import { NetworkInfo } from 'react-native-network-info';
 import config from '../../../App.config';
 import functions from '@react-native-firebase/functions';
-import {useNavigation} from '@react-navigation/native';
-import User from '../backend/storage/User';
-import Gym from '../backend/storage/Gym';
-import SocialLogin from '../components/SocialLogin';
+import { useNavigation } from '@react-navigation/native';
+import User from '../../../backend/storage/User';
+import Gym from '../../../backend/storage/Gym';
 
-import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
-import AppBackground from '../components/AppBackground';
-import CompanyLogo from '../components/CompanyLogo';
-import GoBackButton from '../components/buttons/GoBackButton';
-import CustomTextInputV2 from '../components/CustomTextInputV2';
-import CustomButton from '../components/CustomButton';
-import FormStatusMessage from '../components/FormStatusMessage';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import AppBackground from '../../../components/AppBackground';
+import CompanyLogo from '../../../components/CompanyLogo';
+import GoBackButton from '../../../components/buttons/GoBackButton';
+import CustomTextInputV2 from '../../../components/CustomTextInputV2';
+import CustomButton from '../../../components/CustomButton';
+import FormStatusMessage from '../../../components/FormStatusMessage';
 import LottieView from 'lottie-react-native';
 
 const LoadingComponent = () => {
   return (
     <LottieView
-      source={require('../components/img/animations/cat-loading.json')}
-      style={{marginRight: 100, marginLeft: 50}}
+      source={require('../../../components/img/animations/cat-loading.json')}
+      style={{ marginRight: 100, marginLeft: 50 }}
       autoPlay
       loop
     />
@@ -33,7 +32,7 @@ const LoadingComponent = () => {
 
 export default function PartnerSignUpV2(props) {
   const navigation = useNavigation();
-  const {register, handleSubmit, setValue, errors, watch} = useForm();
+  const { register, handleSubmit, setValue, errors, watch } = useForm();
   const [local, _resetLocal] = useState({});
   local.passwordText = watch('password', '');
   const [ip, setIp] = useState(ip);
@@ -130,7 +129,7 @@ export default function PartnerSignUpV2(props) {
       ...USER
     } = form;
 
-    let {email} = form;
+    let { email } = form;
 
     // Create user
     const partner = new User();
@@ -191,7 +190,7 @@ export default function PartnerSignUpV2(props) {
       let listName = 'applied influencer';
       // Add to Sendgrid
       const addToSendGrid = functions().httpsCallable('addToSendGrid');
-      await addToSendGrid({email, first, last, listName});
+      await addToSendGrid({ email, first, last, listName });
     } catch (err) {
       console.log("addToSendGrid didn't work: ", err);
     }

@@ -1,7 +1,5 @@
-import { colors } from "./assets/js/contexts/Colors"
-import { FONTS } from "./assets/js/contexts/Styles"
-
-
+import { colors } from './constants/Colors';
+import { FONTS } from './constants//Styles';
 
 const config = {
   DEBUG: false,
@@ -31,8 +29,8 @@ const config = {
       ...FONTS.body,
       color: colors.accent,
       fontSize: 16,
-    }
+    },
   },
-}
+};
 
-export default config
+export default config;

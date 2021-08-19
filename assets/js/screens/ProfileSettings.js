@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Keyboard, Modal } from 'react-native';
 
-import ProfileLayout from '../layouts/ProfileLayout';
+import ProfileLayout from '../../../constants/ProfileLayout';
 
-import CustomTextInput from '../components/CustomTextInput';
-import CustomButton from '../components/CustomButton';
+import CustomTextInput from '../../../components/CustomTextInput';
+import CustomButton from '../../../components/CustomButton';
 
 import auth from '@react-native-firebase/auth';
-import { FONTS } from '../contexts/Styles';
+import { FONTS } from '../../../constants/Styles';
 import moment from 'moment';
 import { useNavigation } from '@react-navigation/native';
-import { handleAuthError } from '../backend/HelperFunctions';
-import User from '../backend/storage/User';
-import CustomTextInputV2 from '../components/CustomTextInputV2';
+import { handleAuthError } from '../../../backend/HelperFunctions';
+import User from '../../../backend/storage/User';
+// import CustomTextInputV2 from '../components/CustomTextInputV2';
 import config from '../../../App.config';
 import { useForm } from 'react-hook-form';
-import { geocodeAddress } from '../backend/BackendFunctions';
-import Gym from '../backend/storage/Gym';
-import PlaidButton from '../components/PlaidButton';
-import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
-import { currencyFromZeroDecimal } from '../backend/HelperFunctions';
+// import { geocodeAddress } from '../../../backend/BackendFunctions';
+import Gym from '../../../backend/storage/Gym';
+// import PlaidButton from '../components/PlaidButton';
+// import BankAccountFormWithButtonEntry from '../components/BankAccountFormWithButtonEntry';
+// import { currencyFromZeroDecimal } from '../backend/HelperFunctions';
 import functions from '@react-native-firebase/functions';
 import firestore from '@react-native-firebase/firestore';
 import LottieView from 'lottie-react-native';
@@ -489,7 +489,7 @@ export default function ProfileSettings(props) {
             justifyContent: 'center',
           }}>
           <LottieView
-            source={require('../components/img/animations/cat-loading.json')}
+            source={require('../../../components/img/animations/cat-loading.json')}
             style={{ height: 100, width: 100 }}
             autoPlay
             loop

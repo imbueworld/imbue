@@ -1,17 +1,17 @@
-import React, {useState, useEffect} from 'react';
-import {Text, View} from 'react-native';
-import {StyleSheet} from 'react-native';
-import {FONTS} from '../contexts/Styles';
+import React, { useState, useEffect } from 'react';
+import { Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { FONTS } from '../../../constants/Styles';
 import functions from '@react-native-firebase/functions';
-import {PartnerApplyBackground} from '../components/PartnerApplyBackground';
-import CustomTextInputV2 from '../components/CustomTextInputV2';
-import {useNavigation, useRoute} from '@react-navigation/core';
-import {NetworkInfo} from 'react-native-network-info';
-import CustomButton from '../components/CustomButton';
-import {Formik} from 'formik';
-import User from '../backend/storage/User';
-import Gym from '../backend/storage/Gym';
-import {showMessage, hideMessage} from 'react-native-flash-message';
+import { PartnerApplyBackground } from '../../../components/PartnerApplyBackground';
+import CustomTextInputV2 from '../../../components/CustomTextInputV2';
+import { useNavigation, useRoute } from '@react-navigation/core';
+import { NetworkInfo } from 'react-native-network-info';
+import CustomButton from '../../../components/CustomButton';
+import { Formik } from 'formik';
+import User from '../../../backend/storage/User';
+import Gym from '../../../backend/storage/Gym';
+import { showMessage, hideMessage } from 'react-native-flash-message';
 import * as yup from 'yup';
 import LottieView from 'lottie-react-native';
 
@@ -19,9 +19,9 @@ export const PartnerStep = () => {
   const [loading, setLoading] = useState(false);
   const [ip, setIp] = useState(ip);
   const navigation = useNavigation();
-  const {params} = useRoute();
+  const { params } = useRoute();
 
-  const {step, form} = params;
+  const { step, form } = params;
 
   useEffect(() => {
     // Stripe TOS agreement requirement
@@ -155,7 +155,7 @@ export const PartnerStep = () => {
       console.log("addToSendGrid didn't work: ", err);
     }
     setLoading(false);
-    navigation.push('PartnerStep', {step: 'end'});
+    navigation.push('PartnerStep', { step: 'end' });
   };
 
   const passwordValidationSchema = yup.object().shape({
@@ -184,14 +184,14 @@ export const PartnerStep = () => {
             lastName: '',
           }}
           onSubmit={(values) =>
-            navigation.push('PartnerStep', {step: 'email', form: values})
+            navigation.push('PartnerStep', { step: 'email', form: values })
           }>
-          {({handleChange, errors, touched, handleSubmit, values}) => (
+          {({ handleChange, errors, touched, handleSubmit, values }) => (
             <PartnerApplyBackground onNextButton={handleSubmit}>
               <Text style={styles.body}>
                 TO START, WHAT'S YOUR FIRST & LAST NAME?
               </Text>
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <CustomTextInputV2
                   containerStyle={styles.inputField}
                   placeholder="FIRST NAME"
@@ -219,7 +219,7 @@ export const PartnerStep = () => {
       return (
         <Formik
           validationSchema={emailValidationSchema}
-          initialValues={{email: form.email ? form.email : ''}}
+          initialValues={{ email: form.email ? form.email : '' }}
           onSubmit={(values) =>
             navigation.push('PartnerStep', {
               step: 'workout',
@@ -229,10 +229,10 @@ export const PartnerStep = () => {
               },
             })
           }>
-          {({handleChange, errors, touched, handleSubmit, values}) => (
+          {({ handleChange, errors, touched, handleSubmit, values }) => (
             <PartnerApplyBackground onNextButton={handleSubmit}>
               <Text style={styles.body}>ENTER YOUR EMAIL</Text>
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <CustomTextInputV2
                   containerStyle={styles.inputField}
                   placeholder="EMAIL"
@@ -265,10 +265,10 @@ export const PartnerStep = () => {
               },
             });
           }}>
-          {({handleChange, errors, touched, handleSubmit, values}) => (
+          {({ handleChange, errors, touched, handleSubmit, values }) => (
             <PartnerApplyBackground onNextButton={handleSubmit}>
               <Text style={styles.body}>DESCRIBE YOUR WORKOUTS</Text>
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <CustomTextInputV2
                   multiline
                   containerStyle={styles.inputField}
@@ -300,12 +300,12 @@ export const PartnerStep = () => {
               },
             });
           }}>
-          {({handleChange, errors, touched, handleSubmit, values}) => (
+          {({ handleChange, errors, touched, handleSubmit, values }) => (
             <PartnerApplyBackground onNextButton={handleSubmit}>
               <Text style={styles.body}>
                 WHERE CAN WE FIND YOU ON SOCIAL MEDIA?
               </Text>
-              <View style={{alignItems: 'center'}}>
+              <View style={{ alignItems: 'center' }}>
                 <CustomTextInputV2
                   containerStyle={styles.inputField}
                   placeholder="SOCIAL MEDIA"
@@ -324,9 +324,9 @@ export const PartnerStep = () => {
       return (
         <Formik
           validationSchema={passwordValidationSchema}
-          initialValues={{password: '', confirm_password: ''}}
+          initialValues={{ password: '', confirm_password: '' }}
           onSubmit={partnerSumbitButton}>
-          {({handleChange, errors, touched, handleSubmit, values}) => (
+          {({ handleChange, errors, touched, handleSubmit, values }) => (
             <PartnerApplyBackground onNextButton={handleSubmit}>
               <Text style={styles.body}>NOW, CREATE A PASSWORD</Text>
               {loading ? (
@@ -337,14 +337,14 @@ export const PartnerStep = () => {
                     justifyContent: 'center',
                   }}>
                   <LottieView
-                    source={require('../components/img/animations/cat-loading.json')}
-                    style={{height: 100, width: 100}}
+                    source={require('../../../components/img/animations/cat-loading.json')}
+                    style={{ height: 100, width: 100 }}
                     autoPlay
                     loop
                   />
                 </View>
               ) : (
-                <View style={{alignItems: 'center'}}>
+                <View style={{ alignItems: 'center' }}>
                   <CustomTextInputV2
                     secureTextEntry={true}
                     style={{
@@ -382,7 +382,7 @@ export const PartnerStep = () => {
     case 'end':
       return (
         <PartnerApplyBackground>
-          <Text style={[styles.body, {textTransform: 'uppercase'}]}>
+          <Text style={[styles.body, { textTransform: 'uppercase' }]}>
             Thank you so much for applying to imbue! we’re excited for this
             fitness journey together. Give us a few hours to look over your
             application.
@@ -395,7 +395,7 @@ export const PartnerStep = () => {
             onPress={() =>
               navigation.reset({
                 index: 0,
-                routes: [{name: 'Boot'}],
+                routes: [{ name: 'Boot' }],
               })
             }
             title="BACK TO HOME"

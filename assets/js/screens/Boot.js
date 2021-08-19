@@ -2,18 +2,18 @@ import React, { useEffect } from 'react';
 import { StyleSheet, ScrollView, View, Button } from 'react-native';
 import config from '../../../App.config';
 
-import AppBackground from '../components/AppBackground';
-import CompanyLogo from '../components/CompanyLogo';
+import AppBackground from '../../../components/AppBackground';
+import CompanyLogo from '../../../components/CompanyLogo';
 
 import auth from '@react-native-firebase/auth';
 import { GoogleSignin } from '@react-native-community/google-signin';
 import { LoginManager } from 'react-native-fbsdk';
 import { StackActions, useNavigation } from '@react-navigation/native';
-import { colors } from '../contexts/Colors';
+import { colors } from '../../../constants/Colors';
 import functions from '@react-native-firebase/functions';
 
-import User from '../backend/storage/User';
-import cache from '../backend/storage/cache';
+import User from '../../../backend/storage/User';
+import cache from '../../../backend/storage/cache';
 
 export default function Boot(props) {
   // signs out user on app load
