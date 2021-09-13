@@ -580,10 +580,8 @@ export default function ClassDescription(props) {
                                     setErrorMsg('');
                                     setSuccessMsg('');
 
-                                    const {
-                                      id: classId,
-                                      time_id: timeId,
-                                    } = classDoc;
+                                    const { id: classId, time_id: timeId } =
+                                      classDoc;
 
                                     // add class to user's native calendar
                                     console.log('classDoc: ', classDoc);
@@ -597,8 +595,8 @@ export default function ClassDescription(props) {
                                       .doc(classDoc.id)
                                       .get();
 
-                                    let calendarId = updatedClass.data()
-                                      .calendarId;
+                                    let calendarId =
+                                      updatedClass.data().calendarId;
 
                                     // Take care of duplicate entries
                                     if (calendarId) {
@@ -607,15 +605,16 @@ export default function ClassDescription(props) {
 
                                     // add to calendar
                                     await RNCalendarEvents.requestPermissions();
-                                    let response = await RNCalendarEvents.saveEvent(
-                                      classDoc.name + ' Imbue Class',
-                                      {
-                                        startDate: beg_time,
-                                        endDate: end_time,
-                                        notes:
-                                          'Open the Imbue app at class time to join',
-                                      },
-                                    );
+                                    let response =
+                                      await RNCalendarEvents.saveEvent(
+                                        classDoc.name + ' Imbue Class',
+                                        {
+                                          startDate: beg_time,
+                                          endDate: end_time,
+                                          notes:
+                                            'Open the Imbue app at class time to join',
+                                        },
+                                      );
 
                                     // update firestore
                                     firestore()
@@ -639,9 +638,10 @@ export default function ClassDescription(props) {
                                         'sendGridMemberPurchasedClass???',
                                       );
                                       console.log('gymUid: ', gymUid);
-                                      const sendGridMemberPurchasedClass = functions().httpsCallable(
-                                        'sendGridMemberPurchasedClass',
-                                      );
+                                      const sendGridMemberPurchasedClass =
+                                        functions().httpsCallable(
+                                          'sendGridMemberPurchasedClass',
+                                        );
                                       await sendGridMemberPurchasedClass(
                                         gymUid,
                                       );
@@ -655,9 +655,10 @@ export default function ClassDescription(props) {
 
                                       // initiate SendGrid email
                                       console.log('user.id: ', userId);
-                                      const sendGridMemberAddedClass = functions().httpsCallable(
-                                        'sendGridMemberAddedClass',
-                                      );
+                                      const sendGridMemberAddedClass =
+                                        functions().httpsCallable(
+                                          'sendGridMemberAddedClass',
+                                        );
                                       await sendGridMemberAddedClass(userId);
                                     } catch (err) {
                                       setErrorMsg('Email could not be sent');
@@ -799,6 +800,9 @@ export default function ClassDescription(props) {
                     props.navigation.navigate('PreLiveChecklist', {
                       classId: classDoc.id,
                       timeId: classDoc.time_id,
+                      date: classDoc.formattedDate,
+                      time: classDoc.formattedTime,
+                      className: classDoc.name,
                     });
                   }}
                 />

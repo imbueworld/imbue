@@ -238,7 +238,7 @@ export default function PreLiveChecklist(props) {
 const styles = StyleSheet.create({
   scrollView: {
     minHeight: '100%',
-    backgroundColor: '#F9F9F9',
+    backgroundColor: '#242429',
     marginHorizontal: 10,
   },
   checkBoxesContainer: {

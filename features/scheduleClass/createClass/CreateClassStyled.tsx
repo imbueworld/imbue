@@ -1,4 +1,5 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import FastImage from 'react-native-fast-image';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
@@ -79,3 +80,24 @@ export const ModalContentContainer = styled.View`
   /* bottom:300px; */
   background-color: #c2c2c2;
 `;
+const Background = styled.View<{ selected: boolean }>`
+  background-color:${props => props.selected ? '#ccc' : '#f5f5f5'};
+  height: 30px;
+  width: 30px;
+  border-radius: 15px;
+  justify-content: center;
+  align-items: center;
+  margin: 10px;
+`;
+const DayTitle = styled.Text`
+  color:${colors.black};
+ font-size: 14px;
+`;
+export const SelectDayBackground = ({ days, selected }) => (
+  // <TouchableOpacity onPress={onSelect}>
+  <Background selected={selected}>
+    <DayTitle>{days}</DayTitle>
+  </Background>
+
+  // </TouchableOpacity>
+);

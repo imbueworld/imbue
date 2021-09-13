@@ -115,11 +115,11 @@ export default function NewClassForm(props) {
     //   setRedFields(["instructor"])
     //   throw new Error("Instructor's name must be between 3 and 50 characters long.")
     // }
-    if (name.length < 3 || name.length > 120) {
+    if (name?.length < 3 || name?.length > 120) {
       setRedFields(['name']);
       throw new Error('Class name must be between 3 and 120 characters long.');
     }
-    if (description.length < 3 || description.length > 500) {
+    if (description?.length < 3 || description?.length > 500) {
       setRedFields(['description']);
       throw new Error(
         'Description of the class must be between 3 and 500 characters long.',
@@ -134,9 +134,9 @@ export default function NewClassForm(props) {
     let signs = price.match(/[$]/g);
     let commas = price.match(/[.]/g);
     let letters = price.match(/[A-Za-z]/g);
-    if (signs && signs.length !== 1) priceError = true;
+    if (signs && signs?.length !== 1) priceError = true;
     if (price[0] !== '$') priceError = true;
-    if (commas && commas.length > 1) priceError = true;
+    if (commas && commas?.length > 1) priceError = true;
     if (letters) priceError = true;
     if (priceError) {
       setRedFields(['price']);
@@ -163,8 +163,8 @@ export default function NewClassForm(props) {
   /* quick little logic for first <DropDownPicker defaultValue /> */
   let defaultGym = gym_id;
   if (!gym_id) {
-    if (dropDownGyms.length === 1) {
-      defaultGym = dropDownGyms[0].value;
+    if (dropDownGyms?.length === 1) {
+      defaultGym = dropDownGyms[0]?.value;
       setGymId(defaultGym);
     }
   }
@@ -357,8 +357,8 @@ export default function NewClassForm(props) {
                 let signs = text.match(/[$]/g);
                 let commas = text.match(/[.]/g);
                 let letters = text.match(/[A-Za-z]/g);
-                if (signs && signs.length !== 1) newText = price;
-                if (commas && commas.length > 1) newText = price;
+                if (signs && signs?.length !== 1) newText = price;
+                if (commas && commas?.length > 1) newText = price;
                 if (letters) newText = price;
                 setPrice(newText);
               }}

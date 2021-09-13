@@ -81,6 +81,7 @@ export const ButtonsContainer = styled.View<
     marginBottom?: number;
     containerWidth?: string | number;
     borderRadius?: number;
+    titleColor?: string;
   } & ViewProps
   >`
   justify-content: ${props =>
@@ -99,7 +100,7 @@ export const ButtonsContainer = styled.View<
  * marginTop={50} for testing
  * @param props @see {ButtonType}
  */
-export const TextButton: React.FC<ButtonType> = props => {
+export const TextButton: React.FC<ButtonType & { title?: string, titleColor?: string }> = props => {
   return (
     <ButtonsContainer
       marginTop={props.marginTop || 10}
@@ -109,7 +110,7 @@ export const TextButton: React.FC<ButtonType> = props => {
       spaceAround={props.spaceAround}
       marginBottom={props.marginBottom || 10}>
       <Button {...props}>
-        <ButtonText {...(props as any)}>{props.children}</ButtonText>
+        <ButtonText   {...(props as any)}>{props.title}</ButtonText>
       </Button>
     </ButtonsContainer>
   );

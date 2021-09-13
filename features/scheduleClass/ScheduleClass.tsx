@@ -10,7 +10,6 @@ import { View } from 'react-native';
 import { Body } from '../../components/Body';
 
 interface ISheduleProp {
-
   month: string;
 }
 

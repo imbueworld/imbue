@@ -312,9 +312,10 @@ export default function GymDescription(props) {
                     // sendGridPurchasedYourMembership
                     try {
                       // initiate SendGrid email
-                      const sendGridPurchasedYourMembership = functions().httpsCallable(
-                        'sendGridPurchasedYourMembership',
-                      );
+                      const sendGridPurchasedYourMembership =
+                        functions().httpsCallable(
+                          'sendGridPurchasedYourMembership',
+                        );
                       await sendGridPurchasedYourMembership(gymId);
                     } catch (err) {
                       setErrorMsg('Email could not be sent');
@@ -323,9 +324,10 @@ export default function GymDescription(props) {
                     // sendGridMemberPurchasedMembership
                     try {
                       // initiate SendGrid email
-                      const sendGridMemberPurchasedMembership = functions().httpsCallable(
-                        'sendGridMemberPurchasedMembership',
-                      );
+                      const sendGridMemberPurchasedMembership =
+                        functions().httpsCallable(
+                          'sendGridMemberPurchasedMembership',
+                        );
                       await sendGridMemberPurchasedMembership(userId);
                     } catch (err) {
                       setErrorMsg('Email could not be sent');

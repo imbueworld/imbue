@@ -57,7 +57,7 @@
     "react-native-calendar-events": "^2.2.0",
     "react-native-calendars": "^1.403.0",
     "react-native-communications": "^2.2.1",
-    "react-native-dropdown-picker": "^3.7.1",
+    "react-native-dropdown-picker": "^5.1.23",
     "react-native-fast-image": "^8.3.7",
     "react-native-fbsdk": "^2.0.0",
     "react-native-flash-message": "^0.1.23",

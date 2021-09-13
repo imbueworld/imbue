@@ -40,7 +40,7 @@ import SuccessScreen from '../assets/js/screens/SuccessScreen';
 import PurchaseUnlimited from '../assets/js/screens/PurchaseUnlimited';
 import GymDescription from '../assets/js/screens/GymDescription';
 import UserMemberships from '../assets/js/screens/UserMemberships';
-import ClassDescription from '../assets/js/screens/ClassDescription';
+// import ClassDescription from '../assets/js/screens/ClassDescription';
 import PartnerCreateClass from '../assets/js/screens/PartnerCreateClass';
 import PartnerEditClasses from '../assets/js/screens/PartnerEditClasses';
 import EditClassForm from '../components/EditClassForm';
@@ -56,6 +56,9 @@ import PartnerOnboardStripe from '../assets/js/screens/PartnerOnboardStripe';
 import PartnerOnboardStripeQuestions from '../assets/js/screens/PartnerOnboardStripeQuestions';
 import UserOnboard from '../assets/js/screens/UserOnboard';
 import PreLiveChecklist from '../assets/js/screens/PreLiveChecklist';
+import { PreLiveScreen } from '../features/gymDescription/partner/preLive/PreLive';
+import { ClassDescription } from '../features/gymDescription/partner/ClassDescription';
+
 import { PartnerStep } from '../assets/js/screens/PartnerStep';
 import auth from '@react-native-firebase/auth';
 import { Linking } from 'react-native';
@@ -221,7 +224,7 @@ export const AppNavigation = () => {
           {/* HERE you have to put UserDashboard */}
           <Stack.Screen
             name="UserDashboard"
-            component={ScheduleClass}
+            component={UserDashboard}
             initialParams={{}}
           />
           {/* <Stack.Screen
@@ -231,7 +234,7 @@ export const AppNavigation = () => {
           /> */}
           <Stack.Screen
             name="createClass"
-            component={VideoScreen}
+            component={CreateClass}
             initialParams={{}}
           />
           <Stack.Screen
@@ -403,9 +406,14 @@ export const AppNavigation = () => {
             component={UserOnboard}
             initialParams={{}}
           />
-          <Stack.Screen
+          {/* <Stack.Screen
             name="PreLiveChecklist"
             component={PreLiveChecklist}
+            initialParams={{}}
+          /> */}
+          <Stack.Screen
+            name="PreLiveChecklist"
+            component={PreLiveScreen}
             initialParams={{}}
           />
         </Stack.Navigator>

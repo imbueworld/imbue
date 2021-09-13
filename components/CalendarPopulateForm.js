@@ -218,6 +218,7 @@ export default function CalendarPopulateForm(props) {
           </View>
         ) : (
           <>
+            {/* TODO:Add a state for open and close the select and a state that change on it also */}
             {edit != true ? (
               <CustomDropDownPicker
                 containerStyle={{
@@ -226,7 +227,7 @@ export default function CalendarPopulateForm(props) {
                 }}
                 style={{
                   ...styles.dropDownPicker,
-                  borderColor: redFields.includes('class') ? 'red' : undefined,
+                  borderColor: redFields?.includes('class') ? 'red' : undefined,
                 }}
                 items={dropDownClasses}
                 placeholder="Select your class"

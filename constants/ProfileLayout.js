@@ -181,17 +181,18 @@ export default function ProfileLayout(props) {
           {gym ? (
             <TouchableOpacity
               onPress={async () => {
-                let branchUniversalObject = await branch.createBranchUniversalObject(
-                  'canonicalIdentifier',
-                  {
-                    locallyIndex: true,
-                    contentMetadata: {
-                      customMetadata: {
-                        influencer: gym.id,
+                let branchUniversalObject =
+                  await branch.createBranchUniversalObject(
+                    'canonicalIdentifier',
+                    {
+                      locallyIndex: true,
+                      contentMetadata: {
+                        customMetadata: {
+                          influencer: gym.id,
+                        },
                       },
                     },
-                  },
-                );
+                  );
                 let linkProperties = {
                   feature: 'share',
                 };
